@@ -1,0 +1,7 @@
+/* Перенеси импорт Bootstrap в самое начало */
+@import "bootstrap/dist/css/bootstrap.min.css";
+
+/* Теперь идут директивы Tailwind */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
