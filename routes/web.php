@@ -362,11 +362,10 @@ Route::fallback(function () {
     }
 
     abort(404);
-<<<<<<< HEAD
-});
-=======
 
 });
+
+
 
 
 
@@ -376,4 +375,4 @@ Route::get('/documents/{id}/preview', [DocumentController::class, 'previewPdf'])
 Route::get('/documents/{id}/pdf', [DocumentController::class, 'pdf'])->name('documents.pdf');
 Route::get('/documents/{id}/debug', [DocumentController::class, 'debugFilePath']);
 
->>>>>>> cdd84ef (model)
+

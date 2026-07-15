@@ -1195,8 +1195,6 @@ class DocumentController extends Controller
             abort(403, 'У вас нет прав доступа к этому документу');
         }
     }
-<<<<<<< HEAD
-=======
     public function previewPdf($id)
     {
         $document = Document::findOrFail($id);
@@ -1245,7 +1243,7 @@ class DocumentController extends Controller
         ]);
 
     }
-    public function debugFilePath($id)
+    public function   debugFilePath($id)
     {
         $document = Document::findOrFail($id);
 
@@ -1276,5 +1274,4 @@ class DocumentController extends Controller
             'files_found' => $files,
         ]);
     }
->>>>>>> cdd84ef (model)
 }
