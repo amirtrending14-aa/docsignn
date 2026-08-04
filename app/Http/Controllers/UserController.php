@@ -44,12 +44,10 @@ class UserController extends Controller
     {
         $authUser = auth()->user();
 
-        // Если у пользователя есть компания, ему здесь делать нечего
         if ($authUser->company_id) {
             return redirect()->route('users.index');
         }
 
-        // Админы видят список всех пользователей без компании
         if ($authUser->isAdmin() || $authUser->isSuperAdmin()) {
             $users = User::where(function ($q) {
                 $q->whereNull('company_id')->orWhere('company_id', 0);
@@ -61,65 +59,110 @@ class UserController extends Controller
             return view('users.no-companies', compact('users', 'authUser'));
         }
 
-        // Обычный пользователь без компании просто видит заглушку
         return view('users.no-companies', compact('authUser'));
     }
 
-    public function create()
+    public function create(Request $request)
     {
-        if (!auth()->user()->isAdmin()) {
-            return redirect()->route('users.index')->with('error', 'Только администратор может добавлять пользователей');
+        $companyId = $request->query('company_id');
+        $selectedCompany = null;
+
+        if ($companyId) {
+            $selectedCompany = Company::find($companyId);
         }
-        return view('users.create');
+
+        return view('users.create', [
+            'selectedCompany' => $selectedCompany
+        ]);
     }
 
     public function store(Request $request)
     {
         $authUser = auth()->user();
 
-        if (!$authUser->isAdmin()) {
+        if (!$authUser->isAdmin() && !$authUser->isSuperAdmin()) {
             return redirect()->route('users.index')->with('error', 'Только администратор может добавлять пользователей');
         }
 
+        // Валидация данных
         $data = $request->validate([
-            'name'     => 'required|string|max:255',
-            'email'    => 'required|email|unique:users,email',
-            'password' => 'required|min:6',
-            'phone'    => 'nullable|string|unique:users,phone', // 🔒 ДОБАВЛЕНО: уникальность телефона
-            'role'     => 'required|string|max:50',
-            'level'    => 'required|integer|min:2|max:20',
-            'avatar'   => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'name'       => 'required|string|max:255',
+            'email'      => 'required|email|unique:users,email',
+            'password'   => 'required|min:6',
+            'phone'      => 'nullable|string|unique:users,phone',
+            'role'       => 'required|string|max:50', // Теперь это поле точно придет благодаря исправленному JS
+            'level'      => 'required|integer|min:1|max:20',
+            'avatar'     => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'company_id' => 'nullable|exists:companies,id',
         ]);
 
-        // 🔒 Нормализуем телефон (убираем пробелы, скобки и т.д.)
+        // Нормализуем телефон (оставляем только цифры и +)
         if (!empty($data['phone'])) {
             $data['phone'] = preg_replace('/[^0-9+]/', '', $data['phone']);
         }
 
-        $companyId = $authUser->company_id;
-        $companyName = $authUser->company;
-
-        if (!$companyId && $companyName) {
-            $company = Company::firstOrCreate(
-                ['name' => $companyName],
-                ['owner_id' => $authUser->id]
-            );
-            $companyId = $company->id;
-            $authUser->update(['company_id' => $companyId]);
+        // --- ЛОГИКА КОМПАНИИ ---
+        // 1. Берем ID из формы (если админ создает из другой компании)
+        $targetCompanyId = $data['company_id'] ?? null;
+        
+        // 2. Если ID нет в форме, берем компанию текущего админа
+        if (!$targetCompanyId) {
+            $targetCompanyId = $authUser->company_id;
         }
 
-        $data['password'] = Hash::make($data['password']);
+        $targetCompanyName = 'Без компании';
+
+        // 3. Если ID есть, находим имя компании
+        if ($targetCompanyId) {
+            $company = Company::find($targetCompanyId);
+            if ($company) {
+                $targetCompanyName = $company->name;
+            }
+        } 
+        // 4. Если компании всё еще нет (у админа тоже нет), создаем её автоматически
+        elseif ($authUser->company) {
+             $company = Company::firstOrCreate(
+                ['name' => $authUser->company],
+                ['owner_id' => $authUser->id]
+            );
+            $targetCompanyId = $company->id;
+            $targetCompanyName = $company->name;
+            
+            // Обновляем компанию самого админа, чтобы привязать его
+            if (!$authUser->company_id) {
+                $authUser->update(['company_id' => $targetCompanyId]);
+            }
+        }
+
+        // --- ПОДГОТОВКА ДАННЫХ ---
+        
+        // Пароль хешируется АВТОМАТИЧЕСКИ мутатором в модели User (setPasswordAttribute).
+        // Не используйте Hash::make здесь, иначе будет двойное хеширование!
+        
         $data['created_by'] = $authUser->id;
-        $data['company_id'] = $companyId;
-        $data['company'] = $companyName;
-        $data['is_admin'] = false;
+        $data['company_id'] = $targetCompanyId;
+        $data['company']    = $targetCompanyName;
+        
+        // Автоматически ставим флаг is_admin, если уровень 1
+        $data['is_admin'] = ((int)$data['level'] === 1);
         $data['is_super_admin'] = false;
 
+        // Загрузка аватара
         if ($request->hasFile('avatar')) {
             $data['avatar'] = $request->file('avatar')->store('avatars', 'public');
         }
 
-        User::create($data);
+        // Создание пользователя
+        try {
+            User::create($data);
+        } catch (\Exception $e) {
+            return back()->withInput()->with('error', 'Ошибка создания: ' . $e->getMessage());
+        }
+
+        if ($targetCompanyId) {
+            return redirect()->route('companies.show', $targetCompanyId)
+                ->with('success', 'Пользователь успешно добавлен в команду!');
+        }
 
         return redirect()->route('users.index')->with('success', 'Пользователь создан');
     }
@@ -127,8 +170,6 @@ class UserController extends Controller
     public function show(User $user)
     {
         $authUser = auth()->user();
-
-        // 🔒 БЕЗОПАСНОСТЬ: Усиленная проверка доступа
         if (!$this->canAccessUser($authUser, $user)) {
             abort(403, 'Нет доступа к этому пользователю');
         }
@@ -151,13 +192,10 @@ class UserController extends Controller
     public function edit(User $user)
     {
         $authUser = auth()->user();
-
-        // 🔒 БЕЗОПАСНОСТЬ: Усиленная проверка доступа
         if (!$this->canAccessUser($authUser, $user)) {
             return redirect()->route('users.index')->with('error', 'Нет доступа к этому пользователю');
         }
 
-        // Проверка прав на редактирование
         if (!$authUser->isAdmin() && $user->id !== $authUser->id) {
             return redirect()->route('users.index')->with('error', 'Нет прав для редактирования');
         }
@@ -169,12 +207,10 @@ class UserController extends Controller
     {
         $authUser = auth()->user();
 
-        // 🔒 БЕЗОПАСНОСТЬ: Усиленная проверка доступа
         if (!$this->canAccessUser($authUser, $user)) {
             return redirect()->route('users.index')->with('error', 'Нет доступа к этому пользователю');
         }
 
-        // Проверка прав на редактирование
         if (!$authUser->isAdmin() && $user->id !== $authUser->id) {
             return redirect()->route('users.index')->with('error', 'Нет прав для редактирования');
         }
@@ -182,14 +218,14 @@ class UserController extends Controller
         $rules = [
             'name'          => 'required|string|max:255',
             'email'         => 'required|email|unique:users,email,' . $user->id,
-            'phone'         => 'nullable|string|unique:users,phone,' . $user->id, // 🔒 Уникальность с исключением себя
+            'phone'         => 'nullable|string|unique:users,phone,' . $user->id,
             'avatar'        => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'remove_avatar' => 'nullable|string|in:0,1',
         ];
 
         if ($authUser->isAdmin()) {
             $rules['role'] = 'required|string|max:50';
-            $rules['level'] = 'required|integer|min:2|max:20';
+            $rules['level'] = 'required|integer|min:1|max:20';
         }
 
         $data = $request->validate($rules);
@@ -218,7 +254,6 @@ class UserController extends Controller
     {
         $authUser = auth()->user();
 
-        // 🔒 БЕЗОПАСНОСТЬ: Усиленная проверка доступа
         if (!$this->canAccessUser($authUser, $user)) {
             return back()->with('error', 'Нет доступа к этому пользователю');
         }
@@ -237,20 +272,16 @@ class UserController extends Controller
         return redirect()->route('users.index')->with('success', 'Пользователь удалён');
     }
 
-    // 🔒 БЕЗОПАСНОСТЬ: Универсальный метод проверки доступа к пользователю
     private function canAccessUser($authUser, $targetUser)
     {
-        // Супер-админ имеет доступ ко всем
         if ($authUser->isSuperAdmin()) {
             return true;
         }
 
-        // Админ имеет доступ только к пользователям своей компании
         if ($authUser->isAdmin()) {
             return $authUser->company_id && $targetUser->company_id === $authUser->company_id;
         }
 
-        // Обычный пользователь имеет доступ только к себе
         return $targetUser->id === $authUser->id;
     }
 }

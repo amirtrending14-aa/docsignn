@@ -383,6 +383,37 @@
         flex-shrink: 0;
     }
 
+    .tree-empty-hint {
+        max-width: 1400px;
+        margin: 16px auto 0;
+        text-align: center;
+        font-size: 12px;
+        color: var(--muted);
+        position: relative;
+        z-index: 1;
+        display: none;
+    }
+    .tree-empty-hint.visible { display: block; }
+
+    /* Диагностическая плашка — видна прямо на странице, без консоли */
+    .tree-debug-banner {
+        max-width: 1400px;
+        margin: 0 auto 16px;
+        position: relative;
+        z-index: 1;
+        background: rgba(255, 193, 7, 0.08);
+        border: 1px solid rgba(255, 193, 7, 0.35);
+        border-radius: 10px;
+        padding: 12px 16px;
+        font-size: 12px;
+        line-height: 1.5;
+        color: #ffc107;
+        display: none;
+        white-space: pre-wrap;
+        word-break: break-word;
+    }
+    .tree-debug-banner.visible { display: block; }
+
     /* ============================================ */
     /* === ПОЛНАЯ АДАПТИВНОСТЬ === */
     /* ============================================ */
@@ -570,6 +601,8 @@
         </div>
     </div>
 
+    <div class="tree-debug-banner" id="treeDebugBanner"></div>
+
     <div class="tree-wrap" id="treeWrap">
         <div class="tree-header">
             <h2 data-i18n="tree_doc_flow_title">Документооборот</h2>
@@ -585,7 +618,7 @@
                 <div class="user-card" id="user-{{ $user->id }}" data-user-id="{{ $user->id }}">
                     <div class="user-photo">
                         @if($user->avatar)
-                        <img src="{{ asset('storage/' . $user->avatar) }}" alt="{{ $user->name }}">
+                        <img src="{{ asset('storage/' . $user->avatar) }}" alt="{{ $user->name }}" loading="eager">
                         @else
                         <div class="user-photo-placeholder">
                             {{ strtoupper(mb_substr($user->name, 0, 1)) }}
@@ -616,6 +649,9 @@
     </div>
 
     <div class="arrow-legend" id="arrowLegend"></div>
+    <div class="tree-empty-hint" id="treeEmptyHint">
+        Связи между пользователями не найдены (нет документов, связывающих участников команды).
+    </div>
 </div>
 
 <div class="modal-overlay" id="documentModal">
@@ -732,6 +768,32 @@
     const documentDetails = @json($documentDetails);
     const users = @json($users->toArray());
 
+    // 🔎 Диагностика прямо на странице (жёлтая плашка сверху) —
+    // не нужно открывать консоль, чтобы понять, дошли данные или нет.
+    (function renderDebugBanner() {
+        const banner = document.getElementById('treeDebugBanner');
+        if (!banner) return;
+
+        const connCount = Object.keys(connections || {}).length;
+
+        if (connCount === 0) {
+            banner.classList.add('visible');
+            banner.textContent =
+                'ДИАГНОСТИКА: сервер передал 0 связей (connections пуст). ' +
+                'Проверь storage/logs/laravel.log — записи "StrelController: latest documents" ' +
+                'и "StrelController: team scope" покажут, кто реальный отправитель/получатель ' +
+                'и кто входит в текущую команду (userIds).';
+        } else {
+            // Можно закомментировать этот блок, если не нужно подтверждение на проде —
+            // он просто показывает, что данные дошли и в каком виде.
+            banner.classList.remove('visible');
+        }
+
+        console.log('[strel] connections:', connections);
+        console.log('[strel] documentCounts:', documentCounts);
+        console.log('[strel] users:', users);
+    })();
+
     const ZOOM_MIN = 0.5;
     const ZOOM_MAX = 1.5;
     const ZOOM_STEP = 0.1;
@@ -753,6 +815,25 @@
         if (label) label.textContent = Math.round(currentScale * 100) + '%';
     }
 
+    // Ждём загрузки всех аватарок в карточках, чтобы высоты карточек
+    // были финальными до первого расчёта координат стрелок.
+    function waitForCardImages() {
+        const imgs = Array.from(document.querySelectorAll('.user-photo img'));
+        if (imgs.length === 0) return Promise.resolve();
+
+        const promises = imgs.map(img => {
+            if (img.complete) return Promise.resolve();
+            return new Promise(resolve => {
+                img.addEventListener('load', resolve, { once: true });
+                img.addEventListener('error', resolve, { once: true });
+            });
+        });
+
+        return Promise.all(promises);
+    }
+
+    let arrowsInitialized = false;
+
     document.addEventListener('DOMContentLoaded', function() {
         const cardCount = document.querySelectorAll('.user-card').length;
         applyScale(computeAutoScale(cardCount));
@@ -773,13 +854,40 @@
             });
         }
 
-        requestAnimationFrame(() => {
-            setTimeout(drawArrows, 300);
+        // Первичная отрисовка: ждём кадр рендера + загрузку картинок,
+        // чтобы getBoundingClientRect() отдавал финальные размеры карточек.
+        waitForCardImages().then(() => {
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    drawArrows();
+                    arrowsInitialized = true;
+                });
+            });
         });
+
+        // Подстраховка на случай, если что-то (шрифты, отложенный CSS) ещё
+        // изменит размеры уже после первой отрисовки.
+        setTimeout(drawArrows, 600);
+        setTimeout(drawArrows, 1500);
+
         window.addEventListener('resize', () => {
             clearTimeout(window._arrowResizeTimer);
             window._arrowResizeTimer = setTimeout(drawArrows, 200);
         });
+
+        // Если контейнер меняет размер (например, из-за динамической загрузки
+        // шрифта или иконок), пересчитываем стрелки.
+        if (typeof ResizeObserver !== 'undefined') {
+            const treeWrapEl = document.getElementById('treeWrap');
+            if (treeWrapEl) {
+                const ro = new ResizeObserver(() => {
+                    if (!arrowsInitialized) return;
+                    clearTimeout(window._arrowRoTimer);
+                    window._arrowRoTimer = setTimeout(drawArrows, 150);
+                });
+                ro.observe(treeWrapEl);
+            }
+        }
 
         document.querySelectorAll('.user-card').forEach(card => {
             card.addEventListener('click', function() {
@@ -803,6 +911,7 @@
         const svg = document.getElementById('svgArrows');
         const treeWrap = document.getElementById('treeWrap');
         const legend = document.getElementById('arrowLegend');
+        const emptyHint = document.getElementById('treeEmptyHint');
         if (!svg || !treeWrap) return;
 
         svg.innerHTML = '';
@@ -851,6 +960,14 @@
                 });
             });
         });
+
+        if (emptyHint) {
+            emptyHint.classList.toggle('visible', bySource.size === 0);
+        }
+
+        if (bySource.size === 0) {
+            return;
+        }
 
         const orderedIds = Array.from(document.querySelectorAll('.user-card')).map(c => parseInt(c.dataset.userId));
         const sourceIds = orderedIds.filter(id => bySource.has(id));

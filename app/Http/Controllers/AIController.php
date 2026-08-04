@@ -1634,7 +1634,7 @@ ___________________________________
 
             if (preg_match('/^[1-9]\.\s+/u', $paragraph) ||
                 preg_match('/^(Глава|Раздел|Пункт|Статья|Chapter|Section)/iu', $paragraph)) {
-                $section->addText($paragraph, [
+                $section->addText($paragraph,    [
                     'name' => 'Arial',
                     'size' => 12,
                     'bold' => true,
@@ -1649,7 +1649,7 @@ ___________________________________
             }
         }
 
-        $filePath = 'documents/ai/' . $fileName . '.docx';
+        $filePath = 'documents/contracts/' . $fileName . '.docx';
         $fullPath = storage_path('app/public/' . $filePath);
 
         $dir = dirname($fullPath);
@@ -1665,9 +1665,8 @@ ___________________________________
 
     private function generatePdf(array $data, string $fileName): string
     {
-        $pdf = Pdf::loadView('pdf.ai-document-beautiful', ['data' => $data]);
-
-        $filePath = 'documents/ai/' . $fileName . '.pdf';
+       $pdf = Pdf::loadView('pdf.ai-document-beautiful', ['data' => $data]);
+        $filePath = 'documents/contracts/' . $fileName . '.pdf';
         $fullPath = storage_path('app/public/' . $filePath);
 
         $dir = dirname($fullPath);

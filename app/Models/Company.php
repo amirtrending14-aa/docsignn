@@ -4,8 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo; // ✅ ДОБАВЛЕНО
-use Illuminate\Database\Eloquent\Relations\HasMany;   // ✅ ДОБАВЛЕНО
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
 class Company extends Model
@@ -15,62 +15,85 @@ class Company extends Model
     protected $fillable = [
         'slug',
         'name',
+        'company_number',  // ✅ ДОБАВЛЕНО: номер компании
+        'type',
+        'level',           // ✅ ДОБАВЛЕНО: уровень в дереве
+        'region_id',
+        'city_id',
         'email',
         'password',
         'status',
-        'owner_id',           // ✅ Владелец компании
+        'owner_id',
         'owner_telegram_id',
         'address',
+        'parent_id',       // ✅ ДОБАВЛЕНО: родитель для дерева
     ];
 
-    protected $hidden = [
-        'password',
-    ];
+    protected $hidden = ['password'];
 
-    /**
-     * ✅ ДОБАВЛЕНО: Связь "Компания принадлежит одному владельцу (User)"
-     * Теперь $company->owner будет возвращать объект User или null.
-     */
-    public function owner(): BelongsTo
-    {
+    // ✅ СВЯЗИ (твои)
+    public function region(): BelongsTo {
+        return $this->belongsTo(Region::class);
+    }
+
+    public function city(): BelongsTo {
+        return $this->belongsTo(City::class);
+    }
+
+    public function owner(): BelongsTo {
         return $this->belongsTo(User::class, 'owner_id');
     }
 
-    /**
-     * Связь "У компании много пользователей"
-     */
-    public function users(): HasMany
-    {
+    public function users(): HasMany {
         return $this->hasMany(User::class);
     }
 
-    /**
-     * Связь "У компании много документов"
-     */
-    public function documents(): HasMany
-    {
-        return $this->hasMany(Document::class);
+    // ✅ ДОБАВЛЕНО: ДЕРЕВО КОМПАНИЙ
+    /** Родительская компания */
+    public function parent(): BelongsTo {
+        return $this->belongsTo(Company::class, 'parent_id');
     }
 
-    /**
-     * Автоматическая генерация slug при создании компании
-     */
-    protected static function boot()
+    /** Прямые дочерние компании */
+    public function children(): HasMany {
+        return $this->hasMany(Company::class, 'parent_id');
+    }
+
+    /** Все потомки рекурсивно (каскад вниз — Вариант B) */
+    public function allDescendants(): \Illuminate\Support\Collection {
+        $descendants = collect();
+        foreach ($this->children as $child) {
+            $descendants->push($child);
+            $descendants = $descendants->merge($child->allDescendants());
+        }
+        return $descendants;
+    }
+
+    /** Является ли корневой компанией */
+    public function isRoot(): bool {
+        return $this->parent_id === null;
+    }
+
+    // ✅ Твой boot (без изменений)
+        protected static function boot()
     {
         parent::boot();
-
         static::creating(function ($company) {
             if (empty($company->slug)) {
-                $company->slug = Str::slug($company->name);
-
-                // Проверяем уникальность slug
-                $originalSlug = $company->slug;
-                $count = static::where('slug', 'LIKE', "{$company->slug}%")->count();
-
-                if ($count > 0) {
-                    $company->slug = "{$originalSlug}-" . ($count + 1);
+                $baseSlug = Str::slug($company->name);
+                $slug = $baseSlug;
+                $count = 1;
+                
+                // ✅ ИСПРАВЛЕНО: Более точная проверка существующих слагово
+                while (static::where('slug', $slug)->exists()) {
+                    $slug = $baseSlug . '-' . $count;
+                    $count++;
                 }
+                
+                $company->slug = $slug;
             }
         });
     }
+   
+
 }

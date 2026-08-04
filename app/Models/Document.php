@@ -144,4 +144,10 @@ class Document extends Model
     }
 
 
+    public function recipients()
+    {
+        return $this->belongsToMany(User::class, 'document_user') // Если таблица называется иначе, поменяй 'document_user' на её имя
+        ->withPivot('status', 'created_at', 'updated_at')
+            ->withTimestamps();
+    }
 }

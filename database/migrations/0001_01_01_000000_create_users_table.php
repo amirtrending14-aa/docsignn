@@ -24,6 +24,7 @@ return new class extends Migration
             $table->boolean('is_admin')->default(false);
             $table->boolean('is_super_admin')->default(false);
             $table->timestamp('last_seen_at')->nullable();
+
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();

@@ -1361,6 +1361,7 @@
                 <span data-i18n="signatures">Подписание</span>
             </button>
         </a>
+
         <a href="/users" data-tab="counter" style="text-decoration: none; display: inline-block;">
             <button type="button" style="pointer-events: none;">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1974,24 +1975,41 @@
             <span class="side-badge">{{ $unreadCount }}</span>
             @endif
         </a>
-        <a href="/logs"
-           class="side-item"
-           style="text-decoration: none !important;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="side-icon">
-                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-            </svg>
-            <span data-i18n="history">История</span>
-        </a>
-        <a href="/strel"
-           class="side-item"
-           data-page="strel"
-           style="text-decoration: none;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="side-icon">
-                <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/>
-                <polyline points="16 7 22 7 22 13"/>
-            </svg>
-            <span data-i18n="strel">Стрелки</span>
-        </a>
+       {{-- История --}}
+<a href="/logs"
+   class="side-item"
+   style="text-decoration: none !important;">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="side-icon">
+        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+    </svg>
+    <span data-i18n="history">История</span>
+</a>
+
+{{-- Отделы --}}
+<a href="/departments"
+   class="side-item"
+   style="text-decoration: none !important;">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="side-icon">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+        <circle cx="9" cy="7" r="4"/>
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+    </svg>
+    <span data-i18n="departments">Отделы</span>
+</a>
+
+{{-- ✅ Мои компании (дерево) --}}
+<a href="{{ route('companies.index') }}"
+   class="side-item {{ request()->routeIs('companies.*') ? 'active' : '' }}"
+   style="text-decoration: none !important;">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="side-icon">
+        <path d="M3 21h18"/>
+        <path d="M5 21V7l8-4v18"/>
+        <path d="M19 21V11l-6-4"/>
+        <path d="M9 9v.01"/><path d="M9 12v.01"/><path d="M9 15v.01"/><path d="M9 18v.01"/>
+    </svg>
+    <span data-i18n="companies">Мои компании</span>
+</a>
         <a href="/profile" style="text-decoration: none; color: inherit; display: block;">
             <div class="side-item">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
@@ -2377,7 +2395,10 @@
         status_pending: 'Ожидает',
         status_rejected: 'Отклонён',
         status_draft: 'Черновик',
-         strel: 'Стрелки'
+         strel: 'Стрелки',
+         history: 'История',
+departments: 'Отделы',
+companies: 'Мои компании',
     },
     tj: {
         brand_sub: 'Ҳуҷҷатгардонӣ',
@@ -2433,7 +2454,10 @@
         status_pending: 'Дар интизорӣ',
         status_rejected: 'Радшуда',
         status_draft: 'Лоиҳа',
-          strel: 'Тирҳо'
+          strel: 'Тирҳо',
+          history: 'Таърих',
+departments: 'Шӯъбаҳо',
+companies: 'Ширкатҳои ман',
     },
     en: {
         brand_sub: 'EDMS',
@@ -2489,7 +2513,10 @@
         status_pending: 'Pending',
         status_rejected: 'Rejected',
         status_draft: 'Draft',
-         strel: 'Arrows'
+         strel: 'Arrows',
+         history: 'History',
+departments: 'Departments',
+companies: 'My Companies',
     }
 };
 

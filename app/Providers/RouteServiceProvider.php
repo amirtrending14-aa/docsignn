@@ -44,7 +44,7 @@ class RouteServiceProvider extends ServiceProvider
             return Limit::perMinute(10)->by($request->user()?->id ?: $request->ip());
         });
 
-        RateLimiter::for('ai-generation', function (Request $request) {
+        RateLimiter::for('contracts-generation', function (Request $request) {
             return Limit::perMinute(3)->by($request->user()?->id ?: $request->ip());
         });
 

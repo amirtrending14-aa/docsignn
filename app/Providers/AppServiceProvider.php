@@ -36,7 +36,7 @@ class AppServiceProvider extends ServiceProvider
         // Это необходимо, чтобы маршруты с ->middleware('throttle:...') не падали с ошибкой 500.
         // Наши умные проверки через RateLimitService::check() в контроллерах продолжают работать параллельно.
 
-        RateLimiter::for('ai-generation', function (Request $request) {
+        RateLimiter::for('contracts-generation', function (Request $request) {
             return Limit::perMinute(3)->by($request->user()?->id ?: $request->ip());
         });
 

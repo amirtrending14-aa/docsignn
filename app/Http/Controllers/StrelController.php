@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
 
 class StrelController extends Controller
@@ -31,6 +32,13 @@ class StrelController extends Controller
 
         $groupedByLevel = $users->groupBy('level')->sortKeys();
 
+        Log::info('StrelController: team scope', [
+            'auth_user_id' => $authUser->id,
+            'auth_user_company_id' => $authUser->company_id ?? null,
+            'auth_user_company_string' => $authUser->company ?? null,
+            'resolved_user_ids' => $userIds,
+        ]);
+
         $connections = [];
         $documentCounts = [];
         $documentDetails = [];
@@ -42,9 +50,25 @@ class StrelController extends Controller
         if (Schema::hasTable('document_routes')) {
             $routeColumns = Schema::getColumnListing('document_routes');
 
-            $senderCol = $this->findColumn($routeColumns, ['sender_id', 'from_user_id', 'created_by', 'user_id']);
-            $recipientCol = $this->findColumn($routeColumns, ['receiver_id', 'user_id', 'recipient_id', 'to_user_id', 'assignee_id']);
+            // ⚠️ ВАЖНО: расширенные и НЕ пересекающиеся списки кандидатов.
+            // Порядок важен — более специфичные имена стоят первыми.
+            $senderCol = $this->findColumn($routeColumns, [
+                'sender_id', 'from_user_id', 'from_id', 'author_id',
+                'sent_by', 'sender', 'creator_id', 'created_by',
+            ]);
+            $recipientCol = $this->findColumn($routeColumns, [
+                'receiver_id', 'recipient_id', 'to_user_id', 'to_id',
+                'assignee_id', 'assigned_to', 'receiver', 'delegate_id',
+                'user_id',
+            ]);
             $docIdCol = $this->findColumn($routeColumns, ['document_id', 'doc_id']);
+
+            Log::info('StrelController: document_routes columns', [
+                'all_columns' => $routeColumns,
+                'senderCol' => $senderCol,
+                'recipientCol' => $recipientCol,
+                'docIdCol' => $docIdCol,
+            ]);
 
             if ($senderCol && $recipientCol && $senderCol !== $recipientCol) {
                 $routes = DB::table('document_routes')
@@ -56,8 +80,8 @@ class StrelController extends Controller
                     ->get();
 
                 foreach ($routes as $route) {
-                    $from = $route->$senderCol;
-                    $to = $route->$recipientCol;
+                    $from = (int) $route->$senderCol;
+                    $to = (int) $route->$recipientCol;
 
                     $connections[$from] = $connections[$from] ?? [];
                     $documentCounts["{$from}-{$to}"] = $documentCounts["{$from}-{$to}"] ?? 0;
@@ -89,6 +113,11 @@ class StrelController extends Controller
                 }
 
                 $totalDocs = $routes->count();
+            } else {
+                Log::warning('StrelController: document_routes sender/recipient columns not resolved, skipping this source', [
+                    'senderCol' => $senderCol,
+                    'recipientCol' => $recipientCol,
+                ]);
             }
         }
 
@@ -98,8 +127,39 @@ class StrelController extends Controller
         if (Schema::hasTable('documents') && $totalDocs == 0) {
             $docColumns = Schema::getColumnListing('documents');
 
-            $senderCol = $this->findColumn($docColumns, ['created_by', 'sender_id', 'from_user_id', 'author_id']);
-            $recipientCol = $this->findColumn($docColumns, ['receiver_id', 'user_id', 'to_user_id', 'assignee_id', 'recipient_id']);
+            // 🛡️ Подстраховка: если "логичный" по названию кандидат на практике
+            // всегда NULL (бывает, что колонка есть в схеме, но приложение её
+            // не заполняет — как было с sender_id/created_by), пробуем
+            // следующего кандидата по списку, у которого реально есть данные.
+            $senderCol = $this->firstNonEmptyColumn($docColumns, [
+                'created_by', 'creator_id',
+                'sender_id', 'from_user_id', 'from_id', 'author_id',
+            ], 'documents');
+            $recipientCol = $this->firstNonEmptyColumn($docColumns, [
+                'receiver_id', 'recipient_id', 'to_user_id', 'to_id',
+                'assignee_id', 'assigned_to', 'user_id',
+            ], 'documents');
+
+            Log::info('StrelController: documents columns', [
+                'all_columns' => $docColumns,
+                'senderCol' => $senderCol,
+                'recipientCol' => $recipientCol,
+            ]);
+
+            // 🔎 Диагностика без фильтра по $userIds — чтобы увидеть
+            // РЕАЛЬНЫХ sender/receiver последних документов и сравнить
+            // их с $userIds (список ниже, "team scope").
+            if ($senderCol && $recipientCol) {
+                $rawLatest = DB::table('documents')
+                    ->orderByDesc('id')
+                    ->limit(5)
+                    ->get(['id', $senderCol, $recipientCol]);
+
+                Log::info('StrelController: latest documents (unfiltered by team)', [
+                    'rows' => $rawLatest->toArray(),
+                    'current_team_user_ids' => $userIds,
+                ]);
+            }
 
             if ($senderCol && $recipientCol && $senderCol !== $recipientCol) {
                 $docs = DB::table('documents')
@@ -111,8 +171,8 @@ class StrelController extends Controller
                     ->get();
 
                 foreach ($docs as $doc) {
-                    $from = $doc->$senderCol;
-                    $to = $doc->$recipientCol;
+                    $from = (int) $doc->$senderCol;
+                    $to = (int) $doc->$recipientCol;
 
                     $connections[$from] = $connections[$from] ?? [];
                     $documentCounts["{$from}-{$to}"] = $documentCounts["{$from}-{$to}"] ?? 0;
@@ -133,8 +193,19 @@ class StrelController extends Controller
                 }
 
                 $totalDocs = $docs->count();
+            } else {
+                Log::warning('StrelController: documents sender/recipient columns not resolved either', [
+                    'senderCol' => $senderCol,
+                    'recipientCol' => $recipientCol,
+                ]);
             }
         }
+
+        Log::info('StrelController: final counts', [
+            'user_count' => count($userIds),
+            'connections_count' => count($connections),
+            'total_docs' => $totalDocs,
+        ]);
 
         return view('strel.index', compact(
             'users',
@@ -180,7 +251,9 @@ class StrelController extends Controller
 
     private function findTeamRoot(int $userId, int $depth = 0): int
     {
-        if ($depth > 20) return $userId;
+        if ($depth > 20) {
+            return $userId;
+        }
 
         $user = User::find($userId);
         if (!$user || !$user->created_by) {
@@ -218,5 +291,35 @@ class StrelController extends Controller
             }
         }
         return null;
+    }
+
+    /**
+     * Как findColumn(), но дополнительно проверяет, что колонка реально
+     * содержит хотя бы одно не-NULL значение в таблице. Нужно для случаев,
+     * когда колонка существует в схеме, но приложение её не заполняет
+     * (например sender_id всегда NULL, а реальный отправитель в created_by).
+     */
+    private function firstNonEmptyColumn(array $existingColumns, array $candidates, string $table): ?string
+    {
+        $fallback = null;
+
+        foreach ($candidates as $candidate) {
+            if (!in_array($candidate, $existingColumns)) {
+                continue;
+            }
+
+            if ($fallback === null) {
+                $fallback = $candidate;
+            }
+
+            $hasData = DB::table($table)->whereNotNull($candidate)->exists();
+            if ($hasData) {
+                return $candidate;
+            }
+        }
+
+        // Если ни одна колонка не содержит данных, вернём первую найденную
+        // по схеме — так поведение останется предсказуемым, а не молча null.
+        return $fallback;
     }
 }

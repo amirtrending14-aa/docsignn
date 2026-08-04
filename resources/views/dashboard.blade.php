@@ -73,7 +73,7 @@
                     </div>
                 </div>
                 <div class="stat-value">{{ number_format($stats['waiting'] ?? 0, 0, '.', ' ') }}</div>
-                <span class="stat-delta delta-down">{{ $stats['pending_change'] ?? 3 }}</span>
+                <span class="stat-delta delta-down">{{ $stats['pending_change']  }}</span>
                 <div class="stat-spark">
                     <x-sparkline :data="$sparklineData['waiting']" id="waiting" />
                 </div>

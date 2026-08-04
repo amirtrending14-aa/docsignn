@@ -177,7 +177,7 @@ class GeminiDocumentService
 
     protected function generatePdf(array $data): string
     {
-        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.ai-document', ['data' => $data]);
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.contracts-document', ['data' => $data]);
         return $pdf->output();
     }
 }

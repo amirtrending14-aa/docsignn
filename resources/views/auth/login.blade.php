@@ -808,10 +808,23 @@
             </button>
         </form>
 
-        <div class="divider">
+               <div class="divider">
             <div class="divider-line"></div>
             <span class="divider-text" data-i18n="divider">или</span>
             <div class="divider-line"></div>
+        </div>
+
+        {{-- ✅ НОВАЯ КНОПКА: Создать компанию --}}
+        <div class="create-company-section">
+            <a href="{{ route('register.company') }}" class="create-company-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 21h18"/>
+                    <path d="M5 21V7l8-4v18"/>
+                    <path d="M19 21V11l-6-4"/>
+                    <path d="M9 9v.01"/><path d="M9 12v.01"/><path d="M9 15v.01"/><path d="M9 18v.01"/>
+                </svg>
+                <span data-i18n="createCompany">Создать компанию</span>
+            </a>
         </div>
 
         <div class="register-section">
@@ -821,7 +834,47 @@
             </p>
         </div>
     </div>
+<style>
+        .create-company-section {
+            margin-bottom: 16px;
+            animation: formAppear 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.75s both;
+        }
 
+        .create-company-btn {
+            width: 100%;
+            padding: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: transparent;
+            border: 2px solid transparent;
+            border-radius: 14px;
+            color: var(--text-primary);
+            font-family: 'Figtree', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+            background-image: linear-gradient(rgba(15,23,42,0.8), rgba(15,23,42,0.8)),
+                              linear-gradient(135deg, var(--accent), var(--primary));
+            background-origin: border-box;
+            background-clip: padding-box, border-box;
+        }
+
+        .create-company-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(6, 182, 212, 0.2), 0 0 30px rgba(79, 70, 229, 0.1);
+            background-image: linear-gradient(rgba(30, 41, 59, 0.9), rgba(30, 41, 59, 0.9)),
+                              linear-gradient(135deg, var(--primary-light), var(--accent));
+        }
+
+        .create-company-btn svg {
+            flex-shrink: 0;
+        }
+    </style>
     <!-- Footer badges -->
     <div class="footer-badges">
         <div class="badge">
@@ -880,7 +933,8 @@
             badgeSign: 'ЭЦП',
             rights: 'Все права защищены.',
             invalidEmail: 'Неверный формат email',
-            emptyFields: 'Заполните все поля'
+            emptyFields: 'Заполните все поля',
+               createCompany: 'Создать компанию',
         },
         tj: {
             subtitle: 'Системаи ҳуҷҷатгардонии электронӣ',
@@ -898,7 +952,8 @@
             badgeSign: 'ЭИИ',
             rights: 'Ҳамаи ҳуқуқҳо ҳифз шудаанд.',
             invalidEmail: 'Формати email нодуруст',
-            emptyFields: 'Ҳамаи майдонҳоро пур кунед'
+            emptyFields: 'Ҳамаи майдонҳоро пур кунед',
+              createCompany: 'Ширкат сохтан',
         },
         en: {
             subtitle: 'Electronic Document Management System',
@@ -916,7 +971,8 @@
             badgeSign: 'EDS',
             rights: 'All rights reserved.',
             invalidEmail: 'Invalid email format',
-            emptyFields: 'Please fill in all fields'
+            emptyFields: 'Please fill in all fields',
+            createCompany: 'Create Company',
         }
     };
 

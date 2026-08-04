@@ -3,12 +3,15 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Auth\Passwords\CanResetPassword as CanResetPasswordTrait;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Schema; // Добавлено для проверки схемы
 
 class User extends Authenticatable implements CanResetPassword
 {
@@ -29,7 +32,7 @@ class User extends Authenticatable implements CanResetPassword
         'is_super_admin',
         'last_seen_at',
         'email_verified_at',
-
+        'organization_id',
     ];
 
     protected $hidden = [
@@ -40,7 +43,6 @@ class User extends Authenticatable implements CanResetPassword
     protected $casts = [
         'email_verified_at' => 'datetime',
         'last_seen_at' => 'datetime',
-        // ❌ УБРАЛИ: 'password' => 'hashed',  // Это вызывает двойное хеширование!
         'level' => 'integer',
         'is_admin' => 'boolean',
         'is_super_admin' => 'boolean',
@@ -90,7 +92,8 @@ class User extends Authenticatable implements CanResetPassword
         return $this->last_seen_at->gt(now()->subMinutes(5));
     }
 
-    // ✅ НОВОЕ: Проверка принадлежности к компании
+    // ===== ПРОВЕРКИ ПРАВ ДОСТУПА =====
+
     public function isInSameCompany(User $user): bool
     {
         if ($this->isSuperAdmin()) {
@@ -104,7 +107,6 @@ class User extends Authenticatable implements CanResetPassword
         return $this->company === $user->company;
     }
 
-    // ✅ НОВОЕ: Может ли редактировать другого пользователя
     public function canEditUser(User $user): bool
     {
         if ($this->isSuperAdmin()) {
@@ -122,7 +124,6 @@ class User extends Authenticatable implements CanResetPassword
         return false;
     }
 
-    // ✅ НОВОЕ: Отметить пользователя как онлайн
     public function markAsOnline(): void
     {
         $this->update(['last_seen_at' => now()]);
@@ -150,13 +151,11 @@ class User extends Authenticatable implements CanResetPassword
         return $this->hasMany(Document::class, 'created_by');
     }
 
-    // ✅ НОВОЕ: Документы на подписи
     public function documentsForSigning()
     {
         return $this->hasMany(Document::class, 'assigned_to');
     }
 
-    // ✅ НОВОЕ: Все документы компании
     public function companyDocuments()
     {
         if (!$this->company_id) {
@@ -166,6 +165,13 @@ class User extends Authenticatable implements CanResetPassword
         return Document::whereHas('creator', function($q) {
             $q->where('company_id', $this->company_id);
         })->get();
+    }
+
+    public function departments(): BelongsToMany
+    {
+        return $this->belongsToMany(Department::class, 'user_departments')
+            ->withPivot('position')
+            ->withTimestamps();
     }
 
     // ===== АКСЕССУАРЫ =====
@@ -178,7 +184,6 @@ class User extends Authenticatable implements CanResetPassword
         return $first . $second;
     }
 
-    // ✅ НОВОЕ: Название компании
     public function getCompanyNameAttribute(): string
     {
         if ($this->companyRelation) {
@@ -187,7 +192,6 @@ class User extends Authenticatable implements CanResetPassword
         return $this->company ?? 'Моя команда';
     }
 
-    // ✅ НОВОЕ: URL аватара
     public function getAvatarUrlAttribute(): ?string
     {
         if (!$this->avatar) {
@@ -201,7 +205,6 @@ class User extends Authenticatable implements CanResetPassword
         return Storage::disk('public')->url($this->avatar);
     }
 
-    // ✅ НОВОЕ: Цвет для аватара-заглушки (по имени)
     public function getAvatarColorAttribute(): string
     {
         $colors = [
@@ -213,27 +216,36 @@ class User extends Authenticatable implements CanResetPassword
         return $colors[abs($index)];
     }
 
-    // ===== SCOPE МЕТОДЫ (для удобных запросов) =====
+    public function getRoleLabelAttribute(): string
+    {
+        if ($this->is_super_admin) {
+            return 'Super Admin';
+        }
 
-    // ✅ Пользователи онлайн
+        if ($this->is_admin) {
+            return 'Admin';
+        }
+
+        return $this->role ?: 'Employee';
+    }
+
+    // ===== SCOPE МЕТОДЫ =====
+
     public function scopeOnline($query)
     {
         return $query->where('last_seen_at', '>', now()->subMinutes(5));
     }
 
-    // ✅ Админы
     public function scopeAdmins($query)
     {
         return $query->where('is_admin', true);
     }
 
-    // ✅ Из той же компании
     public function scopeOfCompany($query, $companyId)
     {
         return $query->where('company_id', $companyId);
     }
 
-    // ✅ Активные (не удалённые и с подтверждённым email)
     public function scopeActive($query)
     {
         return $query->whereNotNull('email_verified_at');
@@ -241,7 +253,6 @@ class User extends Authenticatable implements CanResetPassword
 
     // ===== МУТАТОРЫ =====
 
-    // ✅ Автоматически хешировать пароль при установке
     public function setPasswordAttribute($value)
     {
         if ($value && !str_starts_with($value, '$2y$')) {
@@ -249,5 +260,120 @@ class User extends Authenticatable implements CanResetPassword
         } else {
             $this->attributes['password'] = $value;
         }
+    }
+
+    // ==========================================
+    // ✅ ИСПРАВЛЕННЫЕ МЕТОДЫ ДЛЯ РАБОТЫ С КОМПАНИЯМИ
+    // ==========================================
+
+    /**
+     * Проверяет, существует ли колонка parent_id в таблице companies
+     */
+    private function hasParentColumn(): bool
+    {
+        return Schema::hasColumn('companies', 'parent_id');
+    }
+
+    /**
+     * Возвращает ВСЕ компании дерева, к которому принадлежит пользователь.
+     * Если иерархии нет, возвращает только текущую компанию.
+     */
+  public function managedCompanies(): Collection
+{
+    if (!$this->company_id) {
+        return collect();
+    }
+
+    // ✅ Подгрузка связей во ВСЕХ точках возврата
+    $relations = ['owner', 'region', 'city', 'users'];
+
+    if (!$this->hasParentColumn()) {
+        return Company::with($relations)->where('id', $this->company_id)->get();
+    }
+
+    $root = $this->companyRelation;
+    
+    $visited = [];
+    while ($root && $root->parent_id !== null && !in_array($root->id, $visited)) {
+        $visited[] = $root->id;
+        $root = $root->parent;
+    }
+
+    if (!$root) {
+        return Company::with($relations)->where('id', $this->company_id)->get();
+    }
+
+    $treeIds = $this->getAllTreeIds($root->id);
+
+    return Company::with($relations)->whereIn('id', $treeIds)->get();
+}
+
+    /**
+     * Рекурсивно собирает все ID дочерних компаний
+     */
+    private function getAllTreeIds($parentId, $ids = []): array
+    {
+        $ids[] = $parentId;
+        
+        // Проверка существования колонки перед запросом
+        if (!$this->hasParentColumn()) {
+            return $ids;
+        }
+
+        $children = Company::where('parent_id', $parentId)->pluck('id')->toArray();
+        
+        foreach ($children as $childId) {
+            $ids = $this->getAllTreeIds($childId, $ids);
+        }
+        
+        return $ids;
+    }
+
+    /**
+     * Может ли этот пользователь управлять компанией $target?
+     */
+       /**
+     * Может ли этот пользователь управлять компанией $target?
+     */
+     /**
+     * Может ли этот пользователь УПРАВЛЯТЬ (редактировать/удалять) компанией $target?
+     */
+    public function canManageCompany(Company $target): bool
+    {
+        // 1. Супер-админ может всё
+        if ($this->is_super_admin) {
+            return true;
+        }
+
+        // 2. Без компании управлять нельзя
+        if (!$this->company_id) {
+            return false;
+        }
+
+        // 3. Управлять можно ТОЛЬКО своей компанией
+        if ((int)$this->company_id === (int)$target->id) {
+            // И только если ты админ или владелец
+            return $this->is_admin || ((int)$target->owner_id === (int)$this->id);
+        }
+
+        // 4. Чужие компании редактировать нельзя
+        return false;
+    }
+
+    public function canViewCompany(Company $target): bool
+    {
+        // 1. Супер-админ видит всё
+        if ($this->is_super_admin) {
+            return true;
+        }
+
+        // 2. Обычные пользователи без компании ничего не видят в разделе компаний
+        if (!$this->company_id) {
+            return false;
+        }
+
+        // 3. Если у пользователя есть компания, он может просматривать другие компании
+        // (Это снимает ошибку 403 при переходе по ссылке)
+        return true;
     }
 }
