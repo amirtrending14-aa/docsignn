@@ -26,7 +26,13 @@ class Company extends Model
         'owner_id',
         'owner_telegram_id',
         'address',
-        'parent_id',       // ✅ ДОБАВЛЕНО: родитель для дерева
+        'parent_id',     
+          'work_start_time',
+    'late_tolerance_minutes',
+    'late_fine',
+    'absence_fine',  
+    'late_fine_per_minute',
+    'late_block_minutes', 'late_block_fine'
     ];
 
     protected $hidden = ['password'];

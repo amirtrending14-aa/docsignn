@@ -17,22 +17,26 @@ class User extends Authenticatable implements CanResetPassword
 {
     use HasFactory, Notifiable, SoftDeletes, CanResetPasswordTrait;
 
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-        'avatar',
-        'phone',
-        'role',
-        'company',
-        'company_id',
-        'created_by',
-        'level',
-        'is_admin',
-        'is_super_admin',
-        'last_seen_at',
-        'email_verified_at',
-        'organization_id',
+protected $fillable = [
+    'name',
+    'email',
+    'password',
+    'avatar',
+    'phone',
+    'role',
+    'company',
+    'company_id',
+    'created_by',
+    'level',
+    'is_admin',
+    'is_super_admin',
+    'last_seen_at',
+    'email_verified_at',
+    'organization_id',
+    'needs_face_scan',    // ← ДОБАВЬ
+    'face_vector',        // ← ДОБАВЬ
+    'face_registered', 
+    'salary'  
     ];
 
     protected $hidden = [
@@ -40,13 +44,16 @@ class User extends Authenticatable implements CanResetPassword
         'remember_token',
     ];
 
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-        'last_seen_at' => 'datetime',
-        'level' => 'integer',
-        'is_admin' => 'boolean',
-        'is_super_admin' => 'boolean',
-    ];
+protected $casts = [
+    'email_verified_at' => 'datetime',
+    'last_seen_at'      => 'datetime',
+    'level'             => 'integer',
+    'is_admin'          => 'boolean',
+    'is_super_admin'    => 'boolean',
+    'face_vector'       => 'array',
+    'needs_face_scan'   => 'boolean',
+    'face_registered'   => 'boolean',
+];
 
     protected $attributes = [
         'role' => 'employee',
@@ -376,4 +383,8 @@ class User extends Authenticatable implements CanResetPassword
         // (Это снимает ошибку 403 при переходе по ссылке)
         return true;
     }
+    public function attendances()
+{
+    return $this->hasMany(Attendance::class);
+}
 }
