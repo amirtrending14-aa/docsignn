@@ -1378,36 +1378,29 @@
                 fullScreenBtn.style.display = 'inline-flex';
             }
 
-           // ✅ НОВЫЙ КОД (ВСТАВИТЬ ВМЕСТО СТАРОГО)
-if (ext === 'docx') {
-    fetch(fileSource, { credentials: 'include' })
-        .then(async (res) => {
-            if (!res.ok) {
-                throw new Error(`HTTP ${res.status}. Нет доступа к файлу или он не найден.`);
+            if (ext === 'docx') {
+                const docxSource = fetch(fileSource).then(res => res.blob());
+                docxSource.then(blob => {
+                    const wordDiv = document.createElement('div');
+                    wordDiv.id = 'word-preview';
+                    renderTarget.appendChild(wordDiv);
+                    docx.renderAsync(blob, wordDiv)
+                        .then(() => {
+                            loader.style.display = 'none';
+                            previewViewport.style.opacity = '1';
+                        })
+                        .catch(e => {
+                            loader.style.display = 'none';
+                            previewViewport.style.opacity = '1';
+                            renderTarget.innerHTML = '<div style="padding: 24px; text-align: center; color: #ff6363; font-weight: 600;">Ошибка предпросмотра DOCX: ' + (e.message || 'Не удалось загрузить') + '</div>';
+                        });
+                }).catch((e) => {
+                    loader.style.display = 'none';
+                    previewViewport.style.opacity = '1';
+                    renderTarget.innerHTML = '<div style="padding: 24px; text-align: center; color: #ff6363; font-weight: 600;">Ошибка получения DOCX: ' + e.message + '</div>';
+                });
+                return;
             }
-            const contentType = res.headers.get('content-type');
-            if (contentType && contentType.includes('text/html')) {
-                throw new Error(`Сервер вернул HTML вместо DOCX (возможно, редирект на логин).`);
-            }
-            return res.arrayBuffer();
-        })
-        .then(data => {
-            const wordDiv = document.createElement('div');
-            wordDiv.id = 'word-preview';
-            renderTarget.appendChild(wordDiv);
-            return docx.renderAsync(data, wordDiv);
-        })
-        .then(() => {
-            loader.style.display = 'none';
-            previewViewport.style.opacity = '1';
-        })
-        .catch(e => {
-            loader.style.display = 'none';
-            previewViewport.style.opacity = '1';
-            renderTarget.innerHTML = '<div style="padding: 24px; text-align: center; color: #ff6363; font-weight: 600;">Ошибка предпросмотра DOCX: ' + (e.message || 'Не удалось загрузить') + '</div>';
-        });
-    return;
-}
 
             if (ext === 'pdf') {
                 const loadingTask = pdfjsLib.getDocument(fileSource);

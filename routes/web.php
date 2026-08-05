@@ -32,9 +32,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Http\Controllers\CompanyRegistrationController; 
 use App\Http\Controllers\CompanyTreeController;
-use App\Http\Controllers\FaceController;
-use App\Http\Controllers\Admin\AttendanceReportController;
-use App\Http\Controllers\Admin\CompanySettingsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -500,36 +497,4 @@ Route::middleware('auth')->group(function () {
     Route::delete('/companies/{company}',    [CompanyTreeController::class, 'destroy'])->name('companies.destroy');
     Route::get('/companies/{company}',       [CompanyTreeController::class, 'show'])->name('companies.show');
 });
-Route::middleware('auth')->prefix('face')->name('face.')->controller(FaceController::class)->group(function () {
-    Route::get('/scan', 'scanPage')->name('scan');
-    Route::post('/register', 'register')->name('register');
-    Route::post('/checkin', 'checkin')->name('checkin');
-});
 
-// ===== АДМИНКА: отчёты и настройки =====
-Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::controller(AttendanceReportController::class)->group(function () {
-        Route::get('/reports', 'index')->name('reports');
-        Route::post('/attendances/{attendance}/excuse', 'excuse')->name('attendances.excuse');
-    });
-
-    Route::controller(CompanySettingsController::class)->group(function () {
-        Route::get('/companies/{company}/settings', 'settings')->name('companies.settings');
-        Route::put('/companies/{company}/settings', 'updateSettings')->name('companies.settings.update');
-    });
-});
-Route::middleware('auth')->prefix('face')->name('face.')->controller(FaceController::class)->group(function () {
-    Route::get('/scan', 'scanPage')->name('scan');
-    Route::post('/register', 'register')->name('register');
-    Route::post('/checkin', 'checkin')->name('checkin');
-});
-Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->controller(AttendanceReportController::class)->group(function () {
-    Route::get('/reports', 'index')->name('reports');
-    Route::post('/reports/excuse', 'excuse')->name('reports.excuse');
-});
-
-Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->controller(AttendanceReportController::class)->group(function () {
-    Route::get('/reports', 'index')->name('reports');
-    Route::post('/reports/excuse', 'excuse')->name('reports.excuse');
-    Route::post('/reports/settings', 'saveSettings')->name('reports.settings'); // ← ДОБАВЬ ЭТУ СТРОКУ
-});
