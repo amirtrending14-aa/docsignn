@@ -11,16 +11,18 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        // Глобальные middleware
+        // Глобальный middleware для всех web-роутов
         $middleware->web(append: [
             \App\Http\Middleware\UpdateUserOnlineStatus::class,
+             \App\Http\Middleware\EnsureFaceCheckin::class, 
         ]);
 
-        // ✅ РЕГИСТРИРУЕМ АЛИАСЫ
+        // Все алиасы в одном месте
         $middleware->alias([
-            'superadmin' => \App\Http\Middleware\CheckSuperAdmin::class,
+            'superadmin'            => \App\Http\Middleware\CheckSuperAdmin::class,
             'superadmin.protection' => \App\Http\Middleware\SuperAdminProtection::class,
-            'last.seen' => \App\Http\Middleware\UpdateUserOnlineStatus::class,
+            'last.seen'             => \App\Http\Middleware\UpdateUserOnlineStatus::class,
+            'admin'                 => \App\Http\Middleware\EnsureUserIsAdmin::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

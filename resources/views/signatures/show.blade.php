@@ -1186,11 +1186,11 @@ $formattedSize = $fileSize > 1048576
         if (excelContainer) {
             const fileUrl = excelContainer.getAttribute("data-url");
 
-            fetch(fileUrl)
-                .then(response => {
-                    if (!response.ok) throw new Error('Network error');
-                    return response.arrayBuffer();
-                })
+               fetch(fileUrl, { credentials: 'include' }) // ✅ ПЕРЕДАЕМ КУКИ СЕССИИ
+        .then(response => {
+            if (!response.ok) throw new Error('Network error');
+            return response.arrayBuffer();
+        })
                 .then(data => {
                     const workbook = XLSX.read(data, { type: 'array' });
 
@@ -1284,24 +1284,38 @@ $formattedSize = $fileSize > 1048576
             container.appendChild(table);
         }
 
-        const wordContainer = document.getElementById("word-preview");
-        if (wordContainer) {
-            const fileUrl = wordContainer.getAttribute("data-url");
-            fetch(fileUrl)
-                .then(response => {
-                    if (!response.ok) throw new Error('Network error');
-                    return response.blob();
-                })
-                .then(blob => {
-                    docx.renderAsync(blob, wordContainer)
-                        .then(() => console.log("docx rendered"))
-                        .catch(e => console.error("docx error:", e));
-                })
-                .catch(err => {
-                    console.error("Word error:", err);
-                    wordContainer.innerHTML = '<div style="display: flex; height: 100%; align-items: center; justify-content: center; color: #ff6363; font-weight: 600; padding: 20px; text-align: center;">' + SIGN_VIEW_TRANSLATIONS.ru.errorRender + '</div>';
-                });
-        }
+       // ✅ НОВЫЙ КОД (ВСТАВИТЬ)
+const wordContainer = document.getElementById("word-preview");
+if (wordContainer) {
+    const fileUrl = wordContainer.getAttribute("data-url");
+    fetch(fileUrl, { credentials: 'include' })
+        .then(async (response) => {
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}. Нет доступа к файлу.`);
+            }
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.includes('text/html')) {
+                throw new Error(`Сервер вернул HTML вместо DOCX (возможно, редирект на логин).`);
+            }
+            return response.arrayBuffer(); // arrayBuffer надежнее для JSZip, чем blob
+        })
+        .then(data => {
+            return docx.renderAsync(data, wordContainer, null, {
+                className: 'docx',
+                inWrapper: true,
+                ignoreWidth: false,
+                ignoreHeight: false,
+                ignoreFonts: false,
+                breakPages: true,
+                debug: false,
+            });
+        })
+        .then(() => console.log("docx rendered successfully"))
+        .catch(err => {
+            console.error("Word error:", err);
+            wordContainer.innerHTML = `<div style="display: flex; height: 100%; align-items: center; justify-content: center; color: #ff6363; font-weight: 600; padding: 20px; text-align: center; flex-direction: column; gap: 10px;"><i class="bi bi-exclamation-triangle-fill" style="font-size: 24px;"></i>${SIGN_VIEW_TRANSLATIONS.ru.errorRender}: ${err.message}</div>`;
+        });
+}
 
         document.querySelectorAll('.animate-in').forEach((el, i) => {
             setTimeout(() => {
