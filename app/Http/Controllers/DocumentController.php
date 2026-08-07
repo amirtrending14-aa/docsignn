@@ -755,7 +755,9 @@ public function store(Request $request)
             return back()->withErrors(['receiver_mode' => 'Выберите хотя бы один отдел']);
         }
 
-        $receivers = User::whereIn('department_id', $deptIds)
+            $receivers = User::whereHas('departments', function ($query) use ($deptIds) {
+                $query->whereIn('departments.id', $deptIds);
+            })
             ->where('id', '!=', $authUser->id)
             ->pluck('id')
             ->toArray();
@@ -1200,7 +1202,9 @@ public function update(Request $request, Document $document)
                 return back()->withErrors(['receiver_mode' => 'Выберите хотя бы один отдел']);
             }
 
-            $receivers = User::whereIn('department_id', $deptIds)
+                       $receivers = User::whereHas('departments', function ($query) use ($deptIds) {
+                    $query->whereIn('departments.id', $deptIds);
+                })
                 ->where('id', '!=', $authUser->id)
                 ->pluck('id')
                 ->toArray();

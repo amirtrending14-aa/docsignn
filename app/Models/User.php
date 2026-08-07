@@ -173,13 +173,10 @@ protected $casts = [
             $q->where('company_id', $this->company_id);
         })->get();
     }
-
-    public function departments(): BelongsToMany
-    {
-        return $this->belongsToMany(Department::class, 'user_departments')
-            ->withPivot('position')
-            ->withTimestamps();
-    }
+public function departments(): BelongsToMany
+{
+    return $this->belongsToMany(Department::class, 'department_user');
+}
 
     // ===== АКСЕССУАРЫ =====
 

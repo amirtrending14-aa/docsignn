@@ -884,33 +884,68 @@ class DocumentSignatureController extends Controller
         }
     }
 
-    // 🔒 БЕЗОПАСНОСТЬ: Проверка права на просмотр подписи
-    // 🔒 БЕЗОПАСНОСТЬ: Проверка права на просмотр подписи
+     // 🔒 БЕЗОПАСНОСТЬ: Проверка права на просмотр подписи (ИСПРАВЛЕНО ДЛЯ ХОСТИНГА)
     private function checkSignatureAccess($signature)
     {
         $user = Auth::user();
+        $userId = (int)$user->id;
 
-        // Админы имеют доступ ко всему
+        // 1. Админы видят всё
         if ($user->isAdmin()) {
             return;
         }
 
-        // ВАЖНО: Проверяем, загружен ли документ
-        if (!$signature->document) {
-            abort(404, 'Документ, связанный с этой подписью, не найден.');
+        // 2. Загружаем документ, если еще не загружен
+        if (!$signature->relationLoaded('document')) {
+            $signature->load('document');
+        }
+        
+        $document = $signature->document;
+
+        if (!$document) {
+            abort(404, 'Документ для этой подписи не найден.');
         }
 
-        // Проверяем, что подпись принадлежит текущему юзеру ИЛИ юзер имеет доступ к документу
-        $hasAccess = (
-            $signature->user_id == $user->id ||
-            $signature->document->created_by == $user->id ||
-            $signature->document->sender_id == $user->id ||
-            $signature->document->receiver_id == $user->id
-        );
+        // 3. Базовые проверки (с приведением к int для надежности)
+        $isOwner = (int)$signature->user_id === $userId;
+        $isCreator = (int)$document->created_by === $userId;
+        $isSender = (int)$document->sender_id === $userId;
+        $isDirectReceiver = (int)$document->receiver_id === $userId;
 
-        if (!$hasAccess) {
-            abort(403, 'У вас нет прав доступа к этой подписи');
+        if ($isOwner || $isCreator || $isSender || $isDirectReceiver) {
+            return; // ✅ Доступ разрешен
         }
+
+        // 4. Проверка через Workflow (очередь согласования)
+        $isInWorkflow = \App\Models\DocumentWorkflow::where('document_id', $document->id)
+            ->where('user_id', $userId)
+            ->exists();
+
+        if ($isInWorkflow) {
+            return; // ✅ Доступ разрешен
+        }
+
+        // 5. Проверка через множественных получателей
+        try {
+            $isRecipient = \App\Models\DocumentRecipient::where('document_id', $document->id)
+                ->where('user_id', $userId)
+                ->exists();
+
+            if ($isRecipient) {
+                return; // ✅ Доступ разрешен
+            }
+        } catch (\Exception $e) {
+            // Если таблицы нет, просто пропускаем
+        }
+
+        // Если ничего не сработало — блокируем
+        \Log::warning("🚨 Попытка доступа к чужой подписи", [
+            'user_id' => $userId,
+            'signature_id' => $signature->id,
+            'document_id' => $document->id
+        ]);
+        
+        abort(403, 'У вас нет прав доступа к просмотру этой подписи.');
     }
 
     // 🔒 БЕЗОПАСНОСТЬ: Проверка права на подписание документа

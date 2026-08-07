@@ -117,7 +117,7 @@ if (app()->environment('local')) {
 | 4. АВТОРИЗОВАННЫЕ ПОЛЬЗОВАТЕЛИ
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth', 'last.seen', 'verified'])->group(function () {
+Route::middleware(['auth', 'last.seen'])->group(function () {
   Route::get('/documents/select-by-department', [DocumentController::class, 'selectByDepartment'])
         ->name('documents.select-by-department');
  Route::get('/documents/select-by-company', [DocumentController::class, 'selectByCompany'])
