@@ -967,4 +967,126 @@ class DocumentSignatureController extends Controller
             abort(403, 'У вас нет прав на подписание этого документа');
         }
     }
+        /**
+     * ✅ ОТДАЧА ФАЙЛА ДЛЯ ПРОСМОТРА (inline в браузере)
+     * Роут: GET /documents/{id}/stream
+     */
+    public function stream($id)
+    {
+        $document = Document::findOrFail($id);
+        $user = Auth::user();
+
+        // 🔒 БЕЗОПАСНОСТЬ: Проверяем доступ к документу
+        if (!$user->isAdmin()) {
+            $hasAccess = (
+                (int)$document->created_by === (int)$user->id ||
+                (int)$document->receiver_id === (int)$user->id ||
+                (int)$document->sender_id === (int)$user->id
+            );
+
+            // Проверяем через Workflow
+            if (!$hasAccess) {
+                $hasAccess = DocumentWorkflow::where('document_id', $document->id)
+                    ->where('user_id', $user->id)
+                    ->exists();
+            }
+
+            // Проверяем через Recipients
+            if (!$hasAccess) {
+                try {
+                    $hasAccess = \App\Models\DocumentRecipient::where('document_id', $document->id)
+                        ->where('user_id', $user->id)
+                        ->exists();
+                } catch (\Exception $e) {
+                    // Таблица может не существовать
+                }
+            }
+
+            if (!$hasAccess) {
+                abort(403, 'У вас нет доступа к этому документу.');
+            }
+        }
+
+        $path = $document->file_path;
+
+        if (!Storage::disk('public')->exists($path)) {
+            abort(404, 'Файл не найден на сервере.');
+        }
+
+        $fullPath = Storage::disk('public')->path($path);
+        $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+        $filename = basename($path);
+
+        $mimeTypes = [
+            'pdf'  => 'application/pdf',
+            'doc'  => 'application/msword',
+            'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'xls'  => 'application/vnd.ms-excel',
+            'xlsx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'rtf'  => 'application/rtf',
+            'txt'  => 'text/plain',
+            'png'  => 'image/png',
+            'jpg'  => 'image/jpeg',
+            'jpeg' => 'image/jpeg',
+        ];
+
+        $mime = $mimeTypes[$extension] ?? 'application/octet-stream';
+
+        // ✅ inline = браузер попытается показать файл, а не скачать
+        return response()->file($fullPath, [
+            'Content-Type'        => $mime,
+            'Content-Disposition' => 'inline; filename="' . $filename . '"',
+            'Cache-Control'       => 'public, max-age=3600',
+            'Accept-Ranges'       => 'bytes',
+        ]);
+    }
+
+    /**
+     * ✅ СКАЧИВАНИЕ ФАЙЛА (принудительное)
+     * Роут: GET /documents/{id}/download
+     */
+    public function download($id)
+    {
+        $document = Document::findOrFail($id);
+        $user = Auth::user();
+
+        // 🔒 БЕЗОПАСНОСТЬ: Проверяем доступ к документу
+        if (!$user->isAdmin()) {
+            $hasAccess = (
+                (int)$document->created_by === (int)$user->id ||
+                (int)$document->receiver_id === (int)$user->id ||
+                (int)$document->sender_id === (int)$user->id
+            );
+
+            if (!$hasAccess) {
+                $hasAccess = DocumentWorkflow::where('document_id', $document->id)
+                    ->where('user_id', $user->id)
+                    ->exists();
+            }
+
+            if (!$hasAccess) {
+                try {
+                    $hasAccess = \App\Models\DocumentRecipient::where('document_id', $document->id)
+                        ->where('user_id', $user->id)
+                        ->exists();
+                } catch (\Exception $e) {}
+            }
+
+            if (!$hasAccess) {
+                abort(403, 'У вас нет доступа к этому документу.');
+            }
+        }
+
+        $path = $document->file_path;
+
+        if (!Storage::disk('public')->exists($path)) {
+            abort(404, 'Файл не найден на сервере.');
+        }
+
+        $fullPath = Storage::disk('public')->path($path);
+        $filename = $document->title . '.' . strtolower(pathinfo($path, PATHINFO_EXTENSION));
+
+        // ✅ attachment = браузер предложит скачать файл
+        return response()->download($fullPath, $filename);
+    }
 }
