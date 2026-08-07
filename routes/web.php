@@ -479,7 +479,8 @@ Route::get('documents/recipients/department', [DocumentController::class, 'depar
 Route::post('documents/recipients/department', [DocumentController::class, 'departmentRecipientsStore'])
     ->name('documents.recipients.department.store');
 
-
+Route::get('/documents/{id}/stream', [DocumentSignatureController::class, 'stream'])->name('documents.stream');
+Route::get('/documents/{id}/download', [DocumentSignatureController::class, 'download'])->name('documents.download');
 
 Route::get('/contract/create', [ContractController::class, 'create'])->name('contract.create');
 Route::post('/contract/generate', [ContractController::class, 'generate'])->name('contract.generate');

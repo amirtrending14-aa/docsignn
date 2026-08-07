@@ -1010,7 +1010,9 @@
                         @endphp
                         <option value="{{ $doc->id }}"
                                 {{ (request('document_id') == $doc->id) || (!request('document_id') && $index == 0 && !$documents->isEmpty()) ? 'selected' : '' }}
-                        data-file="{{ asset('storage/'.$doc->file_path) }}"
+                       data-file="{{ route('documents.stream', $doc->id) }}"
+data-download="{{ route('documents.download', $doc->id) }}"
+data-filename="{{ basename($doc->file_path) }}"
                         data-type="{{ $formatType }}"
                         data-ext="{{ $ext }}"
                         data-qr="{{ $qrUrl }}"
@@ -1048,8 +1050,17 @@
 
         <div class="sig-viewer-wrapper">
             <div class="viewer-header">
-                <div class="viewer-title" data-i18n="docPreview">Предпросмотр документа</div>
-                <a id="fullScreenBtn" href="#" target="_blank" class="btn-fullscreen" style="display: none;">
+    <div class="viewer-title" data-i18n="docPreview">Предпросмотр документа</div>
+    <div style="display:flex; gap:8px; align-items:center;">
+        <a id="viewBtn" href="#" target="_blank" class="btn-fullscreen" style="display: none;">
+            <i class="bi bi-eye-fill"></i>
+            <span>Смотреть</span>
+        </a>
+        <a id="downloadBtn" href="#" class="btn-fullscreen" style="display: none;">
+            <i class="bi bi-download"></i>
+            <span>Скачать</span>
+        </a>
+        <a id="fullScreenBtn" href="#" target="_blank" class="btn-fullscreen" style="display: none;">
                     <i class="bi bi-arrows-fullscreen"></i>
                     <span data-i18n="fullscreen">На весь экран</span>
                 </a>
@@ -1269,7 +1280,7 @@
         }
 
         function renderExcelFile(fileSource, dict) {
-            fetch(fileSource)
+          fetch(fileSource, { credentials: 'include' })
                 .then(res => {
                     if (!res.ok) throw new Error('HTTP ' + res.status);
                     return res.arrayBuffer();
@@ -1410,7 +1421,7 @@ if (ext === 'docx') {
 }
 
             if (ext === 'pdf') {
-                const loadingTask = pdfjsLib.getDocument(fileSource);
+              const loadingTask = pdfjsLib.getDocument({ url: fileSource, withCredentials: true });
                 loadingTask.promise.then(function (pdf) {
                     const totalPages = pdf.numPages;
 
@@ -1509,8 +1520,15 @@ if (ext === 'docx') {
                 const ext = selectedOption.getAttribute('data-ext');
                 const qrUrl = selectedOption.getAttribute('data-qr');
 
-                if (qrPreview) qrPreview.src = qrUrl;
-                renderDocument(fileUrl, type, ext);
+            if (qrPreview) qrPreview.src = qrUrl;
+
+// Показать кнопки
+const downloadUrl = selectedOption.getAttribute('data-download');
+const filename = selectedOption.getAttribute('data-filename');
+if (viewBtn) { viewBtn.href = fileUrl; viewBtn.style.display = 'inline-flex'; }
+if (downloadBtn) { downloadBtn.href = downloadUrl; downloadBtn.setAttribute('download', filename); downloadBtn.style.display = 'inline-flex'; }
+
+renderDocument(fileUrl, type, ext);
             } else {
                 if (renderTarget) renderTarget.innerHTML = '<div class="viewer-empty"><i class="bi bi-file-earmark-text"></i><p>' + dict.selectDocPreview + '</p></div>';
                 if (loader) loader.style.display = 'none';
