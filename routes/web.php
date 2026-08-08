@@ -194,6 +194,7 @@ Route::middleware(['auth', 'last.seen'])->group(function () {
 Route::post('/documents/recipients/store-region', [DocumentController::class, 'storeRecipientsByRegion'])
     ->name('documents.recipients.store-region');
     Route::resource('signatures', DocumentSignatureController::class);
+    
     Route::resource('versions', DocumentVersionController::class);
 
     // ============================================
@@ -481,7 +482,8 @@ Route::post('documents/recipients/department', [DocumentController::class, 'depa
 
 Route::get('/documents/{id}/stream', [DocumentSignatureController::class, 'stream'])->name('documents.stream');
 Route::get('/documents/{id}/download', [DocumentSignatureController::class, 'download'])->name('documents.download');
-
+Route::get('/signatures/{id}/qr', [DocumentSignatureController::class, 'qrImage'])
+    ->name('signatures.qr');
 Route::get('/contract/create', [ContractController::class, 'create'])->name('contract.create');
 Route::post('/contract/generate', [ContractController::class, 'generate'])->name('contract.generate');
 

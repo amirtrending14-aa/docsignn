@@ -18,10 +18,17 @@ $extension = '';
 $fileSize = 0;
 $fullFileUrl = '';
 
-if ($filePath && Storage::disk('public')->exists($filePath)) {
-$extension = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
-$fileSize = Storage::disk('public')->size($filePath);
-$fullFileUrl = asset('storage/' . $filePath);
+$streamUrl = '';
+$downloadUrl = '';
+
+if ($filePath && Storage::disk('public')->exists($filePath) && $doc) {
+    $extension = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
+    $fileSize = Storage::disk('public')->size($filePath);
+    
+    // ✅ ИСПРАВЛЕНО: используем роуты Laravel вместо asset()
+    $streamUrl = route('documents.stream', $doc->id);
+    $downloadUrl = route('documents.download', $doc->id);
+    $fullFileUrl = $streamUrl; // для совместимости
 }
 
 $isWord = in_array($extension, ['doc', 'docx']);
@@ -1045,39 +1052,54 @@ $formattedSize = $fileSize > 1048576
             <div class="preview-title" data-i18n="previewLabel">Предпросмотр</div>
 
             @if($filePath)
-            <div class="preview-actions">
-                <button id="fullScreenBtn" onclick="toggleFullScreen()" class="btn-icon" title="Во весь экран">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/>
-                    </svg>
-                </button>
-                <a href="{{ $fullFileUrl }}" download="{{ $doc->title ?? 'document' }}.{{ $extension }}" class="btn-download">
-                    <i class="bi bi-download"></i>
-                    <span data-i18n="downloadBtn">Скачать</span>
-                </a>
-            </div>
+           <div class="preview-actions">
+    {{-- ✅ КНОПКА "СМОТРЕТЬ" (открывает в новой вкладке) --}}
+    <a href="{{ $streamUrl }}" target="_blank" class="btn-download" style="border-color: rgba(79,140,255,0.4); color: #4f8cff;">
+        <i class="bi bi-eye-fill"></i>
+        <span data-i18n="viewBtn">Смотреть</span>
+    </a>
+    
+    <button id="fullScreenBtn" onclick="toggleFullScreen()" class="btn-icon" title="Во весь экран">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/>
+        </svg>
+    </button>
+    
+    {{-- ✅ КНОПКА "СКАЧАТЬ" (через Laravel роут) --}}
+    <a href="{{ $downloadUrl }}" download="{{ $doc->title ?? 'document' }}.{{ $extension }}" class="btn-download">
+        <i class="bi bi-download"></i>
+        <span data-i18n="downloadBtn">Скачать</span>
+    </a>
+</div>
             @endif
         </div>
 
-        <div id="previewBox" class="preview-container">
-            @if($filePath)
-            @if($isExcel)
-            <div id="excel-preview" data-url="{{ $fullFileUrl }}" style="width: 100%; height: 100%;"></div>
-            @elseif($extension === 'docx')
-            <div id="word-preview" style="width: 100%; height: 100%; overflow-y: auto;" data-url="{{ $fullFileUrl }}"></div>
-            @else
-            @php
-            if (in_array($extension, ['doc', 'xls', 'ppt', 'pptx'])) {
-            $iframeSrc = 'https://view.officeapps.live.com/op/view.aspx?src=' . rawurlencode($fullFileUrl);
-            } elseif ($extension === 'rtf') {
-            $iframeSrc = $fullFileUrl;
-            } else {
-            $iframeSrc = $fullFileUrl . '#toolbar=0&view=FitH';
-            }
-            @endphp
-            <iframe src="{{ $iframeSrc }}" loading="lazy" title="Document Preview"></iframe>
-            @endif
-            @else
+       <div id="previewBox" class="preview-container">
+    @if($filePath)
+        @if($isExcel)
+            {{-- ✅ data-url теперь Laravel роут --}}
+            <div id="excel-preview" data-url="{{ $streamUrl }}" style="width: 100%; height: 100%;"></div>
+        @elseif($extension === 'docx')
+            {{-- ✅ data-url теперь Laravel роут --}}
+            <div id="word-preview" style="width: 100%; height: 100%; overflow-y: auto;" data-url="{{ $streamUrl }}"></div>
+        @elseif($isPdf)
+            {{-- ✅ PDF через Laravel роут --}}
+            <iframe src="{{ $streamUrl }}#toolbar=0&view=FitH" loading="lazy" title="Document Preview"></iframe>
+        @elseif($extension === 'rtf')
+            {{-- ✅ RTF через Laravel роут --}}
+            <iframe src="{{ $streamUrl }}" loading="lazy" title="Document Preview"></iframe>
+        @else
+            {{-- ✅ Для Office файлов: fallback с кнопкой "Смотреть" --}}
+            <div class="preview-empty">
+                <i class="bi bi-file-earmark-{{ $isWord ? 'word' : 'excel' }}"></i>
+                <p data-i18n="officePreviewHint">Предпросмотр Office файлов доступен по кнопке</p>
+                <a href="{{ $streamUrl }}" target="_blank" class="btn-download" style="margin-top: 12px; border-color: rgba(79,140,255,0.4); color: #4f8cff;">
+                    <i class="bi bi-eye-fill"></i>
+                    <span data-i18n="viewBtn">Смотреть в новой вкладке</span>
+                </a>
+            </div>
+        @endif
+    @else
             <div class="preview-empty">
                 <i class="bi bi-file-earmark-text"></i>
                 <p data-i18n="noFile">Файл не загружен</p>
@@ -1112,7 +1134,9 @@ $formattedSize = $fileSize > 1048576
                 errorRender: 'Не удалось отобразить документ',
                 excelSheets: 'листов',
                 excelRows: 'строк',
-                excelCols: 'столбцов'
+                excelCols: 'столбцов',
+                viewBtn: 'Смотреть',
+officePreviewHint: 'Предпросмотр Office файлов доступен по кнопке',
             },
             tj: {
                 backToList: 'Феҳристи ҳуҷҷатҳо',
@@ -1136,7 +1160,9 @@ $formattedSize = $fileSize > 1048576
                 errorRender: 'Намоиши ҳуҷҷат имконнопазир',
                 excelSheets: 'варақҳо',
                 excelRows: 'сатрҳо',
-                excelCols: 'сутунҳо'
+                excelCols: 'сутунҳо',
+                    viewBtn: 'Дидан',
+    officePreviewHint: 'Пешнамоиши Office файлҳо тавассути тугма дастрас аст',
             },
             en: {
                 backToList: 'Document Registry',
@@ -1160,7 +1186,9 @@ $formattedSize = $fileSize > 1048576
                 errorRender: 'Failed to display document',
                 excelSheets: 'sheets',
                 excelRows: 'rows',
-                excelCols: 'columns'
+                excelCols: 'columns',
+                    viewBtn: 'View',
+    officePreviewHint: 'Office files preview available via button',
             }
         };
 
@@ -1237,10 +1265,19 @@ $formattedSize = $fileSize > 1048576
                     excelContainer.innerHTML = '';
                     excelContainer.appendChild(container);
                 })
-                .catch(err => {
-                    console.error("Excel error:", err);
-                    excelContainer.innerHTML = '<div style="display: flex; height: 100%; align-items: center; justify-content: center; color: #ff6363; font-weight: 600; padding: 20px; text-align: center;">' + SIGN_VIEW_TRANSLATIONS.ru.errorRender + '</div>';
-                });
+              .catch(err => {
+    console.error("Excel error:", err);
+    const dict = SIGN_VIEW_TRANSLATIONS[localStorage.getItem('docsign_lang') || 'ru'] || SIGN_VIEW_TRANSLATIONS.ru;
+    excelContainer.innerHTML = `
+        <div style="display: flex; height: 100%; align-items: center; justify-content: center; color: #ff6363; font-weight: 600; padding: 20px; text-align: center; flex-direction: column; gap: 12px;">
+            <i class="bi bi-exclamation-triangle-fill" style="font-size: 32px;"></i>
+            <div>${dict.errorRender}</div>
+            <div style="font-size: 11px; color: #8892a6; font-weight: 400;">${err.message || ''}</div>
+            <a href="${excelContainer.getAttribute('data-url')}" target="_blank" style="padding: 8px 16px; background: rgba(79,140,255,0.15); border: 1px solid rgba(79,140,255,0.4); border-radius: 8px; color: #4f8cff; text-decoration: none; font-size: 11px; font-weight: 700;">
+                <i class="bi bi-eye-fill"></i> Смотреть в новой вкладке
+            </a>
+        </div>`;
+});
         }
 
         function renderSheet(sheet, container) {

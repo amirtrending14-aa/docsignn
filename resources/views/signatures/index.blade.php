@@ -1109,7 +1109,7 @@ $overdueCount = $signatures->filter(fn($s) => !$s->signed_at && $s->expires_at &
                 @endif
 
                 <div class="sig-qr-wrapper">
-                    <img src="{{ asset('storage/' . $s->signature) }}" alt="QR Code Signature">
+                   <img src="{{ route('signatures.qr', $s->id) }}" alt="QR Code Signature">
                 </div>
             </div>
             @else

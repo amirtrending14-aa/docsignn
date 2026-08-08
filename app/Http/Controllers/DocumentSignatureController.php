@@ -1089,4 +1089,28 @@ class DocumentSignatureController extends Controller
         // ✅ attachment = браузер предложит скачать файл
         return response()->download($fullPath, $filename);
     }
+        /**
+     * ✅ ОТДАЧА QR-КАРТИНКИ ПОДПИСИ
+     * Роут: GET /signatures/{id}/qr
+     */
+    public function qrImage($id)
+    {
+        $signature = DocumentSignature::findOrFail($id);
+        $signature->load('document');
+
+        // 🔒 БЕЗОПАСНОСТЬ: та же проверка, что и в show()
+        $this->checkSignatureAccess($signature);
+
+        if (!$signature->signature || !Storage::disk('public')->exists($signature->signature)) {
+            abort(404, 'QR-код не найден.');
+        }
+
+        return response()->file(
+            Storage::disk('public')->path($signature->signature),
+            [
+                'Content-Type'  => 'image/png',
+                'Cache-Control' => 'public, max-age=86400',
+            ]
+        );
+    }
 }
