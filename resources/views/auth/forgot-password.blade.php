@@ -6,505 +6,342 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>DocSign — Восстановление пароля</title>
 
-    <!-- ✅ Значок сайта (Favicon) DocSign -->
     <link rel="icon" type="image/png" href="{{ asset('img/dss.png') }}">
     <link rel="apple-touch-icon" href="{{ asset('img/dss.png') }}">
 
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400;500;600;700;800&display=swap" rel="stylesheet">
+    {{-- Fontsource: Manrope --}}
+    <link href="https://cdn.jsdelivr.net/npm/@fontsource/manrope/400.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@fontsource/manrope/500.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@fontsource/manrope/600.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@fontsource/manrope/700.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@fontsource/manrope/800.css" rel="stylesheet">
 
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         :root {
-            --primary: #4f46e5;
-            --primary-dark: #3730a3;
-            --primary-light: #818cf8;
-            --accent: #06b6d4;
-            --warning: #f59e0b;
-            --bg-dark: #0f172a;
-            --bg-card: rgba(15, 23, 42, 0.6);
-            --text-primary: #f1f5f9;
-            --text-secondary: #94a3b8;
-            --border: rgba(148, 163, 184, 0.15);
-            --glow: rgba(79, 70, 229, 0.4);
-        }
-
-        html, body {
-            font-family: 'Figtree', sans-serif;
-            min-height: 100vh;
-            background: var(--bg-dark);
-            color: var(--text-primary);
-            overflow-x: hidden;
-            position: relative;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
+            --bg: #080d18;
+            --ink: #eef2f9;
+            --muted: #93a0b8;
+            --gold: #e2b25a;
+            --gold-soft: #f0d9a8;
+            --gold-deep: #c8923a;
+            --teal: #4fc9bd;
+            --line: rgba(160, 175, 200, 0.15);
+            --panel: rgba(10, 15, 28, 0.78);
         }
 
         body {
+            font-family: 'Manrope', sans-serif;
+            background: var(--bg);
+            color: var(--ink);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* ================= ФОН ================= */
+        .bg-glow { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+        .bg-glow::before {
+            content: '';
+            position: absolute; inset: 0;
+            background:
+                radial-gradient(ellipse 60% 45% at 22% 18%, rgba(226, 178, 90, 0.08) 0%, transparent 60%),
+                radial-gradient(ellipse 55% 45% at 80% 82%, rgba(226, 178, 90, 0.05) 0%, transparent 60%),
+                radial-gradient(ellipse 40% 35% at 78% 12%, rgba(79, 201, 189, 0.05) 0%, transparent 60%);
+        }
+
+        .particles { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
+        .particle {
+            position: absolute;
+            width: 2px; height: 2px;
+            background: rgba(226, 178, 90, 0.4);
+            border-radius: 50%;
+            animation: floatUp linear infinite;
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            12% { opacity: 1; }
+            88% { opacity: 1; }
+            100% { transform: translateY(-8vh) scale(1); opacity: 0; }
+        }
+
+        /* ================= СТРАНИЦА ================= */
+        .page {
+            position: relative;
+            z-index: 5;
+            min-height: 100vh;
+            min-height: 100svh;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 40px 20px;
+            padding: 70px 20px 24px;
+            gap: 22px;
         }
 
-        /* ===== ФОН ===== */
-        .bg-animation {
-            position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none;
-        }
-        .bg-animation::before {
-            content: ''; position: absolute; top: -50%; left: -50%;
-            width: 200%; height: 200%;
-            background:
-                radial-gradient(ellipse at 20% 50%, rgba(79, 70, 229, 0.15) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 20%, rgba(6, 182, 212, 0.1) 0%, transparent 50%),
-                radial-gradient(ellipse at 50% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
-            animation: bgShift 15s ease-in-out infinite alternate;
-        }
-        @keyframes bgShift {
-            0% { transform: translate(0, 0) rotate(0deg); }
-            100% { transform: translate(-5%, -5%) rotate(3deg); }
-        }
-
-        .particles { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
-        .particle {
-            position: absolute; width: 3px; height: 3px;
-            background: rgba(129, 140, 248, 0.5); border-radius: 50%;
-            animation: float linear infinite;
-        }
-        @keyframes float {
-            0% { transform: translateY(100vh) scale(0); opacity: 0; }
-            10% { opacity: 1; } 90% { opacity: 1; }
-            100% { transform: translateY(-10vh) scale(1); opacity: 0; }
-        }
-
-        .grid-overlay {
-            position: fixed; inset: 0; z-index: 0; pointer-events: none;
-            background-image:
-                linear-gradient(rgba(148, 163, 184, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(148, 163, 184, 0.03) 1px, transparent 1px);
-            background-size: 60px 60px;
-            animation: gridMove 20s linear infinite;
-        }
-        @keyframes gridMove {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(60px, 60px); }
-        }
-
-        /* ===== КОНТЕЙНЕР ===== */
-        .container {
-            position: relative; z-index: 10;
-            width: 100%; max-width: 480px;
-            display: flex; flex-direction: column; align-items: center;
-        }
-
-        /* ===== ПЕРЕКЛЮЧАТЕЛЬ ЯЗЫКА ===== */
-        .lang-switcher {
-            position: fixed; top: 20px; right: 20px; z-index: 100;
-        }
-        .lang-switcher select {
-            appearance: none; -webkit-appearance: none; -moz-appearance: none;
-            background: rgba(15, 23, 42, 0.7) url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e") no-repeat right 12px center / 14px;
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--border); border-radius: 12px;
-            padding: 10px 36px 10px 16px;
-            color: var(--text-primary);
-            font-family: 'Figtree', sans-serif;
-            font-size: 13px; font-weight: 600;
-            cursor: pointer; outline: none;
-            letter-spacing: 0.5px;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            min-width: 110px;
-        }
-        .lang-switcher select:hover { border-color: var(--primary-light); }
-        .lang-switcher select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.15); }
-        .lang-switcher option { background: #0f172a; color: var(--text-primary); }
-
-        /* ===== КАРТОЧКА ===== */
+        /* ================= КАРТОЧКА ================= */
         .reset-card {
             width: 100%;
-            background: var(--bg-card); backdrop-filter: blur(40px);
-            border: 1px solid var(--border); border-radius: 24px;
-            padding: 48px 40px; position: relative; overflow: hidden;
-            animation: cardAppear 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
-            box-shadow:
-                0 0 0 1px rgba(148, 163, 184, 0.05),
-                0 25px 80px rgba(0, 0, 0, 0.4),
-                0 0 120px rgba(79, 70, 229, 0.08);
+            max-width: 460px;
+            background: var(--panel);
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+            border: 1px solid var(--line);
+            border-radius: 22px;
+            padding: 32px 30px 28px;
+            position: relative;
+            box-shadow: 0 26px 70px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+            transition: border-color .35s ease, box-shadow .35s ease;
+            animation: cardAppear .8s cubic-bezier(.16,1,.3,1) .05s both;
+        }
+        .reset-card:hover {
+            border-color: rgba(226, 178, 90, 0.28);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55), 0 0 60px rgba(226, 178, 90, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.05);
         }
         @keyframes cardAppear {
-            0% { opacity: 0; transform: translateY(30px) scale(0.96); filter: blur(10px); }
-            100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
-        }
-        .reset-card::before {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-            background: linear-gradient(90deg, var(--warning), var(--primary), var(--accent));
-            background-size: 200% 100%; animation: shimmer 3s ease-in-out infinite;
-        }
-        @keyframes shimmer {
-            0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; }
+            0% { opacity: 0; transform: translateY(26px); filter: blur(8px); }
+            100% { opacity: 1; transform: translateY(0); filter: blur(0); }
         }
 
-        /* ===== ЛОГОТИП ===== */
-        .logo-section { text-align: center; margin-bottom: 32px; }
+        .card-topline {
+            position: absolute;
+            top: 0; left: 22px; right: 22px;
+            height: 2px;
+            border-radius: 0 0 4px 4px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            background-size: 200% 100%;
+            animation: shimmer 4s ease-in-out infinite;
+        }
+        @keyframes shimmer {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        @keyframes riseIn {
+            0% { opacity: 0; transform: translateY(14px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .logo-section { text-align: center; margin-bottom: 22px; animation: riseIn .7s cubic-bezier(.16,1,.3,1) .15s both; }
+
         .logo-img {
-            width: 80px; height: 80px; border-radius: 20px;
-            margin: 0 auto 16px; display: block;
-            box-shadow: 0 8px 30px rgba(245, 158, 11, 0.25);
-            transition: transform 0.3s ease;
+            width: 58px; height: 58px;
+            border-radius: 16px;
+            margin: 0 auto 10px;
+            display: block;
+            box-shadow: 0 8px 26px rgba(226, 178, 90, 0.22);
         }
-        .logo-img:hover { transform: scale(1.05) rotate(-2deg); }
-        .logo-title {
-            font-size: 28px; font-weight: 800;
-            color: var(--text-primary); letter-spacing: -0.5px;
-            margin-bottom: 4px; line-height: 1.2;
-        }
-        .logo-title span {
-            background: linear-gradient(135deg, var(--warning), var(--accent));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
+
+        .logo-title { font-size: 24px; font-weight: 800; letter-spacing: -0.4px; margin-bottom: 3px; }
+        .logo-title span { color: var(--gold); }
         .logo-subtitle {
-            font-size: 12px; font-weight: 500;
-            color: var(--text-secondary);
+            font-size: 11px; font-weight: 600;
+            color: var(--muted);
             text-transform: uppercase; letter-spacing: 2px;
         }
 
-        /* ===== ИНФО-БАННЕР ===== */
         .info-banner {
-            display: flex; align-items: flex-start; gap: 12px;
-            padding: 14px 16px;
-            background: rgba(245, 158, 11, 0.08);
-            border: 1px solid rgba(245, 158, 11, 0.15);
-            border-radius: 12px; margin-bottom: 24px;
-            text-align: left;
+            display: flex; align-items: flex-start; gap: 10px;
+            padding: 12px 14px;
+            border-radius: 12px;
+            background: rgba(226, 178, 90, 0.07);
+            border: 1px solid rgba(226, 178, 90, 0.22);
+            font-size: 12.5px; line-height: 1.55;
+            color: var(--gold-soft); font-weight: 600;
+            margin-bottom: 18px;
+            animation: riseIn .7s cubic-bezier(.16,1,.3,1) .25s both;
         }
-        .info-banner svg {
-            width: 18px; height: 18px; color: var(--warning);
-            flex-shrink: 0; margin-top: 1px;
-        }
-        .info-banner p {
-            font-size: 13px; color: var(--text-secondary);
-            line-height: 1.6; margin: 0;
-        }
+        .info-banner svg { width: 17px; height: 17px; flex-shrink: 0; margin-top: 1px; color: var(--gold); }
 
-        /* ===== СТАТУС ===== */
         .status-banner {
-            padding: 14px 16px;
-            background: rgba(16, 185, 129, 0.1);
-            border: 1px solid rgba(16, 185, 129, 0.2);
-            color: #34d399; border-radius: 12px;
-            margin-bottom: 20px;
-            font-size: 13px; line-height: 1.5;
-            text-align: center;
             display: flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 12px 14px;
+            border-radius: 12px;
+            background: rgba(79, 201, 189, 0.1);
+            border: 1px solid rgba(79, 201, 189, 0.3);
+            color: var(--teal);
+            font-size: 13px; font-weight: 600; text-align: center;
+            margin-bottom: 18px;
+            animation: riseIn .7s cubic-bezier(.16,1,.3,1) .3s both;
         }
-        .status-banner svg {
-            width: 16px; height: 16px; flex-shrink: 0;
+        .status-banner svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+        .form-group { margin-bottom: 18px; animation: riseIn .6s cubic-bezier(.16,1,.3,1) .35s both; }
+
+        .form-label {
+            display: block; font-size: 12.5px; font-weight: 700;
+            color: var(--muted); margin-bottom: 7px; letter-spacing: .3px;
         }
 
-        /* ===== ФОРМА ===== */
-        .form-group { margin-bottom: 20px; text-align: left; }
-        .form-label {
-            display: block;
-            font-size: 13px; font-weight: 600;
-            color: var(--text-secondary);
-            margin-bottom: 8px;
-            letter-spacing: 0.2px;
-        }
         .input-wrapper { position: relative; }
+
         .input-icon {
-            position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
-            width: 20px; height: 20px; color: var(--text-secondary); z-index: 2;
-            pointer-events: none;
+            position: absolute; left: 15px; top: 50%;
+            transform: translateY(-50%);
+            width: 18px; height: 18px;
+            color: var(--muted);
+            transition: color .3s ease;
+            pointer-events: none; z-index: 2;
         }
+
         .form-input {
             width: 100%;
-            padding: 14px 16px 14px 48px;
-            background: rgba(30, 41, 59, 0.5);
-            border: 1px solid var(--border); border-radius: 14px;
-            color: var(--text-primary);
-            font-family: 'Figtree', sans-serif; font-size: 15px;
-            transition: all 0.3s ease; outline: none;
-            letter-spacing: 0.2px;
+            padding: 12px 16px 12px 44px;
+            background: rgba(18, 25, 44, 0.6);
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            color: var(--ink);
+            font-family: 'Manrope', sans-serif;
+            font-size: 14px; font-weight: 500;
+            transition: all .3s ease;
+            outline: none;
         }
-        .form-input::placeholder {
-            color: rgba(148, 163, 184, 0.5);
-        }
+        .form-input::placeholder { color: rgba(147, 160, 184, 0.45); }
         .form-input:focus {
-            border-color: var(--accent);
-            background: rgba(30, 41, 59, 0.8);
-            box-shadow: 0 0 0 4px rgba(6, 182, 212, 0.15);
+            border-color: rgba(226, 178, 90, 0.6);
+            background: rgba(18, 25, 44, 0.9);
+            box-shadow: 0 0 0 3px rgba(226, 178, 90, 0.14);
         }
-        .form-input.error {
-            border-color: #ef4444;
-            box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1);
+        .form-input:focus ~ .input-icon { color: var(--gold); }
+        .form-input:-webkit-autofill {
+            -webkit-box-shadow: 0 0 0 30px rgba(18, 25, 44, 0.95) inset !important;
+            -webkit-text-fill-color: var(--ink) !important;
+            caret-color: var(--ink);
         }
-        .error-message {
-            color: #ef4444; font-size: 12px;
-            margin-top: 6px; line-height: 1.4;
-            display: flex; align-items: center; gap: 4px;
-        }
+        .form-input.error { border-color: #ef4444; box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15); }
 
-        /* ===== КНОПКА ===== */
+        .error-message {
+            display: flex; align-items: center; gap: 5px;
+            font-size: 12px; color: #f87171;
+            margin-top: 6px; font-weight: 500;
+        }
+        .error-message svg { width: 12px; height: 12px; flex-shrink: 0; }
+
         .submit-btn {
-            width: 100%; padding: 16px;
-            background: linear-gradient(135deg, var(--warning), var(--primary));
-            border: none; border-radius: 14px;
-            color: white;
-            font-family: 'Figtree', sans-serif;
-            font-size: 15px; font-weight: 700;
+            width: 100%; padding: 14px;
+            background: linear-gradient(135deg, #e8bc66, var(--gold-deep));
+            border: none; border-radius: 12px;
+            color: #171004; font-family: 'Manrope', sans-serif;
+            font-size: 15px; font-weight: 800;
             cursor: pointer; position: relative; overflow: hidden;
-            transition: all 0.3s ease;
-            letter-spacing: 0.3px;
-            margin-top: 8px;
+            transition: all .3s ease; letter-spacing: .2px;
+            margin-top: 4px;
+            animation: riseIn .6s cubic-bezier(.16,1,.3,1) .45s both;
         }
-        .submit-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(245, 158, 11, 0.3);
-        }
+        .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(226, 178, 90, 0.35); }
         .submit-btn:active { transform: translateY(0); }
+        .submit-btn .btn-text { display: flex; align-items: center; justify-content: center; gap: 8px; position: relative; z-index: 1; }
+        .submit-btn .btn-arrow { transition: transform .3s ease; }
+        .submit-btn:hover .btn-arrow { transform: translateX(4px); }
         .submit-btn.loading .btn-text { opacity: 0; }
         .submit-btn.loading::after {
-            content: ''; position: absolute; width: 24px; height: 24px;
-            border: 3px solid rgba(255, 255, 255, 0.3); border-top-color: white;
-            border-radius: 50%; animation: spin 0.8s linear infinite;
-            top: 50%; left: 50%; margin: -12px 0 0 -12px;
+            content: ''; position: absolute;
+            width: 22px; height: 22px;
+            border: 3px solid rgba(23, 16, 4, 0.3);
+            border-top-color: #171004; border-radius: 50%;
+            top: 50%; left: 50%; margin: -11px 0 0 -11px;
+            animation: spin .8s linear infinite;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* ===== ССЫЛКА НАЗАД ===== */
         .back-link-section {
-            text-align: center; margin-top: 24px;
-            padding-top: 24px;
-            border-top: 1px solid var(--border);
+            text-align: center; margin-top: 20px;
+            padding-top: 18px;
+            border-top: 1px solid var(--line);
+            animation: riseIn .6s cubic-bezier(.16,1,.3,1) .55s both;
         }
         .back-link {
-            font-size: 14px; color: var(--text-secondary);
-            text-decoration: none;
-            display: inline-flex; align-items: center; gap: 6px;
-            transition: all 0.2s ease;
+            display: inline-flex; align-items: center; gap: 7px;
+            font-size: 13.5px; font-weight: 600;
+            color: var(--muted); text-decoration: none;
             padding: 6px 12px; border-radius: 8px;
+            transition: all .2s ease;
         }
-        .back-link:hover {
-            color: var(--accent);
-            background: rgba(6, 182, 212, 0.05);
-        }
+        .back-link svg { width: 15px; height: 15px; transition: transform .3s ease; }
+        .back-link:hover { color: var(--teal); background: rgba(79, 201, 189, 0.06); }
+        .back-link:hover svg { transform: translateX(-3px); }
 
-        /* ===== БЕЙДЖИ ===== */
-        .footer-badges {
-            display: flex; justify-content: center; gap: 24px;
-            margin-top: 32px; opacity: 0.7;
-            flex-wrap: wrap;
-        }
-        .badge {
-            display: flex; align-items: center; gap: 6px;
-            font-size: 11px; font-weight: 600;
-            color: var(--text-secondary);
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-        }
-        .badge svg { width: 14px; height: 14px; color: var(--warning); }
+        /* ================= ФУТЕР ================= */
+        .page-footer { text-align: center; animation: riseIn .8s cubic-bezier(.16,1,.3,1) .7s both; }
+        .footer-badges { display: flex; justify-content: center; gap: 20px; }
+        .badge { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; color: var(--muted); opacity: .8; }
+        .badge svg { width: 13px; height: 13px; color: var(--gold); }
+        .copyright { margin-top: 10px; font-size: 11.5px; color: rgba(147, 160, 184, 0.45); font-weight: 500; }
 
-        .copyright {
-            text-align: center; margin-top: 20px;
-            font-size: 12px;
-            color: rgba(148, 163, 184, 0.5);
-            line-height: 1.5;
+        /* ================= ЯЗЫК / УВЕДОМЛЕНИЯ ================= */
+        .lang-switcher {
+            position: fixed; top: 18px; right: 18px; z-index: 100;
+            background: rgba(9, 13, 24, 0.8);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--line);
+            border-radius: 11px; padding: 4px;
         }
+        .lang-select {
+            padding: 7px 12px;
+            background: rgba(226, 178, 90, 0.08);
+            color: var(--gold-soft);
+            border: 1px solid rgba(226, 178, 90, 0.25);
+            border-radius: 8px;
+            font-family: 'Manrope', sans-serif;
+            font-size: 12.5px; font-weight: 700;
+            cursor: pointer; outline: none;
+            appearance: none; -webkit-appearance: none;
+            transition: all .3s ease;
+        }
+        .lang-select:hover { background: rgba(226, 178, 90, 0.16); }
+        .lang-select:focus { border-color: var(--gold); }
+        .lang-select option { background-color: #0d1322; color: var(--ink); }
 
-        /* ===== УВЕДОМЛЕНИЕ ===== */
         .notification {
-            position: fixed; top: 20px; left: 50%;
-            transform: translateX(-50%) translateY(-100px);
-            padding: 14px 24px; border-radius: 12px;
-            font-size: 14px; z-index: 1000;
-            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-            backdrop-filter: blur(20px);
-            max-width: 90%;
+            position: fixed; top: 18px; left: 50%;
+            transform: translateX(-50%) translateY(-120px);
+            padding: 13px 24px; border-radius: 13px;
+            font-size: 13.5px; font-weight: 700;
+            z-index: 1000;
+            transition: transform .5s cubic-bezier(.16,1,.3,1);
+            backdrop-filter: blur(16px);
+            max-width: calc(100vw - 32px);
             text-align: center;
         }
         .notification.show { transform: translateX(-50%) translateY(0); }
-        .notification.error {
-            background: rgba(239, 68, 68, 0.2);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            color: #f87171;
-        }
-        .notification.success {
-            background: rgba(16, 185, 129, 0.2);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            color: #34d399;
-        }
+        .notification.success { background: rgba(79, 201, 189, 0.16); border: 1px solid rgba(79, 201, 189, 0.4); color: var(--teal); }
+        .notification.error { background: rgba(239, 68, 68, 0.16); border: 1px solid rgba(239, 68, 68, 0.4); color: #f87171; }
 
-        /* ===== RESPONSIVE ===== */
-
-        /* Планшеты и маленькие ноутбуки (до 768px) */
-        @media (max-width: 768px) {
-            body { padding: 30px 16px; }
-            .lang-switcher { top: 16px; right: 16px; }
-            .lang-switcher select {
-                padding: 9px 32px 9px 14px;
-                font-size: 12px;
-                min-width: 100px;
-                border-radius: 10px;
-            }
-            .reset-card { padding: 40px 32px; border-radius: 22px; }
-            .logo-section { margin-bottom: 28px; }
-            .logo-img { width: 72px; height: 72px; border-radius: 18px; margin-bottom: 14px; }
-            .logo-title { font-size: 26px; }
-            .logo-subtitle { font-size: 11px; letter-spacing: 1.8px; }
-            .info-banner { padding: 13px 15px; font-size: 12px; }
-            .info-banner svg { width: 16px; height: 16px; }
-            .status-banner { padding: 13px 15px; font-size: 12px; }
-            .form-group { margin-bottom: 18px; }
-            .form-label { font-size: 12px; margin-bottom: 7px; }
-            .form-input { padding: 13px 15px 13px 44px; font-size: 14px; border-radius: 12px; }
-            .input-icon { left: 15px; width: 18px; height: 18px; }
-            .submit-btn { padding: 15px; font-size: 14px; border-radius: 12px; }
-            .back-link-section { margin-top: 20px; padding-top: 20px; }
-            .back-link { font-size: 13px; }
-            .footer-badges { gap: 20px; margin-top: 28px; }
-            .badge { font-size: 10px; gap: 5px; }
-            .badge svg { width: 13px; height: 13px; }
-            .copyright { margin-top: 18px; font-size: 11px; }
-            .notification { padding: 12px 20px; font-size: 13px; border-radius: 10px; }
-        }
-
-        /* Большие телефоны (до 520px) */
+        /* ================= АДАПТИВ ================= */
         @media (max-width: 520px) {
-            body { padding: 20px 16px; }
+            .page { padding: 60px 14px 18px; }
+            .reset-card { padding: 26px 18px 22px; border-radius: 18px; }
+            .logo-img { width: 48px; height: 48px; }
+            .logo-title { font-size: 21px; }
             .lang-switcher { top: 12px; right: 12px; }
-            .lang-switcher select {
-                padding: 8px 28px 8px 12px;
-                font-size: 11px;
-                min-width: 90px;
-                border-radius: 9px;
-                background-position: right 10px center;
-                background-size: 12px;
-            }
-            .reset-card { padding: 36px 24px; border-radius: 20px; }
-            .logo-section { margin-bottom: 24px; }
-            .logo-img { width: 64px; height: 64px; border-radius: 16px; margin-bottom: 12px; }
-            .logo-title { font-size: 24px; }
-            .logo-subtitle { font-size: 10px; letter-spacing: 1.6px; }
-            .info-banner { padding: 12px 14px; gap: 10px; margin-bottom: 20px; border-radius: 10px; }
-            .info-banner svg { width: 16px; height: 16px; }
-            .info-banner p { font-size: 12px; }
-            .status-banner { padding: 12px 14px; font-size: 12px; border-radius: 10px; }
-            .status-banner svg { width: 14px; height: 14px; }
-            .form-group { margin-bottom: 16px; }
-            .form-label { font-size: 12px; margin-bottom: 6px; }
-            .form-input { padding: 12px 14px 12px 42px; font-size: 14px; border-radius: 11px; }
-            .input-icon { left: 14px; width: 18px; height: 18px; }
-            .error-message { font-size: 11px; margin-top: 5px; }
-            .error-message svg { width: 11px; height: 11px; }
-            .submit-btn { padding: 14px; font-size: 14px; border-radius: 11px; margin-top: 6px; }
-            .submit-btn.loading::after { width: 22px; height: 22px; margin: -11px 0 0 -11px; }
-            .back-link-section { margin-top: 18px; padding-top: 18px; }
-            .back-link { font-size: 13px; padding: 5px 10px; border-radius: 7px; }
-            .back-link svg { width: 14px; height: 14px; }
-            .footer-badges { gap: 16px; margin-top: 24px; }
-            .badge { font-size: 10px; gap: 5px; }
-            .badge svg { width: 12px; height: 12px; }
-            .copyright { margin-top: 16px; font-size: 11px; }
-            .notification { padding: 11px 18px; font-size: 12px; border-radius: 9px; top: 16px; }
+            .lang-select { padding: 6px 10px; font-size: 12px; }
+            .footer-badges { gap: 14px; }
         }
 
-        /* Телефоны (до 480px) */
-        @media (max-width: 480px) {
-            body { padding: 16px 12px; }
-            .lang-switcher { top: 10px; right: 10px; }
-            .lang-switcher select {
-                padding: 7px 26px 7px 10px;
-                font-size: 10px;
-                min-width: 85px;
-                border-radius: 8px;
-                letter-spacing: 0.3px;
-            }
-            .reset-card { padding: 32px 20px; border-radius: 18px; }
-            .logo-section { margin-bottom: 22px; }
-            .logo-img { width: 60px; height: 60px; border-radius: 15px; margin-bottom: 10px; }
-            .logo-title { font-size: 22px; }
-            .logo-subtitle { font-size: 10px; letter-spacing: 1.4px; }
-            .info-banner { padding: 11px 13px; gap: 9px; margin-bottom: 18px; border-radius: 9px; }
-            .info-banner svg { width: 15px; height: 15px; }
-            .info-banner p { font-size: 11px; line-height: 1.5; }
-            .status-banner { padding: 11px 13px; font-size: 11px; border-radius: 9px; gap: 6px; }
-            .status-banner svg { width: 13px; height: 13px; }
-            .form-group { margin-bottom: 14px; }
-            .form-label { font-size: 11px; margin-bottom: 5px; }
-            .form-input { padding: 11px 13px 11px 40px; font-size: 13px; border-radius: 10px; }
-            .input-icon { left: 13px; width: 16px; height: 16px; }
-            .error-message { font-size: 10px; margin-top: 4px; gap: 3px; }
-            .error-message svg { width: 10px; height: 10px; }
-            .submit-btn { padding: 13px; font-size: 13px; border-radius: 10px; margin-top: 5px; letter-spacing: 0.2px; }
-            .submit-btn.loading::after { width: 20px; height: 20px; margin: -10px 0 0 -10px; border-width: 2px; }
-            .back-link-section { margin-top: 16px; padding-top: 16px; }
-            .back-link { font-size: 12px; padding: 5px 9px; gap: 5px; }
-            .back-link svg { width: 13px; height: 13px; }
-            .footer-badges { gap: 14px; margin-top: 20px; }
-            .badge { font-size: 9px; gap: 4px; letter-spacing: 0.3px; }
-            .badge svg { width: 11px; height: 11px; }
-            .copyright { margin-top: 14px; font-size: 10px; }
-            .notification { padding: 10px 16px; font-size: 11px; border-radius: 8px; top: 12px; max-width: 92%; }
-        }
-
-        /* Очень маленькие телефоны (до 380px) */
-        @media (max-width: 380px) {
-            body { padding: 12px 10px; }
-            .lang-switcher { top: 8px; right: 8px; }
-            .lang-switcher select {
-                padding: 6px 24px 6px 9px;
-                font-size: 9px;
-                min-width: 80px;
-                border-radius: 7px;
-            }
-            .reset-card { padding: 28px 16px; border-radius: 16px; }
-            .logo-section { margin-bottom: 20px; }
-            .logo-img { width: 56px; height: 56px; border-radius: 14px; margin-bottom: 9px; }
-            .logo-title { font-size: 20px; }
-            .logo-subtitle { font-size: 9px; letter-spacing: 1.2px; }
-            .info-banner { padding: 10px 12px; gap: 8px; margin-bottom: 16px; border-radius: 8px; }
-            .info-banner svg { width: 14px; height: 14px; }
-            .info-banner p { font-size: 10px; line-height: 1.45; }
-            .status-banner { padding: 10px 12px; font-size: 10px; border-radius: 8px; gap: 5px; }
-            .status-banner svg { width: 12px; height: 12px; }
-            .form-group { margin-bottom: 12px; }
-            .form-label { font-size: 10px; margin-bottom: 4px; }
-            .form-input { padding: 10px 12px 10px 38px; font-size: 12px; border-radius: 9px; }
-            .input-icon { left: 12px; width: 15px; height: 15px; }
-            .error-message { font-size: 9px; margin-top: 3px; }
-            .error-message svg { width: 9px; height: 9px; }
-            .submit-btn { padding: 12px; font-size: 12px; border-radius: 9px; margin-top: 4px; }
-            .submit-btn.loading::after { width: 18px; height: 18px; margin: -9px 0 0 -9px; }
-            .back-link-section { margin-top: 14px; padding-top: 14px; }
-            .back-link { font-size: 11px; padding: 4px 8px; gap: 4px; }
-            .back-link svg { width: 12px; height: 12px; }
-            .footer-badges { gap: 12px; margin-top: 18px; }
-            .badge { font-size: 8px; gap: 3px; }
-            .badge svg { width: 10px; height: 10px; }
-            .copyright { margin-top: 12px; font-size: 9px; }
-            .notification { padding: 9px 14px; font-size: 10px; border-radius: 7px; top: 10px; }
+        @media (min-height: 900px) and (min-width: 901px) {
+            body { overflow: hidden; }
         }
     </style>
 </head>
 <body>
-<div class="bg-animation"></div>
-<div class="grid-overlay"></div>
+
+<div class="bg-glow"></div>
 <div class="particles" id="particles"></div>
+
 <div class="notification" id="notification"></div>
 
 <div class="lang-switcher">
-    <select id="lang-select" onchange="switchLang(this.value)">
-        <option value="ru">🇷🇺 Русский</option>
-        <option value="tj">🇹🇯 Тоҷикӣ</option>
-        <option value="en">🇬🇧 English</option>
+    <select class="lang-select" id="lang-select" onchange="switchLang(this.value)">
+        <option value="ru" selected>🇷🇺 RU</option>
+        <option value="tj">🇹🇯 TJ</option>
+        <option value="en">🇬🇧 EN</option>
     </select>
 </div>
 
-<div class="container">
+<div class="page">
     <div class="reset-card">
+        <div class="card-topline"></div>
+
         <div class="logo-section">
             <img src="{{ asset('img/dss.png') }}" alt="DocSign Logo" class="logo-img">
             <div class="logo-title">Doc<span>Sign</span></div>
@@ -517,10 +354,10 @@
                 <path d="M12 16v-4"/>
                 <path d="M12 8h.01"/>
             </svg>
-            <p data-i18n="infoBanner">Забыли пароль? Введите email, и мы отправим ссылку для создания нового пароля.</p>
+            <span data-i18n="infoBanner">Забыли пароль? Введите email, и мы отправим ссылку для создания нового пароля.</span>
         </div>
 
-        @if(session('status'))
+        @if (session('status'))
         <div class="status-banner">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
@@ -532,6 +369,7 @@
 
         <form method="POST" action="{{ route('password.email') }}" id="resetForm" onsubmit="return handleReset(event)">
             @csrf
+
             <div class="form-group">
                 <label class="form-label" for="email" data-i18n="emailLabel">Электронная почта</label>
                 <div class="input-wrapper">
@@ -548,7 +386,7 @@
                 </div>
                 @error('email')
                 <div class="error-message">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="12" cy="12" r="10"/>
                         <line x1="12" y1="8" x2="12" y2="12"/>
                         <line x1="12" y1="16" x2="12.01" y2="16"/>
@@ -559,64 +397,63 @@
             </div>
 
             <button type="submit" class="submit-btn" id="submitBtn">
-                <span class="btn-text" data-i18n="sendBtn">Отправить ссылку</span>
+                <span class="btn-text">
+                    <span data-i18n="sendBtn">Отправить ссылку</span>
+                    <svg class="btn-arrow" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
+                    </svg>
+                </span>
             </button>
         </form>
 
         <div class="back-link-section">
             <a href="{{ route('login') }}" class="back-link">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M19 12H5"/>
-                    <path d="m12 19-7-7 7-7"/>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M19 12H5"/><path d="m12 19-7-7 7-7"/>
                 </svg>
                 <span data-i18n="backLink">Вернуться к входу</span>
             </a>
         </div>
     </div>
 
-    <div class="footer-badges">
-        <div class="badge">
-            <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/>
-            </svg>
-            <span>SSL</span>
+    <footer class="page-footer">
+        <div class="footer-badges">
+            <div class="badge">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+                <span>SSL</span>
+            </div>
+            <div class="badge">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+                <span data-i18n="badgeSecurity">Защита</span>
+            </div>
+            <div class="badge">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/></svg>
+                <span data-i18n="badgeSign">ЭЦП</span>
+            </div>
         </div>
-        <div class="badge">
-            <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
-            </svg>
-            <span data-i18n="badgeSecurity">Защита</span>
-        </div>
-        <div class="badge">
-            <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/>
-            </svg>
-            <span data-i18n="badgeSign">ЭЦП</span>
-        </div>
-    </div>
-
-    <p class="copyright">© {{ date('Y') }} DocSign Ecosystem. <span data-i18n="rights">Все права защищены.</span></p>
+        <p class="copyright">© {{ date('Y') }} DocSign Ecosystem. <span data-i18n="rights">Все права защищены.</span></p>
+    </footer>
 </div>
 
 <script>
-    // Частицы
-    function createParticles() {
-        const container = document.getElementById('particles');
-        for (let i = 0; i < 30; i++) {
-            const p = document.createElement('div');
-            p.className = 'particle';
-            p.style.left = Math.random() * 100 + '%';
-            p.style.animationDuration = (Math.random() * 10 + 8) + 's';
-            p.style.animationDelay = (Math.random() * 10) + 's';
-            p.style.width = p.style.height = (Math.random() * 3 + 1) + 'px';
-            p.style.opacity = Math.random() * 0.5 + 0.1;
-            container.appendChild(p);
+    /* ============ Частицы фона ============ */
+    (function() {
+        var wrap = document.getElementById('particles');
+        for (var i = 0; i < 22; i++) {
+            var pt = document.createElement('div');
+            pt.className = 'particle';
+            pt.style.left = Math.random() * 100 + '%';
+            pt.style.animationDuration = (Math.random() * 12 + 10) + 's';
+            pt.style.animationDelay = (Math.random() * 12) + 's';
+            var sz = (Math.random() * 2 + 1) + 'px';
+            pt.style.width = sz; pt.style.height = sz;
+            pt.style.opacity = Math.random() * 0.4 + 0.1;
+            wrap.appendChild(pt);
         }
-    }
-    createParticles();
+    })();
 
-    // Переводы
-    const translations = {
+    /* ============ Переводы ============ */
+    var translations = {
         ru: {
             subtitle: 'Восстановление пароля',
             infoBanner: 'Забыли пароль? Введите email, и мы отправим ссылку для создания нового пароля.',
@@ -639,13 +476,13 @@
             backLink: 'Бозгашт ба вуруд',
             badgeSecurity: 'Ҳифз',
             badgeSign: 'ЭИИ',
-            rights: 'Ҳуқуқҳо ҳифз шудаанд.',
+            rights: 'Ҳамаи ҳуқуқҳо ҳифз шудаанд.',
             invalidEmail: 'Формати email нодуруст',
             emptyEmail: 'Email-ро ворид кунед'
         },
         en: {
             subtitle: 'Password Recovery',
-            infoBanner: 'Forgot your password? Enter your email and we\'ll send you a link to create a new password.',
+            infoBanner: "Forgot your password? Enter your email and we'll send you a link to create a new one.",
             emailLabel: 'Email Address',
             emailPlaceholder: 'name@company.com',
             sendBtn: 'Send Reset Link',
@@ -654,76 +491,81 @@
             badgeSign: 'EDS',
             rights: 'All rights reserved.',
             invalidEmail: 'Invalid email format',
-            emptyEmail: 'Please enter email'
+            emptyEmail: 'Please enter your email'
         }
     };
 
-    let currentLang = 'ru';
+    var currentLang = 'ru';
 
     function switchLang(lang) {
         currentLang = lang;
-        localStorage.setItem('docSign_lang', lang);
         document.documentElement.lang = lang;
+        var t = translations[lang];
 
-        // Обновляем select
-        const select = document.getElementById('lang-select');
-        if (select) select.value = lang;
-
-        const t = translations[lang];
-        document.querySelectorAll('[data-i18n]').forEach(el => {
-            if (t[el.dataset.i18n]) el.textContent = t[el.dataset.i18n];
+        document.querySelectorAll('[data-i18n]').forEach(function(el) {
+            var key = el.getAttribute('data-i18n');
+            if (t[key]) el.textContent = t[key];
         });
-        document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
-            if (t[el.dataset.i18nPlaceholder]) el.placeholder = t[el.dataset.i18nPlaceholder];
+
+        document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el) {
+            var key = el.getAttribute('data-i18n-placeholder');
+            if (t[key]) el.placeholder = t[key];
         });
     }
 
-    // Инициализация языка
-    document.addEventListener('DOMContentLoaded', () => {
-        const savedLang = localStorage.getItem('docSign_lang') || 'ru';
-        switchLang(savedLang);
-    });
-
-    function showNotification(msg, type = 'error') {
-        const n = document.getElementById('notification');
-        n.textContent = msg;
-        n.className = `notification ${type} show`;
-        setTimeout(() => n.classList.remove('show'), 3000);
+    /* ============ Уведомления ============ */
+    function showNotification(message, type) {
+        var notif = document.getElementById('notification');
+        notif.textContent = message;
+        notif.className = 'notification ' + type + ' show';
+        setTimeout(function() { notif.classList.remove('show'); }, 3000);
     }
 
+    /* ============ Отправка формы ============ */
     function handleReset(e) {
-        const email = document.getElementById('email');
-        const btn = document.getElementById('submitBtn');
-        const t = translations[currentLang];
+        var email = document.getElementById('email');
+        var t = translations[currentLang];
+
         email.classList.remove('error');
 
         if (!email.value.trim()) {
             email.classList.add('error');
             showNotification(t.emptyEmail, 'error');
-            e.preventDefault();
             return false;
         }
+
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
             email.classList.add('error');
             showNotification(t.invalidEmail, 'error');
-            e.preventDefault();
             return false;
         }
 
-        btn.classList.add('loading');
-        btn.style.pointerEvents = 'none';
+        document.getElementById('submitBtn').classList.add('loading');
         return true;
     }
 
-    document.getElementById('email')?.addEventListener('input', function() {
-        this.classList.remove('error');
+    var emailInput = document.getElementById('email');
+    if (emailInput) {
+        emailInput.addEventListener('input', function() {
+            this.classList.remove('error');
+            document.getElementById('submitBtn').classList.remove('loading');
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        /* Ошибки валидации Laravel */
+        var errorMessages = document.querySelectorAll('.error-message');
+        if (errorMessages.length > 0 && errorMessages[0].textContent.trim()) {
+            showNotification(errorMessages[0].textContent.trim(), 'error');
+        }
     });
 
-@if (session('status'))
-    document.addEventListener('DOMContentLoaded', () => {
-        showNotification("{{ session('status') }}", 'success');
+    /* Успешная отправка (session status) */
+    @if (session('status'))
+    document.addEventListener('DOMContentLoaded', function() {
+        showNotification(@json(session('status')), 'success');
     });
-@endif
+    @endif
 </script>
 </body>
 </html>

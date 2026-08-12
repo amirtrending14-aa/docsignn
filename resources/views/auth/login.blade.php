@@ -6,696 +6,482 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>DocSign — Вход в систему</title>
 
-    {{-- ✅ ДОБАВЛЕНО: Favicon DocSign --}}
     <link rel="icon" type="image/png" href="{{ asset('img/dss.png') }}">
     <link rel="apple-touch-icon" href="{{ asset('img/dss.png') }}">
 
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet">
+    {{-- Fontsource: Manrope --}}
+    <link href="https://cdn.jsdelivr.net/npm/@fontsource/manrope/400.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@fontsource/manrope/500.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@fontsource/manrope/600.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@fontsource/manrope/700.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@fontsource/manrope/800.css" rel="stylesheet">
 
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         :root {
-            --primary: #4f46e5;
-            --primary-dark: #3730a3;
-            --primary-light: #818cf8;
-            --accent: #06b6d4;
-            --bg-dark: #0f172a;
-            --bg-card: rgba(15, 23, 42, 0.6);
-            --text-primary: #f1f5f9;
-            --text-secondary: #94a3b8;
-            --border: rgba(148, 163, 184, 0.15);
-            --glow: rgba(79, 70, 229, 0.4);
+            --bg: #080d18;
+            --ink: #eef2f9;
+            --muted: #93a0b8;
+            --gold: #e2b25a;
+            --gold-soft: #f0d9a8;
+            --gold-deep: #c8923a;
+            --teal: #4fc9bd;
+            --line: rgba(160, 175, 200, 0.15);
+            --panel: rgba(10, 15, 28, 0.78);
         }
 
         body {
-            font-family: 'Figtree', sans-serif;
+            font-family: 'Manrope', sans-serif;
+            background: var(--bg);
+            color: var(--ink);
+            overflow-x: hidden;
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: var(--bg-dark);
-            overflow: hidden;
-            position: relative;
         }
 
-        .bg-animation {
-            position: fixed;
-            inset: 0;
-            z-index: 0;
-            overflow: hidden;
-        }
-
-        .bg-animation::before {
+        /* ================= ФОН ================= */
+        .bg-glow { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+        .bg-glow::before {
             content: '';
-            position: absolute;
-            top: -50%; left: -50%;
-            width: 200%; height: 200%;
+            position: absolute; inset: 0;
             background:
-                radial-gradient(ellipse at 20% 50%, rgba(79, 70, 229, 0.15) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 20%, rgba(6, 182, 212, 0.1) 0%, transparent 50%),
-                radial-gradient(ellipse at 50% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
-            animation: bgShift 15s ease-in-out infinite alternate;
+                radial-gradient(ellipse 60% 45% at 22% 18%, rgba(226, 178, 90, 0.08) 0%, transparent 60%),
+                radial-gradient(ellipse 55% 45% at 80% 82%, rgba(226, 178, 90, 0.05) 0%, transparent 60%),
+                radial-gradient(ellipse 40% 35% at 78% 12%, rgba(79, 201, 189, 0.05) 0%, transparent 60%);
         }
 
-        @keyframes bgShift {
-            0% { transform: translate(0, 0) rotate(0deg); }
-            100% { transform: translate(-5%, -5%) rotate(3deg); }
-        }
-
-        .particles {
-            position: fixed;
-            inset: 0;
-            z-index: 0;
-            pointer-events: none;
-        }
-
+        .particles { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
         .particle {
             position: absolute;
-            width: 3px;
-            height: 3px;
-            background: rgba(129, 140, 248, 0.5);
+            width: 2px; height: 2px;
+            background: rgba(226, 178, 90, 0.4);
             border-radius: 50%;
-            animation: float linear infinite;
+            animation: floatUp linear infinite;
         }
-
-        @keyframes float {
+        @keyframes floatUp {
             0% { transform: translateY(100vh) scale(0); opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+            12% { opacity: 1; }
+            88% { opacity: 1; }
+            100% { transform: translateY(-8vh) scale(1); opacity: 0; }
         }
 
-        .grid-overlay {
-            position: fixed;
-            inset: 0;
-            z-index: 0;
-            background-image:
-                linear-gradient(rgba(148, 163, 184, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(148, 163, 184, 0.03) 1px, transparent 1px);
-            background-size: 60px 60px;
-            animation: gridMove 20s linear infinite;
-        }
-
-        @keyframes gridMove {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(60px, 60px); }
-        }
-
-        .container {
+        /* ================= СТРАНИЦА ================= */
+        .page {
             position: relative;
-            z-index: 10;
-            width: 100%;
-            max-width: 500px;
-            padding: 20px;
-            max-height: 100vh;
-            overflow-y: auto;
-        }
-
-        .container::-webkit-scrollbar {
-            width: 4px;
-        }
-        .container::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        .container::-webkit-scrollbar-thumb {
-            background: var(--border);
-            border-radius: 4px;
-        }
-
-        .lang-switcher {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 100;
+            z-index: 5;
+            min-height: 100vh;
+            min-height: 100svh;
             display: flex;
-            background: rgba(15, 23, 42, 0.7);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 4px;
-            gap: 2px;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 70px 20px 24px;
+            gap: 24px;
         }
 
-        .lang-select {
-            padding: 8px 14px;
-            background: linear-gradient(145deg, #1a2a6c, #101a44);
-            color: #ffffff;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            font-family: 'Figtree', sans-serif;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            outline: none;
-            appearance: none;
-            -webkit-appearance: none;
-            transition: all 0.3s ease;
-            letter-spacing: 0.5px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 440px));
+            justify-content: center;
+            align-items: stretch;
+            gap: 26px;
+            width: 100%;
+            max-width: 920px;
         }
 
-        .lang-select:hover {
-            background: #1e3a8a;
-            transform: translateY(-1px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-        }
-
-        .lang-select:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.3);
-        }
-
-        .lang-select option {
-            background-color: #101a44;
-            color: white;
-        }
-
-        .login-card {
-            background: var(--bg-card);
-            backdrop-filter: blur(40px);
-            border: 1px solid var(--border);
-            border-radius: 24px;
-            padding: 44px 40px;
+        /* ================= ОБЩИЙ СТИЛЬ КАРТОЧЕК ================= */
+        .card {
+            background: var(--panel);
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+            border: 1px solid var(--line);
+            border-radius: 22px;
+            padding: 30px 28px 26px;
             position: relative;
-            overflow: hidden;
-            animation: cardAppear 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
-            box-shadow:
-                0 0 0 1px rgba(148, 163, 184, 0.05),
-                0 25px 80px rgba(0, 0, 0, 0.4),
-                0 0 120px rgba(79, 70, 229, 0.08);
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 26px 70px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+            transition: border-color .35s ease, box-shadow .35s ease;
+        }
+        .card:hover {
+            border-color: rgba(226, 178, 90, 0.28);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55), 0 0 60px rgba(226, 178, 90, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.05);
         }
 
+        .login-card  { animation: cardAppear .8s cubic-bezier(.16,1,.3,1) .05s both; }
+        .company-card{ animation: cardAppear .8s cubic-bezier(.16,1,.3,1) .18s both; }
         @keyframes cardAppear {
-            0% {
-                opacity: 0;
-                transform: translateY(30px) scale(0.96);
-                filter: blur(10px);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-                filter: blur(0);
-            }
+            0% { opacity: 0; transform: translateY(26px); filter: blur(8px); }
+            100% { opacity: 1; transform: translateY(0); filter: blur(0); }
         }
 
-        .login-card::before {
-            content: '';
+        .card-topline {
             position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--accent), var(--primary-light), var(--primary));
+            top: 0; left: 22px; right: 22px;
+            height: 2px;
+            border-radius: 0 0 4px 4px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
             background-size: 200% 100%;
-            animation: shimmer 3s ease-in-out infinite;
+            animation: shimmer 4s ease-in-out infinite;
         }
-
         @keyframes shimmer {
             0%, 100% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
         }
 
-        .login-card::after {
-            content: '';
-            position: absolute;
-            top: -1px; left: -1px; right: -1px; bottom: -1px;
-            border-radius: 24px;
-            background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), transparent 40%, transparent 60%, rgba(79, 70, 229, 0.1));
-            z-index: -1;
-            pointer-events: none;
-        }
-
-        .logo-section {
-            text-align: center;
-            margin-bottom: 32px;
-            animation: logoAppear 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
-        }
-
-        @keyframes logoAppear {
-            0% { opacity: 0; transform: translateY(15px); }
+        @keyframes riseIn {
+            0% { opacity: 0; transform: translateY(14px); }
             100% { opacity: 1; transform: translateY(0); }
         }
 
+        /* ================= КАРТОЧКА ВХОДА ================= */
+        .logo-section { text-align: center; margin-bottom: 22px; animation: riseIn .7s cubic-bezier(.16,1,.3,1) .15s both; }
+
         .logo-img {
-            width: 72px;
-            height: 72px;
-            border-radius: 18px;
-            margin: 0 auto 14px;
+            width: 58px; height: 58px;
+            border-radius: 16px;
+            margin: 0 auto 10px;
             display: block;
-            box-shadow: 0 8px 30px rgba(6, 182, 212, 0.25);
-            transition: transform 0.3s ease;
+            box-shadow: 0 8px 26px rgba(226, 178, 90, 0.22);
         }
 
-        .logo-img:hover {
-            transform: scale(1.05) rotate(2deg);
-        }
-
-        .logo-title {
-            font-size: 26px;
-            font-weight: 800;
-            color: var(--text-primary);
-            letter-spacing: -0.5px;
-            margin-bottom: 4px;
-        }
-
-        .logo-title span {
-            background: linear-gradient(135deg, var(--accent), var(--primary-light));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
+        .logo-title { font-size: 24px; font-weight: 800; letter-spacing: -0.4px; margin-bottom: 3px; }
+        .logo-title span { color: var(--gold); }
         .logo-subtitle {
-            font-size: 12px;
-            font-weight: 500;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 2px;
+            font-size: 11px; font-weight: 600;
+            color: var(--muted);
+            text-transform: uppercase; letter-spacing: 2px;
         }
 
         .session-status {
-            padding: 12px 16px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            font-size: 13px;
-            font-weight: 600;
-            text-align: center;
-            animation: formAppear 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+            padding: 11px 14px; border-radius: 11px; margin-bottom: 16px;
+            font-size: 13px; font-weight: 600; text-align: center;
+            background: rgba(79, 201, 189, 0.1);
+            border: 1px solid rgba(79, 201, 189, 0.3);
+            color: var(--teal);
         }
 
-        .session-status.success {
-            background: rgba(16, 185, 129, 0.15);
-            border: 1px solid rgba(16, 185, 129, 0.25);
-            color: #34d399;
-        }
-
-        .form-group {
-            margin-bottom: 18px;
-            animation: formAppear 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
-        }
-
-        .form-group:nth-child(1) { animation-delay: 0.3s; }
-        .form-group:nth-child(2) { animation-delay: 0.4s; }
-
-        @keyframes formAppear {
-            0% { opacity: 0; transform: translateX(-15px); }
-            100% { opacity: 1; transform: translateX(0); }
-        }
+        .form-group { margin-bottom: 14px; animation: riseIn .6s cubic-bezier(.16,1,.3,1) both; }
+        .form-group:nth-of-type(1) { animation-delay: .28s; }
+        .form-group:nth-of-type(2) { animation-delay: .38s; }
 
         .form-label {
-            display: block;
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text-secondary);
-            margin-bottom: 8px;
-            letter-spacing: 0.3px;
+            display: block; font-size: 12.5px; font-weight: 700;
+            color: var(--muted); margin-bottom: 7px; letter-spacing: .3px;
         }
 
-        .input-wrapper {
-            position: relative;
-        }
+        .input-wrapper { position: relative; }
 
         .input-icon {
-            position: absolute;
-            left: 16px;
-            top: 50%;
+            position: absolute; left: 15px; top: 50%;
             transform: translateY(-50%);
-            width: 20px;
-            height: 20px;
-            color: var(--text-secondary);
-            transition: color 0.3s ease;
-            pointer-events: none;
-            z-index: 2;
+            width: 18px; height: 18px;
+            color: var(--muted);
+            transition: color .3s ease;
+            pointer-events: none; z-index: 2;
         }
 
         .form-input {
             width: 100%;
-            padding: 13px 16px 13px 48px;
-            background: rgba(30, 41, 59, 0.5);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            color: var(--text-primary);
-            font-family: 'Figtree', sans-serif;
-            font-size: 14px;
-            font-weight: 500;
-            transition: all 0.3s ease;
+            padding: 12px 44px;
+            background: rgba(18, 25, 44, 0.6);
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            color: var(--ink);
+            font-family: 'Manrope', sans-serif;
+            font-size: 14px; font-weight: 500;
+            transition: all .3s ease;
             outline: none;
         }
-
-        .form-input::placeholder {
-            color: rgba(148, 163, 184, 0.4);
-        }
-
+        .form-input::placeholder { color: rgba(147, 160, 184, 0.45); }
         .form-input:focus {
-            border-color: var(--accent);
-            background: rgba(30, 41, 59, 0.8);
-            box-shadow: 0 0 0 4px rgba(6, 182, 212, 0.15), 0 0 20px rgba(6, 182, 212, 0.1);
+            border-color: rgba(226, 178, 90, 0.6);
+            background: rgba(18, 25, 44, 0.9);
+            box-shadow: 0 0 0 3px rgba(226, 178, 90, 0.14);
         }
-
-        .form-input:focus ~ .input-icon,
-        .form-input:focus + .input-icon {
-            color: var(--accent);
-        }
-
+        .form-input:focus ~ .input-icon { color: var(--gold); }
         .form-input:-webkit-autofill {
-            -webkit-box-shadow: 0 0 0 30px rgba(30, 41, 59, 0.9) inset !important;
-            -webkit-text-fill-color: var(--text-primary) !important;
-            caret-color: var(--text-primary);
+            -webkit-box-shadow: 0 0 0 30px rgba(18, 25, 44, 0.95) inset !important;
+            -webkit-text-fill-color: var(--ink) !important;
+            caret-color: var(--ink);
         }
-
-        .form-input.error {
-            border-color: #ef4444;
-            box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.15);
-        }
-
-        .error-message {
-            font-size: 12px;
-            color: #ef4444;
-            margin-top: 6px;
-            font-weight: 500;
-        }
+        .form-input.error { border-color: #ef4444; box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15); }
+        .error-message { font-size: 12px; color: #f87171; margin-top: 5px; font-weight: 500; }
 
         .toggle-password {
-            position: absolute;
-            right: 14px;
-            top: 50%;
+            position: absolute; right: 12px; top: 50%;
             transform: translateY(-50%);
-            background: none;
-            border: none;
-            color: var(--text-secondary);
-            cursor: pointer;
-            padding: 4px;
-            border-radius: 8px;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 2;
+            background: none; border: none;
+            color: var(--muted);
+            cursor: pointer; padding: 4px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            transition: all .2s ease; z-index: 2;
         }
-
-        .toggle-password:hover {
-            color: var(--text-primary);
-            background: rgba(148, 163, 184, 0.1);
-        }
-
-        .toggle-password svg {
-            width: 18px;
-            height: 18px;
-        }
+        .toggle-password:hover { color: var(--ink); background: rgba(160, 175, 200, 0.1); }
+        .toggle-password svg { width: 17px; height: 17px; }
 
         .form-options {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-            animation: formAppear 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both;
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 18px;
+            animation: riseIn .6s cubic-bezier(.16,1,.3,1) .48s both;
         }
 
         .remember-me {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-            font-size: 13px;
-            color: var(--text-secondary);
-            font-weight: 500;
-            user-select: none;
+            display: flex; align-items: center; gap: 9px;
+            cursor: pointer; font-size: 13px;
+            color: var(--muted); font-weight: 600; user-select: none;
         }
-
         .custom-checkbox {
-            width: 20px;
-            height: 20px;
-            border: 2px solid var(--border);
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-            flex-shrink: 0;
+            width: 18px; height: 18px;
+            border: 1.5px solid rgba(160, 175, 200, 0.35);
+            border-radius: 5px;
+            display: flex; align-items: center; justify-content: center;
+            transition: all .3s ease; flex-shrink: 0;
         }
-
-        .custom-checkbox svg {
-            width: 12px;
-            height: 12px;
-            opacity: 0;
-            transform: scale(0.5);
-            transition: all 0.2s ease;
-            color: white;
-        }
-
-        .remember-input {
-            display: none;
-        }
-
-        .remember-input:checked + .custom-checkbox {
-            background: var(--primary);
-            border-color: var(--primary);
-            box-shadow: 0 2px 8px var(--glow);
-        }
-
-        .remember-input:checked + .custom-checkbox svg {
-            opacity: 1;
-            transform: scale(1);
-        }
+        .custom-checkbox svg { width: 11px; height: 11px; opacity: 0; transform: scale(.5); transition: all .2s ease; color: #171004; }
+        .remember-input { display: none; }
+        .remember-input:checked + .custom-checkbox { background: var(--gold); border-color: var(--gold); }
+        .remember-input:checked + .custom-checkbox svg { opacity: 1; transform: scale(1); }
 
         .forgot-link {
-            font-size: 13px;
-            color: var(--primary-light);
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.2s ease;
-            position: relative;
+            font-size: 13px; color: var(--gold-soft);
+            text-decoration: none; font-weight: 600;
+            transition: color .2s ease;
         }
-
-        .forgot-link::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 0;
-            width: 0;
-            height: 1px;
-            background: var(--primary-light);
-            transition: width 0.3s ease;
-        }
-
-        .forgot-link:hover::after {
-            width: 100%;
-        }
-
-        .forgot-link:hover {
-            color: var(--accent);
-        }
+        .forgot-link:hover { color: var(--gold); text-decoration: underline; }
 
         .submit-btn {
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, var(--accent), var(--primary));
-            border: none;
-            border-radius: 14px;
-            color: white;
-            font-family: 'Figtree', sans-serif;
-            font-size: 15px;
-            font-weight: 700;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            letter-spacing: 0.3px;
-            animation: formAppear 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.6s both;
+            width: 100%; padding: 14px;
+            background: linear-gradient(135deg, #e8bc66, var(--gold-deep));
+            border: none; border-radius: 12px;
+            color: #171004; font-family: 'Manrope', sans-serif;
+            font-size: 15px; font-weight: 800;
+            cursor: pointer; position: relative; overflow: hidden;
+            transition: all .3s ease; letter-spacing: .2px;
+            animation: riseIn .6s cubic-bezier(.16,1,.3,1) .58s both;
         }
-
-        .submit-btn::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, var(--primary-light), var(--accent));
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .submit-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(6, 182, 212, 0.3), 0 0 40px rgba(79, 70, 229, 0.15);
-        }
-
-        .submit-btn:hover::before {
-            opacity: 1;
-        }
-
-        .submit-btn:active {
-            transform: translateY(0);
-        }
-
-        .submit-btn .btn-text {
-            position: relative;
-            z-index: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .submit-btn .btn-arrow {
-            transition: transform 0.3s ease;
-        }
-
-        .submit-btn:hover .btn-arrow {
-            transform: translateX(4px);
-        }
-
-        .submit-btn.loading .btn-text {
-            opacity: 0;
-        }
-
+        .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(226, 178, 90, 0.35); }
+        .submit-btn:active { transform: translateY(0); }
+        .submit-btn .btn-text { display: flex; align-items: center; justify-content: center; gap: 8px; position: relative; z-index: 1; }
+        .submit-btn .btn-arrow { transition: transform .3s ease; }
+        .submit-btn:hover .btn-arrow { transform: translateX(4px); }
+        .submit-btn.loading .btn-text { opacity: 0; }
         .submit-btn.loading::after {
-            content: '';
-            position: absolute;
-            width: 24px;
-            height: 24px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-top-color: white;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            top: 50%;
-            left: 50%;
-            margin: -12px 0 0 -12px;
+            content: ''; position: absolute;
+            width: 22px; height: 22px;
+            border: 3px solid rgba(23, 16, 4, 0.3);
+            border-top-color: #171004; border-radius: 50%;
+            top: 50%; left: 50%; margin: -11px 0 0 -11px;
+            animation: spin .8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .divider { display: flex; align-items: center; margin: 18px 0 14px; gap: 12px; animation: riseIn .6s cubic-bezier(.16,1,.3,1) .66s both; }
+        .divider-line { flex: 1; height: 1px; background: var(--line); }
+        .divider-text { font-size: 12px; color: var(--muted); font-weight: 600; }
+
+        .register-section { text-align: center; margin-top: auto; animation: riseIn .6s cubic-bezier(.16,1,.3,1) .74s both; }
+        .register-text { font-size: 13.5px; color: var(--muted); font-weight: 500; }
+        .register-link { color: var(--teal); text-decoration: none; font-weight: 700; }
+        .register-link:hover { text-decoration: underline; }
+
+        /* ================= КАРТОЧКА КОМПАНИИ ================= */
+        .chip {
+            align-self: flex-start;
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 6px 14px;
+            border-radius: 100px;
+            border: 1px solid rgba(226, 178, 90, 0.4);
+            background: rgba(226, 178, 90, 0.08);
+            color: var(--gold-soft);
+            font-size: 11px; font-weight: 800;
+            letter-spacing: 1.6px; text-transform: uppercase;
+            margin-bottom: 18px;
+            animation: riseIn .7s cubic-bezier(.16,1,.3,1) .25s both;
+        }
+        .chip .dot {
+            width: 6px; height: 6px; border-radius: 50%;
+            background: var(--gold);
+            box-shadow: 0 0 8px var(--gold);
+            animation: pulseDot 2s ease-in-out infinite;
+        }
+        @keyframes pulseDot {
+            0%, 100% { opacity: 1; }
+            50% { opacity: .4; }
         }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        .company-head { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; animation: riseIn .7s cubic-bezier(.16,1,.3,1) .32s both; }
+
+        .company-icon {
+            width: 48px; height: 48px; flex-shrink: 0;
+            border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            background: linear-gradient(135deg, rgba(226, 178, 90, 0.2), rgba(226, 178, 90, 0.06));
+            border: 1px solid rgba(226, 178, 90, 0.35);
+        }
+        .company-icon svg { width: 24px; height: 24px; color: var(--gold); }
+
+        .company-head h2 { font-size: 18px; font-weight: 800; letter-spacing: -0.2px; line-height: 1.25; }
+        .role-tag {
+            display: inline-flex; align-items: center; gap: 5px;
+            margin-top: 4px;
+            font-size: 10.5px; font-weight: 800;
+            color: var(--gold);
+            text-transform: uppercase; letter-spacing: 1.1px;
+        }
+        .role-tag svg { width: 11px; height: 11px; }
+
+        .company-text {
+            font-size: 13px; line-height: 1.65;
+            color: #a7b2c8; font-weight: 500;
+            margin-bottom: 14px;
+            animation: riseIn .7s cubic-bezier(.16,1,.3,1) .4s both;
         }
 
-        .divider {
-            display: flex;
-            align-items: center;
-            margin: 24px 0;
-            gap: 16px;
-            animation: formAppear 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.7s both;
+        .company-features {
+            list-style: none; margin-bottom: 14px;
+            display: grid; gap: 8px;
+            animation: riseIn .7s cubic-bezier(.16,1,.3,1) .48s both;
         }
+        .company-features li {
+            display: flex; align-items: center; gap: 10px;
+            font-size: 13px; font-weight: 600; color: #ccd5e4;
+        }
+        .feat-check {
+            width: 18px; height: 18px; flex-shrink: 0;
+            border-radius: 6px;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(226, 178, 90, 0.12);
+            border: 1px solid rgba(226, 178, 90, 0.35);
+        }
+        .feat-check svg { width: 9px; height: 9px; color: var(--gold); }
 
-        .divider-line {
-            flex: 1;
-            height: 1px;
-            background: var(--border);
+        .admin-note {
+            display: flex; align-items: center; gap: 10px;
+            padding: 11px 13px;
+            border-radius: 11px;
+            background: rgba(226, 178, 90, 0.06);
+            border: 1px solid rgba(226, 178, 90, 0.2);
+            font-size: 12.5px; line-height: 1.5;
+            color: var(--gold-soft); font-weight: 600;
+            margin-bottom: 18px;
+            animation: riseIn .7s cubic-bezier(.16,1,.3,1) .56s both;
         }
+        .admin-note svg { width: 16px; height: 16px; flex-shrink: 0; color: var(--gold); }
 
-        .divider-text {
-            font-size: 12px;
-            color: var(--text-secondary);
-            font-weight: 500;
-            white-space: nowrap;
-        }
+        .company-bottom { margin-top: auto; animation: riseIn .7s cubic-bezier(.16,1,.3,1) .64s both; }
 
-        .register-section {
-            text-align: center;
-            animation: formAppear 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.8s both;
+        .create-company-btn {
+            width: 100%; padding: 14px;
+            display: flex; align-items: center; justify-content: center; gap: 9px;
+            background: rgba(226, 178, 90, 0.08);
+            border: 1.5px solid rgba(226, 178, 90, 0.55);
+            border-radius: 12px;
+            color: var(--gold-soft);
+            font-family: 'Manrope', sans-serif;
+            font-size: 14.5px; font-weight: 800; letter-spacing: .2px;
+            text-decoration: none; cursor: pointer;
+            transition: all .3s ease;
         }
+        .create-company-btn:hover {
+            background: rgba(226, 178, 90, 0.16);
+            border-color: var(--gold);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 28px rgba(226, 178, 90, 0.2);
+        }
+        .create-company-btn .cc-arrow { transition: transform .3s ease; }
+        .create-company-btn:hover .cc-arrow { transform: translateX(4px); }
 
-        .register-text {
-            font-size: 14px;
-            color: var(--text-secondary);
+        .company-hint {
+            display: flex; align-items: center; justify-content: center; gap: 6px;
+            margin-top: 11px;
+            font-size: 11.5px; font-weight: 600;
+            color: rgba(147, 160, 184, 0.65);
         }
+        .company-hint svg { width: 12px; height: 12px; color: var(--teal); }
 
-        .register-link {
-            color: var(--accent);
-            text-decoration: none;
-            font-weight: 700;
-            transition: all 0.2s ease;
-        }
+        /* ================= ФУТЕР ================= */
+        .page-footer { text-align: center; animation: riseIn .8s cubic-bezier(.16,1,.3,1) .8s both; }
+        .footer-badges { display: flex; justify-content: center; gap: 20px; }
+        .badge { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; color: var(--muted); opacity: .8; }
+        .badge svg { width: 13px; height: 13px; color: var(--gold); }
+        .copyright { margin-top: 10px; font-size: 11.5px; color: rgba(147, 160, 184, 0.45); font-weight: 500; }
 
-        .register-link:hover {
-            color: var(--primary-light);
-            text-shadow: 0 0 20px rgba(129, 140, 248, 0.3);
+        /* ================= ЯЗЫК / УВЕДОМЛЕНИЯ ================= */
+        .lang-switcher {
+            position: fixed; top: 18px; right: 18px; z-index: 100;
+            background: rgba(9, 13, 24, 0.8);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--line);
+            border-radius: 11px; padding: 4px;
         }
-
-        .footer-badges {
-            display: flex;
-            justify-content: center;
-            gap: 24px;
-            margin-top: 28px;
-            animation: footerAppear 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.8s both;
+        .lang-select {
+            padding: 7px 12px;
+            background: rgba(226, 178, 90, 0.08);
+            color: var(--gold-soft);
+            border: 1px solid rgba(226, 178, 90, 0.25);
+            border-radius: 8px;
+            font-family: 'Manrope', sans-serif;
+            font-size: 12.5px; font-weight: 700;
+            cursor: pointer; outline: none;
+            appearance: none; -webkit-appearance: none;
+            transition: all .3s ease;
         }
-
-        @keyframes footerAppear {
-            0% { opacity: 0; transform: translateY(10px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-
-        .badge {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--text-secondary);
-            opacity: 0.7;
-        }
-
-        .badge svg {
-            width: 14px;
-            height: 14px;
-            color: var(--accent);
-        }
-
-        .copyright {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 12px;
-            color: rgba(148, 163, 184, 0.4);
-            font-weight: 500;
-            animation: footerAppear 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.9s both;
-        }
+        .lang-select:hover { background: rgba(226, 178, 90, 0.16); }
+        .lang-select:focus { border-color: var(--gold); }
+        .lang-select option { background-color: #0d1322; color: var(--ink); }
 
         .notification {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%) translateY(-100px);
-            padding: 14px 24px;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: 600;
+            position: fixed; top: 18px; left: 50%;
+            transform: translateX(-50%) translateY(-120px);
+            padding: 13px 24px; border-radius: 13px;
+            font-size: 13.5px; font-weight: 700;
             z-index: 1000;
-            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-            backdrop-filter: blur(20px);
+            transition: transform .5s cubic-bezier(.16,1,.3,1);
+            backdrop-filter: blur(16px);
+            max-width: calc(100vw - 32px);
+            text-align: center;
+        }
+        .notification.show { transform: translateX(-50%) translateY(0); }
+        .notification.success { background: rgba(79, 201, 189, 0.16); border: 1px solid rgba(79, 201, 189, 0.4); color: var(--teal); }
+        .notification.error { background: rgba(239, 68, 68, 0.16); border: 1px solid rgba(239, 68, 68, 0.4); color: #f87171; }
+
+        /* ================= АДАПТИВ ================= */
+        @media (min-width: 901px) and (min-height: 780px) {
+            body { overflow: hidden; }
         }
 
-        .notification.show {
-            transform: translateX(-50%) translateY(0);
+        @media (max-width: 900px) {
+            .page { padding-top: 64px; }
+            .cards { grid-template-columns: minmax(0, 460px); gap: 20px; }
         }
 
-        .notification.success {
-            background: rgba(16, 185, 129, 0.2);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            color: #34d399;
-        }
-
-        .notification.error {
-            background: rgba(239, 68, 68, 0.2);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            color: #f87171;
-        }
-
-        @media (max-width: 520px) {
-            .container { padding: 16px; }
-            .login-card { padding: 32px 20px; border-radius: 20px; }
-            .logo-title { font-size: 22px; }
+        @media (max-width: 480px) {
+            .page { padding: 60px 14px 18px; }
+            .card { padding: 24px 18px 20px; border-radius: 18px; }
+            .logo-img { width: 48px; height: 48px; }
+            .logo-title { font-size: 21px; }
+            .form-options { flex-direction: column; gap: 10px; align-items: flex-start; }
             .lang-switcher { top: 12px; right: 12px; }
             .lang-select { padding: 6px 10px; font-size: 12px; }
-            .form-options { flex-direction: column; gap: 12px; align-items: flex-start; }
+            .footer-badges { gap: 14px; }
+        }
+
+        @media (max-height: 800px) and (min-width: 901px) {
+            .page { padding-top: 58px; gap: 16px; }
+            .card { padding: 24px 24px 20px; }
+            .logo-section { margin-bottom: 16px; }
+            .logo-img { width: 48px; height: 48px; }
         }
     </style>
 </head>
 <body>
-<!-- Background effects -->
-<div class="bg-animation"></div>
-<div class="grid-overlay"></div>
+
+<div class="bg-glow"></div>
 <div class="particles" id="particles"></div>
 
-<!-- Notification toast -->
 <div class="notification" id="notification"></div>
 
-<!-- Language switcher -->
 <div class="lang-switcher">
     <select class="lang-select" onchange="switchLang(this.value)">
         <option value="ru" selected>🇷🇺 RU</option>
@@ -704,225 +490,205 @@
     </select>
 </div>
 
-<div class="container">
-    <div class="login-card">
-        <!-- Logo -->
-        <div class="logo-section">
-            <img src="{{ asset('img/dss.png') }}"
-                 alt="DocSign Logo"
-                 class="logo-img">
-            <div class="logo-title">Doc<span>Sign</span></div>
-            <div class="logo-subtitle" data-i18n="subtitle">Система электронного документооборота</div>
-        </div>
+<div class="page">
+    <div class="cards">
 
-        <!-- Session Status -->
-        @if (session('status'))
-        <div class="session-status success">{{ session('status') }}</div>
-        @endif
+        {{-- ================= КАРТОЧКА 1: ВХОД ================= --}}
+        <section class="card login-card">
+            <div class="card-topline"></div>
 
-        <!-- Laravel Login Form -->
-        <form method="POST" action="{{ route('login') }}" id="loginForm" onsubmit="return handleLogin(event)">
-            @csrf
-
-            <!-- Email Address -->
-            <div class="form-group">
-                <label class="form-label" for="email" data-i18n="emailLabel">Электронная почта</label>
-                <div class="input-wrapper">
-                    <input
-                            type="email"
-                            name="email"
-                            id="email"
-                            class="form-input @error('email') error @enderror"
-                            value="{{ old('email') }}"
-                            data-i18n-placeholder="emailPlaceholder"
-                            placeholder="name@company.com"
-                            required
-                            autofocus
-                            autocomplete="username"
-                    >
-                    <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="2" y="4" width="20" height="16" rx="2"/>
-                        <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
-                    </svg>
-                </div>
-                @error('email')
-                <div class="error-message">{{ $message }}</div>
-                @enderror
+            <div class="logo-section">
+                <img src="{{ asset('img/dss.png') }}" alt="DocSign Logo" class="logo-img">
+                <div class="logo-title">Doc<span>Sign</span></div>
+                <div class="logo-subtitle" data-i18n="subtitle">Система электронного документооборота</div>
             </div>
 
-            <!-- Password -->
-            <div class="form-group">
-                <label class="form-label" for="password" data-i18n="passwordLabel">Пароль</label>
-                <div class="input-wrapper">
-                    <input
-                            type="password"
-                            name="password"
-                            id="password"
-                            class="form-input @error('password') error @enderror"
-                            data-i18n-placeholder="passwordPlaceholder"
-                            placeholder="••••••••••"
-                            required
-                            autocomplete="current-password"
-                    >
-                    <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                    </svg>
-                    <button type="button" class="toggle-password" onclick="togglePassword()" aria-label="Toggle password visibility">
-                        <svg id="eyeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
-                            <circle cx="12" cy="12" r="3"/>
-                        </svg>
-                    </button>
-                </div>
-                @error('password')
-                <div class="error-message">{{ $message }}</div>
-                @enderror
-            </div>
+            @if (session('status'))
+            <div class="session-status">{{ session('status') }}</div>
+            @endif
 
-            <!-- Remember Me -->
-            <div class="form-options">
-                <label class="remember-me">
-                    <input type="checkbox" name="remember" id="remember_me" class="remember-input">
-                    <div class="custom-checkbox">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                            <polyline points="20 6 9 17 4 12"/>
+            <form method="POST" action="{{ route('login') }}" id="loginForm" onsubmit="return handleLogin(event)">
+                @csrf
+
+                <div class="form-group">
+                    <label class="form-label" for="email" data-i18n="emailLabel">Электронная почта</label>
+                    <div class="input-wrapper">
+                        <input type="email" name="email" id="email"
+                               class="form-input @error('email') error @enderror"
+                               value="{{ old('email') }}"
+                               placeholder="name@company.com"
+                               required autofocus autocomplete="username">
+                        <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="4" width="20" height="16" rx="2"/>
+                            <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
                         </svg>
                     </div>
-                    <span data-i18n="remember">Запомнить меня</span>
-                </label>
-                @if (Route::has('password.request'))
-                <a class="forgot-link" href="{{ route('password.request') }}" data-i18n="forgot">Забыли пароль?</a>
-                @endif
-            </div>
+                    @error('email')<div class="error-message">{{ $message }}</div>@enderror
+                </div>
 
-            <!-- Submit -->
-            <button type="submit" class="submit-btn" id="submitBtn">
+                <div class="form-group">
+                    <label class="form-label" for="password" data-i18n="passwordLabel">Пароль</label>
+                    <div class="input-wrapper">
+                        <input type="password" name="password" id="password"
+                               class="form-input @error('password') error @enderror"
+                               placeholder="••••••••••"
+                               required autocomplete="current-password">
+                        <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                        </svg>
+                        <button type="button" class="toggle-password" onclick="togglePassword()" aria-label="Toggle password visibility">
+                            <svg id="eyeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                        </button>
+                    </div>
+                    @error('password')<div class="error-message">{{ $message }}</div>@enderror
+                </div>
+
+                <div class="form-options">
+                    <label class="remember-me">
+                        <input type="checkbox" name="remember" id="remember_me" class="remember-input">
+                        <div class="custom-checkbox">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                        </div>
+                        <span data-i18n="remember">Запомнить меня</span>
+                    </label>
+                    @if (Route::has('password.request'))
+                    <a class="forgot-link" href="{{ route('password.request') }}" data-i18n="forgot">Забыли пароль?</a>
+                    @endif
+                </div>
+
+                <button type="submit" class="submit-btn" id="submitBtn">
                     <span class="btn-text">
                         <span data-i18n="loginBtn">Войти в систему</span>
-                        <svg class="btn-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M5 12h14"/>
-                            <path d="m12 5 7 7-7 7"/>
+                        <svg class="btn-arrow" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
                         </svg>
                     </span>
-            </button>
-        </form>
+                </button>
+            </form>
 
-               <div class="divider">
-            <div class="divider-line"></div>
-            <span class="divider-text" data-i18n="divider">или</span>
-            <div class="divider-line"></div>
-        </div>
+            <div class="divider">
+                <div class="divider-line"></div>
+                <span class="divider-text" data-i18n="divider">или</span>
+                <div class="divider-line"></div>
+            </div>
 
-        {{-- ✅ НОВАЯ КНОПКА: Создать компанию --}}
-        <div class="create-company-section">
-            <a href="{{ route('register.company') }}" class="create-company-btn">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M3 21h18"/>
-                    <path d="M5 21V7l8-4v18"/>
-                    <path d="M19 21V11l-6-4"/>
-                    <path d="M9 9v.01"/><path d="M9 12v.01"/><path d="M9 15v.01"/><path d="M9 18v.01"/>
-                </svg>
-                <span data-i18n="createCompany">Создать компанию</span>
-            </a>
-        </div>
+            <div class="register-section">
+                <p class="register-text">
+                    <span data-i18n="noAccount">Нет аккаунта?</span>
+                    <a href="{{ route('register') }}" class="register-link" data-i18n="register">Зарегистрироваться</a>
+                </p>
+            </div>
+        </section>
 
-        <div class="register-section">
-            <p class="register-text">
-                <span data-i18n="noAccount">Нет аккаунта?</span>
-                <a href="{{ route('register') }}" class="register-link" data-i18n="register">Зарегистрироваться</a>
-            </p>
-        </div>
-    </div>
-<style>
-        .create-company-section {
-            margin-bottom: 16px;
-            animation: formAppear 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.75s both;
-        }
+        {{-- ================= КАРТОЧКА 2: СОЗДАТЬ КОМПАНИЮ ================= --}}
+        <section class="card company-card">
+            <div class="card-topline"></div>
 
-        .create-company-btn {
-            width: 100%;
-            padding: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            background: transparent;
-            border: 2px solid transparent;
-            border-radius: 14px;
-            color: var(--text-primary);
-            font-family: 'Figtree', sans-serif;
-            font-size: 14px;
-            font-weight: 700;
-            text-decoration: none;
-            cursor: pointer;
-            position: relative;
-            transition: all 0.3s ease;
-            background-image: linear-gradient(rgba(15,23,42,0.8), rgba(15,23,42,0.8)),
-                              linear-gradient(135deg, var(--accent), var(--primary));
-            background-origin: border-box;
-            background-clip: padding-box, border-box;
-        }
+            <span class="chip"><span class="dot"></span><span data-i18n="chip">Для бизнеса</span></span>
 
-        .create-company-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(6, 182, 212, 0.2), 0 0 30px rgba(79, 70, 229, 0.1);
-            background-image: linear-gradient(rgba(30, 41, 59, 0.9), rgba(30, 41, 59, 0.9)),
-                              linear-gradient(135deg, var(--primary-light), var(--accent));
-        }
+            <div class="company-head">
+                <div class="company-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 21h18"/>
+                        <path d="M5 21V7l8-4v18"/>
+                        <path d="M19 21V11l-6-4"/>
+                        <path d="M9 9v.01"/><path d="M9 12v.01"/><path d="M9 15v.01"/><path d="M9 18v.01"/>
+                    </svg>
+                </div>
+                <div>
+                    <h2 data-i18n="companyTitle">Создайте свою компанию</h2>
+                    <span class="role-tag">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                        <span data-i18n="roleTag">Роль: Администратор</span>
+                    </span>
+                </div>
+            </div>
 
-        .create-company-btn svg {
-            flex-shrink: 0;
-        }
-    </style>
-    <!-- Footer badges -->
-    <div class="footer-badges">
-        <div class="badge">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
-            <span>SSL</span>
-        </div>
-        <div class="badge">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
-            <span data-i18n="badgeSecurity">Защита</span>
-        </div>
-        <div class="badge">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/></svg>
-            <span data-i18n="badgeSign">ЭЦП</span>
-        </div>
+            <p class="company-text" data-i18n="companyText">Если у вас есть своя компания — создайте её и получите собственное рабочее пространство для документооборота.</p>
+
+            <ul class="company-features">
+                <li>
+                    <span class="feat-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+                    <span data-i18n="feat1">Вы автоматически станете администратором</span>
+                </li>
+                <li>
+                    <span class="feat-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+                    <span data-i18n="feat2">Приглашайте сотрудников и настраивайте права</span>
+                </li>
+                <li>
+                    <span class="feat-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+                    <span data-i18n="feat3">Юридически значимая электронная подпись</span>
+                </li>
+            </ul>
+
+            <div class="admin-note">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
+                <span data-i18n="adminNote">После создания компании вы получаете роль «Администратор» с полным доступом.</span>
+            </div>
+
+            <div class="company-bottom">
+                <a href="{{ route('register.company') }}" class="create-company-btn">
+                    <span data-i18n="companyBtn">Создать компанию</span>
+                    <svg class="cc-arrow" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
+                    </svg>
+                </a>
+                <div class="company-hint">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                    <span data-i18n="companyHint">Бесплатно • Занимает меньше минуты</span>
+                </div>
+            </div>
+        </section>
     </div>
 
-    <p class="copyright">
-        © {{ date('Y') }} DocSign Ecosystem. <span data-i18n="rights">Все права защищены.</span>
-    </p>
+    <footer class="page-footer">
+        <div class="footer-badges">
+            <div class="badge">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+                <span>SSL</span>
+            </div>
+            <div class="badge">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+                <span data-i18n="badgeSecurity">Защита</span>
+            </div>
+            <div class="badge">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/></svg>
+                <span data-i18n="badgeSign">ЭЦП</span>
+            </div>
+        </div>
+        <p class="copyright">© {{ date('Y') }} DocSign Ecosystem. <span data-i18n="rights">Все права защищены.</span></p>
+    </footer>
 </div>
 
 <script>
-    // Generate particles
-    function createParticles() {
-        var container = document.getElementById('particles');
-        var count = 30;
-        for (var i = 0; i < count; i++) {
-            var particle = document.createElement('div');
-            particle.className = 'particle';
-            particle.style.left = Math.random() * 100 + '%';
-            particle.style.animationDuration = (Math.random() * 10 + 8) + 's';
-            particle.style.animationDelay = (Math.random() * 10) + 's';
-            particle.style.width = (Math.random() * 3 + 1) + 'px';
-            particle.style.height = particle.style.width;
-            particle.style.opacity = Math.random() * 0.5 + 0.1;
-            container.appendChild(particle);
+    /* ============ Частицы фона ============ */
+    (function() {
+        var wrap = document.getElementById('particles');
+        for (var i = 0; i < 22; i++) {
+            var pt = document.createElement('div');
+            pt.className = 'particle';
+            pt.style.left = Math.random() * 100 + '%';
+            pt.style.animationDuration = (Math.random() * 12 + 10) + 's';
+            pt.style.animationDelay = (Math.random() * 12) + 's';
+            var sz = (Math.random() * 2 + 1) + 'px';
+            pt.style.width = sz; pt.style.height = sz;
+            pt.style.opacity = Math.random() * 0.4 + 0.1;
+            wrap.appendChild(pt);
         }
-    }
-    createParticles();
+    })();
 
-    // Translations
+    /* ============ Переводы ============ */
     var translations = {
         ru: {
             subtitle: 'Система электронного документооборота',
             emailLabel: 'Электронная почта',
-            emailPlaceholder: 'name@company.com',
             passwordLabel: 'Пароль',
-            passwordPlaceholder: '••••••••••',
             remember: 'Запомнить меня',
             forgot: 'Забыли пароль?',
             loginBtn: 'Войти в систему',
@@ -934,14 +700,21 @@
             rights: 'Все права защищены.',
             invalidEmail: 'Неверный формат email',
             emptyFields: 'Заполните все поля',
-               createCompany: 'Создать компанию',
+            chip: 'Для бизнеса',
+            companyTitle: 'Создайте свою компанию',
+            roleTag: 'Роль: Администратор',
+            companyText: 'Если у вас есть своя компания — создайте её и получите собственное рабочее пространство для документооборота.',
+            feat1: 'Вы автоматически станете администратором',
+            feat2: 'Приглашайте сотрудников и настраивайте права',
+            feat3: 'Юридически значимая электронная подпись',
+            adminNote: 'После создания компании вы получаете роль «Администратор» с полным доступом.',
+            companyBtn: 'Создать компанию',
+            companyHint: 'Бесплатно • Занимает меньше минуты'
         },
         tj: {
             subtitle: 'Системаи ҳуҷҷатгардонии электронӣ',
             emailLabel: 'Почтаи электронӣ',
-            emailPlaceholder: 'name@company.com',
             passwordLabel: 'Рамз',
-            passwordPlaceholder: '••••••••••',
             remember: 'Маро дар ёд дор',
             forgot: 'Рамзро фаромӯш кардед?',
             loginBtn: 'Ворид шудан',
@@ -953,14 +726,21 @@
             rights: 'Ҳамаи ҳуқуқҳо ҳифз шудаанд.',
             invalidEmail: 'Формати email нодуруст',
             emptyFields: 'Ҳамаи майдонҳоро пур кунед',
-              createCompany: 'Ширкат сохтан',
+            chip: 'Барои бизнес',
+            companyTitle: 'Ширкати худро созед',
+            roleTag: 'Нақш: Администратор',
+            companyText: 'Агар шумо ширкати худро дошта бошед — онро созед ва фазои кории худро барои ҳуҷҷатгардонӣ ба даст оред.',
+            feat1: 'Шумо ба таври худкор администратор мешавед',
+            feat2: 'Кормандонро даъват кунед ва ҳуқуқҳоро танзим намоед',
+            feat3: 'Имзои электронии дорои қувваи ҳуқуқӣ',
+            adminNote: 'Пас аз таъсиси ширкат шумо нақши «Администратор» бо дастрасии пурра мегиред.',
+            companyBtn: 'Ширкат сохтан',
+            companyHint: 'Ройгон • Камтар аз 1 дақиқа'
         },
         en: {
             subtitle: 'Electronic Document Management System',
             emailLabel: 'Email Address',
-            emailPlaceholder: 'name@company.com',
             passwordLabel: 'Password',
-            passwordPlaceholder: '••••••••••',
             remember: 'Remember me',
             forgot: 'Forgot password?',
             loginBtn: 'Sign In',
@@ -972,36 +752,36 @@
             rights: 'All rights reserved.',
             invalidEmail: 'Invalid email format',
             emptyFields: 'Please fill in all fields',
-            createCompany: 'Create Company',
+            chip: 'For Business',
+            companyTitle: 'Create your company',
+            roleTag: 'Role: Administrator',
+            companyText: 'If you own a company — create it and get your own workspace for document management.',
+            feat1: 'You automatically become the administrator',
+            feat2: 'Invite employees and configure their permissions',
+            feat3: 'Legally binding electronic signature',
+            adminNote: 'After creating the company you receive the "Administrator" role with full access.',
+            companyBtn: 'Create Company',
+            companyHint: 'Free • Takes less than a minute'
         }
     };
 
     var currentLang = 'ru';
-
     function switchLang(lang) {
         currentLang = lang;
         document.documentElement.lang = lang;
-
         var t = translations[lang];
-
         document.querySelectorAll('[data-i18n]').forEach(function(el) {
             var key = el.getAttribute('data-i18n');
             if (t[key]) el.textContent = t[key];
         });
-
-        document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el) {
-            var key = el.getAttribute('data-i18n-placeholder');
-            if (t[key]) el.placeholder = t[key];
-        });
     }
 
-    // Toggle password visibility
+    /* ============ Пароль ============ */
     var passwordVisible = false;
     function togglePassword() {
         passwordVisible = !passwordVisible;
         var input = document.getElementById('password');
         var icon = document.getElementById('eyeIcon');
-
         if (passwordVisible) {
             input.type = 'text';
             icon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/><line x1="1" y1="1" x2="23" y2="23"/>';
@@ -1011,26 +791,22 @@
         }
     }
 
-    // Show notification
+    /* ============ Уведомления ============ */
     function showNotification(message, type) {
         var notif = document.getElementById('notification');
         notif.textContent = message;
         notif.className = 'notification ' + type + ' show';
-        setTimeout(function() {
-            notif.classList.remove('show');
-        }, 3000);
+        setTimeout(function() { notif.classList.remove('show'); }, 3000);
     }
 
-    // Handle login with loading animation
+    /* ============ Логин ============ */
     function handleLogin(e) {
         var email = document.getElementById('email');
         var password = document.getElementById('password');
         var t = translations[currentLang];
         var hasError = false;
-
         email.classList.remove('error');
         password.classList.remove('error');
-
         if (!email.value.trim()) {
             email.classList.add('error');
             showNotification(t.emptyFields, 'error');
@@ -1040,33 +816,24 @@
             showNotification(t.invalidEmail, 'error');
             hasError = true;
         }
-
         if (!password.value.trim()) {
             password.classList.add('error');
             hasError = true;
         }
-
         if (hasError) return false;
-
-        var btn = document.getElementById('submitBtn');
-        btn.classList.add('loading');
+        document.getElementById('submitBtn').classList.add('loading');
         return true;
     }
 
-    // Clear error on input
     var emailInput = document.getElementById('email');
     var passInput = document.getElementById('password');
     if (emailInput) emailInput.addEventListener('input', function() { this.classList.remove('error'); });
     if (passInput) passInput.addEventListener('input', function() { this.classList.remove('error'); });
 
-    // Handle Laravel validation errors on page load
     document.addEventListener('DOMContentLoaded', function() {
         var errorMessages = document.querySelectorAll('.error-message');
-        if (errorMessages.length > 0) {
-            var firstError = errorMessages[0].textContent;
-            if (firstError) {
-                showNotification(firstError, 'error');
-            }
+        if (errorMessages.length > 0 && errorMessages[0].textContent.trim()) {
+            showNotification(errorMessages[0].textContent.trim(), 'error');
         }
     });
 </script>

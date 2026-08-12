@@ -510,29 +510,32 @@ Route::middleware('auth')->prefix('face')->name('face.')->controller(FaceControl
 });
 
 // ===== АДМИНКА: отчёты и настройки =====
-Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::controller(AttendanceReportController::class)->group(function () {
-        Route::get('/reports', 'index')->name('reports');
-        Route::post('/attendances/{attendance}/excuse', 'excuse')->name('attendances.excuse');
-    });
 
-    Route::controller(CompanySettingsController::class)->group(function () {
-        Route::get('/companies/{company}/settings', 'settings')->name('companies.settings');
-        Route::put('/companies/{company}/settings', 'updateSettings')->name('companies.settings.update');
-    });
-});
+
+
+// В routes/web.php (в самом низу файла)
+
+// Маршруты Face ID
 Route::middleware('auth')->prefix('face')->name('face.')->controller(FaceController::class)->group(function () {
     Route::get('/scan', 'scanPage')->name('scan');
     Route::post('/register', 'register')->name('register');
     Route::post('/checkin', 'checkin')->name('checkin');
 });
+
+// ===== АДМИНКА: отчёты и настройки посещаемости =====
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->controller(AttendanceReportController::class)->group(function () {
+    // Страница отчета
     Route::get('/reports', 'index')->name('reports');
+    
+    // Сохранение настроек штрафов (ТА САМАЯ КНОПКА "СОХРАНИТЬ")
+    Route::post('/reports/settings', 'saveSettings')->name('reports.settings');
+    
+    // Кнопка "Я знал" (Снять штраф)
     Route::post('/reports/excuse', 'excuse')->name('reports.excuse');
 });
-
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->controller(AttendanceReportController::class)->group(function () {
     Route::get('/reports', 'index')->name('reports');
+    Route::get('/reports/user/{userId}', 'userReport')->name('reports.user'); // ← ДОБАВЬ ЭТУ СТРОКУ
     Route::post('/reports/excuse', 'excuse')->name('reports.excuse');
-    Route::post('/reports/settings', 'saveSettings')->name('reports.settings'); // ← ДОБАВЬ ЭТУ СТРОКУ
+    Route::post('/reports/settings', 'saveSettings')->name('reports.settings');
 });

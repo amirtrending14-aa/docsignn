@@ -94,6 +94,7 @@ class UserController extends Controller
             'level'      => 'required|integer|min:1|max:20',
             'avatar'     => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'company_id' => 'nullable|exists:companies,id',
+            'salary' => 'nullable|numeric|min:0',
         ]);
 
         // Нормализуем телефон (оставляем только цифры и +)
@@ -153,6 +154,8 @@ class UserController extends Controller
         }
 
         // Создание пользователя
+        $data['needs_face_scan'] = $request->boolean('needs_face_scan');
+
         try {
             User::create($data);
         } catch (\Exception $e) {
@@ -204,51 +207,72 @@ class UserController extends Controller
     }
 
     public function update(Request $request, User $user)
-    {
-        $authUser = auth()->user();
+{
+    $authUser = auth()->user();
 
-        if (!$this->canAccessUser($authUser, $user)) {
-            return redirect()->route('users.index')->with('error', 'Нет доступа к этому пользователю');
-        }
-
-        if (!$authUser->isAdmin() && $user->id !== $authUser->id) {
-            return redirect()->route('users.index')->with('error', 'Нет прав для редактирования');
-        }
-
-        $rules = [
-            'name'          => 'required|string|max:255',
-            'email'         => 'required|email|unique:users,email,' . $user->id,
-            'phone'         => 'nullable|string|unique:users,phone,' . $user->id,
-            'avatar'        => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-            'remove_avatar' => 'nullable|string|in:0,1',
-        ];
-
-        if ($authUser->isAdmin()) {
-            $rules['role'] = 'required|string|max:50';
-            $rules['level'] = 'required|integer|min:1|max:20';
-        }
-
-        $data = $request->validate($rules);
-
-        if (!$authUser->isAdmin()) {
-            $data['role'] = $user->role;
-            $data['level'] = $user->level;
-        }
-
-        if ($request->input('remove_avatar') === '1' && $user->avatar) {
-            Storage::disk('public')->delete($user->avatar);
-            $data['avatar'] = null;
-        }
-
-        if ($request->hasFile('avatar')) {
-            if ($user->avatar) Storage::disk('public')->delete($user->avatar);
-            $data['avatar'] = $request->file('avatar')->store('avatars', 'public');
-        }
-
-        $user->update($data);
-
-        return redirect()->route('users.index')->with('success', 'Данные обновлены');
+    if (!$this->canAccessUser($authUser, $user)) {
+        return redirect()->route('users.index')
+            ->with('error', 'Нет доступа к этому пользователю');
     }
+
+    $rules = [
+        'name'            => 'required|string|max:255',
+        'email'           => 'required|email|unique:users,email,' . $user->id,
+        'phone'           => 'nullable|string|unique:users,phone,' . $user->id,
+        'avatar'          => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+        'remove_avatar'   => 'nullable|boolean',
+        'password'        => 'nullable|string|min:8', // ❌ БЕЗ confirmed
+        'salary'          => 'nullable|numeric|min:0',
+        'needs_face_scan' => 'nullable|boolean',
+        'company_id'      => 'nullable|integer|exists:companies,id',
+    ];
+
+    if ($authUser->isAdmin()) {
+        $rules['role']  = 'required|string|max:50';
+        $rules['level'] = 'required|integer|min:1|max:20';
+    }
+
+    $data = $request->validate($rules);
+
+    // ROLE & LEVEL
+    if ($authUser->isAdmin()) {
+        if ($data['role'] !== 'admin' && (int) $data['level'] === 1) {
+            return back()->withErrors(['level' => 'Уровень 1 только для роли admin'])->withInput();
+        }
+    } else {
+        $data['role']  = $user->role;
+        $data['level'] = $user->level;
+    }
+
+    // AVATAR
+    if ($request->boolean('remove_avatar') && $user->avatar) {
+        Storage::disk('public')->delete($user->avatar);
+        $data['avatar'] = null;
+    } elseif ($request->hasFile('avatar')) {
+        if ($user->avatar) Storage::disk('public')->delete($user->avatar);
+        $data['avatar'] = $request->file('avatar')->store('avatars', 'public');
+    } else {
+        unset($data['avatar']);
+    }
+
+    // PASSWORD
+    if (!empty($data['password'])) {
+        $data['password'] = Hash::make($data['password']);
+    } else {
+        unset($data['password']);
+    }
+
+    // COMPANY
+    if (!$authUser->isAdmin() || empty($data['company_id'])) {
+        $data['company_id'] = $user->company_id;
+    }
+
+    unset($data['remove_avatar']);
+
+    $user->update($data);
+
+    return redirect()->route('users.index')->with('success', 'Данные обновлены');
+}
 
     public function destroy(User $user)
     {

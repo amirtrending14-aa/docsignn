@@ -9,196 +9,335 @@
     <link rel="icon" type="image/png" href="{{ asset('img/dss.png') }}">
     <link rel="apple-touch-icon" href="{{ asset('img/dss.png') }}">
 
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet">
+    {{-- Fontsource: Manrope --}}
+    <link href="https://cdn.jsdelivr.net/npm/@fontsource/manrope/400.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@fontsource/manrope/500.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@fontsource/manrope/600.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@fontsource/manrope/700.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@fontsource/manrope/800.css" rel="stylesheet">
 
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+
         :root {
-            --primary: #4f46e5; --primary-dark: #3730a3; --primary-light: #818cf8;
-            --accent: #06b6d4; --bg-dark: #0f172a; --bg-card: rgba(15, 23, 42, 0.6);
-            --text-primary: #f1f5f9; --text-secondary: #94a3b8;
-            --border: rgba(148, 163, 184, 0.15); --glow: rgba(79, 70, 229, 0.4);
+            --bg: #080d18;
+            --ink: #eef2f9;
+            --muted: #93a0b8;
+            --gold: #e2b25a;
+            --gold-soft: #f0d9a8;
+            --gold-deep: #c8923a;
+            --teal: #4fc9bd;
+            --line: rgba(160, 175, 200, 0.15);
+            --panel: rgba(10, 15, 28, 0.78);
         }
+
         body {
-            font-family: 'Figtree', sans-serif; min-height: 100vh;
-            display: flex; align-items: center; justify-content: center;
-            background: var(--bg-dark); overflow-x: hidden; position: relative;
+            font-family: 'Manrope', sans-serif;
+            background: var(--bg);
+            color: var(--ink);
+            overflow-x: hidden;
+            min-height: 100vh;
         }
-        .bg-animation { position: fixed; inset: 0; z-index: 0; overflow: hidden; }
-        .bg-animation::before {
-            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-            background: radial-gradient(ellipse at 20% 50%, rgba(79, 70, 229, 0.15) 0%, transparent 50%),
-                        radial-gradient(ellipse at 80% 20%, rgba(6, 182, 212, 0.1) 0%, transparent 50%),
-                        radial-gradient(ellipse at 50% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
-            animation: bgShift 15s ease-in-out infinite alternate;
+
+        /* ================= ФОН ================= */
+        .bg-glow { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+        .bg-glow::before {
+            content: '';
+            position: absolute; inset: 0;
+            background:
+                radial-gradient(ellipse 60% 45% at 22% 18%, rgba(226, 178, 90, 0.08) 0%, transparent 60%),
+                radial-gradient(ellipse 55% 45% at 80% 82%, rgba(226, 178, 90, 0.05) 0%, transparent 60%),
+                radial-gradient(ellipse 40% 35% at 78% 12%, rgba(79, 201, 189, 0.05) 0%, transparent 60%);
         }
-        @keyframes bgShift { 0% { transform: translate(0, 0) rotate(0deg); } 100% { transform: translate(-5%, -5%) rotate(3deg); } }
-        .particles { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+
+        .particles { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
         .particle {
-            position: absolute; width: 3px; height: 3px; background: rgba(129, 140, 248, 0.5);
-            border-radius: 50%; animation: float linear infinite;
+            position: absolute;
+            width: 2px; height: 2px;
+            background: rgba(226, 178, 90, 0.4);
+            border-radius: 50%;
+            animation: floatUp linear infinite;
         }
-        @keyframes float {
+        @keyframes floatUp {
             0% { transform: translateY(100vh) scale(0); opacity: 0; }
-            10% { opacity: 1; } 90% { opacity: 1; }
-            100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+            12% { opacity: 1; }
+            88% { opacity: 1; }
+            100% { transform: translateY(-8vh) scale(1); opacity: 0; }
         }
-        .grid-overlay {
-            position: fixed; inset: 0; z-index: 0;
-            background-image: linear-gradient(rgba(148, 163, 184, 0.03) 1px, transparent 1px),
-                              linear-gradient(90deg, rgba(148, 163, 184, 0.03) 1px, transparent 1px);
-            background-size: 60px 60px; animation: gridMove 20s linear infinite;
+
+        /* ================= СТРАНИЦА ================= */
+        .page {
+            position: relative;
+            z-index: 5;
+            min-height: 100vh;
+            min-height: 100svh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 70px 20px 24px;
+            gap: 22px;
         }
-        @keyframes gridMove { 0% { transform: translate(0, 0); } 100% { transform: translate(60px, 60px); } }
-        .container {
-            position: relative; z-index: 10; width: 100%; max-width: 540px;
-            padding: 20px; max-height: 100vh; overflow-y: auto;
+
+        /* ================= КАРТОЧКА ================= */
+        .company-form-card {
+            width: 100%;
+            max-width: 560px;
+            background: var(--panel);
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+            border: 1px solid var(--line);
+            border-radius: 22px;
+            padding: 32px 30px 28px;
+            position: relative;
+            box-shadow: 0 26px 70px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+            transition: border-color .35s ease, box-shadow .35s ease;
+            animation: cardAppear .8s cubic-bezier(.16,1,.3,1) .05s both;
         }
-        .container::-webkit-scrollbar { width: 4px; }
-        .container::-webkit-scrollbar-track { background: transparent; }
-        .container::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
-        .lang-switcher {
-            position: fixed; top: 20px; right: 20px; z-index: 100; display: flex;
-            background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(20px);
-            border: 1px solid var(--border); border-radius: 12px; padding: 4px; gap: 2px;
-        }
-        .lang-select {
-            padding: 8px 14px; background: linear-gradient(145deg, #1a2a6c, #101a44);
-            color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px;
-            font-family: 'Figtree', sans-serif; font-size: 13px; font-weight: 600;
-            cursor: pointer; outline: none; appearance: none; -webkit-appearance: none;
-            transition: all 0.3s ease; letter-spacing: 0.5px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        }
-        .lang-select:hover { background: #1e3a8a; transform: translateY(-1px); }
-        .lang-select option { background-color: #101a44; color: white; }
-        .login-card {
-            background: var(--bg-card); backdrop-filter: blur(40px);
-            border: 1px solid var(--border); border-radius: 24px; padding: 40px 36px;
-            position: relative; overflow: hidden;
-            animation: cardAppear 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
-            box-shadow: 0 0 0 1px rgba(148, 163, 184, 0.05), 0 25px 80px rgba(0, 0, 0, 0.4), 0 0 120px rgba(79, 70, 229, 0.08);
+        .company-form-card:hover {
+            border-color: rgba(226, 178, 90, 0.28);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55), 0 0 60px rgba(226, 178, 90, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.05);
         }
         @keyframes cardAppear {
-            0% { opacity: 0; transform: translateY(30px) scale(0.96); filter: blur(10px); }
-            100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+            0% { opacity: 0; transform: translateY(26px); filter: blur(8px); }
+            100% { opacity: 1; transform: translateY(0); filter: blur(0); }
         }
-        .login-card::before {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-            background: linear-gradient(90deg, var(--accent), var(--primary-light), var(--primary));
-            background-size: 200% 100%; animation: shimmer 3s ease-in-out infinite;
+
+        .card-topline {
+            position: absolute;
+            top: 0; left: 22px; right: 22px;
+            height: 2px;
+            border-radius: 0 0 4px 4px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            background-size: 200% 100%;
+            animation: shimmer 4s ease-in-out infinite;
         }
-        @keyframes shimmer { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
-        .logo-section { text-align: center; margin-bottom: 28px; animation: logoAppear 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both; }
-        @keyframes logoAppear { 0% { opacity: 0; transform: translateY(15px); } 100% { opacity: 1; transform: translateY(0); } }
+        @keyframes shimmer {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        @keyframes riseIn {
+            0% { opacity: 0; transform: translateY(14px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .logo-section { text-align: center; margin-bottom: 24px; animation: riseIn .7s cubic-bezier(.16,1,.3,1) .15s both; }
+
         .logo-img {
-            width: 64px; height: 64px; border-radius: 16px; margin: 0 auto 12px; display: block;
-            box-shadow: 0 8px 30px rgba(6, 182, 212, 0.25);
+            width: 58px; height: 58px;
+            border-radius: 16px;
+            margin: 0 auto 10px;
+            display: block;
+            box-shadow: 0 8px 26px rgba(226, 178, 90, 0.22);
         }
-        .logo-title { font-size: 24px; font-weight: 800; color: var(--text-primary); letter-spacing: -0.5px; margin-bottom: 4px; }
-        .logo-title span {
-            background: linear-gradient(135deg, var(--accent), var(--primary-light));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+
+        .logo-title { font-size: 24px; font-weight: 800; letter-spacing: -0.4px; margin-bottom: 3px; }
+        .logo-title span { color: var(--gold); }
+        .logo-subtitle {
+            font-size: 11px; font-weight: 600;
+            color: var(--muted);
+            text-transform: uppercase; letter-spacing: 2px;
         }
-        .logo-subtitle { font-size: 12px; font-weight: 500; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 2px; }
+
+        /* ---- заголовки секций ---- */
         .form-section-title {
-            font-size: 11px; font-weight: 700; color: var(--accent);
-            text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 14px; margin-top: 6px; padding-left: 2px;
+            display: flex; align-items: center; gap: 9px;
+            font-size: 11px; font-weight: 800;
+            color: var(--gold);
+            text-transform: uppercase; letter-spacing: 1.6px;
+            margin: 20px 0 14px;
+            animation: riseIn .6s cubic-bezier(.16,1,.3,1) .3s both;
         }
-        .form-group { margin-bottom: 16px; animation: formAppear 0.6s cubic-bezier(0.16, 1, 0.3, 1) both; }
-        @keyframes formAppear { 0% { opacity: 0; transform: translateX(-15px); } 100% { opacity: 1; transform: translateX(0); } }
+        .form-section-title:first-of-type { margin-top: 4px; }
+        .form-section-title::after {
+            content: '';
+            flex: 1; height: 1px;
+            background: linear-gradient(90deg, rgba(226, 178, 90, 0.3), transparent);
+        }
+
+        .form-group { margin-bottom: 14px; animation: riseIn .6s cubic-bezier(.16,1,.3,1) both; }
+
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .form-label { display: block; font-size: 13px; font-weight: 600; color: var(--text-secondary); margin-bottom: 7px; letter-spacing: 0.3px; }
+
+        .form-label {
+            display: block; font-size: 12.5px; font-weight: 700;
+            color: var(--muted); margin-bottom: 7px; letter-spacing: .3px;
+        }
+
         .input-wrapper { position: relative; }
+
         .input-icon {
-            position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
-            width: 18px; height: 18px; color: var(--text-secondary);
-            transition: color 0.3s ease; pointer-events: none; z-index: 2;
+            position: absolute; left: 15px; top: 50%;
+            transform: translateY(-50%);
+            width: 18px; height: 18px;
+            color: var(--muted);
+            transition: color .3s ease;
+            pointer-events: none; z-index: 2;
         }
+
         .form-input {
-            width: 100%; padding: 12px 14px 12px 44px; background: rgba(30, 41, 59, 0.5);
-            border: 1px solid var(--border); border-radius: 12px; color: var(--text-primary);
-            font-family: 'Figtree', sans-serif; font-size: 14px; font-weight: 500;
-            transition: all 0.3s ease; outline: none;
+            width: 100%;
+            padding: 12px 14px 12px 44px;
+            background: rgba(18, 25, 44, 0.6);
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            color: var(--ink);
+            font-family: 'Manrope', sans-serif;
+            font-size: 14px; font-weight: 500;
+            transition: all .3s ease;
+            outline: none;
         }
-        .form-input::placeholder { color: rgba(148, 163, 184, 0.4); }
+        .form-input::placeholder { color: rgba(147, 160, 184, 0.45); }
         .form-input:focus {
-            border-color: var(--accent); background: rgba(30, 41, 59, 0.8);
-            box-shadow: 0 0 0 4px rgba(6, 182, 212, 0.15), 0 0 20px rgba(6, 182, 212, 0.1);
+            border-color: rgba(226, 178, 90, 0.6);
+            background: rgba(18, 25, 44, 0.9);
+            box-shadow: 0 0 0 3px rgba(226, 178, 90, 0.14);
         }
-        .form-input:focus ~ .input-icon, .form-input:focus + .input-icon { color: var(--accent); }
+        .form-input:focus ~ .input-icon { color: var(--gold); }
         .form-input:-webkit-autofill {
-            -webkit-box-shadow: 0 0 0 30px rgba(30, 41, 59, 0.9) inset !important;
-            -webkit-text-fill-color: var(--text-primary) !important; caret-color: var(--text-primary);
+            -webkit-box-shadow: 0 0 0 30px rgba(18, 25, 44, 0.95) inset !important;
+            -webkit-text-fill-color: var(--ink) !important;
+            caret-color: var(--ink);
         }
-        .form-input.error { border-color: #ef4444; box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.15); }
-        .form-select { appearance: none; -webkit-appearance: none; cursor: pointer; color-scheme: dark; }
-        .form-select option, .form-select optgroup { background-color: #1e293b; color: #f1f5f9; }
-        .form-select optgroup { color: var(--accent); font-weight: 700; }
+        .form-input.error { border-color: #ef4444; box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15); }
+        .error-message { font-size: 12px; color: #f87171; margin-top: 5px; font-weight: 500; }
+
+        /* ---- селекты ---- */
+        .form-select {
+            appearance: none; -webkit-appearance: none;
+            cursor: pointer;
+            padding-right: 40px;
+            color-scheme: dark;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23e2b25a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            background-size: 15px;
+        }
+        .form-select option, .form-select optgroup { background-color: #101828; color: var(--ink); }
+        .form-select optgroup { color: var(--gold); font-weight: 700; }
         .form-select:disabled { opacity: 0.5; cursor: not-allowed; }
-        .error-message { font-size: 12px; color: #ef4444; margin-top: 5px; font-weight: 500; }
+
         .toggle-password {
-            position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
-            background: none; border: none; color: var(--text-secondary);
+            position: absolute; right: 12px; top: 50%;
+            transform: translateY(-50%);
+            background: none; border: none;
+            color: var(--muted);
             cursor: pointer; padding: 4px; border-radius: 8px;
-            transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; z-index: 2;
+            display: flex; align-items: center; justify-content: center;
+            transition: all .2s ease; z-index: 2;
         }
-        .toggle-password:hover { color: var(--text-primary); background: rgba(148, 163, 184, 0.1); }
-        .toggle-password svg { width: 18px; height: 18px; }
+        .toggle-password:hover { color: var(--ink); background: rgba(160, 175, 200, 0.1); }
+        .toggle-password svg { width: 17px; height: 17px; }
+
         .role-badge {
-            display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px;
-            background: rgba(79, 70, 229, 0.15); border: 1px solid rgba(79, 70, 229, 0.3);
-            border-radius: 8px; font-size: 12px; font-weight: 700; color: var(--primary-light); margin-top: 4px;
+            display: inline-flex; align-items: center; gap: 7px;
+            padding: 8px 14px;
+            background: rgba(226, 178, 90, 0.08);
+            border: 1px solid rgba(226, 178, 90, 0.35);
+            border-radius: 10px;
+            font-size: 12.5px; font-weight: 800;
+            color: var(--gold-soft);
+            margin-top: 2px;
         }
-        .role-badge svg { width: 14px; height: 14px; }
+        .role-badge svg { width: 15px; height: 15px; color: var(--gold); }
+
         .submit-btn {
-            width: 100%; padding: 15px; background: linear-gradient(135deg, var(--accent), var(--primary));
-            border: none; border-radius: 14px; color: white; font-family: 'Figtree', sans-serif;
-            font-size: 15px; font-weight: 700; cursor: pointer; position: relative; overflow: hidden;
-            transition: all 0.3s ease; letter-spacing: 0.3px; margin-top: 8px;
-            animation: formAppear 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.6s both;
+            width: 100%; padding: 14px;
+            background: linear-gradient(135deg, #e8bc66, var(--gold-deep));
+            border: none; border-radius: 12px;
+            color: #171004; font-family: 'Manrope', sans-serif;
+            font-size: 15px; font-weight: 800;
+            cursor: pointer; position: relative; overflow: hidden;
+            transition: all .3s ease; letter-spacing: .2px;
+            margin-top: 8px;
+            animation: riseIn .6s cubic-bezier(.16,1,.3,1) .55s both;
         }
-        .submit-btn::before {
-            content: ''; position: absolute; inset: 0;
-            background: linear-gradient(135deg, var(--primary-light), var(--accent));
-            opacity: 0; transition: opacity 0.3s ease;
-        }
-        .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(6, 182, 212, 0.3), 0 0 40px rgba(79, 70, 229, 0.15); }
-        .submit-btn:hover::before { opacity: 1; }
+        .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(226, 178, 90, 0.35); }
         .submit-btn:active { transform: translateY(0); }
-        .submit-btn .btn-text { position: relative; z-index: 1; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .submit-btn .btn-text { display: flex; align-items: center; justify-content: center; gap: 8px; position: relative; z-index: 1; }
+        .submit-btn .btn-arrow { transition: transform .3s ease; }
+        .submit-btn:hover .btn-arrow { transform: translateX(4px); }
         .submit-btn.loading .btn-text { opacity: 0; }
         .submit-btn.loading::after {
-            content: ''; position: absolute; width: 24px; height: 24px;
-            border: 3px solid rgba(255, 255, 255, 0.3); border-top-color: white; border-radius: 50%;
-            animation: spin 0.8s linear infinite; top: 50%; left: 50%; margin: -12px 0 0 -12px;
+            content: ''; position: absolute;
+            width: 22px; height: 22px;
+            border: 3px solid rgba(23, 16, 4, 0.3);
+            border-top-color: #171004; border-radius: 50%;
+            top: 50%; left: 50%; margin: -11px 0 0 -11px;
+            animation: spin .8s linear infinite;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
-        .login-section { text-align: center; margin-top: 20px; animation: formAppear 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.7s both; }
-        .login-text { font-size: 14px; color: var(--text-secondary); }
-        .login-link { color: var(--accent); text-decoration: none; font-weight: 700; transition: all 0.2s ease; }
-        .login-link:hover { color: var(--primary-light); }
+
+        .login-section { text-align: center; margin-top: 20px; animation: riseIn .6s cubic-bezier(.16,1,.3,1) .65s both; }
+        .login-text { font-size: 13.5px; color: var(--muted); font-weight: 500; }
+        .login-link { color: var(--teal); text-decoration: none; font-weight: 700; }
+        .login-link:hover { text-decoration: underline; }
+
+        /* ================= ФУТЕР ================= */
+        .page-footer { text-align: center; animation: riseIn .8s cubic-bezier(.16,1,.3,1) .75s both; }
+        .footer-badges { display: flex; justify-content: center; gap: 20px; }
+        .badge { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; color: var(--muted); opacity: .8; }
+        .badge svg { width: 13px; height: 13px; color: var(--gold); }
+        .copyright { margin-top: 10px; font-size: 11.5px; color: rgba(147, 160, 184, 0.45); font-weight: 500; }
+
+        /* ================= ЯЗЫК / УВЕДОМЛЕНИЯ ================= */
+        .lang-switcher {
+            position: fixed; top: 18px; right: 18px; z-index: 100;
+            background: rgba(9, 13, 24, 0.8);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--line);
+            border-radius: 11px; padding: 4px;
+        }
+        .lang-select {
+            padding: 7px 12px;
+            background: rgba(226, 178, 90, 0.08);
+            color: var(--gold-soft);
+            border: 1px solid rgba(226, 178, 90, 0.25);
+            border-radius: 8px;
+            font-family: 'Manrope', sans-serif;
+            font-size: 12.5px; font-weight: 700;
+            cursor: pointer; outline: none;
+            appearance: none; -webkit-appearance: none;
+            transition: all .3s ease;
+        }
+        .lang-select:hover { background: rgba(226, 178, 90, 0.16); }
+        .lang-select:focus { border-color: var(--gold); }
+        .lang-select option { background-color: #0d1322; color: var(--ink); }
+
         .notification {
-            position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px);
-            padding: 14px 24px; border-radius: 12px; font-size: 14px; font-weight: 600; z-index: 1000;
-            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1); backdrop-filter: blur(20px);
+            position: fixed; top: 18px; left: 50%;
+            transform: translateX(-50%) translateY(-120px);
+            padding: 13px 24px; border-radius: 13px;
+            font-size: 13.5px; font-weight: 700;
+            z-index: 1000;
+            transition: transform .5s cubic-bezier(.16,1,.3,1);
+            backdrop-filter: blur(16px);
+            max-width: calc(100vw - 32px);
+            text-align: center;
         }
         .notification.show { transform: translateX(-50%) translateY(0); }
-        .notification.success { background: rgba(16, 185, 129, 0.2); border: 1px solid rgba(16, 185, 129, 0.3); color: #34d399; }
-        .notification.error { background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.3); color: #f87171; }
-        @media (max-width: 520px) {
-            .container { padding: 16px; }
-            .login-card { padding: 28px 18px; border-radius: 20px; }
-            .logo-title { font-size: 20px; }
-            .form-row { grid-template-columns: 1fr; }
+        .notification.success { background: rgba(79, 201, 189, 0.16); border: 1px solid rgba(79, 201, 189, 0.4); color: var(--teal); }
+        .notification.error { background: rgba(239, 68, 68, 0.16); border: 1px solid rgba(239, 68, 68, 0.4); color: #f87171; }
+
+        /* ================= АДАПТИВ ================= */
+        @media (max-width: 560px) {
+            .page { padding: 60px 14px 18px; }
+            .company-form-card { padding: 26px 18px 22px; border-radius: 18px; }
+            .logo-img { width: 48px; height: 48px; }
+            .logo-title { font-size: 21px; }
+            .form-row { grid-template-columns: 1fr; gap: 0; }
             .lang-switcher { top: 12px; right: 12px; }
+            .lang-select { padding: 6px 10px; font-size: 12px; }
+            .footer-badges { gap: 14px; }
         }
     </style>
 </head>
 <body>
-<div class="bg-animation"></div>
-<div class="grid-overlay"></div>
+
+<div class="bg-glow"></div>
 <div class="particles" id="particles"></div>
+
 <div class="notification" id="notification"></div>
 
 <div class="lang-switcher">
@@ -209,8 +348,10 @@
     </select>
 </div>
 
-<div class="container">
-    <div class="login-card">
+<div class="page">
+    <div class="company-form-card">
+        <div class="card-topline"></div>
+
         <div class="logo-section">
             <img src="{{ asset('img/dss.png') }}" alt="DocSign Logo" class="logo-img">
             <div class="logo-title">Doc<span>Sign</span></div>
@@ -230,7 +371,9 @@
                     <input type="text" name="company_name" id="company_name"
                            class="form-input @error('company_name') error @enderror"
                            value="{{ old('company_name') }}"
-                           placeholder="Например: Алиф Банк, Хукумат г. Худжанд" required autofocus>
+                           data-i18n-placeholder="companyNamePh"
+                           placeholder="Например: Алиф Банк, Хукумат г. Худжанд"
+                           required autofocus>
                     <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/>
                         <path d="M9 9v.01"/><path d="M9 12v.01"/><path d="M9 15v.01"/><path d="M9 18v.01"/>
@@ -244,7 +387,7 @@
                 <label class="form-label" for="company_type" data-i18n="companyTypeLabel">Тип организации *</label>
                 <div class="input-wrapper">
                     <select name="company_type" id="company_type" class="form-input form-select @error('company_type') error @enderror" required>
-                        <option value="">-- Выберите тип организации --</option>
+                        <option value="" data-i18n="typePh">-- Выберите тип организации --</option>
                         <optgroup label="1. Органы государственной власти">
                             <option value="ministry" {{ old('company_type')=='ministry'?'selected':'' }}>Правительство и министерства</option>
                             <option value="local_government" {{ old('company_type')=='local_government'?'selected':'' }}>Местное самоуправление</option>
@@ -293,7 +436,7 @@
                     <label class="form-label" for="region_id" data-i18n="regionLabel">Область *</label>
                     <div class="input-wrapper">
                         <select name="region_id" id="region_id" class="form-input form-select @error('region_id') error @enderror" required>
-                            <option value="">-- Выберите область --</option>
+                            <option value="" data-i18n="regionPh">-- Выберите область --</option>
                             @foreach($regions as $region)
                                 <option value="{{ $region->id }}" {{ old('region_id')==$region->id?'selected':'' }}>
                                     {{ $region->name_ru }}
@@ -311,7 +454,7 @@
                     <label class="form-label" for="city_id" data-i18n="cityLabel">Город / Район *</label>
                     <div class="input-wrapper">
                         <select name="city_id" id="city_id" class="form-input form-select @error('city_id') error @enderror" required disabled>
-                            <option value="">-- Сначала выберите область --</option>
+                            <option value="" data-i18n="cityFirstPh">-- Сначала выберите область --</option>
                         </select>
                         <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M3 21h18"/><path d="M9 8h1"/><path d="M9 12h1"/><path d="M9 16h1"/>
@@ -324,7 +467,7 @@
             </div>
 
             {{-- ═══════════ СЕКЦИЯ: АДМИНИСТРАТОР ═══════════ --}}
-            <div class="form-section-title" style="margin-top:22px;" data-i18n="sectionUser">👤 Данные администратора</div>
+            <div class="form-section-title" data-i18n="sectionUser">👤 Данные администратора</div>
 
             <div class="form-row">
                 <div class="form-group">
@@ -333,6 +476,7 @@
                         <input type="text" name="name" id="name"
                                class="form-input @error('name') error @enderror"
                                value="{{ old('name') }}"
+                               data-i18n-placeholder="namePh"
                                placeholder="Иван Иванов" required>
                         <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
@@ -362,11 +506,12 @@
                     <div class="input-wrapper">
                         <input type="password" name="password" id="password"
                                class="form-input @error('password') error @enderror"
+                               data-i18n-placeholder="passwordPh"
                                placeholder="Минимум 8 символов" required>
                         <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
                         </svg>
-                        <button type="button" class="toggle-password" onclick="togglePassword('password','eyeIcon1')">
+                        <button type="button" class="toggle-password" onclick="togglePassword('password','eyeIcon1')" aria-label="Toggle password visibility">
                             <svg id="eyeIcon1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>
                             </svg>
@@ -379,11 +524,13 @@
                     <label class="form-label" for="password_confirmation" data-i18n="confirmLabel">Подтверждение *</label>
                     <div class="input-wrapper">
                         <input type="password" name="password_confirmation" id="password_confirmation"
-                               class="form-input" placeholder="Повторите пароль" required>
+                               class="form-input"
+                               data-i18n-placeholder="confirmPh"
+                               placeholder="Повторите пароль" required>
                         <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
                         </svg>
-                        <button type="button" class="toggle-password" onclick="togglePassword('password_confirmation','eyeIcon2')">
+                        <button type="button" class="toggle-password" onclick="togglePassword('password_confirmation','eyeIcon2')" aria-label="Toggle password visibility">
                             <svg id="eyeIcon2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>
                             </svg>
@@ -403,11 +550,10 @@
                 </div>
             </div>
 
-            {{-- Кнопка --}}
             <button type="submit" class="submit-btn" id="submitBtn">
                 <span class="btn-text">
                     <span data-i18n="submitBtn">Создать компанию и войти</span>
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <svg class="btn-arrow" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
                     </svg>
                 </span>
@@ -421,79 +567,185 @@
             </p>
         </div>
     </div>
+
+    <footer class="page-footer">
+        <div class="footer-badges">
+            <div class="badge">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+                <span>SSL</span>
+            </div>
+            <div class="badge">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+                <span data-i18n="badgeSecurity">Защита</span>
+            </div>
+            <div class="badge">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/></svg>
+                <span data-i18n="badgeSign">ЭЦП</span>
+            </div>
+        </div>
+        <p class="copyright">© {{ date('Y') }} DocSign Ecosystem. <span data-i18n="rights">Все права защищены.</span></p>
+    </footer>
 </div>
 
 <script>
 (function() {
     'use strict';
 
-    // ===== Частицы =====
-    var particlesEl = document.getElementById('particles');
-    for (var i = 0; i < 30; i++) {
-        var p = document.createElement('div');
-        p.className = 'particle';
-        p.style.left = Math.random() * 100 + '%';
-        p.style.animationDuration = (Math.random() * 10 + 8) + 's';
-        p.style.animationDelay = (Math.random() * 10) + 's';
-        p.style.width = (Math.random() * 3 + 1) + 'px';
-        p.style.height = p.style.width;
-        p.style.opacity = Math.random() * 0.5 + 0.1;
-        particlesEl.appendChild(p);
+    /* ============ Частицы фона ============ */
+    var wrap = document.getElementById('particles');
+    for (var i = 0; i < 22; i++) {
+        var pt = document.createElement('div');
+        pt.className = 'particle';
+        pt.style.left = Math.random() * 100 + '%';
+        pt.style.animationDuration = (Math.random() * 12 + 10) + 's';
+        pt.style.animationDelay = (Math.random() * 12) + 's';
+        var sz = (Math.random() * 2 + 1) + 'px';
+        pt.style.width = sz; pt.style.height = sz;
+        pt.style.opacity = Math.random() * 0.4 + 0.1;
+        wrap.appendChild(pt);
     }
 
-    // ===== Переводы =====
+    /* ============ Переводы ============ */
     var translations = {
         ru: {
-            subtitle: 'Создание компании', sectionCompany: '🏢 Данные компании', companyNameLabel: 'Название компании *',
-            companyTypeLabel: 'Тип организации *', regionLabel: 'Область *', cityLabel: 'Город / Район *',
-            sectionUser: '👤 Данные администратора', nameLabel: 'Имя *', emailLabel: 'Email *',
-            passwordLabel: 'Пароль *', confirmLabel: 'Подтверждение *', roleLabel: 'Ваша роль',
-            roleAdmin: 'Администратор (автоматически)', submitBtn: 'Создать компанию и войти',
-            hasAccount: 'Уже есть аккаунт?', loginLink: 'Войти', passMismatch: 'Пароли не совпадают', selectCity: 'Выберите город / район'
+            subtitle: 'Создание компании',
+            sectionCompany: '🏢 Данные компании',
+            companyNameLabel: 'Название компании *',
+            companyNamePh: 'Например: Алиф Банк, Хукумат г. Худжанд',
+            companyTypeLabel: 'Тип организации *',
+            typePh: '-- Выберите тип организации --',
+            regionLabel: 'Область *',
+            regionPh: '-- Выберите область --',
+            cityLabel: 'Город / Район *',
+            cityFirstPh: '-- Сначала выберите область --',
+            cityPh: '-- Выберите город / район --',
+            sectionUser: '👤 Данные администратора',
+            nameLabel: 'Имя *',
+            namePh: 'Иван Иванов',
+            emailLabel: 'Email *',
+            passwordLabel: 'Пароль *',
+            passwordPh: 'Минимум 8 символов',
+            confirmLabel: 'Подтверждение *',
+            confirmPh: 'Повторите пароль',
+            roleLabel: 'Ваша роль',
+            roleAdmin: 'Администратор (автоматически)',
+            submitBtn: 'Создать компанию и войти',
+            hasAccount: 'Уже есть аккаунт?',
+            loginLink: 'Войти',
+            badgeSecurity: 'Защита',
+            badgeSign: 'ЭЦП',
+            rights: 'Все права защищены.',
+            passMismatch: 'Пароли не совпадают',
+            selectCity: 'Выберите город / район'
         },
         tj: {
-            subtitle: 'Сохтани ширкат', sectionCompany: '🏢 Маълумоти ширкат', companyNameLabel: 'Номи ширкат *',
-            companyTypeLabel: 'Намуди ташкилот *', regionLabel: 'Вилоят *', cityLabel: 'Шаҳр / Ноҳия *',
-            sectionUser: '👤 Маълумоти администратор', nameLabel: 'Ном *', emailLabel: 'Почтаи электронӣ *',
-            passwordLabel: 'Рамз *', confirmLabel: 'Тасдиқ *', roleLabel: 'Нақши шумо',
-            roleAdmin: 'Администратор (автоматикӣ)', submitBtn: 'Ширкат сохтан ва ворид шудан',
-            hasAccount: 'Ҳисоб доред?', loginLink: 'Ворид шудан', passMismatch: 'Рамзҳо мувофиқ нестанд', selectCity: 'Шаҳр / ноҳияро интихоб кунед'
+            subtitle: 'Сохтани ширкат',
+            sectionCompany: '🏢 Маълумоти ширкат',
+            companyNameLabel: 'Номи ширкат *',
+            companyNamePh: 'Масалан: Алиф Бонк, Ҳукумати ш. Хуҷанд',
+            companyTypeLabel: 'Намуди ташкилот *',
+            typePh: '-- Намуди ташкилотро интихоб кунед --',
+            regionLabel: 'Вилоят *',
+            regionPh: '-- Вилоятро интихоб кунед --',
+            cityLabel: 'Шаҳр / Ноҳия *',
+            cityFirstPh: '-- Аввал вилоятро интихоб кунед --',
+            cityPh: '-- Шаҳр / ноҳияро интихоб кунед --',
+            sectionUser: '👤 Маълумоти администратор',
+            nameLabel: 'Ном *',
+            namePh: 'Иван Иванов',
+            emailLabel: 'Email *',
+            passwordLabel: 'Рамз *',
+            passwordPh: 'Камаш 8 аломат',
+            confirmLabel: 'Тасдиқ *',
+            confirmPh: 'Рамзро такрор кунед',
+            roleLabel: 'Нақши шумо',
+            roleAdmin: 'Администратор (автоматикӣ)',
+            submitBtn: 'Ширкат сохтан ва ворид шудан',
+            hasAccount: 'Ҳисоб доред?',
+            loginLink: 'Ворид шудан',
+            badgeSecurity: 'Ҳифз',
+            badgeSign: 'ЭИИ',
+            rights: 'Ҳамаи ҳуқуқҳо ҳифз шудаанд.',
+            passMismatch: 'Рамзҳо мувофиқ нестанд',
+            selectCity: 'Шаҳр / ноҳияро интихоб кунед'
         },
         en: {
-            subtitle: 'Create Company', sectionCompany: '🏢 Company Details', companyNameLabel: 'Company Name *',
-            companyTypeLabel: 'Organization Type *', regionLabel: 'Region *', cityLabel: 'City / District *',
-            sectionUser: '👤 Admin Details', nameLabel: 'Full Name *', emailLabel: 'Email *',
-            passwordLabel: 'Password *', confirmLabel: 'Confirm *', roleLabel: 'Your Role',
-            roleAdmin: 'Administrator (automatic)', submitBtn: 'Create Company & Sign In',
-            hasAccount: 'Already have an account?', loginLink: 'Sign In', passMismatch: 'Passwords do not match', selectCity: 'Select city / district'
+            subtitle: 'Create Company',
+            sectionCompany: '🏢 Company Details',
+            companyNameLabel: 'Company Name *',
+            companyNamePh: 'e.g. Alif Bank, Khujand City Government',
+            companyTypeLabel: 'Organization Type *',
+            typePh: '-- Select organization type --',
+            regionLabel: 'Region *',
+            regionPh: '-- Select region --',
+            cityLabel: 'City / District *',
+            cityFirstPh: '-- Select a region first --',
+            cityPh: '-- Select city / district --',
+            sectionUser: '👤 Admin Details',
+            nameLabel: 'Full Name *',
+            namePh: 'John Doe',
+            emailLabel: 'Email *',
+            passwordLabel: 'Password *',
+            passwordPh: 'At least 8 characters',
+            confirmLabel: 'Confirm *',
+            confirmPh: 'Repeat the password',
+            roleLabel: 'Your Role',
+            roleAdmin: 'Administrator (automatic)',
+            submitBtn: 'Create Company & Sign In',
+            hasAccount: 'Already have an account?',
+            loginLink: 'Sign In',
+            badgeSecurity: 'Security',
+            badgeSign: 'EDS',
+            rights: 'All rights reserved.',
+            passMismatch: 'Passwords do not match',
+            selectCity: 'Please select a city / district'
         }
     };
 
     var currentLang = 'ru';
+
     window.switchLang = function(lang) {
         currentLang = lang;
         document.documentElement.lang = lang;
         var t = translations[lang];
+
         document.querySelectorAll('[data-i18n]').forEach(function(el) {
             var key = el.getAttribute('data-i18n');
             if (t[key]) el.textContent = t[key];
         });
+
+        document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el) {
+            var key = el.getAttribute('data-i18n-placeholder');
+            if (t[key]) el.placeholder = t[key];
+        });
+
+        /* обновляем плейсхолдер списка городов, если он уже заполнен */
+        if (citySelect.options.length > 0 && citySelect.options[0].value === '') {
+            citySelect.options[0].textContent = citySelect.disabled ? t.cityFirstPh : t.cityPh;
+        }
     };
 
-    // ===== Города из БД =====
+    /* ============ Города из БД ============ */
     var allCities = @json($cities);
     var regionSelect = document.getElementById('region_id');
     var citySelect = document.getElementById('city_id');
 
     function loadCities(regionId) {
+        var t = translations[currentLang];
         citySelect.innerHTML = '';
         if (!regionId) {
-            citySelect.innerHTML = '<option value="">-- Сначала выберите область --</option>';
+            var empty = document.createElement('option');
+            empty.value = '';
+            empty.textContent = t.cityFirstPh;
+            citySelect.appendChild(empty);
             citySelect.disabled = true;
             return;
         }
         citySelect.disabled = false;
-        citySelect.innerHTML = '<option value="">-- Выберите город / район --</option>';
+        var first = document.createElement('option');
+        first.value = '';
+        first.textContent = t.cityPh;
+        citySelect.appendChild(first);
         allCities.forEach(function(city) {
             if (String(city.region_id) === String(regionId)) {
                 var opt = document.createElement('option');
@@ -506,7 +758,7 @@
 
     regionSelect.addEventListener('change', function() { loadCities(this.value); });
 
-    // ===== Восстановление old() значений =====
+    /* восстановление old() значений */
     var oldRegion = '{{ old("region_id") }}';
     var oldCity = '{{ old("city_id") }}';
     if (oldRegion) {
@@ -515,7 +767,7 @@
         if (oldCity) { setTimeout(function() { citySelect.value = oldCity; }, 50); }
     }
 
-    // ===== Toggle password =====
+    /* ============ Показ пароля ============ */
     window.togglePassword = function(inputId, iconId) {
         var input = document.getElementById(inputId);
         var icon = document.getElementById(iconId);
@@ -528,7 +780,7 @@
         }
     };
 
-    // ===== Notification =====
+    /* ============ Уведомления ============ */
     function showNotification(message, type) {
         var notif = document.getElementById('notification');
         notif.textContent = message;
@@ -536,19 +788,34 @@
         setTimeout(function() { notif.classList.remove('show'); }, 3000);
     }
 
-    // ===== Submit =====
+    /* ============ Отправка формы ============ */
     window.handleSubmit = function(e) {
         var t = translations[currentLang];
         var pass = document.getElementById('password').value;
         var confirm = document.getElementById('password_confirmation').value;
 
-        if (pass !== confirm) { showNotification(t.passMismatch, 'error'); return false; }
-        if (!citySelect.value) { showNotification(t.selectCity, 'error'); return false; }
+        if (pass !== confirm) {
+            showNotification(t.passMismatch, 'error');
+            return false;
+        }
+        if (!citySelect.value) {
+            showNotification(t.selectCity, 'error');
+            return false;
+        }
 
         document.getElementById('submitBtn').classList.add('loading');
         return true;
     };
 
+    /* снятие ошибок при вводе */
+    document.querySelectorAll('.form-input').forEach(function(input) {
+        input.addEventListener('input', function() {
+            this.classList.remove('error');
+            document.getElementById('submitBtn').classList.remove('loading');
+        });
+    });
+
+    /* ошибки валидации Laravel */
     var errors = document.querySelectorAll('.error-message');
     if (errors.length > 0 && errors[0].textContent.trim()) {
         showNotification(errors[0].textContent.trim(), 'error');

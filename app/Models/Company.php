@@ -12,12 +12,12 @@ class Company extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
+       protected $fillable = [
         'slug',
         'name',
-        'company_number',  // ✅ ДОБАВЛЕНО: номер компании
+        'company_number',
         'type',
-        'level',           // ✅ ДОБАВЛЕНО: уровень в дереве
+        'level',
         'region_id',
         'city_id',
         'email',
@@ -26,13 +26,16 @@ class Company extends Model
         'owner_id',
         'owner_telegram_id',
         'address',
-        'parent_id',     
-          'work_start_time',
-    'late_tolerance_minutes',
-    'late_fine',
-    'absence_fine',  
-    'late_fine_per_minute',
-    'late_block_minutes', 'late_block_fine'
+        'parent_id',
+        
+        // Поля для штрафов и посещаемости
+        'work_start_time',
+        'late_tolerance_minutes',
+        'late_block_minutes',
+        'late_block_fine',
+        'late_fine',
+        'late_fine_per_minute',
+        'absence_fine',
     ];
 
     protected $hidden = ['password'];

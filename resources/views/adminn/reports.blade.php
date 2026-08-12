@@ -587,7 +587,19 @@
     @if (session('success'))
         <div class="att-alert"><i class="bi bi-check-circle-fill"></i>{{ session('success') }}</div>
     @endif
-
+@if ($errors->any())
+    <div class="att-alert" style="background: rgba(255,122,122,0.08); border-color: rgba(255,122,122,0.3); color: #ff7a7a;">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <div>
+            <strong>Ошибка сохранения:</strong>
+            <ul style="margin: 4px 0 0 16px; padding: 0;">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    </div>
+@endif
     {{-- ===== СТАТИСТИКА ===== --}}
     <div class="att-stats">
         <div class="att-stat st-total">
@@ -800,21 +812,24 @@
                         </div>
                     </div>
 
-                    <div class="att-card-actions">
-                        <a href="{{ route('users.show', $user->id) }}" class="att-act">
-                            <i class="bi bi-eye-fill"></i> <span data-i18n="profileBtn">Профиль</span>
-                        </a>
-                        @if (in_array($c->status, ['absent', 'late', 'waiting']))
-                            <form method="POST" action="{{ route('admin.reports.excuse') }}">
-                                @csrf
-                                <input type="hidden" name="user_id" value="{{ $user->id }}">
-                                <input type="hidden" name="date" value="{{ $date }}">
-                                <button type="submit" class="att-act excuse">
-                                    <i class="bi bi-shield-check"></i> <span data-i18n="excuseBtn">Я знал</span>
-                                </button>
-                            </form>
-                        @endif
-                    </div>
+                   <div class="att-card-actions">
+    <a href="{{ route('users.show', $user->id) }}" class="att-act">
+        <i class="bi bi-eye-fill"></i> <span data-i18n="profileBtn">Профиль</span>
+    </a>
+    <a href="{{ route('admin.reports.user', $user->id) }}?month={{ substr($date, 0, 7) }}" class="att-act">
+        <i class="bi bi-calendar3"></i> <span data-i18n="calendarBtn">Отчёт</span>
+    </a>
+    @if (in_array($c->status, ['absent', 'late', 'waiting']))
+        <form method="POST" action="{{ route('admin.reports.excuse') }}">
+            @csrf
+            <input type="hidden" name="user_id" value="{{ $user->id }}">
+            <input type="hidden" name="date" value="{{ $date }}">
+            <button type="submit" class="att-act excuse">
+                <i class="bi bi-shield-check"></i> <span data-i18n="excuseBtn">Я знал</span>
+            </button>
+        </form>
+    @endif
+</div>
                 </div>
             </div>
         @empty

@@ -14,7 +14,6 @@
         position: relative;
     }
 
-    /* Фоновые blob-ы */
     .edit-blob {
         position: absolute;
         border-radius: 50%;
@@ -24,660 +23,211 @@
         opacity: 0.35;
     }
 
-    .edit-blob-1 {
-        top: -120px;
-        left: -120px;
-        width: 500px;
-        height: 500px;
-        background: radial-gradient(circle, rgba(var(--glow), 0.35) 0%, transparent 70%);
-        animation: blobFloat 20s ease-in-out infinite;
+    .edit-blob-1 { top: -120px; left: -120px; width: 500px; height: 500px; background: radial-gradient(circle, rgba(var(--glow), 0.35) 0%, transparent 70%); animation: blobFloat 20s ease-in-out infinite; }
+    .edit-blob-2 { bottom: -120px; right: -120px; width: 600px; height: 600px; background: radial-gradient(circle, rgba(168, 85, 247, 0.28) 0%, transparent 70%); animation: blobFloat 25s ease-in-out infinite reverse; }
+    .edit-blob-3 { top: 40%; left: 60%; width: 400px; height: 400px; background: radial-gradient(circle, rgba(236, 72, 153, 0.22) 0%, transparent 70%); animation: blobFloat3 30s ease-in-out infinite; }
+
+    @keyframes blobFloat { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(30px, -30px); } }
+    @keyframes blobFloat3 { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(-30px, 30px); } }
+
+    .edit-wrap { max-width: 720px; margin: 0 auto; position: relative; z-index: 1; }
+
+    .edit-topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 22px; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); position: relative; }
+    .edit-topbar::before { content: ""; position: absolute; inset: -1px; border-radius: var(--radius); padding: 1px; background: linear-gradient(135deg, rgba(var(--glow),0.4), transparent 40%, transparent 60%, rgba(var(--glow),0.2)); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; opacity: 0.6; pointer-events: none; }
+
+    .edit-topbar-left { display: flex; align-items: center; gap: 14px; min-width: 0; flex: 1; }
+    .edit-topbar-icon { width: 48px; height: 48px; border-radius: 13px; background: linear-gradient(135deg, rgba(var(--glow), 0.95), rgba(var(--glow), 0.4)); display: grid; place-items: center; flex-shrink: 0; box-shadow: 0 0 24px rgba(var(--glow), 0.5), inset 0 0 12px rgba(255,255,255,0.2); }
+    .edit-topbar-icon svg { width: 24px; height: 24px; color: #0a0d14; }
+    .edit-topbar-title { font-size: 20px; font-weight: 800; color: var(--text); letter-spacing: -0.3px; line-height: 1.2; margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .edit-topbar-title .user-name-accent { color: rgba(var(--glow), 1); text-shadow: 0 0 14px rgba(var(--glow), 0.4); }
+    .edit-topbar-subtitle { font-size: 12px; color: var(--muted); font-weight: 600; margin-top: 3px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .meta-pill { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 7px; background: rgba(var(--glow), 0.12); border: 1px solid rgba(var(--glow), 0.25); color: rgba(var(--glow), 1); font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; white-space: nowrap; }
+    .meta-pill svg { flex-shrink: 0; }
+
+    .btn-back { display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; background: rgba(255,255,255,0.04); color: var(--muted); border: 1px solid var(--line); border-radius: 10px; font-size: 12px; font-weight: 700; text-decoration: none; text-transform: uppercase; letter-spacing: 0.8px; transition: all 0.25s ease; white-space: nowrap; flex-shrink: 0; }
+    .btn-back:hover { color: rgba(var(--glow), 1); border-color: rgba(var(--glow), 0.5); background: rgba(var(--glow), 0.08); box-shadow: 0 0 18px rgba(var(--glow), 0.25); transform: translateX(-2px); }
+    .btn-back svg { width: 14px; height: 14px; }
+
+    .form-card { background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)); border: 1px solid var(--line); border-radius: var(--radius); padding: 36px 32px; position: relative; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+    .form-card::before { content: ""; position: absolute; inset: -1px; border-radius: var(--radius); padding: 1px; background: linear-gradient(135deg, rgba(var(--glow),0.5), transparent 40%, transparent 60%, rgba(var(--glow),0.25)); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; opacity: 0.7; pointer-events: none; }
+
+    .form-section { margin-bottom: 28px; }
+    .form-section:last-child { margin-bottom: 0; }
+    .section-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted); margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+    .section-title::before { content: ""; width: 4px; height: 14px; border-radius: 2px; background: linear-gradient(180deg, rgba(var(--glow), 1), rgba(var(--glow), 0.4)); box-shadow: 0 0 10px rgba(var(--glow), 0.6); flex-shrink: 0; }
+
+    .avatar-block { display: flex; align-items: center; gap: 22px; padding: 22px; background: rgba(255,255,255,0.03); border: 1px solid var(--line); border-radius: 14px; transition: all 0.3s ease; position: relative; overflow: hidden; }
+    .avatar-block::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(var(--glow), 0.5), transparent); opacity: 0; transition: opacity 0.3s ease; }
+    .avatar-block:hover::before { opacity: 1; }
+    .avatar-block:hover { border-color: rgba(var(--glow), 0.3); background: rgba(255,255,255,0.05); }
+
+    .avatar-box { width: 110px; height: 110px; border-radius: 16px; overflow: hidden; position: relative; flex-shrink: 0; background: linear-gradient(135deg, rgba(var(--glow), 0.4), rgba(168, 85, 247, 0.3)); display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 24px rgba(var(--glow), 0.3), inset 0 0 20px rgba(255,255,255,0.1); border: 1px solid rgba(var(--glow), 0.3); }
+    .avatar-box img { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; }
+    .avatar-letter { font-size: 46px; font-weight: 900; font-style: italic; color: rgba(255,255,255,0.9); text-shadow: 0 4px 16px rgba(0,0,0,0.5); }
+
+    .avatar-overlay { position: absolute; inset: 0; background: rgba(10, 13, 20, 0.75); backdrop-filter: blur(3px); opacity: 0; transition: opacity 0.25s ease; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 2; }
+    .avatar-box:hover .avatar-overlay { opacity: 1; }
+    .avatar-overlay-content { text-align: center; color: #ffffff; }
+    .avatar-overlay-content svg { width: 28px; height: 28px; margin: 0 auto 4px; display: block; color: rgba(var(--glow), 1); filter: drop-shadow(0 0 8px rgba(var(--glow), 0.6)); }
+    .avatar-overlay-content span { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
+
+    .avatar-info { flex: 1; min-width: 0; }
+    .avatar-info h3 { font-size: 15px; font-weight: 800; color: var(--text); margin: 0 0 4px; letter-spacing: -0.2px; }
+    .avatar-info p { font-size: 12px; color: var(--muted); margin: 0; font-weight: 500; }
+    .avatar-actions { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+
+    .btn-upload { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; background: linear-gradient(180deg, rgba(var(--glow), 0.95), rgba(var(--glow), 0.65)); color: #0a0d14; border-radius: 9px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; cursor: pointer; transition: all 0.25s ease; box-shadow: 0 4px 14px rgba(var(--glow), 0.35), inset 0 1px 0 rgba(255,255,255,0.3); border: none; }
+    .btn-upload:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(var(--glow), 0.5); filter: brightness(1.08); }
+    .btn-upload svg { width: 13px; height: 13px; }
+
+    .btn-remove { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; background: rgba(255, 99, 99, 0.08); color: #ff6363; border: 1px solid rgba(255, 99, 99, 0.3); border-radius: 9px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; cursor: pointer; transition: all 0.25s ease; }
+    .btn-remove:hover { background: rgba(255, 99, 99, 0.15); border-color: rgba(255, 99, 99, 0.5); box-shadow: 0 0 18px rgba(255, 99, 99, 0.3); }
+    .btn-remove svg { width: 13px; height: 13px; }
+    .avatar-file-name { font-size: 12px; color: rgba(var(--glow), 1); margin-top: 10px; font-weight: 700; word-break: break-word; }
+
+    .field-group { margin-bottom: 18px; }
+    .field-group:last-child { margin-bottom: 0; }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+    .field-label { display: block; text-transform: uppercase; letter-spacing: 1px; font-size: 11px; font-weight: 800; color: var(--muted); margin-bottom: 8px; }
+    .field-label .required { color: rgba(var(--glow), 1); margin-left: 2px; }
+    .field-label .hint { color: var(--muted); text-transform: none; font-weight: 500; letter-spacing: 0; font-size: 11px; margin-left: 4px; opacity: 0.7; }
+
+    .input-custom { width: 100%; background: rgba(255,255,255,0.04) !important; border: 1px solid var(--line) !important; color: var(--text) !important; font-size: 14px !important; font-weight: 500; padding: 13px 16px !important; border-radius: 10px !important; transition: all 0.25s ease; font-family: 'Inter', sans-serif; box-sizing: border-box; }
+    .input-custom:focus { border-color: rgba(var(--glow), 0.6) !important; background: rgba(var(--glow), 0.06) !important; box-shadow: 0 0 0 3px rgba(var(--glow), 0.15), 0 0 20px rgba(var(--glow), 0.2) !important; outline: none !important; }
+    .input-custom::placeholder { color: var(--muted) !important; opacity: 0.6; }
+    .input-custom option { background: var(--bg-0, #06070b); color: var(--text); }
+    select.input-custom { appearance: none; cursor: pointer; color-scheme: dark; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%238892a6' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E") !important; background-repeat: no-repeat !important; background-position: right 16px center !important; padding-right: 40px !important; }
+
+    .note-text { font-size: 11px; color: var(--muted); margin-top: 8px; font-weight: 500; display: flex; align-items: center; gap: 6px; }
+    .note-text::before { content: "ⓘ"; color: rgba(var(--glow), 0.8); font-size: 12px; }
+
+    .readonly-box { background: rgba(255,255,255,0.03); border: 1px dashed rgba(var(--glow), 0.25); border-radius: 10px; padding: 14px 16px; font-size: 13px; font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .readonly-box .lock-icon { width: 28px; height: 28px; border-radius: 8px; background: rgba(var(--glow), 0.12); border: 1px solid rgba(var(--glow), 0.25); display: grid; place-items: center; flex-shrink: 0; }
+    .readonly-box .lock-icon svg { width: 14px; height: 14px; color: rgba(var(--glow), 1); }
+    .readonly-box .meta-item { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; background: rgba(var(--glow), 0.08); border-radius: 7px; color: rgba(var(--glow), 1); font-size: 12px; font-weight: 700; }
+
+    .password-wrap { position: relative; }
+    .password-toggle { position: absolute; top: 50%; right: 12px; transform: translateY(-50%); background: transparent; border: none; color: var(--muted); cursor: pointer; padding: 6px; border-radius: 6px; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; }
+    .password-toggle:hover { color: rgba(var(--glow), 1); background: rgba(var(--glow), 0.1); }
+    .password-toggle svg { width: 18px; height: 18px; }
+
+    .submit-wrap { padding-top: 24px; margin-top: 28px; border-top: 1px solid var(--line); display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+    .btn-submit { display: inline-flex; align-items: center; gap: 10px; padding: 14px 36px; background: linear-gradient(180deg, rgba(var(--glow), 0.95), rgba(var(--glow), 0.65)); color: #0a0d14; border-radius: 11px; font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.2px; transition: all 0.3s ease; box-shadow: 0 8px 28px rgba(var(--glow), 0.4), inset 0 1px 0 rgba(255,255,255,0.3); border: 1px solid transparent; cursor: pointer; white-space: nowrap; }
+    .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 14px 40px rgba(var(--glow), 0.6); filter: brightness(1.08); }
+    .btn-submit svg { width: 18px; height: 18px; }
+
+    .btn-delete { display: inline-flex; align-items: center; gap: 10px; padding: 14px 28px; background: rgba(255, 99, 99, 0.08); color: #ff6363; border: 1px solid rgba(255, 99, 99, 0.3); border-radius: 11px; font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.2px; transition: all 0.3s ease; cursor: pointer; white-space: nowrap; }
+    .btn-delete:hover { background: rgba(255, 99, 99, 0.15); border-color: rgba(255, 99, 99, 0.6); box-shadow: 0 8px 28px rgba(255, 99, 99, 0.35); transform: translateY(-2px); }
+    .btn-delete svg { width: 18px; height: 18px; }
+
+    /* ===== ИЗ CREATE: РОЛЬ-ТОГГЛ ===== */
+    .role-toggle { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+    .role-toggle-btn {
+        display: flex; align-items: center; justify-content: center; gap: 10px;
+        padding: 16px 12px;
+        border-radius: 12px;
+        border: 2px solid var(--line);
+        background: rgba(255,255,255,0.03);
+        cursor: pointer;
+        transition: all 0.25s ease;
+        user-select: none;
+        text-align: center;
+    }
+    .role-toggle-btn:hover { border-color: rgba(var(--glow), 0.4); background: rgba(255,255,255,0.05); }
+    .role-toggle-btn.active { border-color: rgba(var(--glow), 0.8); background: rgba(var(--glow), 0.12); box-shadow: 0 0 20px rgba(var(--glow), 0.25); }
+    .role-toggle-btn .rt-icon { font-size: 22px; line-height: 1; }
+    .role-toggle-btn .rt-label { font-size: 13px; font-weight: 800; color: var(--text); }
+    .role-toggle-btn .rt-desc { font-size: 10px; color: var(--muted); font-weight: 600; margin-top: 2px; }
+    .role-toggle-btn.active .rt-label { color: rgba(var(--glow), 1); }
+
+    .role-custom-input { display: none; margin-top: 12px; }
+    .role-custom-input.visible { display: block; }
+    .role-custom-wrap { position: relative; }
+    .role-custom-wrap .input-custom { padding-left: 36px !important; }
+    .role-custom-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: rgba(var(--glow), 0.7); font-size: 14px; pointer-events: none; }
+
+    /* ===== ИЗ CREATE: ЗАРПЛАТА ===== */
+    .salary-wrap { position: relative; }
+    .salary-icon {
+        position: absolute;
+        left: 14px; top: 50%; transform: translateY(-50%);
+        color: rgba(var(--glow), 0.9);
+        font-size: 18px;
+        pointer-events: none;
+        z-index: 2;
+        filter: drop-shadow(0 0 8px rgba(var(--glow), 0.4));
+    }
+    .salary-wrap .input-custom {
+        padding-left: 44px !important;
+        padding-right: 60px !important;
+        font-weight: 700 !important;
+        letter-spacing: 0.3px;
+    }
+    .salary-suffix {
+        position: absolute;
+        right: 16px; top: 50%; transform: translateY(-50%);
+        font-size: 11px; font-weight: 800;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        pointer-events: none;
+        background: rgba(255,255,255,0.05);
+        padding: 4px 8px;
+        border-radius: 6px;
+        border: 1px solid var(--line);
     }
 
-    .edit-blob-2 {
-        bottom: -120px;
-        right: -120px;
-        width: 600px;
-        height: 600px;
-        background: radial-gradient(circle, rgba(168, 85, 247, 0.28) 0%, transparent 70%);
-        animation: blobFloat 25s ease-in-out infinite reverse;
-    }
-
-    .edit-blob-3 {
-        top: 40%;
-        left: 60%;
-        width: 400px;
-        height: 400px;
-        background: radial-gradient(circle, rgba(236, 72, 153, 0.22) 0%, transparent 70%);
-        animation: blobFloat3 30s ease-in-out infinite;
-    }
-
-    @keyframes blobFloat {
-        0%, 100% { transform: translate(0, 0); }
-        50% { transform: translate(30px, -30px); }
-    }
-
-    @keyframes blobFloat3 {
-        0%, 100% { transform: translate(0, 0); }
-        50% { transform: translate(-30px, 30px); }
-    }
-
-    .edit-wrap {
-        max-width: 720px;
-        margin: 0 auto;
-        position: relative;
-        z-index: 1;
-    }
-
-    /* === TOP BAR === */
-    .edit-topbar {
+    /* ===== ИЗ CREATE: TOGGLE FACE SCAN ===== */
+    .toggle-row {
         display: flex;
         align-items: center;
         justify-content: space-between;
         gap: 16px;
-        flex-wrap: wrap;
-        margin-bottom: 24px;
-        background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
-        border: 1px solid var(--line);
-        border-radius: var(--radius);
-        padding: 18px 22px;
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        position: relative;
-    }
-
-    .edit-topbar::before {
-        content: "";
-        position: absolute;
-        inset: -1px;
-        border-radius: var(--radius);
-        padding: 1px;
-        background: linear-gradient(135deg, rgba(var(--glow),0.4), transparent 40%, transparent 60%, rgba(var(--glow),0.2));
-        -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-        -webkit-mask-composite: xor;
-        mask-composite: exclude;
-        opacity: 0.6;
-        pointer-events: none;
-    }
-
-    .edit-topbar-left {
-        display: flex;
-        align-items: center;
-        gap: 14px;
-        min-width: 0;
-        flex: 1;
-    }
-
-    .edit-topbar-icon {
-        width: 48px;
-        height: 48px;
-        border-radius: 13px;
-        background: linear-gradient(135deg, rgba(var(--glow), 0.95), rgba(var(--glow), 0.4));
-        display: grid;
-        place-items: center;
-        flex-shrink: 0;
-        box-shadow: 0 0 24px rgba(var(--glow), 0.5), inset 0 0 12px rgba(255,255,255,0.2);
-    }
-
-    .edit-topbar-icon svg {
-        width: 24px;
-        height: 24px;
-        color: #0a0d14;
-    }
-
-    .edit-topbar-title {
-        font-size: 20px;
-        font-weight: 800;
-        color: var(--text);
-        letter-spacing: -0.3px;
-        line-height: 1.2;
-        margin: 0;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-
-    .edit-topbar-title .user-name-accent {
-        color: rgba(var(--glow), 1);
-        text-shadow: 0 0 14px rgba(var(--glow), 0.4);
-    }
-
-    .edit-topbar-subtitle {
-        font-size: 12px;
-        color: var(--muted);
-        font-weight: 600;
-        margin-top: 3px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        flex-wrap: wrap;
-    }
-
-    .edit-topbar-subtitle .meta-pill {
-        display: inline-flex;
-        align-items: center;
-        gap: 5px;
-        padding: 3px 9px;
-        border-radius: 7px;
-        background: rgba(var(--glow), 0.12);
-        border: 1px solid rgba(var(--glow), 0.25);
-        color: rgba(var(--glow), 1);
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 11px;
-        font-weight: 700;
-        white-space: nowrap;
-    }
-
-    .meta-pill svg {
-        flex-shrink: 0;
-    }
-
-    .btn-back {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 10px 18px;
-        background: rgba(255,255,255,0.04);
-        color: var(--muted);
-        border: 1px solid var(--line);
-        border-radius: 10px;
-        font-size: 12px;
-        font-weight: 700;
-        text-decoration: none;
-        text-transform: uppercase;
-        letter-spacing: 0.8px;
-        transition: all 0.25s ease;
-        white-space: nowrap;
-        flex-shrink: 0;
-    }
-
-    .btn-back:hover {
-        color: rgba(var(--glow), 1);
-        border-color: rgba(var(--glow), 0.5);
-        background: rgba(var(--glow), 0.08);
-        box-shadow: 0 0 18px rgba(var(--glow), 0.25);
-        transform: translateX(-2px);
-    }
-
-    .btn-back svg {
-        width: 14px;
-        height: 14px;
-    }
-
-    /* === FORM CARD === */
-    .form-card {
-        background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
-        border: 1px solid var(--line);
-        border-radius: var(--radius);
-        padding: 36px 32px;
-        position: relative;
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-    }
-
-    .form-card::before {
-        content: "";
-        position: absolute;
-        inset: -1px;
-        border-radius: var(--radius);
-        padding: 1px;
-        background: linear-gradient(135deg, rgba(var(--glow),0.5), transparent 40%, transparent 60%, rgba(var(--glow),0.25));
-        -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-        -webkit-mask-composite: xor;
-        mask-composite: exclude;
-        opacity: 0.7;
-        pointer-events: none;
-    }
-
-    .form-section {
-        margin-bottom: 28px;
-    }
-
-    .form-section:last-child {
-        margin-bottom: 0;
-    }
-
-    .section-title {
-        font-size: 11px;
-        font-weight: 800;
-        text-transform: uppercase;
-        letter-spacing: 1.5px;
-        color: var(--muted);
-        margin-bottom: 16px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-
-    .section-title::before {
-        content: "";
-        width: 4px;
-        height: 14px;
-        border-radius: 2px;
-        background: linear-gradient(180deg, rgba(var(--glow), 1), rgba(var(--glow), 0.4));
-        box-shadow: 0 0 10px rgba(var(--glow), 0.6);
-        flex-shrink: 0;
-    }
-
-    /* === AVATAR BLOCK === */
-    .avatar-block {
-        display: flex;
-        align-items: center;
-        gap: 22px;
-        padding: 22px;
+        padding: 18px 20px;
         background: rgba(255,255,255,0.03);
         border: 1px solid var(--line);
-        border-radius: 14px;
+        border-radius: 12px;
         transition: all 0.3s ease;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .avatar-block::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 1px;
-        background: linear-gradient(90deg, transparent, rgba(var(--glow), 0.5), transparent);
-        opacity: 0;
-        transition: opacity 0.3s ease;
-    }
-
-    .avatar-block:hover::before {
-        opacity: 1;
-    }
-
-    .avatar-block:hover {
-        border-color: rgba(var(--glow), 0.3);
-        background: rgba(255,255,255,0.05);
-    }
-
-    .avatar-box {
-        width: 110px;
-        height: 110px;
-        border-radius: 16px;
-        overflow: hidden;
-        position: relative;
-        flex-shrink: 0;
-        background: linear-gradient(135deg, rgba(var(--glow), 0.4), rgba(168, 85, 247, 0.3));
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 8px 24px rgba(var(--glow), 0.3), inset 0 0 20px rgba(255,255,255,0.1);
-        border: 1px solid rgba(var(--glow), 0.3);
-    }
-
-    .avatar-box img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        position: absolute;
-        inset: 0;
-    }
-
-    .avatar-letter {
-        font-size: 46px;
-        font-weight: 900;
-        font-style: italic;
-        color: rgba(255,255,255,0.9);
-        text-shadow: 0 4px 16px rgba(0,0,0,0.5);
-    }
-
-    .avatar-overlay {
-        position: absolute;
-        inset: 0;
-        background: rgba(10, 13, 20, 0.75);
-        backdrop-filter: blur(3px);
-        opacity: 0;
-        transition: opacity 0.25s ease;
-        display: flex;
-        align-items: center;
-        justify-content: center;
         cursor: pointer;
-        z-index: 2;
     }
+    .toggle-row:hover { border-color: rgba(var(--glow), 0.35); background: rgba(var(--glow), 0.05); }
+    .toggle-row.active { border-color: rgba(var(--glow), 0.6); background: rgba(var(--glow), 0.1); box-shadow: 0 0 24px rgba(var(--glow), 0.18); }
+    .toggle-left { display: flex; align-items: center; gap: 14px; flex: 1; min-width: 0; }
+    .toggle-icon-box { width: 40px; height: 40px; border-radius: 11px; background: linear-gradient(135deg, rgba(var(--glow), 0.25), rgba(168, 85, 247, 0.18)); border: 1px solid rgba(var(--glow), 0.3); display: grid; place-items: center; flex-shrink: 0; color: rgba(var(--glow), 1); font-size: 20px; }
+    .toggle-row.active .toggle-icon-box { background: linear-gradient(135deg, rgba(var(--glow), 0.95), rgba(var(--glow), 0.55)); color: #0a0d14; box-shadow: 0 0 20px rgba(var(--glow), 0.5); }
+    .toggle-title { font-size: 14px; font-weight: 800; color: var(--text); margin: 0; line-height: 1.2; }
+    .toggle-row.active .toggle-title { color: rgba(var(--glow), 1); }
+    .toggle-desc { font-size: 11px; color: var(--muted); font-weight: 500; margin-top: 3px; }
+    .toggle-switch { position: relative; width: 52px; height: 28px; flex-shrink: 0; }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; position: absolute; }
+    .toggle-slider { position: absolute; inset: 0; background: rgba(255,255,255,0.08); border: 1px solid var(--line); border-radius: 50px; transition: all 0.3s ease; cursor: pointer; }
+    .toggle-slider::before { content: ""; position: absolute; height: 20px; width: 20px; left: 3px; top: 50%; transform: translateY(-50%); background: var(--muted); border-radius: 50%; transition: all 0.3s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+    .toggle-switch input:checked + .toggle-slider { background: linear-gradient(135deg, rgba(var(--glow), 0.85), rgba(var(--glow), 0.55)); border-color: rgba(var(--glow), 0.9); box-shadow: 0 0 14px rgba(var(--glow), 0.4); }
+    .toggle-switch input:checked + .toggle-slider::before { transform: translateY(-50%) translateX(24px); background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.3), 0 0 0 2px rgba(var(--glow), 0.3); }
 
-    .avatar-box:hover .avatar-overlay {
-        opacity: 1;
-    }
+    /* ===== ИЗ CREATE: INFO BANNER ===== */
+    .info-banner { background: rgba(var(--glow), 0.08); border: 1px solid rgba(var(--glow), 0.25); border-radius: 12px; padding: 16px 18px; display: flex; align-items: flex-start; gap: 14px; position: relative; overflow: hidden; }
+    .info-banner::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: linear-gradient(180deg, rgba(var(--glow), 1), rgba(var(--glow), 0.4)); }
+    .info-banner-icon { width: 36px; height: 36px; border-radius: 10px; background: rgba(var(--glow), 0.18); border: 1px solid rgba(var(--glow), 0.35); display: grid; place-items: center; flex-shrink: 0; }
+    .info-banner-icon svg { width: 18px; height: 18px; color: rgba(var(--glow), 1); }
+    .info-banner-text { font-size: 13px; color: var(--text); font-weight: 500; line-height: 1.5; }
+    .info-banner-text strong { color: rgba(var(--glow), 1); font-weight: 700; }
 
-    .avatar-overlay-content {
-        text-align: center;
-        color: #ffffff;
-    }
-
-    .avatar-overlay-content svg {
-        width: 28px;
-        height: 28px;
-        margin: 0 auto 4px;
-        display: block;
-        color: rgba(var(--glow), 1);
-        filter: drop-shadow(0 0 8px rgba(var(--glow), 0.6));
-    }
-
-    .avatar-overlay-content span {
-        font-size: 10px;
-        font-weight: 800;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-    }
-
-    .avatar-info {
-        flex: 1;
-        min-width: 0;
-    }
-
-    .avatar-info h3 {
-        font-size: 15px;
-        font-weight: 800;
-        color: var(--text);
-        margin: 0 0 4px;
-        letter-spacing: -0.2px;
-    }
-
-    .avatar-info p {
-        font-size: 12px;
-        color: var(--muted);
-        margin: 0;
-        font-weight: 500;
-    }
-
-    .avatar-actions {
-        display: flex;
-        gap: 8px;
-        margin-top: 12px;
-        flex-wrap: wrap;
-    }
-
-    .btn-upload {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 8px 14px;
-        background: linear-gradient(180deg, rgba(var(--glow), 0.95), rgba(var(--glow), 0.65));
-        color: #0a0d14;
-        border-radius: 9px;
-        font-size: 11px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.8px;
-        cursor: pointer;
-        transition: all 0.25s ease;
-        box-shadow: 0 4px 14px rgba(var(--glow), 0.35), inset 0 1px 0 rgba(255,255,255,0.3);
-        border: none;
-    }
-
-    .btn-upload:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 8px 20px rgba(var(--glow), 0.5);
-        filter: brightness(1.08);
-    }
-
-    .btn-upload svg {
-        width: 13px;
-        height: 13px;
-    }
-
-    .btn-remove {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 8px 14px;
-        background: rgba(255, 99, 99, 0.08);
-        color: #ff6363;
-        border: 1px solid rgba(255, 99, 99, 0.3);
-        border-radius: 9px;
-        font-size: 11px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.8px;
-        cursor: pointer;
-        transition: all 0.25s ease;
-    }
-
-    .btn-remove:hover {
-        background: rgba(255, 99, 99, 0.15);
-        border-color: rgba(255, 99, 99, 0.5);
-        box-shadow: 0 0 18px rgba(255, 99, 99, 0.3);
-    }
-
-    .btn-remove svg {
-        width: 13px;
-        height: 13px;
-    }
-
-    .avatar-file-name {
-        font-size: 12px;
-        color: rgba(var(--glow), 1);
-        margin-top: 10px;
-        font-weight: 700;
-        word-break: break-word;
-    }
-
-    /* === FIELDS === */
-    .field-group {
-        margin-bottom: 18px;
-    }
-
-    .field-group:last-child {
-        margin-bottom: 0;
-    }
-
-    .field-row {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 16px;
-    }
-
-    .field-label {
-        display: block;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        font-size: 11px;
-        font-weight: 800;
-        color: var(--muted);
-        margin-bottom: 8px;
-    }
-
-    .field-label .required {
-        color: rgba(var(--glow), 1);
-        margin-left: 2px;
-    }
-
-    .field-label .hint {
-        color: var(--muted);
-        text-transform: none;
-        font-weight: 500;
-        letter-spacing: 0;
-        font-size: 11px;
-        margin-left: 4px;
-        opacity: 0.7;
-    }
-
-    .input-custom {
-        width: 100%;
-        background: rgba(255,255,255,0.04) !important;
-        border: 1px solid var(--line) !important;
-        color: var(--text) !important;
-        font-size: 14px !important;
-        font-weight: 500;
-        padding: 13px 16px !important;
-        border-radius: 10px !important;
-        transition: all 0.25s ease;
-        font-family: 'Inter', sans-serif;
-        box-sizing: border-box;
-    }
-
-    .input-custom:focus {
-        border-color: rgba(var(--glow), 0.6) !important;
-        background: rgba(var(--glow), 0.06) !important;
-        box-shadow: 0 0 0 3px rgba(var(--glow), 0.15), 0 0 20px rgba(var(--glow), 0.2) !important;
-        outline: none !important;
-    }
-
-    .input-custom::placeholder {
-        color: var(--muted) !important;
-        opacity: 0.6;
-    }
-
-    .input-custom option {
-        background: var(--bg-0, #06070b);
-        color: var(--text);
-    }
-
-    /* Readonly box */
-    .readonly-box {
-        background: rgba(255,255,255,0.03);
-        border: 1px dashed rgba(var(--glow), 0.25);
+    /* ===== ИЗ CREATE: ВАЛИДАЦИЯ ===== */
+    .validation-errors {
+        background: rgba(255, 80, 80, 0.1);
+        border: 1px solid rgba(255, 80, 80, 0.3);
+        color: #ffcccc;
+        padding: 15px;
         border-radius: 10px;
-        padding: 14px 16px;
+        margin-bottom: 20px;
         font-size: 13px;
-        font-weight: 600;
-        color: var(--text);
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        flex-wrap: wrap;
     }
+    .validation-errors ul { margin: 5px 0 0 20px; padding: 0; }
 
-    .readonly-box .lock-icon {
-        width: 28px;
-        height: 28px;
-        border-radius: 8px;
-        background: rgba(var(--glow), 0.12);
-        border: 1px solid rgba(var(--glow), 0.25);
-        display: grid;
-        place-items: center;
-        flex-shrink: 0;
-    }
-
-    .readonly-box .lock-icon svg {
-        width: 14px;
-        height: 14px;
-        color: rgba(var(--glow), 1);
-    }
-
-    .readonly-box .meta-item {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 4px 10px;
-        background: rgba(var(--glow), 0.08);
-        border-radius: 7px;
-        color: rgba(var(--glow), 1);
-        font-size: 12px;
-        font-weight: 700;
-    }
-
-    /* Password wrapper */
-    .password-wrap {
-        position: relative;
-    }
-
-    .password-toggle {
-        position: absolute;
-        top: 50%;
-        right: 12px;
-        transform: translateY(-50%);
-        background: transparent;
-        border: none;
-        color: var(--muted);
-        cursor: pointer;
-        padding: 6px;
-        border-radius: 6px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.2s ease;
-    }
-
-    .password-toggle:hover {
-        color: rgba(var(--glow), 1);
-        background: rgba(var(--glow), 0.1);
-    }
-
-    .password-toggle svg {
-        width: 18px;
-        height: 18px;
-    }
-
-    /* === SUBMIT === */
-    .submit-wrap {
-        padding-top: 24px;
-        margin-top: 28px;
-        border-top: 1px solid var(--line);
-        display: flex;
-        gap: 12px;
-        justify-content: center;
-        flex-wrap: wrap;
-    }
-
-    .btn-submit {
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        padding: 14px 36px;
-        background: linear-gradient(180deg, rgba(var(--glow), 0.95), rgba(var(--glow), 0.65));
-        color: #0a0d14;
-        border-radius: 11px;
-        font-size: 13px;
-        font-weight: 800;
-        text-transform: uppercase;
-        letter-spacing: 1.2px;
-        transition: all 0.3s ease;
-        box-shadow: 0 8px 28px rgba(var(--glow), 0.4), inset 0 1px 0 rgba(255,255,255,0.3);
-        border: 1px solid transparent;
-        cursor: pointer;
-        white-space: nowrap;
-    }
-
-    .btn-submit:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 14px 40px rgba(var(--glow), 0.6);
-        filter: brightness(1.08);
-    }
-
-    .btn-submit svg {
-        width: 18px;
-        height: 18px;
-    }
-
-    .btn-delete {
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        padding: 14px 28px;
-        background: rgba(255, 99, 99, 0.08);
-        color: #ff6363;
-        border: 1px solid rgba(255, 99, 99, 0.3);
-        border-radius: 11px;
-        font-size: 13px;
-        font-weight: 800;
-        text-transform: uppercase;
-        letter-spacing: 1.2px;
-        transition: all 0.3s ease;
-        cursor: pointer;
-        white-space: nowrap;
-    }
-
-    .btn-delete:hover {
-        background: rgba(255, 99, 99, 0.15);
-        border-color: rgba(255, 99, 99, 0.6);
-        box-shadow: 0 8px 28px rgba(255, 99, 99, 0.35);
-        transform: translateY(-2px);
-    }
-
-    .btn-delete svg {
-        width: 18px;
-        height: 18px;
-    }
-
-    /* ============================================ */
-    /* === ПОЛНАЯ АДАПТИВНОСТЬ === */
-    /* ============================================ */
-
-    /* Маленькие десктопы (до 1200px) */
+    /* Адаптив */
     @media (max-width: 1200px) {
         .edit-user-page { padding: 36px 22px 55px; }
         .edit-topbar { margin-bottom: 22px; padding: 17px 20px; gap: 14px; }
@@ -687,263 +237,46 @@
         .edit-topbar-subtitle { font-size: 11px; gap: 7px; }
         .meta-pill { padding: 3px 8px !important; font-size: 10px !important; }
         .form-card { padding: 32px 28px; }
-        .form-section { margin-bottom: 26px; }
-        .section-title { font-size: 10px; margin-bottom: 15px; }
         .avatar-block { padding: 20px; gap: 20px; }
         .avatar-box { width: 105px; height: 105px; }
         .avatar-letter { font-size: 44px; }
-        .avatar-overlay-content svg { width: 26px; height: 26px; }
-        .avatar-info h3 { font-size: 14px; }
-        .avatar-info p { font-size: 11px; }
-        .btn-upload, .btn-remove { padding: 7px 13px; font-size: 10px; }
         .input-custom { padding: 12px 15px !important; font-size: 13px !important; }
-        .readonly-box { padding: 13px 15px; font-size: 12px; }
         .btn-submit { padding: 13px 34px; font-size: 12px; }
         .btn-delete { padding: 13px 26px; font-size: 12px; }
     }
 
-    /* Планшеты (до 992px) */
-    @media (max-width: 992px) {
-        .edit-user-page { padding: 32px 20px 50px; }
-        .edit-topbar { margin-bottom: 20px; padding: 16px 18px; gap: 12px; border-radius: 13px; }
-        .edit-topbar-left { gap: 12px; }
-        .edit-topbar-icon { width: 44px; height: 44px; border-radius: 12px; }
-        .edit-topbar-icon svg { width: 22px; height: 22px; }
-        .edit-topbar-title { font-size: 18px; white-space: normal; }
-        .edit-topbar-subtitle { font-size: 11px; gap: 6px; margin-top: 2px; }
-        .meta-pill { padding: 3px 8px !important; font-size: 10px !important; }
-        .btn-back { padding: 9px 16px; font-size: 11px; border-radius: 9px; gap: 7px; }
-        .btn-back svg { width: 13px; height: 13px; }
-        .form-card { padding: 28px 24px; border-radius: 13px; }
-        .form-section { margin-bottom: 24px; }
-        .section-title { font-size: 10px; letter-spacing: 1.4px; margin-bottom: 14px; gap: 9px; }
-        .section-title::before { width: 3px; height: 13px; }
-        .avatar-block { padding: 18px; gap: 18px; border-radius: 13px; }
-        .avatar-box { width: 100px; height: 100px; border-radius: 15px; }
-        .avatar-letter { font-size: 42px; }
-        .avatar-overlay-content svg { width: 24px; height: 24px; }
-        .avatar-overlay-content span { font-size: 9px; }
-        .avatar-info h3 { font-size: 14px; }
-        .avatar-info p { font-size: 11px; }
-        .avatar-actions { gap: 7px; margin-top: 10px; }
-        .btn-upload, .btn-remove { padding: 7px 12px; font-size: 10px; border-radius: 8px; }
-        .btn-upload svg, .btn-remove svg { width: 12px; height: 12px; }
-        .avatar-file-name { font-size: 11px; margin-top: 8px; }
-        .field-group { margin-bottom: 16px; }
-        .field-row { gap: 14px; }
-        .field-label { font-size: 10px; letter-spacing: 0.9px; margin-bottom: 7px; }
-        .input-custom { padding: 12px 14px !important; font-size: 13px !important; border-radius: 9px !important; }
-        .readonly-box { padding: 12px 14px; border-radius: 9px; font-size: 12px; gap: 8px; }
-        .readonly-box .lock-icon { width: 26px; height: 26px; }
-        .readonly-box .meta-item { font-size: 11px; padding: 3px 9px; }
-        .password-toggle { right: 11px; }
-        .password-toggle svg { width: 17px; height: 17px; }
-        .submit-wrap { padding-top: 22px; margin-top: 26px; gap: 10px; }
-        .btn-submit { padding: 12px 32px; font-size: 12px; border-radius: 10px; letter-spacing: 1.1px; }
-        .btn-submit svg { width: 17px; height: 17px; }
-        .btn-delete { padding: 12px 24px; font-size: 12px; border-radius: 10px; letter-spacing: 1.1px; }
-        .btn-delete svg { width: 17px; height: 17px; }
-    }
-
-    /* Большие телефоны (до 768px) */
     @media (max-width: 768px) {
         .edit-user-page { padding: 28px 18px 45px; }
-        .edit-topbar { margin-bottom: 18px; padding: 15px 16px; gap: 11px; border-radius: 12px; }
-        .edit-topbar-left { gap: 11px; }
-        .edit-topbar-icon { width: 42px; height: 42px; border-radius: 11px; }
-        .edit-topbar-icon svg { width: 21px; height: 21px; }
-        .edit-topbar-title { font-size: 17px; }
-        .edit-topbar-subtitle { font-size: 10px; gap: 6px; }
-        .meta-pill { padding: 3px 7px !important; font-size: 10px !important; gap: 4px; }
-        .btn-back { padding: 9px 15px; font-size: 11px; border-radius: 9px; gap: 6px; letter-spacing: 0.7px; }
-        .btn-back svg { width: 13px; height: 13px; }
+        .edit-topbar { margin-bottom: 18px; padding: 15px 16px; gap: 11px; border-radius: 12px; flex-direction: column; align-items: stretch; }
+        .btn-back { width: 100%; justify-content: center; }
         .form-card { padding: 24px 20px; border-radius: 12px; }
-        .form-section { margin-bottom: 22px; }
-        .section-title { font-size: 10px; letter-spacing: 1.3px; margin-bottom: 13px; gap: 8px; }
-        .section-title::before { width: 3px; height: 12px; }
-        .avatar-block { padding: 16px; gap: 16px; border-radius: 12px; }
-        .avatar-box { width: 90px; height: 90px; border-radius: 14px; }
-        .avatar-letter { font-size: 38px; }
-        .avatar-overlay-content svg { width: 22px; height: 22px; }
-        .avatar-overlay-content span { font-size: 9px; }
-        .avatar-info h3 { font-size: 13px; }
-        .avatar-info p { font-size: 11px; }
-        .avatar-actions { gap: 6px; margin-top: 10px; }
-        .btn-upload, .btn-remove { padding: 7px 11px; font-size: 10px; border-radius: 8px; }
-        .avatar-file-name { font-size: 11px; margin-top: 8px; }
-        .field-group { margin-bottom: 15px; }
-        .field-row { gap: 13px; }
-        .field-label { font-size: 10px; letter-spacing: 0.8px; margin-bottom: 7px; }
-        .input-custom { padding: 11px 14px !important; font-size: 13px !important; border-radius: 9px !important; }
-        .readonly-box { padding: 11px 13px; border-radius: 9px; font-size: 11px; gap: 7px; }
-        .readonly-box .lock-icon { width: 24px; height: 24px; border-radius: 7px; }
-        .readonly-box .lock-icon svg { width: 13px; height: 13px; }
-        .readonly-box .meta-item { font-size: 10px; padding: 3px 8px; }
-        .password-toggle { right: 10px; }
-        .password-toggle svg { width: 16px; height: 16px; }
-        .submit-wrap { padding-top: 20px; margin-top: 24px; gap: 10px; }
-        .btn-submit { padding: 12px 30px; font-size: 11px; border-radius: 10px; letter-spacing: 1px; }
-        .btn-submit svg { width: 16px; height: 16px; }
-        .btn-delete { padding: 12px 22px; font-size: 11px; border-radius: 10px; letter-spacing: 1px; }
-        .btn-delete svg { width: 16px; height: 16px; }
-    }
-
-    /* Телефоны (до 640px) */
-    @media (max-width: 640px) {
-        .edit-user-page { padding: 24px 16px 40px; }
-        .edit-topbar {
-            flex-direction: column;
-            align-items: stretch;
-            margin-bottom: 16px;
-            padding: 14px;
-            gap: 12px;
-            border-radius: 11px;
-        }
-        .edit-topbar-left { gap: 10px; width: 100%; }
-        .edit-topbar-icon { width: 40px; height: 40px; border-radius: 10px; }
-        .edit-topbar-icon svg { width: 20px; height: 20px; }
-        .edit-topbar-title { font-size: 16px; white-space: normal; }
-        .edit-topbar-subtitle { font-size: 10px; gap: 5px; }
-        .meta-pill { padding: 2px 7px !important; font-size: 9px !important; }
-        .btn-back {
-            width: 100%;
-            justify-content: center;
-            padding: 10px 14px;
-            font-size: 10px;
-            border-radius: 9px;
-        }
-        .btn-back svg { width: 12px; height: 12px; }
-        .form-card { padding: 22px 18px; border-radius: 11px; }
-        .form-section { margin-bottom: 20px; }
-        .section-title { font-size: 9px; letter-spacing: 1.2px; margin-bottom: 12px; gap: 7px; }
-        .section-title::before { width: 3px; height: 11px; }
-        .avatar-block {
-            flex-direction: column;
-            text-align: center;
-            padding: 18px;
-            gap: 14px;
-            border-radius: 11px;
-        }
-        .avatar-box { width: 85px; height: 85px; border-radius: 13px; }
-        .avatar-letter { font-size: 36px; }
-        .avatar-overlay-content svg { width: 20px; height: 20px; }
+        .avatar-block { flex-direction: column; text-align: center; padding: 18px; gap: 14px; }
+        .avatar-box { width: 90px; height: 90px; }
         .avatar-info { text-align: center; width: 100%; }
-        .avatar-info h3 { font-size: 13px; }
-        .avatar-info p { font-size: 10px; }
-        .avatar-actions { justify-content: center; gap: 6px; margin-top: 10px; }
-        .btn-upload, .btn-remove { padding: 7px 11px; font-size: 9px; border-radius: 8px; }
-        .avatar-file-name { font-size: 10px; margin-top: 7px; text-align: center; }
-        .field-group { margin-bottom: 14px; }
-        .field-row { grid-template-columns: 1fr; gap: 14px; }
-        .field-label { font-size: 9px; letter-spacing: 0.7px; margin-bottom: 6px; }
-        .input-custom { padding: 11px 13px !important; font-size: 12px !important; border-radius: 8px !important; }
-        .readonly-box { padding: 10px 12px; border-radius: 8px; font-size: 11px; gap: 6px; justify-content: center; }
-        .readonly-box .lock-icon { width: 22px; height: 22px; border-radius: 6px; }
-        .readonly-box .meta-item { font-size: 10px; padding: 3px 7px; }
-        .password-toggle { right: 10px; padding: 5px; }
-        .password-toggle svg { width: 15px; height: 15px; }
-        .submit-wrap {
-            padding-top: 18px;
-            margin-top: 22px;
-            gap: 10px;
-            flex-direction: column;
-        }
-        .btn-submit, .btn-delete {
-            width: 100%;
-            justify-content: center;
-            padding: 12px 28px;
-            font-size: 11px;
-            border-radius: 9px;
-            letter-spacing: 1px;
-        }
-        .btn-submit svg, .btn-delete svg { width: 15px; height: 15px; }
+        .avatar-actions { justify-content: center; }
+        .field-row { grid-template-columns: 1fr; }
+        .toggle-row { flex-direction: column; align-items: flex-start; }
+        .toggle-switch { align-self: flex-end; margin-top: -30px; }
+        .submit-wrap { flex-direction: column; }
+        .btn-submit, .btn-delete { width: 100%; justify-content: center; }
     }
 
-    /* Маленькие телефоны (до 480px) */
     @media (max-width: 480px) {
         .edit-user-page { padding: 20px 14px 36px; }
-        .edit-topbar { margin-bottom: 14px; padding: 13px 12px; gap: 10px; border-radius: 10px; }
-        .edit-topbar-left { gap: 9px; }
-        .edit-topbar-icon { width: 38px; height: 38px; border-radius: 10px; }
-        .edit-topbar-icon svg { width: 19px; height: 19px; }
-        .edit-topbar-title { font-size: 15px; }
-        .edit-topbar-subtitle { font-size: 10px; gap: 4px; }
-        .meta-pill { padding: 2px 6px !important; font-size: 9px !important; }
-        .btn-back { padding: 9px 13px; font-size: 10px; border-radius: 8px; letter-spacing: 0.6px; }
-        .btn-back svg { width: 12px; height: 12px; }
         .form-card { padding: 20px 16px; border-radius: 10px; }
-        .form-section { margin-bottom: 18px; }
-        .section-title { font-size: 9px; letter-spacing: 1.1px; margin-bottom: 11px; }
-        .avatar-block { padding: 16px; gap: 12px; border-radius: 10px; }
-        .avatar-box { width: 80px; height: 80px; border-radius: 12px; }
-        .avatar-letter { font-size: 34px; }
-        .avatar-overlay-content svg { width: 18px; height: 18px; }
-        .avatar-overlay-content span { font-size: 8px; }
-        .avatar-info h3 { font-size: 12px; }
-        .avatar-info p { font-size: 10px; }
-        .avatar-actions { gap: 5px; margin-top: 9px; }
-        .btn-upload, .btn-remove { padding: 6px 10px; font-size: 9px; border-radius: 7px; }
-        .btn-upload svg, .btn-remove svg { width: 11px; height: 11px; }
-        .avatar-file-name { font-size: 10px; }
-        .field-group { margin-bottom: 13px; }
-        .field-label { font-size: 9px; letter-spacing: 0.6px; margin-bottom: 6px; }
-        .input-custom { padding: 10px 12px !important; font-size: 12px !important; border-radius: 8px !important; }
-        .readonly-box { padding: 9px 11px; border-radius: 8px; font-size: 10px; gap: 5px; flex-direction: column; align-items: stretch; }
-        .readonly-box .lock-icon { width: 22px; height: 22px; align-self: center; }
-        .readonly-box .meta-item { font-size: 10px; padding: 3px 7px; justify-content: center; }
-        .password-toggle svg { width: 14px; height: 14px; }
-        .submit-wrap { padding-top: 16px; margin-top: 20px; }
-        .btn-submit, .btn-delete { padding: 11px 24px; font-size: 10px; border-radius: 8px; letter-spacing: 0.9px; }
-        .btn-submit svg, .btn-delete svg { width: 14px; height: 14px; }
-    }
-
-    /* Очень маленькие телефоны (до 380px) */
-    @media (max-width: 380px) {
-        .edit-user-page { padding: 18px 12px 32px; }
-        .edit-topbar { margin-bottom: 12px; padding: 12px 10px; gap: 9px; border-radius: 9px; }
-        .edit-topbar-left { gap: 8px; }
-        .edit-topbar-icon { width: 36px; height: 36px; border-radius: 9px; }
-        .edit-topbar-icon svg { width: 18px; height: 18px; }
-        .edit-topbar-title { font-size: 14px; }
-        .edit-topbar-subtitle { font-size: 9px; }
-        .meta-pill { padding: 2px 5px !important; font-size: 8px !important; }
-        .btn-back { padding: 8px 12px; font-size: 9px; border-radius: 7px; }
-        .btn-back svg { width: 11px; height: 11px; }
-        .form-card { padding: 18px 14px; border-radius: 9px; }
-        .form-section { margin-bottom: 16px; }
-        .section-title { font-size: 8px; letter-spacing: 1px; margin-bottom: 10px; }
-        .avatar-block { padding: 14px; gap: 11px; border-radius: 9px; }
-        .avatar-box { width: 75px; height: 75px; border-radius: 11px; }
-        .avatar-letter { font-size: 32px; }
-        .avatar-overlay-content svg { width: 16px; height: 16px; }
-        .avatar-overlay-content span { font-size: 8px; }
-        .avatar-info h3 { font-size: 12px; }
-        .avatar-info p { font-size: 9px; }
-        .avatar-actions { gap: 5px; }
-        .btn-upload, .btn-remove { padding: 6px 9px; font-size: 8px; }
-        .avatar-file-name { font-size: 9px; }
-        .field-group { margin-bottom: 12px; }
-        .field-label { font-size: 8px; letter-spacing: 0.5px; margin-bottom: 5px; }
-        .input-custom { padding: 10px 11px !important; font-size: 11px !important; border-radius: 7px !important; }
-        .readonly-box { padding: 8px 10px; }
-        .readonly-box .meta-item { font-size: 9px; }
-        .password-toggle svg { width: 13px; height: 13px; }
-        .submit-wrap { padding-top: 14px; margin-top: 18px; }
-        .btn-submit, .btn-delete { padding: 10px 22px; font-size: 10px; border-radius: 7px; }
-        .btn-submit svg, .btn-delete svg { width: 13px; height: 13px; }
+        .avatar-box { width: 80px; height: 80px; }
+        .role-toggle { gap: 8px; }
+        .role-toggle-btn { padding: 12px 8px; }
+        .role-toggle-btn .rt-label { font-size: 12px; }
     }
 </style>
 
 <div class="edit-user-page">
-
-    {{-- Фоновые blob-ы --}}
     <div class="edit-blob edit-blob-1"></div>
     <div class="edit-blob edit-blob-2"></div>
     <div class="edit-blob edit-blob-3"></div>
 
     <div class="edit-wrap">
-
-        {{-- TOP BAR --}}
         <div class="edit-topbar">
             <div class="edit-topbar-left">
                 <div class="edit-topbar-icon">
@@ -975,9 +308,19 @@
             </a>
         </div>
 
-        {{-- FORM --}}
         <div class="form-card">
-            <form method="POST" action="{{ route('users.update', $user->id) }}" enctype="multipart/form-data">
+            @if ($errors->any())
+                <div class="validation-errors">
+                    <strong data-i18n="checkData">Проверьте данные:</strong>
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            <form method="POST" action="{{ route('users.update', $user->id) }}" enctype="multipart/form-data" id="editUserForm">
                 @csrf
                 @method('PUT')
 
@@ -987,11 +330,11 @@
                     <div class="avatar-block">
                         <div class="avatar-box">
                             @if($user->avatar)
-                            <img id="avatarPreview" src="{{ asset('storage/' . $user->avatar) }}">
-                            <span id="avatarLetter" class="avatar-letter" style="display: none;">{{ Str::upper(Str::substr($user->name, 0, 1)) }}</span>
+                                <img id="avatarPreview" src="{{ asset('storage/' . $user->avatar) }}">
+                                <span id="avatarLetter" class="avatar-letter" style="display: none;">{{ Str::upper(Str::substr($user->name, 0, 1)) }}</span>
                             @else
-                            <img id="avatarPreview" src="" style="display: none;">
-                            <span id="avatarLetter" class="avatar-letter">{{ Str::upper(Str::substr($user->name, 0, 1)) }}</span>
+                                <img id="avatarPreview" src="" style="display: none;">
+                                <span id="avatarLetter" class="avatar-letter">{{ Str::upper(Str::substr($user->name, 0, 1)) }}</span>
                             @endif
 
                             <label for="avatarInput" class="avatar-overlay">
@@ -1039,7 +382,7 @@
                             <span data-i18n="fullName">Полное имя</span>
                             <span class="required">*</span>
                         </label>
-                        <input name="name" type="text" required class="input-custom" value="{{ $user->name }}">
+                        <input name="name" type="text" required class="input-custom" value="{{ old('name', $user->name) }}" id="nameInput">
                     </div>
 
                     <div class="field-row">
@@ -1048,14 +391,14 @@
                                 <span data-i18n="email">Email</span>
                                 <span class="required">*</span>
                             </label>
-                            <input name="email" type="email" required class="input-custom" value="{{ $user->email }}">
+                            <input name="email" type="email" required class="input-custom" value="{{ old('email', $user->email) }}">
                         </div>
                         <div class="field-group">
                             <label class="field-label">
                                 <span data-i18n="phone">Телефон</span>
                                 <span class="required">*</span>
                             </label>
-                            <input name="phone" type="text" id="phone" required class="input-custom" value="{{ $user->phone ?? '+992 ' }}">
+                            <input name="phone" type="text" id="phone" required class="input-custom" value="{{ old('phone', $user->phone ?? '+992 ') }}">
                         </div>
                     </div>
                 </div>
@@ -1065,43 +408,138 @@
                     <div class="section-title" data-i18n="accessSection">Роль и уровень</div>
 
                     @if((int)$user->created_by === auth()->id())
-                    <div class="field-row">
                         <div class="field-group">
                             <label class="field-label">
                                 <span data-i18n="role">Роль</span>
                                 <span class="required">*</span>
                             </label>
-                            <input name="role" type="text" required class="input-custom" value="{{ $user->role }}">
+
+                            <div class="role-toggle">
+                                <div class="role-toggle-btn {{ $user->role === 'admin' ? 'active' : '' }}" id="btnRoleAdmin" onclick="setRole('admin')">
+                                    <div>
+                                        <div class="rt-icon">🛡️</div>
+                                        <div class="rt-label" data-i18n="role_admin">Администратор</div>
+                                        <div class="rt-desc" data-i18n="role_admin_desc">Полный доступ</div>
+                                    </div>
+                                </div>
+                                <div class="role-toggle-btn {{ $user->role !== 'admin' ? 'active' : '' }}" id="btnRoleCustom" onclick="setRole('custom')">
+                                    <div>
+                                        <div class="rt-icon">✏️</div>
+                                        <div class="rt-label" data-i18n="role_custom">Своя роль</div>
+                                        <div class="rt-desc" data-i18n="role_custom_desc">Вписать вручную</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <input type="hidden" name="role" id="roleHidden" value="{{ old('role', $user->role) }}">
+
+                            <div class="role-custom-input {{ $user->role !== 'admin' ? 'visible' : '' }}" id="roleCustomBlock">
+                                <div class="role-custom-wrap">
+                                    <i class="bi bi-pencil-fill role-custom-icon"></i>
+                                    <input type="text" class="input-custom" id="roleCustomInput"
+                                           placeholder="Например: менеджер, бухгалтер, директор..."
+                                           value="{{ old('role', $user->role) !== 'admin' ? old('role', $user->role) : '' }}"
+                                           autocomplete="off">
+                                </div>
+                            </div>
                         </div>
+
                         <div class="field-group">
                             <label class="field-label">
-                                <span data-i18n="level">Уровень</span> (1-20)
+                                <span data-i18n="level">Уровень</span> (1–20)
                                 <span class="required">*</span>
                             </label>
-                            <select name="level" required class="input-custom">
+                            <select name="level" required class="input-custom" id="levelSelect">
                                 @for($i = 1; $i <= 20; $i++)
-                                <option value="{{ $i }}" {{ $user->level == $i ? 'selected' : '' }}>{{ __('users.level') }} {{ $i }}</option>
+                                   <option value="{{ $i }}" {{ old('level', $user->level) == $i ? 'selected' : '' }}>
+    {{ $i }}
+</option>
                                 @endfor
                             </select>
+                            <p class="note-text" data-i18n="levelNote">Уровень 1 = администратор, 2–20 = сотрудники</p>
                         </div>
-                    </div>
                     @else
-                    <input type="hidden" name="role" value="{{ $user->role }}">
-                    <input type="hidden" name="level" value="{{ $user->level }}">
-                    <div class="readonly-box">
-                        <div class="lock-icon">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                        <input type="hidden" name="role" value="{{ $user->role }}">
+                        <input type="hidden" name="level" value="{{ $user->level }}">
+                        <div class="readonly-box">
+                            <div class="lock-icon">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                                </svg>
+                            </div>
+                            <span class="meta-item">
+                                <span data-i18n="role">Роль</span>: {{ $user->role }}
+                            </span>
+                            <span class="meta-item">
+                                <span data-i18n="level">Уровень</span>: {{ $user->level }}
+                            </span>
+                        </div>
+                    @endif
+                </div>
+
+                {{-- КОМПАНИЯ, ЗАРПЛАТА, СКАН ЛИЦА (ИЗ CREATE) --}}
+                <div class="form-section">
+                    <div class="section-title" data-i18n="companySection">Компания и настройки</div>
+
+                    @if($selectedCompany ?? false)
+                        <input type="hidden" name="company_id" value="{{ $selectedCompany->id }}">
+                    @endif
+
+                    <div class="info-banner" style="margin-bottom: 16px;">
+                        <div class="info-banner-icon">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
                         </div>
-                        <span class="meta-item">
-                            <span data-i18n="role">Роль</span>: {{ $user->role }}
-                        </span>
-                        <span class="meta-item">
-                            <span data-i18n="level">Уровень</span>: {{ $user->level }}
-                        </span>
+                        <div class="info-banner-text">
+                            <span data-i18n="autoCompany">Компания назначается автоматически:</span>
+                            <strong>{{ ($selectedCompany ?? null)?->name ?? auth()->user()->companyName ?? $user->companyName ?? '—' }}</strong>
+                        </div>
                     </div>
-                    @endif
+
+                    {{-- ЗАРПЛАТА --}}
+                    <div class="field-group">
+                        <label class="field-label">
+                            <span data-i18n="salary">Зарплата</span>
+                        </label>
+                        <div class="salary-wrap">
+                            <i class="bi bi-coin salary-icon"></i>
+                            <input type="number"
+                                   name="salary"
+                                   id="salaryInput"
+                                   class="input-custom"
+                                   placeholder="30000"
+                                   value="{{ old('salary', $user->salary ?? '') }}"
+                                   min="0"
+                                   step="100">
+                            <span class="salary-suffix" data-i18n="perMonth">сом/мес</span>
+                        </div>
+                        <p class="note-text" data-i18n="salaryNote">Ежемесячная зарплата сотрудника в сомони</p>
+                    </div>
+
+                    {{-- СКАН ЛИЦА (TOGGLE) --}}
+                    <div class="field-group" style="margin-bottom: 0;">
+                        <label class="toggle-row {{ old('needs_face_scan', $user->needs_face_scan) ? 'active' : '' }}" id="toggleRow" for="face">
+                            <div class="toggle-left">
+                                <div class="toggle-icon-box">
+                                    <i class="bi bi-shield-check"></i>
+                                </div>
+                                <div>
+                                    <div class="toggle-title" data-i18n="faceScanTitle">Сотрудник компании</div>
+                                    <div class="toggle-desc" data-i18n="faceScanDesc">Требуется сканирование лица (Breez Face ID) при входе</div>
+                                </div>
+                            </div>
+                            <label class="toggle-switch" onclick="event.stopPropagation()">
+                                <input type="checkbox"
+                                       name="needs_face_scan"
+                                       value="1"
+                                       id="face"
+                                       {{ old('needs_face_scan', $user->needs_face_scan) ? 'checked' : '' }}
+                                       onchange="toggleFaceScan(this)">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </label>
+                    </div>
                 </div>
 
                 {{-- ПАРОЛЬ --}}
@@ -1156,242 +594,281 @@
 </div>
 
 <script>
-    // ============================================================
-    // ПРЕВЬЮ АВАТАРА
-    // ============================================================
-    function previewAvatar(input) {
-        if (input.files && input.files[0]) {
-            const file = input.files[0];
+// ============================================================
+// РОЛЬ — ЛОГИКА ИЗ CREATE
+// ============================================================
+const roleHidden      = document.getElementById('roleHidden');
+const roleCustomBlock = document.getElementById('roleCustomBlock');
+const roleCustomInput = document.getElementById('roleCustomInput');
+const btnAdmin        = document.getElementById('btnRoleAdmin');
+const btnCustom       = document.getElementById('btnRoleCustom');
+const levelSelect     = document.getElementById('levelSelect');
 
-            if (file.size > 2 * 1024 * 1024) {
-                const lang = localStorage.getItem('docsign_lang') || 'ru';
-                const alerts = {
-                    ru: 'Файл слишком большой. Максимум 2MB',
-                    tj: 'Файл хеле калон аст. Ҳадди аксар 2MB',
-                    en: 'File too large. Maximum 2MB'
-                };
-                alert(alerts[lang] || alerts.ru);
-                input.value = '';
-                return;
-            }
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const preview = document.getElementById('avatarPreview');
-                const letter = document.getElementById('avatarLetter');
-                preview.src = e.target.result;
-                preview.style.display = 'block';
-                letter.style.display = 'none';
-                document.getElementById('removeAvatarFlag').value = '0';
-                document.getElementById('removeBtn').style.display = '';
-                document.getElementById('fileNameDisplay').textContent = '📎 ' + file.name;
-            }
-            reader.readAsDataURL(file);
-        }
+function setRole(mode) {
+    if (mode === 'admin') {
+        btnAdmin.classList.add('active');
+        btnCustom.classList.remove('active');
+        roleCustomBlock.classList.remove('visible');
+        roleCustomInput.removeAttribute('required');
+        roleCustomInput.value = '';
+        roleHidden.value = 'admin';
+        roleHidden.disabled = false;
+        levelSelect.value = '1';
+    } else {
+        btnCustom.classList.add('active');
+        btnAdmin.classList.remove('active');
+        roleCustomBlock.classList.add('visible');
+        roleCustomInput.setAttribute('required', 'required');
+        roleCustomInput.focus();
+        if (levelSelect.value === '1') levelSelect.value = '2';
     }
+}
 
-    // ============================================================
-    // УДАЛЕНИЕ АВАТАРА
-    // ============================================================
-    function removeAvatar() {
-        const lang = localStorage.getItem('docsign_lang') || 'ru';
-        const confirms = {
-            ru: 'Удалить фотографию профиля?',
-            tj: 'Расми профилро нест мекунед?',
-            en: 'Remove profile photo?'
-        };
+if (roleCustomInput) {
+    roleCustomInput.addEventListener('input', function() {
+        const val = this.value.trim();
+        roleHidden.value = val;
+        if (val.toLowerCase() === 'admin') {
+            levelSelect.value = '1';
+        } else if (levelSelect.value === '1') {
+            levelSelect.value = '2';
+        }
+    });
+}
 
-        if (confirm(confirms[lang] || confirms.ru)) {
+document.getElementById('editUserForm')?.addEventListener('submit', function(e) {
+    if (roleHidden) roleHidden.disabled = false;
+
+    if (btnCustom && btnCustom.classList.contains('active')) {
+        const val = roleCustomInput.value.trim();
+        if (!val) {
+            e.preventDefault();
+            alert('Пожалуйста, введите название роли');
+            roleCustomInput.focus();
+            roleCustomInput.style.borderColor = '#ff6363';
+            setTimeout(() => { roleCustomInput.style.borderColor = ''; }, 2000);
+            return;
+        }
+        roleHidden.value = val;
+    } else if (roleHidden) {
+        roleHidden.value = 'admin';
+    }
+});
+
+// ============================================================
+// ПРЕВЬЮ АВАТАРА
+// ============================================================
+function previewAvatar(input) {
+    if (input.files && input.files[0]) {
+        const file = input.files[0];
+        if (file.size > 2 * 1024 * 1024) {
+            const lang = localStorage.getItem('docsign_lang') || 'ru';
+            const alerts = {
+                ru: 'Файл слишком большой. Максимум 2MB',
+                tj: 'Файл хеле калон аст. Ҳадди аксар 2MB',
+                en: 'File too large. Maximum 2MB'
+            };
+            alert(alerts[lang] || alerts.ru);
+            input.value = '';
+            return;
+        }
+        const reader = new FileReader();
+        reader.onload = function(e) {
             const preview = document.getElementById('avatarPreview');
             const letter = document.getElementById('avatarLetter');
-            preview.src = '';
-            preview.style.display = 'none';
-            letter.style.display = '';
-            document.getElementById('avatarInput').value = '';
-            document.getElementById('removeAvatarFlag').value = '1';
-            document.getElementById('removeBtn').style.display = 'none';
-            document.getElementById('fileNameDisplay').textContent = '';
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+            letter.style.display = 'none';
+            document.getElementById('removeAvatarFlag').value = '0';
+            document.getElementById('removeBtn').style.display = '';
+            document.getElementById('fileNameDisplay').textContent = '📎 ' + file.name;
         }
+        reader.readAsDataURL(file);
     }
+}
 
-    // ============================================================
-    // ФОРМАТИРОВАНИЕ ТЕЛЕФОНА
-    // ============================================================
-    const phoneInput = document.getElementById('phone');
-    const prefix = '+992 ';
+// ============================================================
+// УДАЛЕНИЕ АВАТАРА
+// ============================================================
+function removeAvatar() {
+    const lang = localStorage.getItem('docsign_lang') || 'ru';
+    const confirms = {
+        ru: 'Удалить фотографию профиля?',
+        tj: 'Расми профилро нест мекунед?',
+        en: 'Remove profile photo?'
+    };
+    if (confirm(confirms[lang] || confirms.ru)) {
+        const preview = document.getElementById('avatarPreview');
+        const letter = document.getElementById('avatarLetter');
+        preview.src = '';
+        preview.style.display = 'none';
+        letter.style.display = '';
+        document.getElementById('avatarInput').value = '';
+        document.getElementById('removeAvatarFlag').value = '1';
+        document.getElementById('removeBtn').style.display = 'none';
+        document.getElementById('fileNameDisplay').textContent = '';
+    }
+}
 
-    if (phoneInput) {
-        phoneInput.addEventListener('input', function(e) {
-            if (!e.target.value.startsWith(prefix)) e.target.value = prefix;
-            let digits = e.target.value.substring(prefix.length).replace(/\D/g, '').substring(0, 9);
-            let formatted = '';
-            if (digits.length > 0) formatted += digits.substring(0, 2);
-            if (digits.length >= 3) formatted += ' ' + digits.substring(2, 5);
-            if (digits.length >= 6) formatted += ' ' + digits.substring(5, 7);
-            if (digits.length >= 8) formatted += ' ' + digits.substring(7, 9);
-            e.target.value = prefix + formatted;
+// ============================================================
+// БУКВА АВАТАРА (ИЗ CREATE)
+// ============================================================
+const nameInput = document.getElementById('nameInput');
+if (nameInput) {
+    nameInput.addEventListener('input', e => {
+        const letter = document.getElementById('avatarLetter');
+        if (letter) letter.textContent = e.target.value.trim().charAt(0).toUpperCase() || '?';
+    });
+}
+
+// ============================================================
+// ФОРМАТИРОВАНИЕ ТЕЛЕФОНА
+// ============================================================
+const phoneInput = document.getElementById('phone');
+const prefix = '+992 ';
+if (phoneInput) {
+    phoneInput.addEventListener('input', function(e) {
+        if (!e.target.value.startsWith(prefix)) e.target.value = prefix;
+        let digits = e.target.value.substring(prefix.length).replace(/\D/g, '').substring(0, 9);
+        let formatted = '';
+        if (digits.length > 0) formatted += digits.substring(0, 2);
+        if (digits.length >= 3) formatted += ' ' + digits.substring(2, 5);
+        if (digits.length >= 6) formatted += ' ' + digits.substring(5, 7);
+        if (digits.length >= 8) formatted += ' ' + digits.substring(7, 9);
+        e.target.value = prefix + formatted;
+    });
+}
+
+// ============================================================
+// TOGGLE PASSWORD
+// ============================================================
+function togglePassword() {
+    const input = document.getElementById('password');
+    const icon = document.getElementById('eyeIcon');
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>';
+    } else {
+        input.type = 'password';
+        icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>';
+    }
+}
+
+// ============================================================
+// TOGGLE FACE SCAN (ИЗ CREATE)
+// ============================================================
+const faceCheckbox = document.getElementById('face');
+const toggleRow    = document.getElementById('toggleRow');
+
+function toggleFaceScan(cb) {
+    if (cb.checked) {
+        toggleRow.classList.add('active');
+    } else {
+        toggleRow.classList.remove('active');
+    }
+}
+
+if (toggleRow) {
+    toggleRow.addEventListener('click', function(e) {
+        if (e.target.closest('.toggle-switch')) return;
+        faceCheckbox.checked = !faceCheckbox.checked;
+        toggleFaceScan(faceCheckbox);
+    });
+}
+
+// ============================================================
+// ПЕРЕВОДЫ
+// ============================================================
+document.addEventListener('DOMContentLoaded', function() {
+    const EDIT_USER_TRANSLATIONS = {
+        ru: {
+            editUser: 'Редактировать', level: 'Уровень', backBtn: 'Назад',
+            photo: 'Фото', photoDesc: 'JPG, PNG до 2MB',
+            change: 'Изменить', upload: 'Загрузить', remove: 'Удалить',
+            fullName: 'Полное имя', email: 'Email', phone: 'Телефон', role: 'Роль',
+            newPassword: 'Новый пароль', leaveEmpty: 'оставьте пустым, чтобы не менять',
+            save: 'Сохранить', delete: 'Удалить пользователя', checkData: 'Проверьте данные:',
+            photoSection: 'Фото профиля', mainInfo: 'Основная информация',
+            accessSection: 'Роль и уровень', securitySection: 'Безопасность',
+            role_admin: 'Администратор', role_admin_desc: 'Полный доступ',
+            role_custom: 'Своя роль', role_custom_desc: 'Вписать вручную',
+            levelNote: 'Уровень 1 = администратор, 2–20 = сотрудники',
+            companySection: 'Компания и настройки',
+            autoCompany: 'Компания назначается автоматически:',
+            salary: 'Зарплата', perMonth: 'сом/мес',
+            salaryNote: 'Ежемесячная зарплата сотрудника в сомони',
+            faceScanTitle: 'Сотрудник компании',
+            faceScanDesc: 'Требуется сканирование лица (Breez Face ID) при входе'
+        },
+        tj: {
+            editUser: 'Таҳрир', level: 'Сатҳ', backBtn: 'Бозгашт',
+            photo: 'Сурат', photoDesc: 'JPG, PNG то 2MB',
+            change: 'Иваз кардан', upload: 'Боркунӣ', remove: 'Нест кардан',
+            fullName: 'Номи пурра', email: 'Email', phone: 'Телефон', role: 'Вазифа',
+            newPassword: 'Рамзи нав', leaveEmpty: 'холӣ гузоред',
+            save: 'Нигоҳ доштан', delete: 'Нест кардани корбар', checkData: 'Маълумотро тафтиш кунед:',
+            photoSection: 'Сурати профил', mainInfo: 'Маълумоти асосӣ',
+            accessSection: 'Нақш ва сатҳ', securitySection: 'Амният',
+            role_admin: 'Администратор', role_admin_desc: 'Дастрасии пурра',
+            role_custom: 'Вазифаи худ', role_custom_desc: 'Дастӣ нависед',
+            levelNote: 'Сатҳи 1 = администратор, 2–20 = кормандон',
+            companySection: 'Ширкат ва танзимот',
+            autoCompany: 'Ширкат автоматикӣ таъин мешавад:',
+            salary: 'Маош', perMonth: 'сомонӣ/моҳ',
+            salaryNote: 'Маоши моҳонаи корманд бо сомонӣ',
+            faceScanTitle: 'Корманди ширкат',
+            faceScanDesc: 'Сканкунии чеҳра (Breez Face ID) ҳангоми воридшавӣ лозим аст'
+        },
+        en: {
+            editUser: 'Edit', level: 'Level', backBtn: 'Back',
+            photo: 'Photo', photoDesc: 'JPG, PNG up to 2MB',
+            change: 'Change', upload: 'Upload', remove: 'Remove',
+            fullName: 'Full Name', email: 'Email', phone: 'Phone', role: 'Role',
+            newPassword: 'New Password', leaveEmpty: 'leave empty to keep current',
+            save: 'Save', delete: 'Delete User', checkData: 'Check the data:',
+            photoSection: 'Profile Photo', mainInfo: 'Main Information',
+            accessSection: 'Role & Level', securitySection: 'Security',
+            role_admin: 'Administrator', role_admin_desc: 'Full access',
+            role_custom: 'Custom role', role_custom_desc: 'Type manually',
+            levelNote: 'Level 1 = admin, 2–20 = employees',
+            companySection: 'Company & Settings',
+            autoCompany: 'Company is assigned automatically:',
+            salary: 'Salary', perMonth: 'somoni/month',
+            salaryNote: "Employee's monthly salary in somoni",
+            faceScanTitle: 'Company Employee',
+            faceScanDesc: 'Face scan (Breez Face ID) required on login'
+        }
+    };
+
+    function applyEditUserTranslations(lang) {
+        const dict = EDIT_USER_TRANSLATIONS[lang] || EDIT_USER_TRANSLATIONS.ru;
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            if (dict[key] !== undefined) el.textContent = dict[key];
         });
     }
 
-    // ============================================================
-    // TOGGLE PASSWORD
-    // ============================================================
-    function togglePassword() {
-        const input = document.getElementById('password');
-        const icon = document.getElementById('eyeIcon');
-        if (input.type === 'password') {
-            input.type = 'text';
-            icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>';
-        } else {
-            input.type = 'password';
-            icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>';
-        }
-    }
-
-    // ============================================================
-    // ПЕРЕВОДЫ
-    // ============================================================
-    document.addEventListener('DOMContentLoaded', function() {
-        const EDIT_USER_TRANSLATIONS = {
-            ru: {
-                editUser: 'Редактировать',
-                level: 'Уровень',
-                backBtn: 'Назад',
-                photo: 'Фото',
-                photoDesc: 'JPG, PNG до 2MB',
-                change: 'Изменить',
-                upload: 'Загрузить',
-                remove: 'Удалить',
-                fullName: 'Полное имя',
-                email: 'Email',
-                phone: 'Телефон',
-                role: 'Роль',
-                newPassword: 'Новый пароль',
-                leaveEmpty: 'оставьте пустым, чтобы не менять',
-                save: 'Сохранить',
-                delete: 'Удалить пользователя',
-                photoSection: 'Фото профиля',
-                mainInfo: 'Основная информация',
-                accessSection: 'Роль и уровень',
-                securitySection: 'Безопасность',
-                confirmDelete: 'Удалить пользователя? Это действие необратимо.',
-                confirmRemovePhoto: 'Удалить фотографию профиля?'
-            },
-            tj: {
-                editUser: 'Таҳрир',
-                level: 'Сатҳ',
-                backBtn: 'Бозгашт',
-                photo: 'Сурат',
-                photoDesc: 'JPG, PNG то 2MB',
-                change: 'Иваз кардан',
-                upload: 'Боркунӣ',
-                remove: 'Нест кардан',
-                fullName: 'Номи пурра',
-                email: 'Email',
-                phone: 'Телефон',
-                role: 'Вазифа',
-                newPassword: 'Рамзи нав',
-                leaveEmpty: 'холӣ гузоред',
-                save: 'Нигоҳ доштан',
-                delete: 'Нест кардани корбар',
-                photoSection: 'Сурати профил',
-                mainInfo: 'Маълумоти асосӣ',
-                accessSection: 'Нақш ва сатҳ',
-                securitySection: 'Амният',
-                confirmDelete: 'Корбарро нест мекунед? Ин амал бозгашт надорад.',
-                confirmRemovePhoto: 'Расми профилро нест мекунед?'
-            },
-            en: {
-                editUser: 'Edit',
-                level: 'Level',
-                backBtn: 'Back',
-                photo: 'Photo',
-                photoDesc: 'JPG, PNG up to 2MB',
-                change: 'Change',
-                upload: 'Upload',
-                remove: 'Remove',
-                fullName: 'Full Name',
-                email: 'Email',
-                phone: 'Phone',
-                role: 'Role',
-                newPassword: 'New Password',
-                leaveEmpty: 'leave empty to keep current',
-                save: 'Save',
-                delete: 'Delete User',
-                photoSection: 'Profile Photo',
-                mainInfo: 'Main Information',
-                accessSection: 'Role & Level',
-                securitySection: 'Security',
-                confirmDelete: 'Delete this user? This action cannot be undone.',
-                confirmRemovePhoto: 'Remove profile photo?'
-            }
-        };
-
-        function applyEditUserTranslations(lang) {
-            const dict = EDIT_USER_TRANSLATIONS[lang] || EDIT_USER_TRANSLATIONS.ru;
-
-            document.querySelectorAll('[data-i18n]').forEach(el => {
-                const key = el.getAttribute('data-i18n');
-                if (dict[key] !== undefined) el.textContent = dict[key];
-            });
-
-            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
-                const key = el.getAttribute('data-i18n-placeholder');
-                if (dict[key] !== undefined) el.setAttribute('placeholder', dict[key]);
-            });
-
-            document.querySelectorAll('[data-i18n-title]').forEach(el => {
-                const key = el.getAttribute('data-i18n-title');
-                if (dict[key] !== undefined) el.setAttribute('title', dict[key]);
-            });
-
-            document.querySelectorAll('[data-confirm-i18n]').forEach(el => {
-                const key = el.getAttribute('data-confirm-i18n');
-                const message = dict[key] || 'Are you sure?';
-
-                const newEl = el.cloneNode(true);
-                el.parentNode.replaceChild(newEl, el);
-
-                if (newEl.tagName === 'FORM') {
-                    newEl.onsubmit = (e) => {
-                        if (!confirm(message)) e.preventDefault();
-                    };
-                } else {
-                    const form = newEl.closest('form');
-                    if (form) {
-                        form.onsubmit = (e) => {
-                            if (!confirm(message)) e.preventDefault();
-                        };
-                    }
-                }
-            });
-        }
-
-        // ПАРАЛЛАКС ДЛЯ ФОНОВЫХ ПЯТЕН
-        const blobs = document.querySelectorAll('.edit-blob');
-        document.addEventListener('mousemove', (e) => {
-            const x = (e.clientX / window.innerWidth - 0.5) * 30;
-            const y = (e.clientY / window.innerHeight - 0.5) * 30;
-            blobs.forEach((blob, i) => {
-                const factor = (i + 1) * 0.4;
-                blob.style.transform = `translate(${x * factor}px, ${y * factor}px)`;
-            });
-        });
-
-        const initialLang = localStorage.getItem('docsign_lang') || 'ru';
-        applyEditUserTranslations(initialLang);
-
-        window.addEventListener('docsign:lang-changed', (e) => {
-            const lang = e.detail?.lang || 'ru';
-            applyEditUserTranslations(lang);
-        });
-
-        window.addEventListener('storage', (e) => {
-            if (e.key === 'docsign_lang' && e.newValue) {
-                applyEditUserTranslations(e.newValue);
-            }
+    // ПАРАЛЛАКС
+    const blobs = document.querySelectorAll('.edit-blob');
+    document.addEventListener('mousemove', (e) => {
+        const x = (e.clientX / window.innerWidth - 0.5) * 30;
+        const y = (e.clientY / window.innerHeight - 0.5) * 30;
+        blobs.forEach((blob, i) => {
+            const factor = (i + 1) * 0.4;
+            blob.style.transform = `translate(${x * factor}px, ${y * factor}px)`;
         });
     });
+
+    const initialLang = localStorage.getItem('docsign_lang') || 'ru';
+    applyEditUserTranslations(initialLang);
+
+    window.addEventListener('docsign:lang-changed', (e) => {
+        applyEditUserTranslations(e.detail?.lang || 'ru');
+    });
+    window.addEventListener('storage', (e) => {
+        if (e.key === 'docsign_lang' && e.newValue) applyEditUserTranslations(e.newValue);
+    });
+});
 </script>
 
 @endsection

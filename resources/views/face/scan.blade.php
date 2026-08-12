@@ -19,7 +19,7 @@
         position: relative;
         width: 400px;
         height: 400px;
-        margin: 0 auto 2rem;
+        margin: 0 auto 1.5rem;
         border-radius: 50%;
         overflow: hidden;
         box-shadow: 0 0 0 4px rgba(255,255,255,0.2), 0 10px 40px rgba(0,0,0,0.4);
@@ -79,12 +79,58 @@
     }
 
     .status-text {
-        font-size: 1.2rem;
+        font-size: 1.1rem;
         font-weight: 600;
         color: white;
         text-align: center;
         margin-bottom: 1rem;
         min-height: 1.5em;
+    }
+
+    .liveness-instructions {
+        background: rgba(0,0,0,0.4);
+        border-radius: 12px;
+        padding: 12px;
+        margin-bottom: 1rem;
+        color: white;
+        font-size: 0.9rem;
+    }
+
+    .liveness-step {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 6px 0;
+        opacity: 0.5;
+        transition: all 0.3s;
+    }
+
+    .liveness-step.active {
+        opacity: 1;
+        color: #00ff88;
+        font-weight: 600;
+    }
+
+    .liveness-step.done {
+        opacity: 1;
+        color: #00ff88;
+    }
+
+    .liveness-icon {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        flex-shrink: 0;
+    }
+
+    .liveness-step.done .liveness-icon {
+        background: #00ff88;
+        color: #000;
     }
 
     .progress-bar {
@@ -134,21 +180,25 @@
         font-weight: 500;
     }
 
-    .debug-info {
-        background: rgba(0,0,0,0.5);
+    .liveness-counter {
+        position: absolute;
+        bottom: 15px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0,0,0,0.85);
         color: #00ff88;
-        padding: 10px;
-        border-radius: 8px;
-        font-family: monospace;
-        font-size: 11px;
-        margin-top: 10px;
-        max-height: 100px;
-        overflow-y: auto;
+        padding: 6px 16px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 700;
+        font-family: 'JetBrains Mono', monospace;
+        z-index: 10;
+        border: 1px solid rgba(0,255,136,0.5);
     }
 
     .face-detected-indicator {
         position: absolute;
-        bottom: 10px;
+        bottom: 50px;
         left: 50%;
         transform: translateX(-50%);
         background: rgba(0,255,136,0.9);
@@ -165,112 +215,291 @@
     .face-detected-indicator.visible {
         opacity: 1;
     }
+
+    .quality-indicator {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: rgba(0,0,0,0.7);
+        color: #fff;
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 11px;
+        font-weight: 600;
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .quality-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #ff4444;
+        transition: background 0.3s;
+    }
+
+    .quality-good .quality-dot {
+        background: #00ff88;
+    }
+
+    .lockout-card {
+        background: rgba(255,68,68,0.15);
+        border: 1px solid rgba(255,68,68,0.5);
+        border-radius: 16px;
+        padding: 2rem;
+        text-align: center;
+        color: white;
+    }
+
+    .lockout-icon {
+        font-size: 64px;
+        margin-bottom: 1rem;
+        color: #ff4444;
+    }
+
+    .lockout-timer {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 48px;
+        font-weight: 800;
+        color: #ff4444;
+        margin: 1rem 0;
+    }
 </style>
 
 <div class="face-scan-container">
     <div class="scan-card">
-        <h2 class="text-center text-white mb-4">Breez Face ID</h2>
+        <h2 class="text-center text-white mb-4">🛡️ Breez Face ID</h2>
 
-        <p id="status-text" class="status-text">Инициализация...</p>
-
-        <div class="video-wrapper" id="video-wrapper">
-            <video id="video" autoplay muted playsinline></video>
-            <canvas id="overlay"></canvas>
-            <div class="face-mask"></div>
-            <div class="scan-line"></div>
-            <div class="face-detected-indicator" id="face-indicator">
-                ✓ Лицо обнаружено
+        @if($locked)
+            <div class="lockout-card">
+                <div class="lockout-icon">🔒</div>
+                <h3 class="mb-3">Временно заблокировано</h3>
+                <p class="mb-3">Слишком много неудачных попыток</p>
+                <div class="lockout-timer" id="lockout-timer">{{ $lockout_seconds }}</div>
+                <p class="mb-0">секунд до разблокировки</p>
+                <button onclick="window.location.reload()" class="btn btn-light mt-4">
+                    🔄 Обновить
+                </button>
             </div>
-        </div>
+        @else
+            <p id="status-text" class="status-text">Инициализация...</p>
 
-        <div class="progress-bar">
-            <div class="progress-fill" id="progress"></div>
-        </div>
+            <div class="liveness-instructions">
+                <div class="liveness-step" id="step-turn">
+                    <div class="liveness-icon">↔</div>
+                    <span>Поверните голову влево и вправо</span>
+                </div>
+                <div class="liveness-step" id="step-nod">
+                    <div class="liveness-icon">↕</div>
+                    <span>Кивните головой</span>
+                </div>
+            </div>
 
-        <button id="btn-scan" class="btn-scan" disabled>
-            Сканировать
-        </button>
+            <div class="video-wrapper" id="video-wrapper">
+                <video id="video" autoplay muted playsinline></video>
+                <canvas id="overlay"></canvas>
+                <div class="face-mask"></div>
+                <div class="scan-line"></div>
+                <div class="face-detected-indicator" id="face-indicator">
+                    ✓ Лицо обнаружено
+                </div>
+                <div class="liveness-counter" id="liveness-counter">
+                    Liveness: 0 / 2
+                </div>
+                <div class="quality-indicator" id="quality-indicator">
+                    <div class="quality-dot"></div>
+                    <span id="quality-text">Ожидание</span>
+                </div>
+            </div>
 
-        <div id="result"></div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress"></div>
+            </div>
 
-        <div class="debug-info" id="debug"></div>
+            <button id="btn-scan" class="btn-scan" disabled>
+                Сканировать
+            </button>
+
+            <div id="result"></div>
+        @endif
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
-<script>
-    function debug(msg) {
-        console.log('[FaceID]', msg);
-        const el = document.getElementById('debug');
-        if (el) {
-            el.innerHTML += new Date().toLocaleTimeString() + ' — ' + msg + '<br>';
-            el.scrollTop = el.scrollHeight;
-        }
-    }
 
-    let MODE = @json($mode);
+<script>
+    const CONFIG = {
+        INPUT_SIZE: 416,
+        SCORE_THRESHOLD: 0.5,
+        MIN_LIVENESS: 2,  // ✅ Только поворот + кивок
+        MODELS_URL: 'https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js@master/weights',
+        
+        MOVEMENT_THRESHOLD: 30,
+        MOVEMENT_COOLDOWN: 800,
+    };
+
+    const MODE = @json($mode ?? 'checkin');
+    const LOCKED = @json($locked ?? false);
+    
     let isScanning = false;
     let detectionLoop = null;
-    let faceStableCount = 0;
+    let livenessScore = 0;
+    let lastFacePosition = null;
+    let lastMovementTime = 0;
 
     const video = document.getElementById('video');
     const overlay = document.getElementById('overlay');
-    const overlayCtx = overlay.getContext('2d');
+    const overlayCtx = overlay ? overlay.getContext('2d') : null;
     const btn = document.getElementById('btn-scan');
     const status = document.getElementById('status-text');
     const result = document.getElementById('result');
     const progress = document.getElementById('progress');
     const wrapper = document.getElementById('video-wrapper');
     const faceIndicator = document.getElementById('face-indicator');
+    const qualityIndicator = document.getElementById('quality-indicator');
+    const qualityText = document.getElementById('quality-text');
+    const livenessCounter = document.getElementById('liveness-counter');
 
-    debug('Режим: ' + MODE);
-
-    // ===== ЗАГРУЗКА МОДЕЛЕЙ =====
-    async function loadModels() {
-        debug('Загрузка моделей...');
-        status.innerText = 'Загрузка AI...';
-        progress.style.width = '30%';
-        
-        await faceapi.nets.tinyFaceDetector.loadFromUri('/models');
-        debug('✓ tinyFaceDetector');
-        progress.style.width = '60%';
-        
-        await faceapi.nets.faceLandmark68Net.loadFromUri('/models');
-        debug('✓ faceLandmark68Net');
-        progress.style.width = '80%';
-        
-        await faceapi.nets.faceRecognitionNet.loadFromUri('/models');
-        debug('✓ faceRecognitionNet');
-        progress.style.width = '100%';
+    if (LOCKED) {
+        let seconds = {{ $lockout_seconds }};
+        const timer = document.getElementById('lockout-timer');
+        const interval = setInterval(() => {
+            seconds--;
+            if (timer) timer.textContent = seconds;
+            if (seconds <= 0) {
+                clearInterval(interval);
+                window.location.reload();
+            }
+        }, 1000);
     }
 
-    // ===== КАМЕРА =====
-    async function startCamera() {
-        debug('Включение камеры...');
-        status.innerText = 'Включение камеры...';
+    function debug(msg) {
+        console.log('[FaceID]', msg);
+    }
+
+    // ✅ ПРОВЕРКА ДВИЖЕНИЯ ГОЛОВЫ (поворот + кивок)
+    function checkMovement(detection) {
+        const now = Date.now();
+        if (now - lastMovementTime < CONFIG.MOVEMENT_COOLDOWN) return;
         
-        const stream = await navigator.mediaDevices.getUserMedia({
-            video: { facingMode: 'user', width: 640, height: 480 }
+        const box = detection.detection.box;
+        const centerX = box.x + box.width / 2;
+        const centerY = box.y + box.height / 2;
+        
+        if (lastFacePosition) {
+            const dx = Math.abs(centerX - lastFacePosition.x);
+            const dy = Math.abs(centerY - lastFacePosition.y);
+            
+            // Горизонтальное движение (поворот головы)
+            if (dx > CONFIG.MOVEMENT_THRESHOLD) {
+                registerLivenessEvent('turn');
+                lastMovementTime = now;
+                debug('✓ Поворот головы (dx=' + Math.round(dx) + ')');
+            }
+            // Вертикальное движение (кивок)
+            else if (dy > CONFIG.MOVEMENT_THRESHOLD * 0.8) {
+                registerLivenessEvent('nod');
+                lastMovementTime = now;
+                debug('✓ Кивок (dy=' + Math.round(dy) + ')');
+            }
+        }
+        
+        lastFacePosition = { x: centerX, y: centerY };
+    }
+
+    // ✅ РЕГИСТРАЦИЯ LIVENESS СОБЫТИЯ
+    const livenessEvents = new Set();
+    function registerLivenessEvent(type) {
+        livenessEvents.add(type);
+        livenessScore = livenessEvents.size;
+        updateLivenessUI();
+    }
+
+    function updateLivenessUI() {
+        if (!livenessCounter) return;
+        livenessCounter.textContent = `Liveness: ${livenessScore} / ${CONFIG.MIN_LIVENESS}`;
+        
+        const steps = {
+            turn: document.getElementById('step-turn'),
+            nod: document.getElementById('step-nod'),
+        };
+        
+        Object.entries(steps).forEach(([key, el]) => {
+            if (!el) return;
+            if (livenessEvents.has(key)) {
+                el.classList.add('done');
+                el.classList.remove('active');
+            } else {
+                el.classList.remove('done');
+            }
         });
         
-        video.srcObject = stream;
-        await new Promise(r => video.onloadeddata = r);
-        
-        overlay.width = video.videoWidth;
-        overlay.height = video.videoHeight;
-        
-        debug('✓ Камера готова');
+        if (livenessScore < CONFIG.MIN_LIVENESS) {
+            const nextStep = ['turn', 'nod'].find(s => !livenessEvents.has(s));
+            if (nextStep && steps[nextStep]) {
+                steps[nextStep].classList.add('active');
+            }
+        }
     }
 
-    // ===== РИСОВАНИЕ (с защитой от null) =====
+    async function loadModels() {
+        debug('Загрузка моделей...');
+        if (status) status.innerText = 'Загрузка AI...';
+        if (progress) progress.style.width = '20%';
+        
+        try {
+            await faceapi.nets.tinyFaceDetector.loadFromUri(CONFIG.MODELS_URL);
+            if (progress) progress.style.width = '40%';
+            
+            await faceapi.nets.faceLandmark68Net.loadFromUri(CONFIG.MODELS_URL);
+            if (progress) progress.style.width = '70%';
+            
+            await faceapi.nets.faceRecognitionNet.loadFromUri(CONFIG.MODELS_URL);
+            if (progress) progress.style.width = '100%';
+            
+            debug('✓ Все модели загружены');
+        } catch (e) {
+            debug('✗ Ошибка: ' + e.message);
+            throw new Error('Не удалось загрузить AI модели');
+        }
+    }
+
+    async function startCamera() {
+        debug('Включение камеры...');
+        if (status) status.innerText = 'Включение камеры...';
+        
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({
+                video: { 
+                    facingMode: 'user', 
+                    width: { ideal: 640 },
+                    height: { ideal: 480 }
+                }
+            });
+            
+            video.srcObject = stream;
+            await new Promise((resolve, reject) => {
+                video.onloadeddata = resolve;
+                video.onerror = () => reject(new Error('Ошибка видео'));
+            });
+            
+            overlay.width = video.videoWidth;
+            overlay.height = video.videoHeight;
+            
+            debug('✓ Камера готова');
+        } catch (e) {
+            debug('✗ Ошибка камеры: ' + e.message);
+            throw new Error('Не удалось включить камеру. Проверьте разрешения.');
+        }
+    }
+
     function drawDetection(detection) {
+        if (!overlayCtx) return;
         overlayCtx.clearRect(0, 0, overlay.width, overlay.height);
         
-        // ✅ КРИТИЧЕСКИ ВАЖНО: проверяем что detection существует
-        if (!detection || !detection.detection || !detection.detection.box) {
-            return;
-        }
+        if (!detection || !detection.detection || !detection.detection.box) return;
 
         const box = detection.detection.box;
         const scaleX = overlay.width / video.videoWidth;
@@ -279,128 +508,111 @@
         overlayCtx.strokeStyle = '#00ff88';
         overlayCtx.lineWidth = 3;
         overlayCtx.strokeRect(
-            box.x * scaleX,
-            box.y * scaleY,
-            box.width * scaleX,
-            box.height * scaleY
+            box.x * scaleX, box.y * scaleY,
+            box.width * scaleX, box.height * scaleY
         );
     }
 
-    // ===== НЕПРЕРЫВНЫЙ ПОИСК (исправлен) =====
     async function detectionLoop_fn() {
         if (isScanning) return;
 
         try {
             const detection = await faceapi
                 .detectSingleFace(video, new faceapi.TinyFaceDetectorOptions({
-                    inputSize: 320,
-                    scoreThreshold: 0.4
-                }));
+                    inputSize: CONFIG.INPUT_SIZE,
+                    scoreThreshold: CONFIG.SCORE_THRESHOLD
+                }))
+                .withFaceLandmarks();
 
-            if (detection) {
-                faceIndicator.classList.add('visible');
+            if (detection && detection.detection.score >= CONFIG.SCORE_THRESHOLD) {
+                if (faceIndicator) faceIndicator.classList.add('visible');
+                if (qualityIndicator) qualityIndicator.classList.add('quality-good');
+                if (qualityText) qualityText.textContent = '✓ Готово';
                 drawDetection(detection);
                 
-                faceStableCount++;
-                if (faceStableCount >= 2 && MODE === 'checkin') {
-                    debug('✓ Лицо стабильно, авто-скан');
-                    performFullScan();
-                    return;
-                }
+                checkMovement(detection);
             } else {
-                faceIndicator.classList.remove('visible');
-                // ✅ Чистим канвас когда лица нет
-                overlayCtx.clearRect(0, 0, overlay.width, overlay.height);
-                faceStableCount = 0;
+                if (faceIndicator) faceIndicator.classList.remove('visible');
+                if (qualityIndicator) qualityIndicator.classList.remove('quality-good');
+                if (qualityText) qualityText.textContent = 'Ищем лицо...';
+                if (overlayCtx) overlayCtx.clearRect(0, 0, overlay.width, overlay.height);
             }
         } catch (e) {
-            debug('Ошибка поиска: ' + e.message);
+            debug('Ошибка: ' + e.message);
         }
 
-        detectionLoop = setTimeout(detectionLoop_fn, 400);
+        detectionLoop = setTimeout(detectionLoop_fn, 300);
     }
 
-    // ===== ИНИЦИАЛИЗАЦИЯ =====
     async function init() {
+        if (LOCKED) return;
+        
         try {
             await loadModels();
             await startCamera();
 
-            btn.disabled = false;
-            status.innerText = MODE === 'register' 
-                ? 'Смотрите в камеру' 
-                : 'Смотрите в камеру — автоскан';
-
-            debug('✓ Готово');
+            if (btn) btn.disabled = false;
+            if (status) status.innerText = 'Выполните действия и нажмите "Сканировать"';
+            
+            updateLivenessUI();
             detectionLoop_fn();
         } catch (e) {
-            debug('ОШИБКА: ' + e.message);
-            status.innerText = 'Ошибка: ' + e.message;
-            result.innerHTML = '<div class="alert alert-danger alert-modern">' + e.message + '</div>';
+            debug('✗ Ошибка: ' + e.message);
+            if (status) status.innerText = '❌ ' + e.message;
+            if (result) result.innerHTML = '<div class="alert alert-danger alert-modern">' + e.message + '</div>';
         }
     }
 
-    // ===== ⚡ БЫСТРЫЙ РЕДИРЕКТ (используем replace чтобы не возвращаться) =====
     function forceRedirect(url) {
-        debug('Переход: ' + url);
-        
-        // Останавливаем всё
         if (detectionLoop) clearTimeout(detectionLoop);
         detectionLoop = null;
         isScanning = true;
         
-        // Отключаем камеру
-        if (video.srcObject) {
+        if (video && video.srcObject) {
             video.srcObject.getTracks().forEach(t => t.stop());
         }
         
-        // КРИТИЧНО: replace() вместо href — не оставляет скан в истории
-        setTimeout(() => {
-            window.location.replace(url);
-        }, 800);
+        setTimeout(() => window.location.replace(url), 800);
     }
 
-    // ===== ПОЛНОЕ СКАНИРОВАНИЕ (ОПТИМИЗИРОВАНО — 1 запрос вместо 2) =====
     async function performFullScan() {
         if (isScanning) return;
-        isScanning = true;
-
-        if (detectionLoop) {
-            clearTimeout(detectionLoop);
-            detectionLoop = null;
+        
+        if (livenessScore < CONFIG.MIN_LIVENESS) {
+            if (status) status.innerText = '⚠️ Поверните голову и кивните';
+            return;
         }
-
-        btn.disabled = true;
-        wrapper.classList.add('scanning');
-        status.innerText = 'Сканирую...';
-        progress.style.width = '20%';
+        
+        isScanning = true;
+        if (detectionLoop) { clearTimeout(detectionLoop); detectionLoop = null; }
+        if (btn) btn.disabled = true;
+        if (wrapper) wrapper.classList.add('scanning');
+        if (status) status.innerText = 'Сканирую...';
+        if (progress) progress.style.width = '30%';
 
         try {
-            // ✅ ОДИН запрос вместо двух — сразу с landmarks + descriptor
-            debug('Полное сканирование (быстрый режим)...');
-            
             const detection = await faceapi
                 .detectSingleFace(video, new faceapi.TinyFaceDetectorOptions({
-                    inputSize: 320,
-                    scoreThreshold: 0.4
+                    inputSize: CONFIG.INPUT_SIZE,
+                    scoreThreshold: CONFIG.SCORE_THRESHOLD
                 }))
                 .withFaceLandmarks()
                 .withFaceDescriptor();
 
-            progress.style.width = '60%';
+            if (progress) progress.style.width = '60%';
 
             if (!detection) {
-                debug('✗ Лицо потеряно');
+                if (status) status.innerText = 'Лицо потеряно. Попробуйте ещё раз';
                 isScanning = false;
-                btn.disabled = false;
-                wrapper.classList.remove('scanning');
+                if (btn) btn.disabled = false;
+                if (wrapper) wrapper.classList.remove('scanning');
                 detectionLoop_fn();
                 return;
             }
 
-            debug('✓ Отправка на сервер');
-            status.innerText = 'Проверка...';
-            progress.style.width = '90%';
+            debug('Отправка на сервер...');
+            if (status) status.innerText = 'Проверка...';
+            if (progress) progress.style.width = '90%';
 
             const url = MODE === 'register'
                 ? '{{ route('face.register') }}'
@@ -413,77 +625,65 @@
                     'X-CSRF-TOKEN': '{{ csrf_token() }}',
                     'Accept': 'application/json'
                 },
-                body: JSON.stringify({ vector: Array.from(detection.descriptor) })
+                body: JSON.stringify({ 
+                    vector: Array.from(detection.descriptor),
+                    liveness: livenessScore
+                })
             });
 
-            progress.style.width = '100%';
+            if (progress) progress.style.width = '100%';
             const data = await resp.json();
             debug('Ответ: ' + JSON.stringify(data));
 
-            wrapper.classList.remove('scanning');
+            if (wrapper) wrapper.classList.remove('scanning');
 
-            // ✅ УСПЕХ
-            if (resp.ok) {
+            if (resp.ok && data.ok) {
                 const redirect = data.redirect || '{{ route('dashboard') }}';
                 const alertClass = data.status === 'late' ? 'warning' : 'success';
                 const lateInfo = data.late_minutes > 0 ? ` (${data.late_minutes} мин)` : '';
-                
                 const message = data.status === 'late'
-                    ? `Опоздание${lateInfo}! Время: ${data.time}. Штраф: -${data.fine} сом`
-                    : `Вовремя! Время: ${data.time}`;
+                    ? `⏰ Опоздание${lateInfo}! Время: ${data.time}. Штраф: -${data.fine} сом`
+                    : `✅ Вовремя! Время: ${data.time}`;
 
-                result.innerHTML = `<div class="alert alert-${alertClass} alert-modern">${message}</div>`;
-                status.innerText = '✓ Готово! Переход...';
-                debug('✓ Успех');
-
+                if (result) result.innerHTML = `<div class="alert alert-${alertClass} alert-modern">${message}</div>`;
+                if (status) status.innerText = '✓ Готово!';
                 forceRedirect(redirect);
                 return;
             }
 
-            // ✅ УЖЕ ОТМЕЧЕН — тоже редирект
-            if (data.error && data.error.includes('уже отметились')) {
-                debug('✓ Уже отмечен');
-                result.innerHTML = '<div class="alert alert-info alert-modern">Уже отмечен. Переход...</div>';
-                status.innerText = 'Переход на главную...';
-                
-                forceRedirect('{{ route('dashboard') }}');
+            if (data.status === 'already') {
+                if (result) result.innerHTML = '<div class="alert alert-info alert-modern">✓ Вы уже отметились</div>';
+                forceRedirect(data.redirect || '{{ route('dashboard') }}');
                 return;
             }
 
-            // ✗ Ошибка
-            debug('✗ Ошибка: ' + data.error);
-            const resetUrl = '{{ route('face.scan') }}?reset=1';
-            
-            result.innerHTML = `
-                <div class="alert alert-danger alert-modern">
-                    ${data.error || 'Ошибка'}
-                    <br><br>
-                    <button onclick="window.location.href='${resetUrl}'" class="btn btn-sm btn-warning mt-2">
-                        🔄 Перерегистрировать
-                    </button>
-                </div>`;
-            
-            status.innerText = 'Попробуйте ещё раз';
+            debug('Ошибка: ' + (data.error || 'Неизвестная'));
+            if (result) result.innerHTML = `<div class="alert alert-danger alert-modern">❌ ${data.error || 'Ошибка'}</div>`;
+            if (status) status.innerText = 'Попробуйте ещё раз';
             isScanning = false;
-            btn.disabled = false;
-            detectionLoop_fn();
+            if (btn) btn.disabled = false;
+            
+            if (resp.status === 429) {
+                setTimeout(() => window.location.reload(), 1500);
+            } else {
+                detectionLoop_fn();
+            }
 
         } catch (e) {
-            debug('✗ JS: ' + e.message);
-            wrapper.classList.remove('scanning');
-            result.innerHTML = `<div class="alert alert-danger alert-modern">Ошибка: ${e.message}</div>`;
+            debug('JS ошибка: ' + e.message);
+            if (wrapper) wrapper.classList.remove('scanning');
+            if (result) result.innerHTML = `<div class="alert alert-danger alert-modern">❌ ${e.message}</div>`;
             isScanning = false;
-            btn.disabled = false;
+            if (btn) btn.disabled = false;
             detectionLoop_fn();
         }
     }
 
-    btn.addEventListener('click', () => {
-        debug('Кнопка нажата');
-        performFullScan();
-    });
+    if (btn) btn.addEventListener('click', () => performFullScan());
 
-    debug('Запуск...');
-    init();
+    if (!LOCKED) {
+        debug('Запуск системы...');
+        init();
+    }
 </script>
 @endsection

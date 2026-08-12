@@ -2019,7 +2019,17 @@
                 <span data-i18n="profile">Профиль</span>
             </div>
         </a>
-
+@if(auth()->check() && auth()->user()->company_id && (auth()->user()->role === 'admin' || auth()->user()->level == 1))
+    <a href="{{ route('admin.reports') }}" style="text-decoration: none; color: inherit; display: block;">
+        <div class="side-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
+                <path d="M3 3v18h18"/>
+                <path d="M7 14l3-3 4 4 5-6"/>
+            </svg>
+            <span data-i18n="reports">Ҳисобот / Отчёт</span>
+        </div>
+    </a>
+@endif
         <form method="POST" action="{{ route('logout') }}" id="sidebar-logout-form" style="margin:0;">
             @csrf
             <a href="#" class="side-item" onclick="event.preventDefault(); document.getElementById('sidebar-logout-form').submit();" style="text-decoration: none !important; color: #ff6b6b;">
