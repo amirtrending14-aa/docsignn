@@ -507,7 +507,8 @@ Route::middleware('auth')->prefix('face')->name('face.')->controller(FaceControl
     Route::get('/scan', 'scanPage')->name('scan');
     Route::post('/register', 'register')->name('register');
     Route::post('/checkin', 'checkin')->name('checkin');
-});
+        Route::post('/refuse', 'refuse')->name('refuse');
+}); 
 
 // ===== АДМИНКА: отчёты и настройки =====
 
@@ -520,6 +521,7 @@ Route::middleware('auth')->prefix('face')->name('face.')->controller(FaceControl
     Route::get('/scan', 'scanPage')->name('scan');
     Route::post('/register', 'register')->name('register');
     Route::post('/checkin', 'checkin')->name('checkin');
+    Route::post('/face/refuse', [FaceController::class, 'refuse'])->name('face.refuse');
 });
 
 // ===== АДМИНКА: отчёты и настройки посещаемости =====

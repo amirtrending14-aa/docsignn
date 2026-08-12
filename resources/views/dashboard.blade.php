@@ -2229,4 +2229,9 @@
 
     </script>
 </div>
+<script>
+  setInterval(function () {
+    location.reload();
+  }, 120000); // 60000 мс = 1 минута
+</script>
 @endsection

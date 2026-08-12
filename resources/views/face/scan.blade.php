@@ -87,50 +87,14 @@
         min-height: 1.5em;
     }
 
-    .liveness-instructions {
+    .simple-instructions {
         background: rgba(0,0,0,0.4);
         border-radius: 12px;
-        padding: 12px;
+        padding: 16px;
         margin-bottom: 1rem;
         color: white;
-        font-size: 0.9rem;
-    }
-
-    .liveness-step {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 6px 0;
-        opacity: 0.5;
-        transition: all 0.3s;
-    }
-
-    .liveness-step.active {
-        opacity: 1;
-        color: #00ff88;
-        font-weight: 600;
-    }
-
-    .liveness-step.done {
-        opacity: 1;
-        color: #00ff88;
-    }
-
-    .liveness-icon {
-        width: 24px;
-        height: 24px;
-        border-radius: 50%;
-        background: rgba(255,255,255,0.2);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 12px;
-        flex-shrink: 0;
-    }
-
-    .liveness-step.done .liveness-icon {
-        background: #00ff88;
-        color: #000;
+        font-size: 0.95rem;
+        text-align: center;
     }
 
     .progress-bar {
@@ -172,28 +136,38 @@
         cursor: not-allowed;
     }
 
+    .btn-cancel {
+        width: 100%;
+        padding: 1rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        background: rgba(255, 68, 68, 0.2);
+        color: #ff8a8a;
+        border: 2px solid rgba(255, 68, 68, 0.5);
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        margin-top: 1rem;
+    }
+
+    .btn-cancel:hover:not(:disabled) {
+        background: rgba(255, 68, 68, 0.3);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    }
+
+    .btn-cancel:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
     .alert-modern {
         border-radius: 12px;
         padding: 1rem;
         margin-top: 1rem;
         border: none;
         font-weight: 500;
-    }
-
-    .liveness-counter {
-        position: absolute;
-        bottom: 15px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: rgba(0,0,0,0.85);
-        color: #00ff88;
-        padding: 6px 16px;
-        border-radius: 20px;
-        font-size: 13px;
-        font-weight: 700;
-        font-family: 'JetBrains Mono', monospace;
-        z-index: 10;
-        border: 1px solid rgba(0,255,136,0.5);
     }
 
     .face-detected-indicator {
@@ -203,9 +177,9 @@
         transform: translateX(-50%);
         background: rgba(0,255,136,0.9);
         color: #000;
-        padding: 4px 12px;
+        padding: 8px 16px;
         border-radius: 20px;
-        font-size: 12px;
+        font-size: 13px;
         font-weight: 700;
         opacity: 0;
         transition: opacity 0.3s;
@@ -286,15 +260,8 @@
         @else
             <p id="status-text" class="status-text">Инициализация...</p>
 
-            <div class="liveness-instructions">
-                <div class="liveness-step" id="step-turn">
-                    <div class="liveness-icon">↔</div>
-                    <span>Поверните голову влево и вправо</span>
-                </div>
-                <div class="liveness-step" id="step-nod">
-                    <div class="liveness-icon">↕</div>
-                    <span>Кивните головой</span>
-                </div>
+            <div class="simple-instructions">
+                👀 Посмотрите в камеру и нажмите "Сканировать"
             </div>
 
             <div class="video-wrapper" id="video-wrapper">
@@ -304,9 +271,6 @@
                 <div class="scan-line"></div>
                 <div class="face-detected-indicator" id="face-indicator">
                     ✓ Лицо обнаружено
-                </div>
-                <div class="liveness-counter" id="liveness-counter">
-                    Liveness: 0 / 2
                 </div>
                 <div class="quality-indicator" id="quality-indicator">
                     <div class="quality-dot"></div>
@@ -321,6 +285,9 @@
             <button id="btn-scan" class="btn-scan" disabled>
                 Сканировать
             </button>
+            <button id="btn-cancel" class="btn-cancel" style="display: none;">
+                ❌ Отказаться от сканирования
+            </button>
 
             <div id="result"></div>
         @endif
@@ -333,26 +300,22 @@
     const CONFIG = {
         INPUT_SIZE: 416,
         SCORE_THRESHOLD: 0.5,
-        MIN_LIVENESS: 2,  // ✅ Только поворот + кивок
         MODELS_URL: 'https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js@master/weights',
-        
-        MOVEMENT_THRESHOLD: 30,
-        MOVEMENT_COOLDOWN: 800,
     };
 
     const MODE = @json($mode ?? 'checkin');
     const LOCKED = @json($locked ?? false);
     
     let isScanning = false;
+    let isCancelling = false;
     let detectionLoop = null;
-    let livenessScore = 0;
-    let lastFacePosition = null;
-    let lastMovementTime = 0;
+    let faceDetected = false;
 
     const video = document.getElementById('video');
     const overlay = document.getElementById('overlay');
     const overlayCtx = overlay ? overlay.getContext('2d') : null;
     const btn = document.getElementById('btn-scan');
+    const btnCancel = document.getElementById('btn-cancel');
     const status = document.getElementById('status-text');
     const result = document.getElementById('result');
     const progress = document.getElementById('progress');
@@ -360,7 +323,6 @@
     const faceIndicator = document.getElementById('face-indicator');
     const qualityIndicator = document.getElementById('quality-indicator');
     const qualityText = document.getElementById('quality-text');
-    const livenessCounter = document.getElementById('liveness-counter');
 
     if (LOCKED) {
         let seconds = {{ $lockout_seconds }};
@@ -377,71 +339,6 @@
 
     function debug(msg) {
         console.log('[FaceID]', msg);
-    }
-
-    // ✅ ПРОВЕРКА ДВИЖЕНИЯ ГОЛОВЫ (поворот + кивок)
-    function checkMovement(detection) {
-        const now = Date.now();
-        if (now - lastMovementTime < CONFIG.MOVEMENT_COOLDOWN) return;
-        
-        const box = detection.detection.box;
-        const centerX = box.x + box.width / 2;
-        const centerY = box.y + box.height / 2;
-        
-        if (lastFacePosition) {
-            const dx = Math.abs(centerX - lastFacePosition.x);
-            const dy = Math.abs(centerY - lastFacePosition.y);
-            
-            // Горизонтальное движение (поворот головы)
-            if (dx > CONFIG.MOVEMENT_THRESHOLD) {
-                registerLivenessEvent('turn');
-                lastMovementTime = now;
-                debug('✓ Поворот головы (dx=' + Math.round(dx) + ')');
-            }
-            // Вертикальное движение (кивок)
-            else if (dy > CONFIG.MOVEMENT_THRESHOLD * 0.8) {
-                registerLivenessEvent('nod');
-                lastMovementTime = now;
-                debug('✓ Кивок (dy=' + Math.round(dy) + ')');
-            }
-        }
-        
-        lastFacePosition = { x: centerX, y: centerY };
-    }
-
-    // ✅ РЕГИСТРАЦИЯ LIVENESS СОБЫТИЯ
-    const livenessEvents = new Set();
-    function registerLivenessEvent(type) {
-        livenessEvents.add(type);
-        livenessScore = livenessEvents.size;
-        updateLivenessUI();
-    }
-
-    function updateLivenessUI() {
-        if (!livenessCounter) return;
-        livenessCounter.textContent = `Liveness: ${livenessScore} / ${CONFIG.MIN_LIVENESS}`;
-        
-        const steps = {
-            turn: document.getElementById('step-turn'),
-            nod: document.getElementById('step-nod'),
-        };
-        
-        Object.entries(steps).forEach(([key, el]) => {
-            if (!el) return;
-            if (livenessEvents.has(key)) {
-                el.classList.add('done');
-                el.classList.remove('active');
-            } else {
-                el.classList.remove('done');
-            }
-        });
-        
-        if (livenessScore < CONFIG.MIN_LIVENESS) {
-            const nextStep = ['turn', 'nod'].find(s => !livenessEvents.has(s));
-            if (nextStep && steps[nextStep]) {
-                steps[nextStep].classList.add('active');
-            }
-        }
     }
 
     async function loadModels() {
@@ -514,7 +411,7 @@
     }
 
     async function detectionLoop_fn() {
-        if (isScanning) return;
+        if (isScanning || isCancelling) return;
 
         try {
             const detection = await faceapi
@@ -525,17 +422,25 @@
                 .withFaceLandmarks();
 
             if (detection && detection.detection.score >= CONFIG.SCORE_THRESHOLD) {
+                faceDetected = true;
                 if (faceIndicator) faceIndicator.classList.add('visible');
                 if (qualityIndicator) qualityIndicator.classList.add('quality-good');
                 if (qualityText) qualityText.textContent = '✓ Готово';
                 drawDetection(detection);
                 
-                checkMovement(detection);
+                if (btn && btn.disabled) {
+                    btn.disabled = false;
+                }
             } else {
+                faceDetected = false;
                 if (faceIndicator) faceIndicator.classList.remove('visible');
                 if (qualityIndicator) qualityIndicator.classList.remove('quality-good');
                 if (qualityText) qualityText.textContent = 'Ищем лицо...';
                 if (overlayCtx) overlayCtx.clearRect(0, 0, overlay.width, overlay.height);
+                
+                if (btn && !btn.disabled) {
+                    btn.disabled = true;
+                }
             }
         } catch (e) {
             debug('Ошибка: ' + e.message);
@@ -551,10 +456,9 @@
             await loadModels();
             await startCamera();
 
-            if (btn) btn.disabled = false;
-            if (status) status.innerText = 'Выполните действия и нажмите "Сканировать"';
+            if (btnCancel) btnCancel.style.display = 'block';
+            if (status) status.innerText = 'Посмотрите в камеру и нажмите "Сканировать"';
             
-            updateLivenessUI();
             detectionLoop_fn();
         } catch (e) {
             debug('✗ Ошибка: ' + e.message);
@@ -575,17 +479,93 @@
         setTimeout(() => window.location.replace(url), 800);
     }
 
+    async function cancelScan() {
+        if (isCancelling) return;
+        
+        debug('Отказ от сканирования');
+        isCancelling = true;
+        
+        if (detectionLoop) {
+            clearTimeout(detectionLoop);
+            detectionLoop = null;
+        }
+        
+        if (btn) btn.disabled = true;
+        if (btnCancel) {
+            btnCancel.disabled = true;
+            btnCancel.innerHTML = '⏳ Отправка отказа...';
+        }
+        
+        if (wrapper) wrapper.classList.remove('scanning');
+        if (overlayCtx) overlayCtx.clearRect(0, 0, overlay.width, overlay.height);
+        if (faceIndicator) faceIndicator.classList.remove('visible');
+        if (qualityIndicator) qualityIndicator.classList.remove('quality-good');
+        
+        if (status) status.innerText = '⏳ Отказ от сканирования...';
+        if (progress) progress.style.width = '50%';
+        
+        if (video && video.srcObject) {
+            video.srcObject.getTracks().forEach(t => t.stop());
+        }
+        
+        const dashboardUrl = '{{ route('dashboard') }}';
+        const refuseUrl = '{{ route("face.refuse") }}';
+        
+        try {
+            const resp = await fetch(refuseUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ 
+                    refused: true,
+                    reason: 'user_cancelled'
+                })
+            });
+            
+            if (!resp.ok) {
+                throw new Error('Server returned ' + resp.status);
+            }
+            
+            const data = await resp.json();
+            debug('Ответ отказа: ' + JSON.stringify(data));
+            
+            if (progress) progress.style.width = '100%';
+            
+            if (data.ok) {
+                if (status) status.innerText = '⚠️ Отказ зарегистрирован. Перенаправление...';
+                if (result) result.innerHTML = '<div class="alert alert-warning alert-modern">⚠️ Отказ от сканирования зарегистрирован. Это будет отмечено в отчёте.</div>';
+                
+                const redirect = data.redirect || dashboardUrl;
+                setTimeout(() => window.location.replace(redirect), 1200);
+                return;
+            }
+            
+            throw new Error('Server response not ok');
+            
+        } catch (e) {
+            debug('Ошибка отправки отказа: ' + e.message);
+            if (status) status.innerText = '⚠️ Перенаправление...';
+            if (result) result.innerHTML = '<div class="alert alert-warning alert-modern">⚠️ Перенаправление на дашборд.</div>';
+            if (progress) progress.style.width = '100%';
+            setTimeout(() => window.location.replace(dashboardUrl), 1200);
+        }
+    }
+
     async function performFullScan() {
         if (isScanning) return;
         
-        if (livenessScore < CONFIG.MIN_LIVENESS) {
-            if (status) status.innerText = '⚠️ Поверните голову и кивните';
+        if (!faceDetected) {
+            if (status) status.innerText = '⚠️ Лицо не обнаружено. Посмотрите в камеру';
             return;
         }
         
         isScanning = true;
         if (detectionLoop) { clearTimeout(detectionLoop); detectionLoop = null; }
         if (btn) btn.disabled = true;
+        if (btnCancel) btnCancel.style.display = 'none';
         if (wrapper) wrapper.classList.add('scanning');
         if (status) status.innerText = 'Сканирую...';
         if (progress) progress.style.width = '30%';
@@ -605,6 +585,7 @@
                 if (status) status.innerText = 'Лицо потеряно. Попробуйте ещё раз';
                 isScanning = false;
                 if (btn) btn.disabled = false;
+                if (btnCancel) btnCancel.style.display = 'block';
                 if (wrapper) wrapper.classList.remove('scanning');
                 detectionLoop_fn();
                 return;
@@ -626,8 +607,7 @@
                     'Accept': 'application/json'
                 },
                 body: JSON.stringify({ 
-                    vector: Array.from(detection.descriptor),
-                    liveness: livenessScore
+                    vector: Array.from(detection.descriptor)
                 })
             });
 
@@ -662,6 +642,7 @@
             if (status) status.innerText = 'Попробуйте ещё раз';
             isScanning = false;
             if (btn) btn.disabled = false;
+            if (btnCancel) btnCancel.style.display = 'block';
             
             if (resp.status === 429) {
                 setTimeout(() => window.location.reload(), 1500);
@@ -675,11 +656,13 @@
             if (result) result.innerHTML = `<div class="alert alert-danger alert-modern">❌ ${e.message}</div>`;
             isScanning = false;
             if (btn) btn.disabled = false;
+            if (btnCancel) btnCancel.style.display = 'block';
             detectionLoop_fn();
         }
     }
 
     if (btn) btn.addEventListener('click', () => performFullScan());
+    if (btnCancel) btnCancel.addEventListener('click', () => cancelScan());
 
     if (!LOCKED) {
         debug('Запуск системы...');
