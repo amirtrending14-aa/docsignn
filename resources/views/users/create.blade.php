@@ -6,7 +6,6 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
 <style>
-    /* ... Ваши стили остались без изменений ... */
     .create-user-page { min-height: 100vh; padding: 40px 24px 60px; color: var(--text); font-family: 'Inter', sans-serif; position: relative; }
     .create-blob { position: absolute; border-radius: 50%; pointer-events: none; z-index: 0; filter: blur(100px); opacity: 0.35; }
     .create-blob-1 { top: -120px; left: -120px; width: 500px; height: 500px; background: radial-gradient(circle, rgba(var(--glow), 0.35) 0%, transparent 70%); animation: blobFloat 20s ease-in-out infinite; }
@@ -46,6 +45,7 @@
     .avatar-file-name { font-size: 12px; color: rgba(var(--glow), 1); margin-top: 8px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
     .field-group { margin-bottom: 18px; }
     .field-group:last-child { margin-bottom: 0; }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
     .field-label { display: block; text-transform: uppercase; letter-spacing: 1px; font-size: 11px; font-weight: 800; color: var(--muted); margin-bottom: 8px; }
     .field-label .required { color: rgba(var(--glow), 1); margin-left: 2px; }
     .input-custom { width: 100%; background: rgba(255,255,255,0.04) !important; border: 1px solid var(--line) !important; color: var(--text) !important; font-size: 14px !important; font-weight: 500; padding: 13px 16px !important; border-radius: 10px !important; transition: all 0.25s ease; font-family: 'Inter', sans-serif; box-sizing: border-box; }
@@ -100,6 +100,137 @@
     .role-custom-wrap .input-custom { padding-left: 36px !important; }
     .role-custom-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: rgba(var(--glow), 0.7); font-size: 14px; pointer-events: none; }
 
+    /* ===== ЗАРПЛАТА ===== */
+    .salary-wrap { position: relative; }
+    .salary-icon {
+        position: absolute;
+        left: 14px; top: 50%; transform: translateY(-50%);
+        color: rgba(var(--glow), 0.9);
+        font-size: 18px;
+        pointer-events: none;
+        z-index: 2;
+        filter: drop-shadow(0 0 8px rgba(var(--glow), 0.4));
+    }
+    .salary-wrap .input-custom {
+        padding-left: 44px !important;
+        padding-right: 60px !important;
+        font-weight: 700 !important;
+        letter-spacing: 0.3px;
+    }
+    .salary-suffix {
+        position: absolute;
+        right: 16px; top: 50%; transform: translateY(-50%);
+        font-size: 11px; font-weight: 800;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        pointer-events: none;
+        background: rgba(255,255,255,0.05);
+        padding: 4px 8px;
+        border-radius: 6px;
+        border: 1px solid var(--line);
+    }
+
+    /* ===== TOGGLE СКАН ЛИЦА ===== */
+    .toggle-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 18px 20px;
+        background: rgba(255,255,255,0.03);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    .toggle-row:hover {
+        border-color: rgba(var(--glow), 0.35);
+        background: rgba(var(--glow), 0.05);
+    }
+    .toggle-row.active {
+        border-color: rgba(var(--glow), 0.6);
+        background: rgba(var(--glow), 0.1);
+        box-shadow: 0 0 24px rgba(var(--glow), 0.18);
+    }
+    .toggle-left {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        flex: 1;
+        min-width: 0;
+    }
+    .toggle-icon-box {
+        width: 40px; height: 40px;
+        border-radius: 11px;
+        background: linear-gradient(135deg, rgba(var(--glow), 0.25), rgba(168, 85, 247, 0.18));
+        border: 1px solid rgba(var(--glow), 0.3);
+        display: grid;
+        place-items: center;
+        flex-shrink: 0;
+        color: rgba(var(--glow), 1);
+        font-size: 20px;
+    }
+    .toggle-row.active .toggle-icon-box {
+        background: linear-gradient(135deg, rgba(var(--glow), 0.95), rgba(var(--glow), 0.55));
+        color: #0a0d14;
+        box-shadow: 0 0 20px rgba(var(--glow), 0.5);
+    }
+    .toggle-title {
+        font-size: 14px;
+        font-weight: 800;
+        color: var(--text);
+        margin: 0;
+        line-height: 1.2;
+    }
+    .toggle-row.active .toggle-title { color: rgba(var(--glow), 1); }
+    .toggle-desc {
+        font-size: 11px;
+        color: var(--muted);
+        font-weight: 500;
+        margin-top: 3px;
+    }
+    .toggle-switch {
+        position: relative;
+        width: 52px; height: 28px;
+        flex-shrink: 0;
+    }
+    .toggle-switch input {
+        opacity: 0;
+        width: 0; height: 0;
+        position: absolute;
+    }
+    .toggle-slider {
+        position: absolute;
+        inset: 0;
+        background: rgba(255,255,255,0.08);
+        border: 1px solid var(--line);
+        border-radius: 50px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    .toggle-slider::before {
+        content: "";
+        position: absolute;
+        height: 20px; width: 20px;
+        left: 3px; top: 50%;
+        transform: translateY(-50%);
+        background: var(--muted);
+        border-radius: 50%;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+    .toggle-switch input:checked + .toggle-slider {
+        background: linear-gradient(135deg, rgba(var(--glow), 0.85), rgba(var(--glow), 0.55));
+        border-color: rgba(var(--glow), 0.9);
+        box-shadow: 0 0 14px rgba(var(--glow), 0.4);
+    }
+    .toggle-switch input:checked + .toggle-slider::before {
+        transform: translateY(-50%) translateX(24px);
+        background: #fff;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3), 0 0 0 2px rgba(var(--glow), 0.3);
+    }
+
     /* Ошибки валидации */
     .validation-errors {
         background: rgba(255, 80, 80, 0.1);
@@ -111,13 +242,16 @@
         font-size: 13px;
     }
     .validation-errors ul { margin: 5px 0 0 20px; padding: 0; }
-    
+
     @media (max-width: 768px) {
         .create-user-page { padding: 28px 16px 45px; }
         .create-topbar { flex-direction: column; align-items: stretch; }
         .btn-back { width: 100%; justify-content: center; }
         .avatar-block { flex-direction: column; text-align: center; }
         .form-card { padding: 24px 18px; }
+        .field-row { grid-template-columns: 1fr; }
+        .toggle-row { flex-direction: column; align-items: flex-start; }
+        .toggle-switch { align-self: flex-end; margin-top: -30px; }
     }
     @media (max-width: 480px) {
         .create-user-page { padding: 20px 12px 36px; }
@@ -156,7 +290,6 @@
         </div>
 
         <div class="form-card">
-            {{-- Вывод ошибок валидации --}}
             @if ($errors->any())
                 <div class="validation-errors">
                     <strong>Проверьте данные:</strong>
@@ -271,12 +404,15 @@
                     </div>
                 </div>
 
-                {{-- ===== КОМПАНИЯ ===== --}}
+                {{-- ===== КОМПАНИЯ, ЗАРПЛАТА, СКАН ЛИЦА ===== --}}
                 <div class="form-section">
+                    <div class="section-title" data-i18n="companySection">Компания и настройки</div>
+
                     @if($selectedCompany)
                         <input type="hidden" name="company_id" value="{{ $selectedCompany->id }}">
                     @endif
-                    <div class="info-banner">
+
+                    <div class="info-banner" style="margin-bottom: 16px;">
                         <div class="info-banner-icon">
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                         </div>
@@ -284,6 +420,48 @@
                             <span data-i18n="autoCompany">Компания назначается автоматически:</span>
                             <strong>{{ $selectedCompany?->name ?? auth()->user()->companyName ?? '—' }}</strong>
                         </div>
+                    </div>
+
+                    {{-- ЗАРПЛАТА --}}
+                    <div class="field-group">
+                        <label class="field-label"><span data-i18n="salary">Зарплата</span></label>
+                        <div class="salary-wrap">
+                            <i class="bi bi-coin salary-icon"></i>
+                            <input type="number"
+                                   name="salary"
+                                   id="salaryInput"
+                                   class="input-custom"
+                                   placeholder="30000"
+                                   value="{{ old('salary') }}"
+                                   min="0"
+                                   step="100">
+                            <span class="salary-suffix">сом/мес</span>
+                        </div>
+                        <p class="note-text" data-i18n="salaryNote">Ежемесячная зарплата сотрудника в сомони</p>
+                    </div>
+
+                    {{-- СКАН ЛИЦА (TOGGLE) --}}
+                    <div class="field-group" style="margin-bottom: 0;">
+                        <label class="toggle-row" id="toggleRow" for="face">
+                            <div class="toggle-left">
+                                <div class="toggle-icon-box">
+                                    <i class="bi bi-shield-check"></i>
+                                </div>
+                                <div>
+                                    <div class="toggle-title" data-i18n="faceScanTitle">Сотрудник компании</div>
+                                    <div class="toggle-desc" data-i18n="faceScanDesc">Требуется сканирование лица (Breez Face ID) при входе</div>
+                                </div>
+                            </div>
+                            <label class="toggle-switch" onclick="event.stopPropagation()">
+                                <input type="checkbox"
+                                       name="needs_face_scan"
+                                       value="1"
+                                       id="face"
+                                       {{ old('needs_face_scan') ? 'checked' : '' }}
+                                       onchange="toggleFaceScan(this)">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </label>
                     </div>
                 </div>
 
@@ -316,11 +494,10 @@ function setRole(mode) {
         roleCustomBlock.classList.remove('visible');
         roleCustomInput.removeAttribute('required');
         roleCustomInput.value = '';
-        
-        // Важно: сразу пишем в hidden и включаем его
+
         roleHidden.value = 'admin';
         roleHidden.disabled = false;
-        
+
         levelSelect.value = '1';
     } else {
         btnCustom.classList.add('active');
@@ -328,18 +505,15 @@ function setRole(mode) {
         roleCustomBlock.classList.add('visible');
         roleCustomInput.setAttribute('required', 'required');
         roleCustomInput.focus();
-        
-        // При переключении не отключаем disabled навсегда, 
-        // мы будем управлять этим перед отправкой формы
+
         if (levelSelect.value === '1') levelSelect.value = '2';
     }
 }
 
-// Синхронизация ввода текста
 roleCustomInput.addEventListener('input', function() {
     const val = this.value.trim();
     roleHidden.value = val;
-    
+
     if (val.toLowerCase() === 'admin') {
         levelSelect.value = '1';
     } else if (levelSelect.value === '1') {
@@ -347,13 +521,10 @@ roleCustomInput.addEventListener('input', function() {
     }
 });
 
-// ОБРАБОТЧИК ОТПРАВКИ ФОРМЫ (Гарантирует отправку role)
 document.querySelector('form').addEventListener('submit', function(e) {
-    // 1. Всегда включаем hidden поле, чтобы браузер его отправил
     roleHidden.disabled = false;
 
     if (btnCustom.classList.contains('active')) {
-        // Если режим "Своя роль"
         const val = roleCustomInput.value.trim();
         if (!val) {
             e.preventDefault();
@@ -365,11 +536,8 @@ document.querySelector('form').addEventListener('submit', function(e) {
         }
         roleHidden.value = val;
     } else {
-        // Если режим "Админ"
         roleHidden.value = 'admin';
     }
-    
-    // Форма продолжит отправку с правильным полем role
 });
 
 // ============================================================
@@ -438,6 +606,35 @@ if (nameInput) {
 }
 
 // ============================================================
+// СКАН ЛИЦА TOGGLE
+// ============================================================
+const faceCheckbox = document.getElementById('face');
+const toggleRow    = document.getElementById('toggleRow');
+
+function toggleFaceScan(cb) {
+    if (cb.checked) {
+        toggleRow.classList.add('active');
+    } else {
+        toggleRow.classList.remove('active');
+    }
+}
+
+// Инициализация состояния при загрузке
+if (faceCheckbox && faceCheckbox.checked) {
+    toggleRow.classList.add('active');
+}
+
+// Клик по всей строке тоже включает/выключает
+if (toggleRow) {
+    toggleRow.addEventListener('click', function(e) {
+        // Чтобы двойной клик не случался когда кликнули по самому switch
+        if (e.target.closest('.toggle-switch')) return;
+        faceCheckbox.checked = !faceCheckbox.checked;
+        toggleFaceScan(faceCheckbox);
+    });
+}
+
+// ============================================================
 // ПЕРЕВОДЫ
 // ============================================================
 document.addEventListener('DOMContentLoaded', function() {
@@ -451,7 +648,11 @@ document.addEventListener('DOMContentLoaded', function() {
             createUser: 'Создать пользователя', photoSection: 'Фото профиля',
             mainInfo: 'Основная информация', accessSection: 'Доступ и безопасность',
             role_admin: 'Администратор', role_admin_desc: 'Полный доступ',
-            role_custom: 'Своя роль', role_custom_desc: 'Вписать вручную'
+            role_custom: 'Своя роль', role_custom_desc: 'Вписать вручную',
+            companySection: 'Компания и настройки',
+            salary: 'Зарплата', salaryNote: 'Ежемесячная зарплата сотрудника в сомони',
+            faceScanTitle: 'Сотрудник компании',
+            faceScanDesc: 'Требуется сканирование лица (Breez Face ID) при входе'
         },
         tj: {
             newUser: 'Корбари нав', companyLabel: 'Ширкат', backToList: 'Бозгашт ба рӯйхат',
@@ -462,7 +663,11 @@ document.addEventListener('DOMContentLoaded', function() {
             createUser: 'Эҷоди корбар', photoSection: 'Сурати профил',
             mainInfo: 'Маълумоти асосӣ', accessSection: 'Дастрасӣ ва амният',
             role_admin: 'Администратор', role_admin_desc: 'Дастрасии пурра',
-            role_custom: 'Вазифаи худ', role_custom_desc: 'Дастӣ нависед'
+            role_custom: 'Вазифаи худ', role_custom_desc: 'Дастӣ нависед',
+            companySection: 'Ширкат ва танзимот',
+            salary: 'Маош', salaryNote: 'Маоши моҳонаи корманд бо сомонӣ',
+            faceScanTitle: 'Корманди ширкат',
+            faceScanDesc: 'Сканкунии чеҳра (Breez Face ID) ҳангоми воридшавӣ лозим аст'
         },
         en: {
             newUser: 'New User', companyLabel: 'Company', backToList: 'Back to list',
@@ -473,7 +678,11 @@ document.addEventListener('DOMContentLoaded', function() {
             createUser: 'Create User', photoSection: 'Profile Photo',
             mainInfo: 'Main Information', accessSection: 'Access & Security',
             role_admin: 'Administrator', role_admin_desc: 'Full access',
-            role_custom: 'Custom role', role_custom_desc: 'Type manually'
+            role_custom: 'Custom role', role_custom_desc: 'Type manually',
+            companySection: 'Company & Settings',
+            salary: 'Salary', salaryNote: "Employee's monthly salary in somoni",
+            faceScanTitle: 'Company Employee',
+            faceScanDesc: 'Face scan (Breez Face ID) required on login'
         }
     };
 

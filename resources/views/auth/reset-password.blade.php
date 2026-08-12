@@ -6,710 +6,322 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>DocSign — Регистрация</title>
 
-    <!-- ✅ Значок сайта (Favicon) DocSign -->
     <link rel="icon" type="image/png" href="{{ asset('img/dss.png') }}">
     <link rel="apple-touch-icon" href="{{ asset('img/dss.png') }}">
 
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet">
+    {{-- Fontsource: Manrope --}}
+    <link href="https://cdn.jsdelivr.net/npm/@fontsource/manrope/400.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@fontsource/manrope/500.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@fontsource/manrope/600.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@fontsource/manrope/700.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@fontsource/manrope/800.css" rel="stylesheet">
 
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         :root {
-            --primary: #4f46e5;
-            --primary-dark: #3730a3;
-            --primary-light: #818cf8;
-             --accent: #06b6d4;
-            --bg-dark: #0f172a;
-            --bg-card: rgba(15, 23, 42, 0.6);
-            --text-primary: #f1f5f9;
-            --text-secondary: #94a3b8;
-            --border: rgba(148, 163, 184, 0.15);
-            --glow: rgba(79, 70, 229, 0.4);
+            --bg: #080d18;
+            --ink: #eef2f9;
+            --muted: #93a0b8;
+            --gold: #e2b25a;
+            --gold-soft: #f0d9a8;
+            --gold-deep: #c8923a;
+            --teal: #4fc9bd;
+            --line: rgba(160, 175, 200, 0.15);
+            --panel: rgba(10, 15, 28, 0.78);
         }
 
         body {
-            font-family: 'Figtree', sans-serif;
+            font-family: 'Manrope', sans-serif;
+            background: var(--bg);
+            color: var(--ink);
+            overflow-x: hidden;
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: var(--bg-dark);
-            overflow: hidden;
-            position: relative;
         }
 
-        .bg-animation {
-            position: fixed;
-            inset: 0;
-            z-index: 0;
-            overflow: hidden;
-        }
-
-        .bg-animation::before {
+        /* ================= ФОН ================= */
+        .bg-glow { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+        .bg-glow::before {
             content: '';
-            position: absolute;
-            top: -50%; left: -50%;
-            width: 200%; height: 200%;
+            position: absolute; inset: 0;
             background:
-                radial-gradient(ellipse at 20% 50%, rgba(79, 70, 229, 0.15) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 20%, rgba(6, 182, 212, 0.1) 0%, transparent 50%),
-                radial-gradient(ellipse at 50% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
-            animation: bgShift 15s ease-in-out infinite alternate;
+                radial-gradient(ellipse 60% 45% at 22% 18%, rgba(226, 178, 90, 0.08) 0%, transparent 60%),
+                radial-gradient(ellipse 55% 45% at 80% 82%, rgba(226, 178, 90, 0.05) 0%, transparent 60%),
+                radial-gradient(ellipse 40% 35% at 78% 12%, rgba(79, 201, 189, 0.05) 0%, transparent 60%);
         }
 
-        @keyframes bgShift {
-            0% { transform: translate(0, 0) rotate(0deg); }
-            100% { transform: translate(-5%, -5%) rotate(3deg); }
-        }
-
-        .particles {
-            position: fixed;
-            inset: 0;
-            z-index: 0;
-            pointer-events: none;
-        }
-
+        .particles { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
         .particle {
             position: absolute;
-            width: 3px;
-            height: 3px;
-            background: rgba(129, 140, 248, 0.5);
+            width: 2px; height: 2px;
+            background: rgba(226, 178, 90, 0.4);
             border-radius: 50%;
-            animation: float linear infinite;
+            animation: floatUp linear infinite;
         }
-
-        @keyframes float {
+        @keyframes floatUp {
             0% { transform: translateY(100vh) scale(0); opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+            12% { opacity: 1; }
+            88% { opacity: 1; }
+            100% { transform: translateY(-8vh) scale(1); opacity: 0; }
         }
 
-        .grid-overlay {
-            position: fixed;
-            inset: 0;
-            z-index: 0;
-            background-image:
-                linear-gradient(rgba(148, 163, 184, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(148, 163, 184, 0.03) 1px, transparent 1px);
-            background-size: 60px 60px;
-            animation: gridMove 20s linear infinite;
-        }
-
-        @keyframes gridMove {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(60px, 60px); }
-        }
-
-        .container {
+        /* ================= СТРАНИЦА ================= */
+        .page {
             position: relative;
-            z-index: 10;
-            width: 100%;
-            max-width: 500px;
-            padding: 20px;
-            max-height: 100vh;
-            overflow-y: auto;
-        }
-
-        .container::-webkit-scrollbar {
-            width: 4px;
-        }
-        .container::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        .container::-webkit-scrollbar-thumb {
-            background: var(--border);
-            border-radius: 4px;
-        }
-
-        .lang-switcher {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 100;
+            z-index: 5;
+            min-height: 100vh;
+            min-height: 100svh;
             display: flex;
-            background: rgba(15, 23, 42, 0.7);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 4px;
-            gap: 2px;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 70px 20px 24px;
+            gap: 22px;
         }
 
-        .lang-btn {
-            padding: 8px 14px;
-            border: none;
-            background: transparent;
-            color: var(--text-secondary);
-            font-family: 'Figtree', sans-serif;
-            font-size: 13px;
-            font-weight: 600;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            letter-spacing: 0.5px;
-        }
-
-        .lang-btn:hover {
-            color: var(--text-primary);
-            background: rgba(79, 70, 229, 0.15);
-        }
-
-        .lang-btn.active {
-            background: var(--primary);
-            color: white;
-            box-shadow: 0 2px 10px var(--glow);
-        }
-
+        /* ================= КАРТОЧКА ================= */
         .register-card {
-            background: var(--bg-card);
-            backdrop-filter: blur(40px);
-            border: 1px solid var(--border);
-            border-radius: 24px;
-            padding: 44px 40px;
+            width: 100%;
+            max-width: 460px;
+            background: var(--panel);
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+            border: 1px solid var(--line);
+            border-radius: 22px;
+            padding: 32px 30px 28px;
             position: relative;
-            overflow: hidden;
-            animation: cardAppear 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
-            box-shadow:
-                0 0 0 1px rgba(148, 163, 184, 0.05),
-                0 25px 80px rgba(0, 0, 0, 0.4),
-                0 0 120px rgba(79, 70, 229, 0.08);
+            box-shadow: 0 26px 70px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+            transition: border-color .35s ease, box-shadow .35s ease;
+            animation: cardAppear .8s cubic-bezier(.16,1,.3,1) .05s both;
         }
-
+        .register-card:hover {
+            border-color: rgba(226, 178, 90, 0.28);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55), 0 0 60px rgba(226, 178, 90, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
         @keyframes cardAppear {
-            0% {
-                opacity: 0;
-                transform: translateY(30px) scale(0.96);
-                filter: blur(10px);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-                filter: blur(0);
-            }
+            0% { opacity: 0; transform: translateY(26px); filter: blur(8px); }
+            100% { opacity: 1; transform: translateY(0); filter: blur(0); }
         }
 
-        .register-card::before {
-            content: '';
+        .card-topline {
             position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--accent), var(--primary-light), var(--primary));
+            top: 0; left: 22px; right: 22px;
+            height: 2px;
+            border-radius: 0 0 4px 4px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
             background-size: 200% 100%;
-            animation: shimmer 3s ease-in-out infinite;
+            animation: shimmer 4s ease-in-out infinite;
         }
-
         @keyframes shimmer {
             0%, 100% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
         }
 
-        .register-card::after {
-            content: '';
-            position: absolute;
-            top: -1px; left: -1px; right: -1px; bottom: -1px;
-            border-radius: 24px;
-            background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), transparent 40%, transparent 60%, rgba(79, 70, 229, 0.1));
-            z-index: -1;
-            pointer-events: none;
-        }
-
-        .logo-section {
-            text-align: center;
-            margin-bottom: 32px;
-            animation: logoAppear 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
-        }
-
-        @keyframes logoAppear {
-            0% { opacity: 0; transform: translateY(15px); }
+        @keyframes riseIn {
+            0% { opacity: 0; transform: translateY(14px); }
             100% { opacity: 1; transform: translateY(0); }
         }
 
+        .logo-section { text-align: center; margin-bottom: 24px; animation: riseIn .7s cubic-bezier(.16,1,.3,1) .15s both; }
+
         .logo-img {
-            width: 72px;
-            height: 72px;
-            border-radius: 18px;
-            margin: 0 auto 14px;
+            width: 58px; height: 58px;
+            border-radius: 16px;
+            margin: 0 auto 10px;
             display: block;
-            box-shadow: 0 8px 30px rgba(6, 182, 212, 0.25);
-            transition: transform 0.3s ease;
+            box-shadow: 0 8px 26px rgba(226, 178, 90, 0.22);
         }
 
-        .logo-img:hover {
-            transform: scale(1.05) rotate(2deg);
-        }
-
-        .logo-title {
-            font-size: 26px;
-            font-weight: 800;
-            color: var(--text-primary);
-            letter-spacing: -0.5px;
-            margin-bottom: 4px;
-        }
-
-        .logo-title span {
-            background: linear-gradient(135deg, var(--accent), var(--primary-light));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
+        .logo-title { font-size: 24px; font-weight: 800; letter-spacing: -0.4px; margin-bottom: 3px; }
+        .logo-title span { color: var(--gold); }
         .logo-subtitle {
-            font-size: 12px;
-            font-weight: 500;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 2px;
+            font-size: 11px; font-weight: 600;
+            color: var(--muted);
+            text-transform: uppercase; letter-spacing: 2px;
         }
 
-        .form-group {
-            margin-bottom: 18px;
-            animation: formAppear 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
-        }
-
-        .form-group:nth-child(1) { animation-delay: 0.3s; }
-        .form-group:nth-child(2) { animation-delay: 0.4s; }
-        .form-group:nth-child(3) { animation-delay: 0.5s; }
-
-        @keyframes formAppear {
-            0% { opacity: 0; transform: translateX(-15px); }
-            100% { opacity: 1; transform: translateX(0); }
-        }
+        .form-group { margin-bottom: 15px; animation: riseIn .6s cubic-bezier(.16,1,.3,1) both; }
+        .form-group:nth-of-type(1) { animation-delay: .25s; }
+        .form-group:nth-of-type(2) { animation-delay: .33s; }
+        .form-group:nth-of-type(3) { animation-delay: .41s; }
+        .form-group:nth-of-type(4) { animation-delay: .49s; }
 
         .form-label {
-            display: block;
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text-secondary);
-            margin-bottom: 8px;
-            letter-spacing: 0.3px;
+            display: block; font-size: 12.5px; font-weight: 700;
+            color: var(--muted); margin-bottom: 7px; letter-spacing: .3px;
         }
 
-        .input-wrapper {
-            position: relative;
-        }
+        .input-wrapper { position: relative; }
 
         .input-icon {
-            position: absolute;
-            left: 16px;
-            top: 50%;
+            position: absolute; left: 15px; top: 50%;
             transform: translateY(-50%);
-            width: 20px;
-            height: 20px;
-            color: var(--text-secondary);
-            transition: color 0.3s ease;
-            pointer-events: none;
-            z-index: 2;
+            width: 18px; height: 18px;
+            color: var(--muted);
+            transition: color .3s ease;
+            pointer-events: none; z-index: 2;
         }
 
         .form-input {
             width: 100%;
-            padding: 13px 16px 13px 48px;
-            background: rgba(30, 41, 59, 0.5);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            color: var(--text-primary);
-            font-family: 'Figtree', sans-serif;
-            font-size: 14px;
-            font-weight: 500;
-            transition: all 0.3s ease;
+            padding: 12px 44px;
+            background: rgba(18, 25, 44, 0.6);
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            color: var(--ink);
+            font-family: 'Manrope', sans-serif;
+            font-size: 14px; font-weight: 500;
+            transition: all .3s ease;
             outline: none;
         }
-
-        .form-input::placeholder {
-            color: rgba(148, 163, 184, 0.4);
-        }
-
+        .form-input::placeholder { color: rgba(147, 160, 184, 0.45); }
         .form-input:focus {
-            border-color: var(--accent);
-            background: rgba(30, 41, 59, 0.8);
-            box-shadow: 0 0 0 4px rgba(6, 182, 212, 0.15), 0 0 20px rgba(6, 182, 212, 0.1);
+            border-color: rgba(226, 178, 90, 0.6);
+            background: rgba(18, 25, 44, 0.9);
+            box-shadow: 0 0 0 3px rgba(226, 178, 90, 0.14);
         }
-
+        .form-input:focus ~ .input-icon { color: var(--gold); }
         .form-input:-webkit-autofill {
-            -webkit-box-shadow: 0 0 0 30px rgba(30, 41, 59, 0.9) inset !important;
-            -webkit-text-fill-color: var(--text-primary) !important;
-            caret-color: var(--text-primary);
+            -webkit-box-shadow: 0 0 0 30px rgba(18, 25, 44, 0.95) inset !important;
+            -webkit-text-fill-color: var(--ink) !important;
+            caret-color: var(--ink);
         }
-
-        .form-input.error {
-            border-color: #ef4444;
-            box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.15);
-        }
-
-        .error-message {
-            font-size: 12px;
-            color: #ef4444;
-            margin-top: 6px;
-            font-weight: 500;
-        }
+        .form-input.error { border-color: #ef4444; box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15); }
+        .error-message { font-size: 12px; color: #f87171; margin-top: 5px; font-weight: 500; }
 
         .toggle-password {
-            position: absolute;
-            right: 14px;
-            top: 50%;
+            position: absolute; right: 12px; top: 50%;
             transform: translateY(-50%);
-            background: none;
-            border: none;
-            color: var(--text-secondary);
-            cursor: pointer;
-            padding: 4px;
-            border-radius: 8px;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 2;
+            background: none; border: none;
+            color: var(--muted);
+            cursor: pointer; padding: 4px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            transition: all .2s ease; z-index: 2;
         }
+        .toggle-password:hover { color: var(--ink); background: rgba(160, 175, 200, 0.1); }
+        .toggle-password svg { width: 17px; height: 17px; }
 
-        .toggle-password:hover {
-            color: var(--text-primary);
-            background: rgba(148, 163, 184, 0.1);
-        }
-
-        .toggle-password svg {
-            width: 18px;
-            height: 18px;
-        }
-
-        /* Password strength indicator */
-        .password-strength {
-            margin-top: 8px;
-            display: flex;
-            gap: 4px;
-        }
-
+        /* ---- индикатор надёжности пароля ---- */
+        .password-strength { margin-top: 8px; display: flex; gap: 4px; }
         .strength-bar {
-            flex: 1;
-            height: 3px;
-            border-radius: 3px;
-            background: rgba(148, 163, 184, 0.15);
-            transition: all 0.3s ease;
+            flex: 1; height: 3px; border-radius: 3px;
+            background: rgba(160, 175, 200, 0.15);
+            transition: all .3s ease;
         }
-
         .strength-bar.weak { background: #ef4444; }
         .strength-bar.medium { background: #f59e0b; }
         .strength-bar.strong { background: #10b981; }
-
         .strength-text {
-            font-size: 11px;
-            font-weight: 500;
-            margin-top: 4px;
-            color: var(--text-secondary);
-            transition: color 0.3s ease;
+            font-size: 11px; font-weight: 600;
+            margin-top: 5px; min-height: 14px;
+            color: var(--muted);
+            transition: color .3s ease;
         }
-
-        .strength-text.weak { color: #ef4444; }
+        .strength-text.weak { color: #f87171; }
         .strength-text.medium { color: #f59e0b; }
-        .strength-text.strong { color: #10b981; }
+        .strength-text.strong { color: #34d399; }
 
         .submit-btn {
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, var(--accent), var(--primary));
-            border: none;
-            border-radius: 14px;
-            color: white;
-            font-family: 'Figtree', sans-serif;
-            font-size: 15px;
-            font-weight: 700;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            letter-spacing: 0.3px;
-            animation: formAppear 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.6s both;
+            width: 100%; padding: 14px;
+            background: linear-gradient(135deg, #e8bc66, var(--gold-deep));
+            border: none; border-radius: 12px;
+            color: #171004; font-family: 'Manrope', sans-serif;
+            font-size: 15px; font-weight: 800;
+            cursor: pointer; position: relative; overflow: hidden;
+            transition: all .3s ease; letter-spacing: .2px;
+            margin-top: 4px;
+            animation: riseIn .6s cubic-bezier(.16,1,.3,1) .58s both;
         }
-
-        .submit-btn::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, var(--primary-light), var(--accent));
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .submit-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(6, 182, 212, 0.3), 0 0 40px rgba(79, 70, 229, 0.15);
-        }
-
-        .submit-btn:hover::before {
-            opacity: 1;
-        }
-
-        .submit-btn:active {
-            transform: translateY(0);
-        }
-
-        .submit-btn .btn-text {
-            position: relative;
-            z-index: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .submit-btn.loading .btn-text {
-            opacity: 0;
-        }
-
+        .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(226, 178, 90, 0.35); }
+        .submit-btn:active { transform: translateY(0); }
+        .submit-btn .btn-text { display: flex; align-items: center; justify-content: center; gap: 8px; position: relative; z-index: 1; }
+        .submit-btn .btn-arrow { transition: transform .3s ease; }
+        .submit-btn:hover .btn-arrow { transform: translateX(4px); }
+        .submit-btn.loading .btn-text { opacity: 0; }
         .submit-btn.loading::after {
-            content: '';
-            position: absolute;
-            width: 24px;
-            height: 24px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-top-color: white;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            top: 50%;
-            left: 50%;
-            margin: -12px 0 0 -12px;
+            content: ''; position: absolute;
+            width: 22px; height: 22px;
+            border: 3px solid rgba(23, 16, 4, 0.3);
+            border-top-color: #171004; border-radius: 50%;
+            top: 50%; left: 50%; margin: -11px 0 0 -11px;
+            animation: spin .8s linear infinite;
         }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
+        .login-link-section { text-align: center; margin-top: 20px; animation: riseIn .6s cubic-bezier(.16,1,.3,1) .68s both; }
+        .login-text { font-size: 13.5px; color: var(--muted); font-weight: 500; }
+        .login-link { color: var(--teal); text-decoration: none; font-weight: 700; }
+        .login-link:hover { text-decoration: underline; }
 
-        .login-link-section {
-            text-align: center;
-            margin-top: 24px;
-            animation: formAppear 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.7s both;
-        }
+        /* ================= ФУТЕР ================= */
+        .page-footer { text-align: center; animation: riseIn .8s cubic-bezier(.16,1,.3,1) .8s both; }
+        .footer-badges { display: flex; justify-content: center; gap: 20px; }
+        .badge { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; color: var(--muted); opacity: .8; }
+        .badge svg { width: 13px; height: 13px; color: var(--gold); }
+        .copyright { margin-top: 10px; font-size: 11.5px; color: rgba(147, 160, 184, 0.45); font-weight: 500; }
 
-        .login-text {
-            font-size: 14px;
-            color: var(--text-secondary);
+        /* ================= ЯЗЫК / УВЕДОМЛЕНИЯ ================= */
+        .lang-switcher {
+            position: fixed; top: 18px; right: 18px; z-index: 100;
+            background: rgba(9, 13, 24, 0.8);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--line);
+            border-radius: 11px; padding: 4px;
         }
-
-        .login-link {
-            color: var(--accent);
-            text-decoration: none;
-            font-weight: 700;
-            transition: all 0.2s ease;
+        .lang-select {
+            padding: 7px 12px;
+            background: rgba(226, 178, 90, 0.08);
+            color: var(--gold-soft);
+            border: 1px solid rgba(226, 178, 90, 0.25);
+            border-radius: 8px;
+            font-family: 'Manrope', sans-serif;
+            font-size: 12.5px; font-weight: 700;
+            cursor: pointer; outline: none;
+            appearance: none; -webkit-appearance: none;
+            transition: all .3s ease;
         }
-
-        .login-link:hover {
-            color: var(--primary-light);
-            text-shadow: 0 0 20px rgba(129, 140, 248, 0.3);
-        }
-
-        .footer-badges {
-            display: flex;
-            justify-content: center;
-            gap: 24px;
-            margin-top: 28px;
-            animation: footerAppear 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.8s both;
-        }
-
-        @keyframes footerAppear {
-            0% { opacity: 0; transform: translateY(10px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-
-        .badge {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--text-secondary);
-            opacity: 0.7;
-        }
-
-        .badge svg {
-            width: 14px;
-            height: 14px;
-            color: var(--accent);
-        }
-
-        .copyright {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 12px;
-            color: rgba(148, 163, 184, 0.4);
-            font-weight: 500;
-            animation: footerAppear 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.9s both;
-        }
+        .lang-select:hover { background: rgba(226, 178, 90, 0.16); }
+        .lang-select:focus { border-color: var(--gold); }
+        .lang-select option { background-color: #0d1322; color: var(--ink); }
 
         .notification {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%) translateY(-100px);
-            padding: 14px 24px;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: 600;
+            position: fixed; top: 18px; left: 50%;
+            transform: translateX(-50%) translateY(-120px);
+            padding: 13px 24px; border-radius: 13px;
+            font-size: 13.5px; font-weight: 700;
             z-index: 1000;
-            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-            backdrop-filter: blur(20px);
+            transition: transform .5s cubic-bezier(.16,1,.3,1);
+            backdrop-filter: blur(16px);
+            max-width: calc(100vw - 32px);
+            text-align: center;
         }
+        .notification.show { transform: translateX(-50%) translateY(0); }
+        .notification.success { background: rgba(79, 201, 189, 0.16); border: 1px solid rgba(79, 201, 189, 0.4); color: var(--teal); }
+        .notification.error { background: rgba(239, 68, 68, 0.16); border: 1px solid rgba(239, 68, 68, 0.4); color: #f87171; }
 
-        .notification.show {
-            transform: translateX(-50%) translateY(0);
-        }
-
-        .notification.success {
-            background: rgba(16, 185, 129, 0.2);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            color: #34d399;
-        }
-
-        .notification.error {
-            background: rgba(239, 68, 68, 0.2);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            color: #f87171;
-        }
-
-        /* ===== RESPONSIVE ===== */
-
-        /* Планшеты и маленькие ноутбуки (до 768px) */
-        @media (max-width: 768px) {
-            .container { padding: 16px; }
-            .lang-switcher { top: 16px; right: 16px; }
-            .lang-btn { padding: 7px 12px; font-size: 12px; }
-            .register-card { padding: 38px 32px; border-radius: 22px; }
-            .logo-section { margin-bottom: 28px; }
-            .logo-img { width: 64px; height: 64px; border-radius: 16px; margin-bottom: 12px; }
-            .logo-title { font-size: 24px; }
-            .logo-subtitle { font-size: 11px; letter-spacing: 1.8px; }
-            .form-group { margin-bottom: 16px; }
-            .form-label { font-size: 12px; margin-bottom: 7px; }
-            .form-input { padding: 12px 15px 12px 44px; font-size: 13px; border-radius: 12px; }
-            .input-icon { left: 15px; width: 18px; height: 18px; }
-            .toggle-password { right: 12px; padding: 3px; }
-            .toggle-password svg { width: 16px; height: 16px; }
-            .password-strength { margin-top: 7px; gap: 3px; }
-            .strength-bar { height: 3px; }
-            .strength-text { font-size: 10px; margin-top: 3px; }
-            .error-message { font-size: 11px; margin-top: 5px; }
-            .submit-btn { padding: 14px; font-size: 14px; border-radius: 12px; }
-            .submit-btn .btn-text { gap: 7px; }
-            .submit-btn.loading::after { width: 22px; height: 22px; margin: -11px 0 0 -11px; }
-            .login-link-section { margin-top: 20px; }
-            .login-text { font-size: 13px; }
-            .footer-badges { gap: 20px; margin-top: 24px; }
-            .badge { font-size: 10px; gap: 5px; }
-            .badge svg { width: 13px; height: 13px; }
-            .copyright { margin-top: 18px; font-size: 11px; }
-            .notification { padding: 12px 20px; font-size: 13px; border-radius: 10px; top: 16px; }
-        }
-
-        /* Большие телефоны (до 520px) */
+        /* ================= АДАПТИВ ================= */
         @media (max-width: 520px) {
-            .container { padding: 16px; }
-            .lang-switcher { top: 12px; right: 12px; padding: 3px; gap: 1px; border-radius: 10px; }
-            .lang-btn { padding: 6px 10px; font-size: 11px; border-radius: 7px; }
-            .register-card { padding: 32px 20px; border-radius: 20px; }
-            .logo-section { margin-bottom: 24px; }
-            .logo-img { width: 60px; height: 60px; border-radius: 15px; margin-bottom: 10px; }
-            .logo-title { font-size: 22px; }
-            .logo-subtitle { font-size: 10px; letter-spacing: 1.6px; }
-            .form-group { margin-bottom: 14px; }
-            .form-label { font-size: 12px; margin-bottom: 6px; }
-            .form-input { padding: 11px 14px 11px 42px; font-size: 13px; border-radius: 11px; }
-            .input-icon { left: 14px; width: 18px; height: 18px; }
-            .toggle-password { right: 10px; padding: 3px; }
-            .toggle-password svg { width: 16px; height: 16px; }
-            .password-strength { margin-top: 6px; gap: 3px; }
-            .strength-bar { height: 3px; }
-            .strength-text { font-size: 10px; margin-top: 3px; }
-            .error-message { font-size: 11px; margin-top: 4px; }
-            .submit-btn { padding: 13px; font-size: 13px; border-radius: 11px; }
-            .submit-btn .btn-text { gap: 6px; }
-            .submit-btn.loading::after { width: 20px; height: 20px; margin: -10px 0 0 -10px; border-width: 2px; }
-            .login-link-section { margin-top: 18px; }
-            .login-text { font-size: 13px; }
-            .footer-badges { gap: 16px; margin-top: 20px; }
-            .badge { font-size: 10px; gap: 5px; }
-            .badge svg { width: 12px; height: 12px; }
-            .copyright { margin-top: 16px; font-size: 11px; }
-            .notification { padding: 11px 18px; font-size: 12px; border-radius: 9px; top: 12px; max-width: 92%; }
+            .page { padding: 60px 14px 18px; }
+            .register-card { padding: 26px 18px 22px; border-radius: 18px; }
+            .logo-img { width: 48px; height: 48px; }
+            .logo-title { font-size: 21px; }
+            .lang-switcher { top: 12px; right: 12px; }
+            .lang-select { padding: 6px 10px; font-size: 12px; }
+            .footer-badges { gap: 14px; }
         }
 
-        /* Телефоны (до 480px) */
-        @media (max-width: 480px) {
-            .container { padding: 12px; }
-            .lang-switcher { top: 10px; right: 10px; padding: 3px; gap: 1px; border-radius: 9px; }
-            .lang-btn { padding: 5px 9px; font-size: 10px; border-radius: 6px; letter-spacing: 0.3px; }
-            .register-card { padding: 28px 18px; border-radius: 18px; }
-            .logo-section { margin-bottom: 22px; }
-            .logo-img { width: 56px; height: 56px; border-radius: 14px; margin-bottom: 9px; }
-            .logo-title { font-size: 20px; }
-            .logo-subtitle { font-size: 10px; letter-spacing: 1.4px; }
-            .form-group { margin-bottom: 12px; }
-            .form-label { font-size: 11px; margin-bottom: 5px; }
-            .form-input { padding: 10px 13px 10px 40px; font-size: 12px; border-radius: 10px; }
-            .input-icon { left: 13px; width: 16px; height: 16px; }
-            .toggle-password { right: 9px; padding: 2px; }
-            .toggle-password svg { width: 15px; height: 15px; }
-            .password-strength { margin-top: 5px; gap: 2px; }
-            .strength-bar { height: 2px; }
-            .strength-text { font-size: 9px; margin-top: 2px; }
-            .error-message { font-size: 10px; margin-top: 3px; }
-            .submit-btn { padding: 12px; font-size: 12px; border-radius: 10px; letter-spacing: 0.2px; }
-            .submit-btn .btn-text { gap: 5px; }
-            .submit-btn svg { width: 15px; height: 15px; }
-            .submit-btn.loading::after { width: 18px; height: 18px; margin: -9px 0 0 -9px; border-width: 2px; }
-            .login-link-section { margin-top: 16px; }
-            .login-text { font-size: 12px; }
-            .footer-badges { gap: 14px; margin-top: 18px; }
-            .badge { font-size: 9px; gap: 4px; letter-spacing: 0.3px; }
-            .badge svg { width: 11px; height: 11px; }
-            .copyright { margin-top: 14px; font-size: 10px; }
-            .notification { padding: 10px 16px; font-size: 11px; border-radius: 8px; top: 10px; max-width: 94%; }
-        }
-
-        /* Очень маленькие телефоны (до 380px) */
-        @media (max-width: 380px) {
-            .container { padding: 10px; }
-            .lang-switcher { top: 8px; right: 8px; padding: 2px; gap: 1px; border-radius: 8px; }
-            .lang-btn { padding: 4px 8px; font-size: 9px; border-radius: 5px; }
-            .register-card { padding: 24px 14px; border-radius: 16px; }
-            .logo-section { margin-bottom: 20px; }
-            .logo-img { width: 52px; height: 52px; border-radius: 13px; margin-bottom: 8px; }
-            .logo-title { font-size: 19px; }
-            .logo-subtitle { font-size: 9px; letter-spacing: 1.2px; }
-            .form-group { margin-bottom: 10px; }
-            .form-label { font-size: 10px; margin-bottom: 4px; }
-            .form-input { padding: 9px 12px 9px 38px; font-size: 11px; border-radius: 9px; }
-            .input-icon { left: 12px; width: 15px; height: 15px; }
-            .toggle-password { right: 8px; padding: 2px; }
-            .toggle-password svg { width: 14px; height: 14px; }
-            .password-strength { margin-top: 4px; gap: 2px; }
-            .strength-bar { height: 2px; }
-            .strength-text { font-size: 8px; margin-top: 2px; }
-            .error-message { font-size: 9px; margin-top: 2px; }
-            .submit-btn { padding: 11px; font-size: 11px; border-radius: 9px; }
-            .submit-btn .btn-text { gap: 4px; }
-            .submit-btn svg { width: 14px; height: 14px; }
-            .submit-btn.loading::after { width: 16px; height: 16px; margin: -8px 0 0 -8px; }
-            .login-link-section { margin-top: 14px; }
-            .login-text { font-size: 11px; }
-            .footer-badges { gap: 12px; margin-top: 16px; }
-            .badge { font-size: 8px; gap: 3px; }
-            .badge svg { width: 10px; height: 10px; }
-            .copyright { margin-top: 12px; font-size: 9px; }
-            .notification { padding: 9px 14px; font-size: 10px; border-radius: 7px; top: 8px; }
+        @media (min-height: 900px) and (min-width: 901px) {
+            body { overflow: hidden; }
         }
     </style>
 </head>
 <body>
-<!-- Background effects -->
-<div class="bg-animation"></div>
-<div class="grid-overlay"></div>
+
+<div class="bg-glow"></div>
 <div class="particles" id="particles"></div>
 
-<!-- Notification toast -->
 <div class="notification" id="notification"></div>
 
-<!-- Language switcher -->
 <div class="lang-switcher">
     <select class="lang-select" onchange="switchLang(this.value)">
         <option value="ru" selected>🇷🇺 RU</option>
@@ -718,133 +330,65 @@
     </select>
 </div>
 
-
-<style>
-    .lang-switcher {
-        display: inline-block;
-        margin: 10px;
-        font-family: 'Segoe UI', Roboto, sans-serif;
-    }
-
-    .lang-select {
-        /* Основной стиль: темно-синий градиент */
-        background: linear-gradient(145deg, #1a2a6c, #101a44);
-        color: #ffffff;
-        padding: 10px 15px;
-        border-radius: 8px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        font-size: 14px;
-        font-weight: 500;
-        cursor: pointer;
-        outline: none;
-        appearance: none; /* Убираем стандартную стрелку браузера */
-        -webkit-appearance: none;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    }
-
-    /* Эффект при наведении */
-    .lang-select:hover {
-        background: #1e3a8a;
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-        transform: translateY(-1px);
-    }
-
-    /* Фокус (когда нажали) */
-    .lang-select:focus {
-        border-color: #3b82f6;
-        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.4);
-    }
-
-    /* Стили для выпадающего списка (в некоторых браузерах) */
-    .lang-select option {
-        background-color: #101a44;
-        color: white;
-        padding: 10px;
-    }
-</style>
-
-<div class="container">
+<div class="page">
     <div class="register-card">
-        <!-- Logo -->
+        <div class="card-topline"></div>
+
         <div class="logo-section">
-            <img src="{{ asset('img/dss.png') }}"
-                 alt="DocSign Logo"
-                 class="logo-img">
+            <img src="{{ asset('img/dss.png') }}" alt="DocSign Logo" class="logo-img">
             <div class="logo-title">Doc<span>Sign</span></div>
             <div class="logo-subtitle" data-i18n="subtitle">Создайте аккаунт</div>
         </div>
 
-        <!-- Laravel Register Form -->
         <form method="POST" action="{{ route('register') }}" id="registerForm" onsubmit="return handleRegister(event)">
             @csrf
 
-            <!-- Name -->
+            {{-- Имя --}}
             <div class="form-group">
                 <label class="form-label" for="name" data-i18n="nameLabel">Полное имя</label>
                 <div class="input-wrapper">
-                    <input
-                            type="text"
-                            name="name"
-                            id="name"
-                            class="form-input @error('name') error @enderror"
-                            value="{{ old('name') }}"
-                            data-i18n-placeholder="namePlaceholder"
-                            placeholder="Иван Иванов"
-                            required
-                            autofocus
-                            autocomplete="name"
-                    >
+                    <input type="text" name="name" id="name"
+                           class="form-input @error('name') error @enderror"
+                           value="{{ old('name') }}"
+                           data-i18n-placeholder="namePlaceholder"
+                           placeholder="Иван Иванов"
+                           required autofocus autocomplete="name">
                     <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
                         <circle cx="12" cy="7" r="4"/>
                     </svg>
                 </div>
-                @error('name')
-                <div class="error-message">{{ $message }}</div>
-                @enderror
+                @error('name')<div class="error-message">{{ $message }}</div>@enderror
             </div>
 
-            <!-- Email Address -->
+            {{-- Email --}}
             <div class="form-group">
                 <label class="form-label" for="email" data-i18n="emailLabel">Электронная почта</label>
                 <div class="input-wrapper">
-                    <input
-                            type="email"
-                            name="email"
-                            id="email"
-                            class="form-input @error('email') error @enderror"
-                            value="{{ old('email') }}"
-                            data-i18n-placeholder="emailPlaceholder"
-                            placeholder="name@company.com"
-                            required
-                            autocomplete="username"
-                    >
+                    <input type="email" name="email" id="email"
+                           class="form-input @error('email') error @enderror"
+                           value="{{ old('email') }}"
+                           data-i18n-placeholder="emailPlaceholder"
+                           placeholder="name@company.com"
+                           required autocomplete="username">
                     <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <rect x="2" y="4" width="20" height="16" rx="2"/>
                         <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
                     </svg>
                 </div>
-                @error('email')
-                <div class="error-message">{{ $message }}</div>
-                @enderror
+                @error('email')<div class="error-message">{{ $message }}</div>@enderror
             </div>
 
-            <!-- Password -->
+            {{-- Пароль --}}
             <div class="form-group">
                 <label class="form-label" for="password" data-i18n="passwordLabel">Пароль</label>
                 <div class="input-wrapper">
-                    <input
-                            type="password"
-                            name="password"
-                            id="password"
-                            class="form-input @error('password') error @enderror"
-                            data-i18n-placeholder="passwordPlaceholder"
-                            placeholder="••••••••••"
-                            required
-                            autocomplete="new-password"
-                            oninput="checkPasswordStrength(this.value)"
-                    >
+                    <input type="password" name="password" id="password"
+                           class="form-input @error('password') error @enderror"
+                           data-i18n-placeholder="passwordPlaceholder"
+                           placeholder="••••••••••"
+                           required autocomplete="new-password"
+                           oninput="checkPasswordStrength(this.value)">
                     <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
                         <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
@@ -863,25 +407,18 @@
                     <div class="strength-bar" id="bar4"></div>
                 </div>
                 <div class="strength-text" id="strengthText"></div>
-                @error('password')
-                <div class="error-message">{{ $message }}</div>
-                @enderror
+                @error('password')<div class="error-message">{{ $message }}</div>@enderror
             </div>
 
-            <!-- Confirm Password -->
+            {{-- Подтверждение пароля --}}
             <div class="form-group">
                 <label class="form-label" for="password_confirmation" data-i18n="confirmLabel">Подтвердите пароль</label>
                 <div class="input-wrapper">
-                    <input
-                            type="password"
-                            name="password_confirmation"
-                            id="password_confirmation"
-                            class="form-input @error('password_confirmation') error @enderror"
-                            data-i18n-placeholder="confirmPlaceholder"
-                            placeholder="••••••••••"
-                            required
-                            autocomplete="new-password"
-                    >
+                    <input type="password" name="password_confirmation" id="password_confirmation"
+                           class="form-input @error('password_confirmation') error @enderror"
+                           data-i18n-placeholder="confirmPlaceholder"
+                           placeholder="••••••••••"
+                           required autocomplete="new-password">
                     <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
                     </svg>
@@ -892,20 +429,16 @@
                         </svg>
                     </button>
                 </div>
-                @error('password_confirmation')
-                <div class="error-message">{{ $message }}</div>
-                @enderror
+                @error('password_confirmation')<div class="error-message">{{ $message }}</div>@enderror
             </div>
 
-            <!-- Submit -->
             <button type="submit" class="submit-btn" id="submitBtn">
-                    <span class="btn-text">
-                        <span data-i18n="registerBtn">Зарегистрироваться</span>
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M5 12h14"/>
-                            <path d="m12 5 7 7-7 7"/>
-                        </svg>
-                    </span>
+                <span class="btn-text">
+                    <span data-i18n="registerBtn">Зарегистрироваться</span>
+                    <svg class="btn-arrow" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
+                    </svg>
+                </span>
             </button>
         </form>
 
@@ -917,47 +450,43 @@
         </div>
     </div>
 
-    <!-- Footer badges -->
-    <div class="footer-badges">
-        <div class="badge">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
-            <span>SSL</span>
+    <footer class="page-footer">
+        <div class="footer-badges">
+            <div class="badge">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+                <span>SSL</span>
+            </div>
+            <div class="badge">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+                <span data-i18n="badgeSecurity">Защита</span>
+            </div>
+            <div class="badge">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/></svg>
+                <span data-i18n="badgeSign">ЭЦП</span>
+            </div>
         </div>
-        <div class="badge">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
-            <span data-i18n="badgeSecurity">Защита</span>
-        </div>
-        <div class="badge">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/></svg>
-            <span data-i18n="badgeSign">ЭЦП</span>
-        </div>
-    </div>
-
-    <p class="copyright">
-        © {{ date('Y') }} DocSign Ecosystem. <span data-i18n="rights">Все права защищены.</span>
-    </p>
+        <p class="copyright">© {{ date('Y') }} DocSign Ecosystem. <span data-i18n="rights">Все права защищены.</span></p>
+    </footer>
 </div>
 
 <script>
-    // Generate particles
-    function createParticles() {
-        var container = document.getElementById('particles');
-        var count = 30;
-        for (var i = 0; i < count; i++) {
-            var particle = document.createElement('div');
-            particle.className = 'particle';
-            particle.style.left = Math.random() * 100 + '%';
-            particle.style.animationDuration = (Math.random() * 10 + 8) + 's';
-            particle.style.animationDelay = (Math.random() * 10) + 's';
-            particle.style.width = (Math.random() * 3 + 1) + 'px';
-            particle.style.height = particle.style.width;
-            particle.style.opacity = Math.random() * 0.5 + 0.1;
-            container.appendChild(particle);
+    /* ============ Частицы фона ============ */
+    (function() {
+        var wrap = document.getElementById('particles');
+        for (var i = 0; i < 22; i++) {
+            var pt = document.createElement('div');
+            pt.className = 'particle';
+            pt.style.left = Math.random() * 100 + '%';
+            pt.style.animationDuration = (Math.random() * 12 + 10) + 's';
+            pt.style.animationDelay = (Math.random() * 12) + 's';
+            var sz = (Math.random() * 2 + 1) + 'px';
+            pt.style.width = sz; pt.style.height = sz;
+            pt.style.opacity = Math.random() * 0.4 + 0.1;
+            wrap.appendChild(pt);
         }
-    }
-    createParticles();
+    })();
 
-    // Translations
+    /* ============ Переводы ============ */
     var translations = {
         ru: {
             subtitle: 'Создайте аккаунт',
@@ -975,12 +504,12 @@
             badgeSecurity: 'Защита',
             badgeSign: 'ЭЦП',
             rights: 'Все права защищены.',
-            weak: 'Слабый',
-            medium: 'Средний',
-            strong: 'Сильный',
-            veryStrong: 'Очень сильный',
+            weak: 'Слабый пароль',
+            medium: 'Средний пароль',
+            strong: 'Сильный пароль',
+            veryStrong: 'Очень сильный пароль',
             passwordMismatch: 'Пароли не совпадают',
-            registering: 'Регистрация...'
+            minLen: 'Пароль должен быть не менее 8 символов'
         },
         tj: {
             subtitle: 'Ҳисоб эҷод кунед',
@@ -998,12 +527,12 @@
             badgeSecurity: 'Ҳифз',
             badgeSign: 'ЭИИ',
             rights: 'Ҳамаи ҳуқуқҳо ҳифз шудаанд.',
-            weak: 'Заиф',
-            medium: 'Миёна',
-            strong: 'Қавӣ',
-            veryStrong: 'Хеле қавӣ',
+            weak: 'Рамзи заиф',
+            medium: 'Рамзи миёна',
+            strong: 'Рамзи қавӣ',
+            veryStrong: 'Рамзи хеле қавӣ',
             passwordMismatch: 'Рамзҳо мувофиқ нестанд',
-            registering: 'Бақайдгирӣ...'
+            minLen: 'Рамз бояд камаш 8 аломат дошта бошад'
         },
         en: {
             subtitle: 'Create an Account',
@@ -1021,12 +550,12 @@
             badgeSecurity: 'Security',
             badgeSign: 'EDS',
             rights: 'All rights reserved.',
-            weak: 'Weak',
-            medium: 'Medium',
-            strong: 'Strong',
-            veryStrong: 'Very Strong',
+            weak: 'Weak password',
+            medium: 'Medium password',
+            strong: 'Strong password',
+            veryStrong: 'Very strong password',
             passwordMismatch: 'Passwords do not match',
-            registering: 'Registering...'
+            minLen: 'Password must be at least 8 characters'
         }
     };
 
@@ -1035,7 +564,6 @@
     function switchLang(lang) {
         currentLang = lang;
         document.documentElement.lang = lang;
-
         var t = translations[lang];
 
         document.querySelectorAll('[data-i18n]').forEach(function(el) {
@@ -1048,19 +576,17 @@
             if (t[key]) el.placeholder = t[key];
         });
 
-        // Re-check password strength text
         var passVal = document.getElementById('password').value;
         if (passVal) checkPasswordStrength(passVal);
     }
 
-    // Toggle password visibility
+    /* ============ Показ пароля ============ */
     var passwordStates = { password: false, password_confirmation: false };
 
     function togglePassword(fieldId, iconId) {
         passwordStates[fieldId] = !passwordStates[fieldId];
         var input = document.getElementById(fieldId);
         var icon = document.getElementById(iconId);
-
         if (passwordStates[fieldId]) {
             input.type = 'text';
             icon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/><line x1="1" y1="1" x2="23" y2="23"/>';
@@ -1070,7 +596,7 @@
         }
     }
 
-    // Password strength checker
+    /* ============ Надёжность пароля ============ */
     function checkPasswordStrength(password) {
         var bars = [
             document.getElementById('bar1'),
@@ -1081,13 +607,9 @@
         var textEl = document.getElementById('strengthText');
         var t = translations[currentLang];
 
-        // Reset
-        bars.forEach(function(bar) {
-            bar.className = 'strength-bar';
-        });
+        bars.forEach(function(bar) { bar.className = 'strength-bar'; });
         textEl.className = 'strength-text';
         textEl.textContent = '';
-
         if (!password) return;
 
         var score = 0;
@@ -1097,19 +619,10 @@
         if (/[^a-zA-Z0-9]/.test(password)) score++;
 
         var level, label;
-        if (score <= 1) {
-            level = 'weak';
-            label = t.weak;
-        } else if (score === 2) {
-            level = 'medium';
-            label = t.medium;
-        } else if (score === 3) {
-            level = 'strong';
-            label = t.strong;
-        } else {
-            level = 'strong';
-            label = t.veryStrong;
-        }
+        if (score <= 1) { level = 'weak'; label = t.weak; }
+        else if (score === 2) { level = 'medium'; label = t.medium; }
+        else if (score === 3) { level = 'strong'; label = t.strong; }
+        else { level = 'strong'; label = t.veryStrong; }
 
         for (var i = 0; i < score; i++) {
             bars[i].className = 'strength-bar ' + level;
@@ -1118,71 +631,50 @@
         textEl.textContent = label;
     }
 
-    // Show notification
+    /* ============ Уведомления ============ */
     function showNotification(message, type) {
         var notif = document.getElementById('notification');
         notif.textContent = message;
         notif.className = 'notification ' + type + ' show';
-        setTimeout(function() {
-            notif.classList.remove('show');
-        }, 3000);
+        setTimeout(function() { notif.classList.remove('show'); }, 3000);
     }
 
-    // Handle register - ИСПРАВЛЕННАЯ ВЕРСИЯ
+    /* ============ Регистрация ============ */
     function handleRegister(e) {
         var password = document.getElementById('password');
         var confirm = document.getElementById('password_confirmation');
         var t = translations[currentLang];
 
-        // Убираем предыдущие ошибки
         password.classList.remove('error');
         confirm.classList.remove('error');
 
-        // Проверка совпадения паролей
         if (password.value !== confirm.value) {
             confirm.classList.add('error');
             showNotification(t.passwordMismatch, 'error');
-            return false; // Блокируем отправку формы
-        }
-
-        // Проверяем минимальную длину пароля
-        if (password.value.length < 8) {
-            password.classList.add('error');
-            showNotification(currentLang === 'ru' ? 'Пароль должен быть не менее 8 символов' :
-                           (currentLang === 'tj' ? 'Рамз бояд камаш 8 аломат дошта бошад' :
-                           'Password must be at least 8 characters'), 'error');
             return false;
         }
 
-        // Добавляем индикатор загрузки, но НЕ блокируем форму
-        var btn = document.getElementById('submitBtn');
-        btn.classList.add('loading');
+        if (password.value.length < 8) {
+            password.classList.add('error');
+            showNotification(t.minLen, 'error');
+            return false;
+        }
 
-        // ВАЖНО: НЕ делаем btn.disabled = true, это блокирует отправку!
-
-        return true; // Разрешаем отправку формы
+        document.getElementById('submitBtn').classList.add('loading');
+        return true;
     }
 
-    // Clear errors on input
     document.querySelectorAll('.form-input').forEach(function(input) {
         input.addEventListener('input', function() {
             this.classList.remove('error');
-            // Убираем индикатор загрузки при изменении
-            var btn = document.getElementById('submitBtn');
-            btn.classList.remove('loading');
+            document.getElementById('submitBtn').classList.remove('loading');
         });
     });
 
-    // Обработка ошибок валидации Laravel (если есть)
     document.addEventListener('DOMContentLoaded', function() {
-        // Проверяем, есть ли ошибки валидации от Laravel
         var errorMessages = document.querySelectorAll('.error-message');
-        if (errorMessages.length > 0) {
-            // Показываем первую ошибку как уведомление
-            var firstError = errorMessages[0].textContent;
-            if (firstError) {
-                showNotification(firstError, 'error');
-            }
+        if (errorMessages.length > 0 && errorMessages[0].textContent.trim()) {
+            showNotification(errorMessages[0].textContent.trim(), 'error');
         }
     });
 </script>

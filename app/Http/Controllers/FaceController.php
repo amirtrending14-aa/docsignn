@@ -7,17 +7,16 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
 class FaceController extends Controller
 {
-    /**
-     * Строгий порог: 0.5
-     * < 0.4 = точно тот же человек
-     * 0.4 - 0.5 = вероятно тот же человек
-     * > 0.5 = РАЗНЫЕ ЛЮДИ (блокируем)
-     */
-    private const FACE_THRESHOLD = 0.50;
+    private const FACE_THRESHOLD     = 0.50;
+    private const PHOTO_THRESHOLD    = 0.05;
+    private const MAX_ATTEMPTS       = 3;
+    private const LOCKOUT_MINUTES    = 5;
+    private const MIN_LIVENESS       = 2;  // ✅ Поворот + кивок
 
     public function scanPage(Request $request): View|RedirectResponse
     {
@@ -32,14 +31,24 @@ class FaceController extends Controller
                 'face_vector'     => null,
                 'face_registered' => false,
             ]);
+            $this->clearAttempts($user->id);
             return redirect()->route('face.scan');
         }
 
-        if ($user->face_registered) {
-            return view('face.scan', ['mode' => 'checkin']);
+        $lockout = $this->getLockout($user->id);
+        if ($lockout > 0) {
+            return view('face.scan', [
+                'mode' => $user->face_registered ? 'checkin' : 'register',
+                'locked' => true,
+                'lockout_seconds' => $lockout,
+            ]);
         }
 
-        return view('face.scan', ['mode' => 'register']);
+        return view('face.scan', [
+            'mode' => $user->face_registered ? 'checkin' : 'register',
+            'locked' => false,
+            'lockout_seconds' => 0,
+        ]);
     }
 
     public function register(Request $request): JsonResponse
@@ -50,12 +59,22 @@ class FaceController extends Controller
             return $this->error('Лицо уже зарегистрировано. Сбросьте через ?reset=1', 403);
         }
 
+        $lockout = $this->getLockout($user->id);
+        if ($lockout > 0) {
+            return $this->error("Слишком много попыток. Подождите {$lockout} секунд.", 429);
+        }
+
+        $liveness = (int) $request->input('liveness', 0);
+        if ($liveness < self::MIN_LIVENESS) {
+            $this->incrementAttempts($user->id);
+            return $this->error('⚠️ Нужно повернуть голову и кивнуть. Попробуйте ещё раз.', 422);
+        }
+
         $user->load('companyRelation');
         $vector = $this->validatedVector($request);
 
-        // ✅ ПРОВЕРКА: вектор должен быть ровно 128 чисел
         if (count($vector) !== 128) {
-            return $this->error('Некорректный вектор лица (длина: ' . count($vector) . ')', 422);
+            return $this->error('Некорректный вектор лица', 422);
         }
 
         $user->update([
@@ -63,12 +82,13 @@ class FaceController extends Controller
             'face_registered' => true,
         ]);
 
+        $this->clearAttempts($user->id);
+
         Log::info('FaceID: лицо зарегистрировано', [
-            'user_id'   => $user->id,
-            'vector_sample' => array_slice($vector, 0, 3), // первые 3 числа для диагностики
+            'user_id'  => $user->id,
+            'liveness' => $liveness,
         ]);
 
-        // Сразу отмечаем приход
         $now        = now();
         $lateness   = $this->checkLatency($user, $now);
         $attendance = $user->attendances()->create([
@@ -86,57 +106,78 @@ class FaceController extends Controller
         $user   = $request->user()->load('companyRelation');
         $vector = $this->validatedVector($request);
 
+        $lockout = $this->getLockout($user->id);
+        if ($lockout > 0) {
+            return $this->error("Слишком много неудачных попыток. Подождите {$lockout} секунд.", 429);
+        }
+
         if (! $user->face_vector) {
             return $this->error('Сначала зарегистрируйте лицо', 422);
         }
 
-        // ✅ ПРОВЕРКА 1: сохранённый вектор должен быть массивом 128 чисел
         $savedVector = $user->face_vector;
         if (! is_array($savedVector) || count($savedVector) !== 128) {
-            Log::error('FaceID: повреждённый вектор в БД', [
-                'user_id'  => $user->id,
-                'type'     => gettype($savedVector),
-                'count'    => is_array($savedVector) ? count($savedVector) : 'N/A',
-            ]);
-            return $this->error('Ошибка данных лица. Обратитесь к администратору для перерегистрации.', 422);
+            Log::error('FaceID: повреждённый вектор в БД', ['user_id' => $user->id]);
+            return $this->error('Ошибка данных лица. Обратитесь к администратору.', 422);
         }
 
-        // ✅ ПРОВЕРКА 2: считаем расстояние
+        $liveness = (int) $request->input('liveness', 0);
+        if ($liveness < self::MIN_LIVENESS) {
+            $this->incrementAttempts($user->id);
+            Log::warning('FaceID: попытка без liveness', [
+                'user_id'  => $user->id,
+                'liveness' => $liveness,
+            ]);
+            return $this->error('⚠️ Обнаружена фотография! Поверните голову и кивните.', 422);
+        }
+
         $distance = $this->distance($savedVector, $vector);
 
         Log::info('FaceID: попытка входа', [
-            'user_id'      => $user->id,
-            'user_name'    => $user->name,
-            'distance'     => round($distance, 4),
-            'threshold'    => self::FACE_THRESHOLD,
-            'match'        => $distance <= self::FACE_THRESHOLD,
-            'saved_sample' => array_slice($savedVector, 0, 3),
-            'current_sample' => array_slice($vector, 0, 3),
+            'user_id'  => $user->id,
+            'distance' => round($distance, 4),
+            'liveness' => $liveness,
         ]);
 
-        // ✅ ПРОВЕРКА 3: строгое сравнение
-        if ($distance > self::FACE_THRESHOLD) {
-            return $this->error(sprintf(
-                'Лицо не совпадает! (расстояние: %.3f, порог: %.2f). Это не %s.',
-                $distance,
-                self::FACE_THRESHOLD,
-                $user->name
-            ), 422);
-        }
-
-        // ✅ ПРОВЕРКА 4: дополнительная защита — очень близкое расстояние
-        // Если расстояние < 0.1, это может быть фото/видео — но оставим пока
-        if ($distance < 0.05) {
-            Log::warning('FaceID: подозрительно близкое совпадение', [
-                'user_id' => $user->id,
+        if ($distance < self::PHOTO_THRESHOLD) {
+            $this->incrementAttempts($user->id);
+            Log::warning('FaceID: обнаружена фотография!', [
+                'user_id'  => $user->id,
                 'distance' => $distance,
             ]);
+            return $this->error('🚫 Обнаружена фотография/видео! Нужно живое лицо.', 403);
         }
 
-        // Проверка: не отмечался ли уже сегодня
+        if ($distance > self::FACE_THRESHOLD) {
+            $this->incrementAttempts($user->id);
+            $attempts = $this->getAttempts($user->id);
+            $remaining = self::MAX_ATTEMPTS - $attempts;
+
+            Log::warning('FaceID: лицо не совпадает', [
+                'user_id'  => $user->id,
+                'distance' => $distance,
+                'attempts' => $attempts,
+            ]);
+
+            if ($remaining <= 0) {
+                return $this->error(
+                    "❌ Лицо не совпадает. Превышен лимит попыток. Блокировка на " . self::LOCKOUT_MINUTES . " минут.",
+                    429
+                );
+            }
+
+            return $this->error(
+                sprintf('Лицо не совпадает. Осталось попыток: %d из %d', $remaining, self::MAX_ATTEMPTS),
+                422
+            );
+        }
+
+        $this->clearAttempts($user->id);
+
         $now        = now();
+        $today      = $now->toDateString();
         $attendance = Attendance::where('user_id', $user->id)
-            ->whereDate('date', $now->toDateString())
+            ->whereRaw("DATE(date) = ?", [$today])
             ->first();
 
         if ($attendance && $attendance->status !== Attendance::STATUS_ABSENT) {
@@ -163,7 +204,46 @@ class FaceController extends Controller
         return $this->successResponse($attendance, $lateness);
     }
 
-    // ================= ЛОГИКА ШТРАФОВ =================
+    private function getLockout(int $userId): int
+    {
+        $lockKey = "face_lockout_{$userId}";
+        $lockUntil = Cache::get($lockKey);
+        
+        if (! $lockUntil) return 0;
+        
+        $remaining = $lockUntil - time();
+        return $remaining > 0 ? $remaining : 0;
+    }
+
+    private function getAttempts(int $userId): int
+    {
+        return (int) Cache::get("face_attempts_{$userId}", 0);
+    }
+
+    private function incrementAttempts(int $userId): void
+    {
+        $key = "face_attempts_{$userId}";
+        $attempts = (int) Cache::get($key, 0) + 1;
+        
+        Cache::put($key, $attempts, now()->addMinutes(self::LOCKOUT_MINUTES));
+
+        if ($attempts >= self::MAX_ATTEMPTS) {
+            $lockKey = "face_lockout_{$userId}";
+            Cache::put($lockKey, time() + (self::LOCKOUT_MINUTES * 60), now()->addMinutes(self::LOCKOUT_MINUTES));
+            
+            Log::warning('FaceID: блокировка пользователя', [
+                'user_id'  => $userId,
+                'attempts' => $attempts,
+                'minutes'  => self::LOCKOUT_MINUTES,
+            ]);
+        }
+    }
+
+    private function clearAttempts(int $userId): void
+    {
+        Cache::forget("face_attempts_{$userId}");
+        Cache::forget("face_lockout_{$userId}");
+    }
 
     private function checkLatency($user, $now): array
     {
@@ -195,8 +275,6 @@ class FaceController extends Controller
         $blocks = (int) ceil($lateness['minutes'] / $blockMinutes);
         return (float) ($blocks * $blockFine);
     }
-
-    // ================= HELPERS =================
 
     private function successResponse(Attendance $attendance, array $lateness): JsonResponse
     {
