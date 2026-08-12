@@ -2676,7 +2676,9 @@ const oldBell = document.getElementById('notifBtn');
             .catch(error => console.error('Ошибка проверки уведомлений:', error));
 
     }, 5000); // Строго каждые 5 секунд
+    
 </script>
+
 @endif
 </body>
 </html>

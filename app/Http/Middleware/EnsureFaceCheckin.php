@@ -49,22 +49,23 @@ class EnsureFaceCheckin
     /**
      * Проверяет, есть ли у пользователя действительная отметка посещения за сегодня.
      */
-    private function hasValidAttendanceToday(int $userId): bool
-    {
-        return Attendance::where('user_id', $userId)
-            ->whereDate('date', now()->toDateString())
-            ->where(function ($q) {
-                // Реальный приход: вовремя или опоздал
-                $q->whereIn('status', [
-                    Attendance::STATUS_ON_TIME,
-                    Attendance::STATUS_LATE,
-                ])
-                // Или: админ снял штраф ПОСЛЕ фактического прихода
-                ->orWhere(function ($q2) {
-                    $q2->where('status', Attendance::STATUS_EXCUSED)
-                       ->whereNotNull('check_in_time');
-                });
-            })
-            ->exists();
-    }
+  private function hasValidAttendanceToday(int $userId): bool
+{
+    return Attendance::where('user_id', $userId)
+        ->whereDate('date', now()->toDateString())
+        ->where(function ($q) {
+            // ✅ Реальный приход ИЛИ отказ от сканирования
+            $q->whereIn('status', [
+                Attendance::STATUS_ON_TIME,    // пришёл вовремя
+                Attendance::STATUS_LATE,       // опоздал
+                Attendance::STATUS_REFUSED,    // ❌ ОТКАЗАЛСЯ от скана (новая проверка!)
+            ])
+            // Или: админ снял штраф ПОСЛЕ фактического прихода
+            ->orWhere(function ($q2) {
+                $q2->where('status', Attendance::STATUS_EXCUSED)
+                   ->whereNotNull('check_in_time');
+            });
+        })
+        ->exists();
+}
 }
