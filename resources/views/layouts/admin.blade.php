@@ -1348,13 +1348,13 @@
                 <span data-i18n="dashboard">Обзор</span>
             </button>
         </a>
-        <button type="button" data-tab="docs" onclick="window.location.href='/documents'">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                <polyline points="14 2 14 8 20 8"/>
-            </svg>
-            <span data-i18n="documents">Документы</span>
-        </button>
+     <button type="button" data-tab="docs" onclick="window.location.href='{{ route('documents.index', ['tab' => 'all']) }}'">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+        <polyline points="14 2 14 8 20 8"/>
+    </svg>
+    <span data-i18n="documents">Документы</span>
+</button>
         <a href="/signatures" class="button-link" style="text-decoration: none; color: inherit; display: inline-flex; align-items: center;">
             <button type="button" data-tab="sign" style="pointer-events: none;">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
@@ -1921,33 +1921,47 @@
 
         <div class="side-title" data-i18n="workspace">Рабочее пространство</div>
 
-        <a href="{{ route('documents.index', ['type' => 'incoming']) }}" class="side-item" style="text-decoration: none; color: inherit;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-            <span data-i18n="incoming">Входящие</span>
-        </a>
-        <a href="{{ route('documents.index', ['type' => 'outgoing']) }}" class="side-item" style="text-decoration: none; color: inherit;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-            <span data-i18n="outgoing">Исходящие</span>
-        </a>
-        <a href="{{ route('documents.index', ['status' => 'waiting']) }}" style="text-decoration: none; color: inherit; display: block;">
-            <div class="side-item">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M12 19l7-7 3 3-7 7-3-3z"/>
-                    <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/>
-                </svg>
-                <span data-i18n="on_signing">На подписании</span>
-            </div>
-        </a>
-        <a href="{{ route('documents.index', ['status' => 'draft']) }}" style="text-decoration: none; color: inherit; display: block;">
-            <div class="side-item">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="21 8 21 21 3 21 3 8"/>
-                    <rect x="1" y="3" width="22" height="5"/>
-                    <line x1="10" y1="12" x2="14" y2="12"/>
-                </svg>
-                <span data-i18n="archive">Архив</span>
-            </div>
-        </a>
+        <a href="{{ route('documents.index', ['tab' => 'incoming']) }}"
+   class="side-item {{ request('tab','incoming')=='incoming' ? 'active' : '' }}"
+   style="text-decoration:none;color:inherit;">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+    <span data-i18n="incoming">Входящие</span>
+</a>
+
+<a href="{{ route('documents.index', ['tab' => 'outgoing']) }}"
+   class="side-item {{ request('tab')=='outgoing' ? 'active' : '' }}"
+   style="text-decoration:none;color:inherit;">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    <span data-i18n="outgoing">Исходящие</span>
+</a>
+
+<a href="{{ route('documents.index', ['tab' => 'signing']) }}"
+   class="side-item {{ request('tab')=='signing' ? 'active' : '' }}"
+   style="text-decoration:none;color:inherit;display:block;">
+    <div class="side-item-inner">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/></svg>
+        <span data-i18n="on_signing">На подписании</span>
+    </div>
+</a>
+
+<a href="{{ route('documents.index', ['tab' => 'archive']) }}"
+   class="side-item {{ request('tab')=='archive' ? 'active' : '' }}"
+   style="text-decoration:none;color:inherit;display:block;">
+    <div class="side-item-inner">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
+        <span data-i18n="archive">Архив</span>
+    </div>
+</a>
+
+{{-- Если хочешь отдельную кнопку "Черновики" --}}
+<a href="{{ route('documents.index', ['tab' => 'draft']) }}"
+   class="side-item {{ request('tab')=='draft' ? 'active' : '' }}"
+   style="text-decoration:none;color:inherit;display:block;">
+    <div class="side-item-inner">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        <span data-i18n="drafts">Черновики</span>
+    </div>
+</a>
 
         <div class="side-title" data-i18n="management">Управление</div>
         <a href="/analysis"

@@ -587,7 +587,7 @@ body {
     <div class="page-head-custom">
         <h1>
             <span class="accent-bar"></span>
-            <span data-i18n="documents">DOCUMENTS</span>
+            <span>{{ $tabTitle }}</span>
         </h1>
         <a href="{{ route('documents.create') }}" class="btn-new">
             <i class="bi bi-plus-lg"></i>

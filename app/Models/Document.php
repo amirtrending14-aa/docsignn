@@ -14,9 +14,11 @@ class Document extends Model
 {
     use SoftDeletes;
     use HasFactory;
-    const STATUS_DRAFT = 'draft';
-    const STATUS_ACTIVE = 'active';
-    const STATUS_REJECTED = 'rejected';
+const STATUS_DRAFT      = 'draft';
+const STATUS_ACTIVE     = 'active';
+const STATUS_PROCESSING = 'processing';
+const STATUS_COMPLETED  = 'completed';
+const STATUS_REJECTED   = 'rejected';
 
     protected $fillable =[
         'number',

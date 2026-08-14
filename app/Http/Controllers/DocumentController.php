@@ -515,29 +515,75 @@ public function storeDepartmentSelection(Request $request)
     /**
      * ✅ ДОБАВЛЕНО: Отображение списка документов (обязательно для Route::resource)
      */
-    public function index()
-    {
-        $user = Auth::user();
-        
-        // Базовый запрос с подгрузкой связей
-        $query = Document::with(['createdBy', 'receiver', 'signatures.user']);
+   public function index(Request $request)
+{
+    $user = Auth::user();
+    $tab  = $request->query('tab', 'all'); // ← дефолт теперь "all"
 
-        // Если пользователь не админ, показываем только его документы
-        if (!$user->isAdmin()) {
-            $query->where(function ($q) use ($user) {
-                $q->where('created_by', $user->id)
-                  ->orWhere('sender_id', $user->id)
-                  ->orWhere('receiver_id', $user->id);
-            });
-        }
+    $query = Document::with(['createdBy', 'receiver', 'signatures']);
 
-        // Сортировка по дате (новые сверху) и пагинация по 15 штук
-        $documents = $query->latest()->paginate(15);
+    // Админ видит всё, обычный юзер — только своё
+    if (!$user->isAdmin()) {
+        $query->where(function ($q) use ($user) {
+            $q->where('created_by', $user->id)
+              ->orWhere('receiver_id', $user->id);
+        });
+    }
 
-        // ВАЖНО: Если твоя папка с видами называется 'documents' (с буквой s на конце), 
-        // поменяй 'document.index' на 'documents.index'
-        return view('document.index', compact('documents'));
-    } 
+    switch ($tab) {
+
+        // 📋 ВСЕ ДОКУМЕНТЫ (кнопка "ДОКУМЕНТЫ" в верхнем меню)
+        case 'all':
+            // фильтр только по видимости (уже выше), статусов не трогаем
+            break;
+
+        case 'incoming':
+            $query->where('receiver_id', $user->id)
+                  ->where('status', '!=', Document::STATUS_DRAFT);
+            break;
+
+        case 'outgoing':
+            $query->where('created_by', $user->id)
+                  ->where('status', '!=', Document::STATUS_DRAFT);
+            break;
+
+        case 'signing':
+            $query->where('receiver_id', $user->id)
+                  ->whereIn('status', [Document::STATUS_ACTIVE, 'processing'])
+                  ->whereDoesntHave('signatures', function ($q) use ($user) {
+                      $q->where('user_id', $user->id)->where('signature', '!=', '');
+                  });
+            break;
+
+        case 'archive':
+            $query->whereIn('status', ['completed', 'approved', Document::STATUS_REJECTED])
+                  ->where(function ($q) use ($user) {
+                      $q->where('created_by', $user->id)->orWhere('receiver_id', $user->id);
+                  });
+            break;
+
+        case 'draft':
+        default:
+            $query->where('created_by', $user->id)
+                  ->where('status', Document::STATUS_DRAFT);
+            break;
+    }
+
+    $documents = $query->latest()->paginate(15)->withQueryString();
+
+    $tabTitles = [
+        'all'      => 'Документы',     // ← для верхней кнопки
+        'incoming' => 'Входящие',
+        'outgoing' => 'Исходящие',
+        'signing'  => 'На подписании',
+        'archive'  => 'Архив',
+        'draft'    => 'Черновики',
+    ];
+
+    return view('document.index', compact('documents'))
+        ->with('currentTab', $tab)
+        ->with('tabTitle', $tabTitles[$tab] ?? 'Документы');
+}
     public function create()
     {
         $user = auth()->user();

@@ -503,25 +503,19 @@ Route::middleware('auth')->group(function () {
     Route::delete('/companies/{company}',    [CompanyTreeController::class, 'destroy'])->name('companies.destroy');
     Route::get('/companies/{company}',       [CompanyTreeController::class, 'show'])->name('companies.show');
 });
-Route::middleware('auth')->prefix('face')->name('face.')->controller(FaceController::class)->group(function () {
-    Route::get('/scan', 'scanPage')->name('scan');
-    Route::post('/register', 'register')->name('register');
-    Route::post('/checkin', 'checkin')->name('checkin');
-        Route::post('/refuse', 'refuse')->name('refuse');
-}); 
+
 
 // ===== АДМИНКА: отчёты и настройки =====
 
 
 
-// В routes/web.php (в самом низу файла)
-
-// Маршруты Face ID
+// ===== FACE ID МАРШРУТЫ (ЕДИНСТВЕННЫЙ БЛОК) =====
 Route::middleware('auth')->prefix('face')->name('face.')->controller(FaceController::class)->group(function () {
     Route::get('/scan', 'scanPage')->name('scan');
     Route::post('/register', 'register')->name('register');
     Route::post('/checkin', 'checkin')->name('checkin');
-    Route::post('/face/refuse', [FaceController::class, 'refuse'])->name('face.refuse');
+    Route::post('/refuse', 'refuse')->name('refuse');
+    Route::post('/login-by-face', 'loginByFace')->name('loginByFace'); // ← НОВЫЙ: вход только по лицу + email
 });
 
 // ===== АДМИНКА: отчёты и настройки посещаемости =====
