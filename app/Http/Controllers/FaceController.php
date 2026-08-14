@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Attendance;
+use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -12,10 +13,12 @@ use Illuminate\Support\Facades\Log;
 
 class FaceController extends Controller
 {
-    private const FACE_THRESHOLD     = 0.50;   // Максимальная дистанция для совпадения
-    private const PHOTO_THRESHOLD    = 0.05;   // Минимальная дистанция (защита от фото)
+    // 🔒 ДВОЙНАЯ ПРОВЕРКА: cosine + euclidean
+private const COSINE_THRESHOLD   = 0.60;   // Минимальное косинусное сходство (0.0-1.0)
+private const EUCLID_THRESHOLD   = 0.60;   // Было 0.55 — увеличиваем
+private const SIMILAR_USER_LIMIT = 0.85;   // Порог для защиты от двойников
     private const MAX_ATTEMPTS       = 3;
-    private const LOCKOUT_MINUTES    = 5;
+    private const LOCKOUT_MINUTES    = 10;
 
     /**
      * Страница сканирования
@@ -38,24 +41,18 @@ class FaceController extends Controller
         }
 
         $lockout = $this->getLockout($user->id);
-        if ($lockout > 0) {
-            return view('face.scan', [
-                'mode'            => $user->face_registered ? 'checkin' : 'register',
-                'locked'          => true,
-                'lockout_seconds' => $lockout,
-            ]);
-        }
 
         return view('face.scan', [
             'mode'            => $user->face_registered ? 'checkin' : 'register',
-            'locked'          => false,
-            'lockout_seconds' => 0,
+            'locked'          => $lockout > 0,
+            'lockout_seconds' => $lockout,
+            'current_user'    => $user,  // ← ВАЖНО: передаём для отображения в view
         ]);
     }
 
     /**
-     * РЕГИСТРАЦИЯ лица (первый раз)
-     * Просто сохраняем вектор лица — без движений головой
+     * 🔐 РЕГИСТРАЦИЯ лица
+     * Проверяем, что это не лицо другого пользователя
      */
     public function register(Request $request): JsonResponse
     {
@@ -67,17 +64,28 @@ class FaceController extends Controller
 
         $lockout = $this->getLockout($user->id);
         if ($lockout > 0) {
-            return $this->error("Слишком много попыток. Подождите {$lockout} секунд.", 429);
+            return $this->error("Блокировка. Подождите {$lockout} секунд.", 429);
         }
 
         $user->load('companyRelation');
         $vector = $this->validatedVector($request);
 
-        if (count($vector) !== 128) {
-            return $this->error('Некорректный вектор лица', 422);
+      /*  // 🔒 КРИТИЧНО: проверяем, не принадлежит ли вектор другому пользователю
+        $duplicate = $this->findSimilarUser($vector, $user->id);
+        if ($duplicate) {
+            Log::warning('FaceID: попытка регистрации вектора другого пользователя', [
+                'user_id'       => $user->id,
+                'email'         => $user->email,
+                'duplicate_id'  => $duplicate['user']->id,
+                'duplicate_email' => $duplicate['user']->email,
+                'similarity'    => round($duplicate['similarity'], 4),
+            ]);
+            return $this->error(
+                "⚠️ Это лицо уже зарегистрировано на {$duplicate['user']->email}. Обратитесь к администратору.",
+                409
+            );
         }
-
-        // Сохраняем вектор лица
+*/
         $user->update([
             'face_vector'     => $vector,
             'face_registered' => true,
@@ -87,24 +95,18 @@ class FaceController extends Controller
 
         Log::info('FaceID: лицо зарегистрировано', [
             'user_id' => $user->id,
+            'email'   => $user->email,
+            'name'    => $user->name,
         ]);
 
-        // Сразу отмечаем приход
-        $now        = now();
-        $lateness   = $this->checkLatency($user, $now);
-        $attendance = $user->attendances()->create([
-            'date'          => $now->toDateString(),
-            'check_in_time' => $now->format('H:i:s'),
-            'status'        => $lateness['is_late'] ? Attendance::STATUS_LATE : Attendance::STATUS_ON_TIME,
-            'fine'          => $this->calculateFine($user, $lateness),
-        ]);
+        $attendance = $this->createAttendance($user, now());
 
-        return $this->successResponse($attendance, $lateness);
+        return $this->successResponse($attendance, $this->checkLatency($user, now()));
     }
 
     /**
-     * ЕЖЕДНЕВНЫЙ ВХОД по лицу
-     * Сравниваем вектор — проверяем что это ИМЕННО владелец, а не другой человек
+     * 🔐 ЕЖЕДНЕВНЫЙ ВХОД
+     * Двойная проверка: cosine + euclidean + защита от двойников
      */
     public function checkin(Request $request): JsonResponse
     {
@@ -113,69 +115,59 @@ class FaceController extends Controller
 
         $lockout = $this->getLockout($user->id);
         if ($lockout > 0) {
-            return $this->error("Слишком много неудачных попыток. Подождите {$lockout} секунд.", 429);
+            return $this->error("Блокировка. Подождите {$lockout} секунд.", 429);
         }
 
-        if (! $user->face_vector) {
+        if (! $user->face_vector || ! $user->face_registered) {
             return $this->error('Сначала зарегистрируйте лицо', 422);
         }
 
         $savedVector = $user->face_vector;
         if (! is_array($savedVector) || count($savedVector) !== 128) {
-            Log::error('FaceID: повреждённый вектор в БД', ['user_id' => $user->id]);
+            Log::error('FaceID: повреждённый вектор', ['user_id' => $user->id]);
             return $this->error('Ошибка данных лица. Обратитесь к администратору.', 422);
         }
 
-        // Сравниваем векторы
-        $distance = $this->distance($savedVector, $vector);
+        // 🔒 ТРОЙНАЯ ПРОВЕРКА
+        $euclid = $this->euclideanDistance($savedVector, $vector);
+        $cosine = $this->cosineSimilarity($savedVector, $vector);
 
         Log::info('FaceID: попытка входа', [
-            'user_id'  => $user->id,
-            'distance' => round($distance, 4),
+            'user_id' => $user->id,
+            'email'   => $user->email,
+            'euclid'  => round($euclid, 4),
+            'cosine'  => round($cosine, 4),
         ]);
 
-        // 🔒 Защита от фотографии/видео (слишком идеальное совпадение = подделка)
-        if ($distance < self::PHOTO_THRESHOLD) {
-            $this->incrementAttempts($user->id);
-            Log::warning('FaceID: обнаружена фотография!', [
-                'user_id'  => $user->id,
-                'distance' => $distance,
-            ]);
-            return $this->error('🚫 Обнаружена фотография/видео! Нужно живое лицо.', 403);
+        // ❌ Проверка 1: евклидово расстояние
+        if ($euclid > self::EUCLID_THRESHOLD) {
+            return $this->handleFailure($user, 'Лицо не совпадает (расстояние)');
         }
 
-        // 🔒 Защита от ЧУЖОГО лица (слишком большая разница)
-        if ($distance > self::FACE_THRESHOLD) {
-            $this->incrementAttempts($user->id);
-            $attempts  = $this->getAttempts($user->id);
-            $remaining = self::MAX_ATTEMPTS - $attempts;
-
-            Log::warning('FaceID: лицо не совпадает', [
-                'user_id'  => $user->id,
-                'distance' => $distance,
-                'attempts' => $attempts,
-            ]);
-
-            if ($remaining <= 0) {
-                return $this->error(
-                    "❌ Лицо не совпадает. Превышен лимит попыток. Блокировка на " . self::LOCKOUT_MINUTES . " минут.",
-                    429
-                );
-            }
-
-            return $this->error(
-                sprintf('Лицо не совпадает. Осталось попыток: %d из %d', $remaining, self::MAX_ATTEMPTS),
-                422
-            );
+        // ❌ Проверка 2: косинусное сходство
+        if ($cosine < self::COSINE_THRESHOLD) {
+            return $this->handleFailure($user, 'Лицо не совпадает (сходство)');
         }
 
-        // ✅ Лицо совпало!
+        // ❌ Проверка 3: не двойник ли это?
+        $otherUser = $this->findSimilarUser($vector, $user->id);
+        if ($otherUser && $otherUser['similarity'] > $cosine * 0.95) {
+            Log::warning('FaceID: подозрение на двойника', [
+                'claimed_user'  => $user->id,
+                'possible_real' => $otherUser['user']->id,
+                'similarity'    => round($otherUser['similarity'], 4),
+                'vs_claimed'    => round($cosine, 4),
+            ]);
+            return $this->handleFailure($user, '⚠️ Обнаружено несоответствие');
+        }
+
+        // ✅ Все проверки пройдены
         $this->clearAttempts($user->id);
 
         $now        = now();
         $today      = $now->toDateString();
         $attendance = Attendance::where('user_id', $user->id)
-            ->whereRaw("DATE(date) = ?", [$today])
+            ->whereDate('date', $today)
             ->first();
 
         if ($attendance && $attendance->status !== Attendance::STATUS_ABSENT) {
@@ -187,23 +179,13 @@ class FaceController extends Controller
             ], 200);
         }
 
-        $lateness = $this->checkLatency($user, $now);
+        $attendance = $this->createAttendance($user, $now, $attendance);
 
-        $data = [
-            'check_in_time' => $now->format('H:i:s'),
-            'status'        => $lateness['is_late'] ? Attendance::STATUS_LATE : Attendance::STATUS_ON_TIME,
-            'fine'          => $this->calculateFine($user, $lateness),
-        ];
-
-        $attendance
-            ? $attendance->update($data)
-            : $attendance = $user->attendances()->create(['date' => $now->toDateString()] + $data);
-
-        return $this->successResponse($attendance, $lateness);
+        return $this->successResponse($attendance, $this->checkLatency($user, $now));
     }
 
     /**
-     * ❌ ОТКАЗ от сканирования — регистрирует неявку в отчёте
+     * ❌ Отказ от сканирования
      */
     public function refuse(Request $request): JsonResponse
     {
@@ -215,11 +197,12 @@ class FaceController extends Controller
             ->first();
 
         if ($record) {
-            $record->status        = Attendance::STATUS_REFUSED;
-            $record->refused_at    = now();
-            $record->check_in_time = null;
-            $record->fine          = (float) ($user->companyRelation->absence_fine ?? 200);
-            $record->save();
+            $record->update([
+                'status'        => Attendance::STATUS_REFUSED,
+                'refused_at'    => now(),
+                'check_in_time' => null,
+                'fine'          => (float) ($user->companyRelation->absence_fine ?? 200),
+            ]);
         } else {
             Attendance::create([
                 'user_id'       => $user->id,
@@ -231,27 +214,119 @@ class FaceController extends Controller
             ]);
         }
 
-        Log::info('FaceID: пользователь отказался от сканирования', [
-            'user_id' => $user->id,
-        ]);
+        Log::info('FaceID: отказ от сканирования', ['user_id' => $user->id]);
 
-        return response()->json([
-            'ok'       => true,
-            'redirect' => route('dashboard'),
-        ]);
+        return response()->json(['ok' => true, 'redirect' => route('dashboard')]);
     }
 
-    // ==================== ВСПОМОГАТЕЛЬНЫЕ МЕТОДЫ ====================
+    // ==================== МАТЕМАТИКА ====================
+
+    /**
+     * Евклидово расстояние (0 = идентичны)
+     */
+    private function euclideanDistance(array $a, array $b): float
+    {
+        $sum = 0.0;
+        foreach ($a as $i => $value) {
+            $sum += ($value - $b[$i]) ** 2;
+        }
+        return sqrt($sum);
+    }
+
+    /**
+     * Косинусное сходство (1.0 = идентичны, 0 = ортогональны)
+     * Для нормализованных face-эмбеддингов это НАМНОГО надёжнее евклида
+     */
+    private function cosineSimilarity(array $a, array $b): float
+    {
+        $dot = 0.0;
+        $magA = 0.0;
+        $magB = 0.0;
+        foreach ($a as $i => $value) {
+            $dot  += $value * $b[$i];
+            $magA += $value ** 2;
+            $magB += $b[$i] ** 2;
+        }
+        if ($magA == 0 || $magB == 0) return 0.0;
+        return $dot / (sqrt($magA) * sqrt($magB));
+    }
+
+    /**
+     * 🔒 Поиск пользователя с похожим вектором (защита от двойников)
+     */
+    private function findSimilarUser(array $vector, int $excludeId): ?array
+    {
+        $candidates = User::where('face_registered', true)
+            ->whereNotNull('face_vector')
+            ->where('id', '!=', $excludeId)
+            ->get();
+
+        $best = null;
+        $bestSimilarity = 0;
+
+        foreach ($candidates as $candidate) {
+            $saved = $candidate->face_vector;
+            if (! is_array($saved) || count($saved) !== 128) continue;
+
+            $sim = $this->cosineSimilarity($saved, $vector);
+            if ($sim > $bestSimilarity) {
+                $bestSimilarity = $sim;
+                $best = $candidate;
+            }
+        }
+
+        if ($best && $bestSimilarity > self::SIMILAR_USER_LIMIT) {
+            return ['user' => $best, 'similarity' => $bestSimilarity];
+        }
+
+        return null;
+    }
+
+    // ==================== ВСПОМОГАТЕЛЬНЫЕ ====================
+
+    private function handleFailure(User $user, string $reason): JsonResponse
+    {
+        $this->incrementAttempts($user->id);
+        $attempts  = $this->getAttempts($user->id);
+        $remaining = self::MAX_ATTEMPTS - $attempts;
+
+        Log::warning('FaceID: неудачная попытка', [
+            'user_id'  => $user->id,
+            'email'    => $user->email,
+            'reason'   => $reason,
+            'attempts' => $attempts,
+        ]);
+
+        if ($remaining <= 0) {
+            return $this->error(
+                "❌ Превышен лимит попыток. Блокировка на " . self::LOCKOUT_MINUTES . " мин.",
+                429
+            );
+        }
+
+        return $this->error("{$reason}. Осталось попыток: {$remaining}", 403);
+    }
+
+    private function createAttendance(User $user, $now, ?Attendance $existing = null): Attendance
+    {
+        $lateness = $this->checkLatency($user, $now);
+        $data = [
+            'date'          => $now->toDateString(),
+            'check_in_time' => $now->format('H:i:s'),
+            'status'        => $lateness['is_late'] ? Attendance::STATUS_LATE : Attendance::STATUS_ON_TIME,
+            'fine'          => $this->calculateFine($user, $lateness),
+        ];
+
+        return $existing
+            ? tap($existing)->update($data)
+            : $user->attendances()->create($data);
+    }
 
     private function getLockout(int $userId): int
     {
-        $lockKey   = "face_lockout_{$userId}";
-        $lockUntil = Cache::get($lockKey);
-
+        $lockUntil = Cache::get("face_lockout_{$userId}");
         if (! $lockUntil) return 0;
-
-        $remaining = $lockUntil - time();
-        return $remaining > 0 ? $remaining : 0;
+        return max(0, $lockUntil - time());
     }
 
     private function getAttempts(int $userId): int
@@ -261,20 +336,17 @@ class FaceController extends Controller
 
     private function incrementAttempts(int $userId): void
     {
-        $key      = "face_attempts_{$userId}";
-        $attempts = (int) Cache::get($key, 0) + 1;
-
+        $key = "face_attempts_{$userId}";
+        $attempts = $this->getAttempts($userId) + 1;
         Cache::put($key, $attempts, now()->addMinutes(self::LOCKOUT_MINUTES));
 
         if ($attempts >= self::MAX_ATTEMPTS) {
-            $lockKey = "face_lockout_{$userId}";
-            Cache::put($lockKey, time() + (self::LOCKOUT_MINUTES * 60), now()->addMinutes(self::LOCKOUT_MINUTES));
-
-            Log::warning('FaceID: блокировка пользователя', [
-                'user_id'  => $userId,
-                'attempts' => $attempts,
-                'minutes'  => self::LOCKOUT_MINUTES,
-            ]);
+            Cache::put(
+                "face_lockout_{$userId}",
+                time() + self::LOCKOUT_MINUTES * 60,
+                now()->addMinutes(self::LOCKOUT_MINUTES)
+            );
+            Log::warning('FaceID: блокировка', ['user_id' => $userId]);
         }
     }
 
@@ -291,14 +363,9 @@ class FaceController extends Controller
             ->setTimeFromTimeString($company->work_start_time ?? '08:30')
             ->addMinutes($company->late_tolerance_minutes ?? 0);
 
-        if (! $now->greaterThan($deadline)) {
-            return ['is_late' => false, 'minutes' => 0];
-        }
-
-        return [
-            'is_late' => true,
-            'minutes' => (int) ceil($deadline->diffInSeconds($now) / 60),
-        ];
+        return $now->greaterThan($deadline)
+            ? ['is_late' => true, 'minutes' => (int) ceil($deadline->diffInSeconds($now) / 60)]
+            : ['is_late' => false, 'minutes' => 0];
     }
 
     private function calculateFine($user, array $lateness): float
@@ -306,13 +373,10 @@ class FaceController extends Controller
         if (! $lateness['is_late']) return 0.0;
 
         $company      = $user->companyRelation;
-        $blockMinutes = (int) ($company->late_block_minutes ?? 60);
+        $blockMinutes = max(1, (int) ($company->late_block_minutes ?? 60));
         $blockFine    = (float) ($company->late_block_fine ?? 100);
 
-        if ($blockMinutes <= 0) $blockMinutes = 60;
-
-        $blocks = (int) ceil($lateness['minutes'] / $blockMinutes);
-        return (float) ($blocks * $blockFine);
+        return (float) (ceil($lateness['minutes'] / $blockMinutes) * $blockFine);
     }
 
     private function successResponse(Attendance $attendance, array $lateness): JsonResponse
@@ -333,15 +397,6 @@ class FaceController extends Controller
             'vector'   => 'required|array|size:128',
             'vector.*' => 'numeric',
         ])['vector'];
-    }
-
-    private function distance(array $a, array $b): float
-    {
-        $sum = 0.0;
-        foreach ($a as $i => $value) {
-            $sum += ($value - $b[$i]) ** 2;
-        }
-        return sqrt($sum);
     }
 
     private function error(string $message, int $code): JsonResponse
