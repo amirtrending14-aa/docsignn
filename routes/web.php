@@ -502,7 +502,12 @@ Route::middleware('auth')->group(function () {
     Route::put('/companies/{company}',       [CompanyTreeController::class, 'update'])->name('companies.update');
     Route::delete('/companies/{company}',    [CompanyTreeController::class, 'destroy'])->name('companies.destroy');
     Route::get('/companies/{company}',       [CompanyTreeController::class, 'show'])->name('companies.show');
-});
+
+
+
+
+// Генерация договоров
+   });
 
 
 // ===== АДМИНКА: отчёты и настройки =====
@@ -534,4 +539,35 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->controlle
     Route::get('/reports/user/{userId}', 'userReport')->name('reports.user'); // ← ДОБАВЬ ЭТУ СТРОКУ
     Route::post('/reports/excuse', 'excuse')->name('reports.excuse');
     Route::post('/reports/settings', 'saveSettings')->name('reports.settings');
+});
+
+
+
+    Route::middleware(['auth'])->group(function () {
+           Route::get('/contracts/index', [ContractController::class, 'index'])->name('contracts.list');
+  
+    // Создание
+    Route::get('/contracts/create', [ContractController::class, 'create'])->name('contracts.create');
+    Route::post('/contracts/generate', [ContractController::class, 'generate'])->name('contracts.generate');
+    Route::post('/contracts/generate-ajax', [ContractController::class, 'generateAjax'])->name('contracts.generate-ajax');
+    
+    // Анализ (шаг 1)
+    Route::post('/contracts/analyze-ajax', [ContractController::class, 'analyzeAjax'])->name('contracts.analyze-ajax');
+    
+    // Список
+    Route::get('/contracts', [ContractController::class, 'index'])->name('contracts.index');
+    
+    // Просмотр
+    Route::get('/contracts/{id}/preview', [ContractController::class, 'preview'])->name('contracts.preview');
+    
+    // 📄 Скачать Word
+    Route::get('/contracts/{id}/download', [ContractController::class, 'download'])->name('contracts.download');
+    
+    // 📕 Скачать PDF  ← ДОБАВЬ ЭТО
+    Route::get('/contracts/{id}/download-pdf', [ContractController::class, 'downloadPdf'])
+        ->name('contracts.downloadPdf');
+    
+    // Анализатор
+    Route::get('/contracts/analyze-page', [ContractController::class, 'analyzePage'])->name('contracts.analyze-page');
+    Route::post('/contracts/analyze-upload', [ContractController::class, 'analyzeUpload'])->name('contracts.analyze-upload');
 });

@@ -31,7 +31,6 @@ class DocumentSignatureController extends Controller
     {
         $user = Auth::user();
 
-        // ✅ ПРОСРОЧЕННЫЕ ДОКУМЕНТЫ
         $overdueQuery = Document::where('status', 'pending')
             ->where(function($q) {
                 $q->where('deadline', '<', now())
@@ -39,7 +38,6 @@ class DocumentSignatureController extends Controller
             });
 
         if (!$user->isAdmin()) {
-            // 🔒 БЕЗОПАСНОСТЬ: Показываем только документы, связанные с текущим юзером
             $overdueQuery->where(function($q) use ($user) {
                 $q->where('created_by', $user->id)
                     ->orWhere('receiver_id', $user->id)
@@ -49,7 +47,6 @@ class DocumentSignatureController extends Controller
 
         $overdueCount = $overdueQuery->count();
 
-        // ✅ ОСНОВНОЙ ЗАПРОС
         $query = DocumentSignature::with(['document', 'user']);
 
         if (!$user->isAdmin()) {
@@ -66,7 +63,6 @@ class DocumentSignatureController extends Controller
         $documentId = $request->query('document_id');
         $user = Auth::user();
 
-        // 🔒 БЕЗОПАСНОСТЬ: Загружаем только документы, доступные текущему юзеру
         $documentsQuery = Document::latest();
 
         if (!$user->isAdmin()) {
@@ -86,16 +82,34 @@ class DocumentSignatureController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'document_id' => 'required|exists:documents,id',
+            'document_id'    => 'required|exists:documents,id',
+            'position_mode'  => 'required|in:page,cell',
+            'qr_x_percent'   => 'required_if:position_mode,page|nullable|numeric|min:0|max:100',
+            'qr_y_percent'   => 'required_if:position_mode,page|nullable|numeric|min:0|max:100',
+            'qr_cell'        => 'required_if:position_mode,cell|nullable|string|max:12',
+            'qr_offset_x'    => 'nullable|integer|min:0|max:5000',
+            'qr_offset_y'    => 'nullable|integer|min:0|max:5000',
         ], [
-            'document_id.required' => 'Идентификатор документа обязателен.',
-            'document_id.exists' => 'Выбранный документ не найден в базе данных.',
+            'document_id.required'   => 'Идентификатор документа обязателен.',
+            'document_id.exists'     => 'Выбранный документ не найден в базе данных.',
+            'position_mode.required' => 'Укажите место для QR-кода, кликнув по документу.',
+            'qr_x_percent.required_if' => 'Укажите место для QR-кода, кликнув по документу.',
+            'qr_y_percent.required_if' => 'Укажите место для QR-кода, кликнув по документу.',
+            'qr_cell.required_if'      => 'Укажите ячейку для QR-кода, кликнув по таблице.',
         ]);
+
+        $position = [
+            'mode'      => $request->input('position_mode'),
+            'x_percent' => $request->input('qr_x_percent'),
+            'y_percent' => $request->input('qr_y_percent'),
+            'cell'      => $request->input('qr_cell'),
+            'offset_x'  => $request->input('qr_offset_x'),
+            'offset_y'  => $request->input('qr_offset_y'),
+        ];
 
         $document = Document::findOrFail($request->document_id);
         $signer = Auth::user();
 
-        // 🔒 БЕЗОПАСНОСТЬ: Проверяем право на подписание документа
         $this->checkDocumentSigningAccess($document, $signer);
 
         $creator = $document->createdBy ?? $document->user;
@@ -124,69 +138,61 @@ class DocumentSignatureController extends Controller
         $qrSize = 100;
 
         try {
-            DB::transaction(function () use ($document, $signer, $currentWorkflow, $qrData, $extension, $qrSize, &$redirectType, $signerName, $signedDate) {
+            DB::transaction(function () use ($document, $signer, $currentWorkflow, $qrData, $extension, $qrSize, &$redirectType, $signerName, $signedDate, $position) {
 
                 if ($extension === 'docx' || $extension === 'doc') {
-                    $result = $this->processDocxSigning($document, $qrData, $qrSize, $signerName, $signedDate);
+                    $result = $this->processDocxSigning($document, $qrData, $qrSize, $signerName, $signedDate, $position);
                     $this->saveSignature($document, $signer, $result['qr_path']);
                     $this->processWorkflow($document, $currentWorkflow, $signer);
                     $document->update([
                         'file_path' => $result['docx_path'],
                         'status'    => ($this->isLastStep($document)) ? 'completed' : 'processing'
                     ]);
-
-                    // 📝 ИСТОРИЯ: Подписание DOCX
                     $this->logAction($document->id, 'подписание', "DOCX документ подписан пользователем {$signer->name}. QR-код внедрён в файл.");
                     $redirectType = 'docx';
                     return;
                 }
 
                 if ($extension === 'pdf') {
-                    $result = $this->processPdfSigning($document, $qrData, $qrSize, $signerName, $signedDate);
+                    $result = $this->processPdfSigning($document, $qrData, $qrSize, $signerName, $signedDate, $position);
                     $this->saveSignature($document, $signer, $result['qr_path']);
                     $this->processWorkflow($document, $currentWorkflow, $signer);
                     $document->update([
                         'file_path' => $result['pdf_path'],
                         'status'    => ($this->isLastStep($document)) ? 'completed' : 'processing'
                     ]);
-
-                    // 📝 ИСТОРИЯ: Подписание PDF
                     $this->logAction($document->id, 'подписание', "PDF документ подписан пользователем {$signer->name}. QR-код внедрён в файл.");
                     $redirectType = 'pdf';
                     return;
                 }
 
                 if ($extension === 'xlsx' || $extension === 'xls') {
-                    $result = $this->processXlsxSigning($document, $qrData, $qrSize, $signerName, $signedDate);
+                    $result = $this->processXlsxSigning($document, $qrData, $qrSize, $signerName, $signedDate, $position);
                     $this->saveSignature($document, $signer, $result['qr_path']);
                     $this->processWorkflow($document, $currentWorkflow, $signer);
                     $document->update([
                         'file_path' => $result['xlsx_path'],
                         'status'    => ($this->isLastStep($document)) ? 'completed' : 'processing'
                     ]);
-
-                    // 📝 ИСТОРИЯ: Подписание XLSX
                     $this->logAction($document->id, 'подписание', "Excel документ подписан пользователем {$signer->name}. QR-код внедрён в файл.");
                     $redirectType = 'xlsx';
                     return;
                 }
 
                 if ($extension === 'rtf') {
-                    $result = $this->processRtfSigning($document, $qrData, $qrSize, $signerName, $signedDate);
+                    $result = $this->processRtfSigning($document, $qrData, $qrSize, $signerName, $signedDate, $position);
                     $this->saveSignature($document, $signer, $result['qr_path']);
                     $this->processWorkflow($document, $currentWorkflow, $signer);
                     $document->update([
                         'file_path' => $result['docx_path'],
                         'status'    => ($this->isLastStep($document)) ? 'completed' : 'processing'
                     ]);
-
-                    // 📝 ИСТОРИЯ: Конвертация RTF и подписание
                     $this->logAction($document->id, 'подписание', "RTF конвертирован в DOCX и подписан пользователем {$signer->name}. QR-код внедрён.");
                     $redirectType = 'docx';
                     return;
                 }
 
-                // Для других типов
+                // Для других (неизвестных) типов — позиция не применяется, отдельный QR-штамп
                 $permanentQrName = 'signatures/qr_' . time() . '_' . $document->id . '.png';
                 $stampPath = $this->generateStamp($qrData, $signerName, $signedDate, $qrSize);
 
@@ -201,7 +207,6 @@ class DocumentSignatureController extends Controller
                 $this->processWorkflow($document, $currentWorkflow, $signer);
                 $document->update(['status' => ($this->isLastStep($document)) ? 'completed' : 'processing']);
 
-                // 📝 ИСТОРИЯ: Подписание другого формата
                 $this->logAction($document->id, 'подписание', "Документ формата {$extension} подписан пользователем {$signer->name}. Создан QR-штамп.");
             });
 
@@ -217,17 +222,11 @@ class DocumentSignatureController extends Controller
 
         } catch (Exception $e) {
             \Log::error("Ошибка подписи: " . $e->getMessage() . "\n" . $e->getTraceAsString());
-
-            // 📝 ИСТОРИЯ: Ошибка подписания
             $this->logAction($document->id, 'ошибка', "Ошибка при подписании документа пользователем {$signer->name}: " . $e->getMessage());
-
             return back()->with('error', '❌ Ошибка: ' . $e->getMessage());
         }
     }
 
-    /**
-     * ✅ Сохраняет или обновляет подпись
-     */
     private function saveSignature($document, $signer, $qrPath)
     {
         $signature = DocumentSignature::where('document_id', $document->id)
@@ -252,12 +251,8 @@ class DocumentSignatureController extends Controller
     }
 
     public function show(DocumentSignature $signature) {
-        // Явно загружаем связь document, чтобы избежать проблемы N+1 и null
         $signature->load('document');
-
-        // 🔒 БЕЗОПАСНОСТЬ: Проверяем право на просмотр подписи
         $this->checkSignatureAccess($signature);
-
         return view('signatures.show', compact('signature'));
     }
 
@@ -273,6 +268,29 @@ class DocumentSignatureController extends Controller
         if (!Auth::user()->isAdmin() && $signature->user_id !== Auth::id()) {
             abort(403);
         }
+
+        $request->validate([
+            'position_mode'  => 'required|in:page,cell',
+            'qr_x_percent'   => 'required_if:position_mode,page|nullable|numeric|min:0|max:100',
+            'qr_y_percent'   => 'required_if:position_mode,page|nullable|numeric|min:0|max:100',
+            'qr_cell'        => 'required_if:position_mode,cell|nullable|string|max:12',
+            'qr_offset_x'    => 'nullable|integer|min:0|max:5000',
+            'qr_offset_y'    => 'nullable|integer|min:0|max:5000',
+        ], [
+            'position_mode.required'   => 'Укажите место для QR-кода, кликнув по документу.',
+            'qr_x_percent.required_if' => 'Укажите место для QR-кода, кликнув по документу.',
+            'qr_y_percent.required_if' => 'Укажите место для QR-кода, кликнув по документу.',
+            'qr_cell.required_if'      => 'Укажите ячейку для QR-кода, кликнув по таблице.',
+        ]);
+
+        $position = [
+            'mode'      => $request->input('position_mode'),
+            'x_percent' => $request->input('qr_x_percent'),
+            'y_percent' => $request->input('qr_y_percent'),
+            'cell'      => $request->input('qr_cell'),
+            'offset_x'  => $request->input('qr_offset_x'),
+            'offset_y'  => $request->input('qr_offset_y'),
+        ];
 
         $document = $signature->document;
         $signer = Auth::user();
@@ -293,13 +311,13 @@ class DocumentSignatureController extends Controller
         $qrSize = 100;
 
         try {
-            DB::transaction(function () use ($qrData, $signature, $document, $extension, $qrSize, &$redirectType, $signerName, $signedDate) {
+            DB::transaction(function () use ($qrData, $signature, $document, $extension, $qrSize, &$redirectType, $signerName, $signedDate, $position) {
 
                 if ($extension === 'docx' || $extension === 'doc') {
                     if ($signature->signature) Storage::disk('public')->delete($signature->signature);
                     if ($document->file_path) Storage::disk('public')->delete($document->file_path);
 
-                    $result = $this->processDocxSigning($document, $qrData, $qrSize, $signerName, $signedDate);
+                    $result = $this->processDocxSigning($document, $qrData, $qrSize, $signerName, $signedDate, $position);
                     $document->update(['file_path' => $result['docx_path']]);
                     $signature->update(['signature' => $result['qr_path'], 'signed_at' => now()]);
                     $redirectType = 'docx';
@@ -310,7 +328,7 @@ class DocumentSignatureController extends Controller
                     if ($signature->signature) Storage::disk('public')->delete($signature->signature);
                     if ($document->file_path) Storage::disk('public')->delete($document->file_path);
 
-                    $result = $this->processPdfSigning($document, $qrData, $qrSize, $signerName, $signedDate);
+                    $result = $this->processPdfSigning($document, $qrData, $qrSize, $signerName, $signedDate, $position);
                     $document->update(['file_path' => $result['pdf_path']]);
                     $signature->update(['signature' => $result['qr_path'], 'signed_at' => now()]);
                     $redirectType = 'pdf';
@@ -321,7 +339,7 @@ class DocumentSignatureController extends Controller
                     if ($signature->signature) Storage::disk('public')->delete($signature->signature);
                     if ($document->file_path) Storage::disk('public')->delete($document->file_path);
 
-                    $result = $this->processXlsxSigning($document, $qrData, $qrSize, $signerName, $signedDate);
+                    $result = $this->processXlsxSigning($document, $qrData, $qrSize, $signerName, $signedDate, $position);
                     $document->update(['file_path' => $result['xlsx_path']]);
                     $signature->update(['signature' => $result['qr_path'], 'signed_at' => now()]);
                     $redirectType = 'xlsx';
@@ -332,7 +350,7 @@ class DocumentSignatureController extends Controller
                     if ($signature->signature) Storage::disk('public')->delete($signature->signature);
                     if ($document->file_path) Storage::disk('public')->delete($document->file_path);
 
-                    $result = $this->processRtfSigning($document, $qrData, $qrSize, $signerName, $signedDate);
+                    $result = $this->processRtfSigning($document, $qrData, $qrSize, $signerName, $signedDate, $position);
                     $document->update(['file_path' => $result['docx_path']]);
                     $signature->update(['signature' => $result['qr_path'], 'signed_at' => now()]);
                     $redirectType = 'docx';
@@ -347,7 +365,6 @@ class DocumentSignatureController extends Controller
                 $signature->update(['signature' => $permanentQrName, 'signed_at' => now()]);
             });
 
-            // 📝 ИСТОРИЯ: Обновление подписи
             $this->logAction($document->id, 'обновление подписи', "Подпись обновлена пользователем {$signer->name}. Формат: " . strtoupper($extension));
 
             if ($redirectType === 'docx') {
@@ -362,10 +379,7 @@ class DocumentSignatureController extends Controller
 
         } catch (Exception $e) {
             \Log::error("Ошибка обновления: " . $e->getMessage());
-
-            // 📝 ИСТОРИЯ: Ошибка обновления
             $this->logAction($document->id, 'ошибка', "Ошибка при обновлении подписи пользователем {$signer->name}: " . $e->getMessage());
-
             return back()->with('error', 'Ошибка обновления: ' . $e->getMessage());
         }
     }
@@ -375,21 +389,16 @@ class DocumentSignatureController extends Controller
             abort(403);
         }
 
-        // Загружаем документ
         $signature->load('document');
-
         $document = $signature->document;
         $signer = Auth::user();
 
-        // 📝 ИСТОРИЯ: Удаление подписи (ДО удаления файлов)
-        // Проверяем, существует ли документ, прежде чем писать его название в лог
         $docTitle = $document ? $document->title : 'Удаленный документ';
         $this->logAction($document?->id, 'удаление подписи', "Подпись пользователя {$signer->name} удалена из документа «{$docTitle}»");
 
         if ($document) {
             $extension = strtolower(pathinfo($document->file_path, PATHINFO_EXTENSION));
             if (in_array($extension, ['pdf', 'docx', 'doc', 'xlsx', 'xls'])) {
-                // Проверяем существование файла перед удалением
                 if (Storage::disk('public')->exists($document->file_path)) {
                     Storage::disk('public')->delete($document->file_path);
                 }
@@ -397,7 +406,6 @@ class DocumentSignatureController extends Controller
         }
 
         if ($signature->signature) {
-            // Проверяем существование файла подписи
             if (Storage::disk('public')->exists($signature->signature)) {
                 Storage::disk('public')->delete($signature->signature);
             }
@@ -409,8 +417,38 @@ class DocumentSignatureController extends Controller
     }
 
     /**
-     * ✅ Генерирует штамп с QR-кодом ВЫСОКОГО качества
+     * ✅ НОВОЕ: рассчитывает координаты QR на "странице" (мм) по проценту клика
+     * $position = ['x_percent' => .., 'y_percent' => ..]
      */
+    private function resolvePagePosition(array $position, float $pageWidthMm, float $pageHeightMm, float $qrSize)
+    {
+        $qrWidthMm  = $qrSize * self::PIXEL_TO_MM_FACTOR;
+        $qrHeightMm = ($qrSize + 70) * self::PIXEL_TO_MM_FACTOR;
+
+        $xPercent = isset($position['x_percent']) ? (float)$position['x_percent'] : 90;
+        $yPercent = isset($position['y_percent']) ? (float)$position['y_percent'] : 90;
+        $xPercent = max(0, min(100, $xPercent));
+        $yPercent = max(0, min(100, $yPercent));
+
+        // клик = центр QR-штампа
+        $centerX = ($xPercent / 100) * $pageWidthMm;
+        $centerY = ($yPercent / 100) * $pageHeightMm;
+
+        $x = $centerX - ($qrWidthMm / 2);
+        $y = $centerY - ($qrHeightMm / 2);
+
+        // не даём вылезти за пределы страницы
+        $x = max(0, min($pageWidthMm - $qrWidthMm, $x));
+        $y = max(0, min($pageHeightMm - $qrHeightMm, $y));
+
+        return [
+            'x_mm'      => $x,
+            'y_mm'      => $y,
+            'width_mm'  => $qrWidthMm,
+            'height_mm' => $qrHeightMm,
+        ];
+    }
+
     private function generateStamp($qrPayload, $signerName, $signedDate, $qrSizePx = 100)
     {
         $tempDir = storage_path('app/temp_sigs');
@@ -516,9 +554,9 @@ class DocumentSignatureController extends Controller
     }
 
     /**
-     * ✅ PDF: QR на ПОСЛЕДНЕЙ странице
+     * ✅ PDF: QR на ПОСЛЕДНЕЙ странице, позиция — по клику пользователя
      */
-    private function processPdfSigning($document, $qrPayload, $qrSize = 100, $signerName = '', $signedDate = '')
+    private function processPdfSigning($document, $qrPayload, $qrSize = 100, $signerName = '', $signedDate = '', array $position = [])
     {
         $stampPath = $this->generateStamp($qrPayload, $signerName, $signedDate, $qrSize);
 
@@ -543,14 +581,8 @@ class DocumentSignatureController extends Controller
             $pdf->useTemplate($templateId);
 
             if ($pageNo == $targetPage) {
-                $qr_size_mm = $qrSize * self::PIXEL_TO_MM_FACTOR;
-                $stamp_height_mm = ($qrSize + 70) * self::PIXEL_TO_MM_FACTOR;
-
-                $margin = 15;
-                $qr_x_mm = $size['width'] - $qr_size_mm - $margin;
-                $qr_y_mm = $size['height'] - $stamp_height_mm - $margin;
-
-                $pdf->Image($stampPath, $qr_x_mm, $qr_y_mm, $qr_size_mm, $stamp_height_mm, 'PNG');
+                $pos = $this->resolvePagePosition($position, $size['width'], $size['height'], $qrSize);
+                $pdf->Image($stampPath, $pos['x_mm'], $pos['y_mm'], $pos['width_mm'], $pos['height_mm'], 'PNG');
             }
         }
 
@@ -576,9 +608,9 @@ class DocumentSignatureController extends Controller
     }
 
     /**
-     * ✅ DOCX: QR на ПОСЛЕДНЕЙ странице
+     * ✅ DOCX: QR на ПОСЛЕДНЕЙ странице (секции), позиция — по клику пользователя (в % от A4)
      */
-    private function processDocxSigning($document, $qrPayload, $qrSize = 100, $signerName = '', $signedDate = '')
+    private function processDocxSigning($document, $qrPayload, $qrSize = 100, $signerName = '', $signedDate = '', array $position = [])
     {
         $originalPath = storage_path('app/public/' . $document->file_path);
         if (!File::exists($originalPath)) {
@@ -596,20 +628,12 @@ class DocumentSignatureController extends Controller
         $sectionIndex = count($sections) > 0 ? count($sections) - 1 : 0;
         $section = $sections[$sectionIndex] ?? $phpWord->addSection();
 
-        $qr_size_mm = $qrSize * self::PIXEL_TO_MM_FACTOR;
-        $stamp_height_mm = ($qrSize + 70) * self::PIXEL_TO_MM_FACTOR;
+        $pos = $this->resolvePagePosition($position, self::A4_WIDTH_MM, self::A4_HEIGHT_MM, $qrSize);
 
-        $margin = 15;
-        $pageWidthMm = self::A4_WIDTH_MM;
-        $pageHeightMm = self::A4_HEIGHT_MM;
-
-        $qr_x_mm = $pageWidthMm - $qr_size_mm - $margin;
-        $qr_y_mm = $pageHeightMm - $stamp_height_mm - $margin;
-
-        $qr_x_twips = round($qr_x_mm * self::MM_TO_TWIPS_FACTOR);
-        $qr_y_twips = round($qr_y_mm * self::MM_TO_TWIPS_FACTOR);
-        $qr_width_pt = round($qr_size_mm * self::MM_TO_PT_FACTOR);
-        $qr_height_pt = round($stamp_height_mm * self::MM_TO_PT_FACTOR);
+        $qr_x_twips = round($pos['x_mm'] * self::MM_TO_TWIPS_FACTOR);
+        $qr_y_twips = round($pos['y_mm'] * self::MM_TO_TWIPS_FACTOR);
+        $qr_width_pt = round($pos['width_mm'] * self::MM_TO_PT_FACTOR);
+        $qr_height_pt = round($pos['height_mm'] * self::MM_TO_PT_FACTOR);
 
         $section->addImage($stampPath, [
             'width'            => $qr_width_pt,
@@ -648,9 +672,9 @@ class DocumentSignatureController extends Controller
     }
 
     /**
-     * ✅ XLSX: QR на ПОСЛЕДНЕМ листе
+     * ✅ XLSX: QR на ПОСЛЕДНЕМ листе, позиция — по клику на ячейку
      */
-    private function processXlsxSigning($document, $qrPayload, $qrSize = 100, $signerName = '', $signedDate = '')
+    private function processXlsxSigning($document, $qrPayload, $qrSize = 100, $signerName = '', $signedDate = '', array $position = [])
     {
         $stampPath = $this->generateStamp($qrPayload, $signerName, $signedDate, $qrSize);
 
@@ -667,17 +691,32 @@ class DocumentSignatureController extends Controller
 
         $stampHeight = $qrSize + 70;
 
-        $qrX = 700;
-        $qrY = 500;
-
         $drawing = new Drawing();
         $drawing->setName('QR Code Stamp');
         $drawing->setDescription('Document Signature');
         $drawing->setPath($stampPath);
         $drawing->setHeight($stampHeight);
         $drawing->setWidth($qrSize);
-        $drawing->setOffsetX($qrX);
-        $drawing->setOffsetY($qrY);
+
+        if (($position['mode'] ?? null) === 'cell' && !empty($position['cell'])) {
+            // Санитизация ссылки на ячейку (только буквы+цифры, формат вида F20)
+            $cell = strtoupper(preg_replace('/[^A-Za-z0-9]/', '', $position['cell']));
+            if (!preg_match('/^[A-Z]{1,3}[0-9]{1,7}$/', $cell)) {
+                $cell = 'A1';
+            }
+            $offsetX = isset($position['offset_x']) ? max(0, (int)$position['offset_x']) : 5;
+            $offsetY = isset($position['offset_y']) ? max(0, (int)$position['offset_y']) : 5;
+
+            $drawing->setCoordinates($cell);
+            $drawing->setOffsetX($offsetX);
+            $drawing->setOffsetY($offsetY);
+        } else {
+            // fallback — как раньше, если позиция не пришла
+            $drawing->setCoordinates('A1');
+            $drawing->setOffsetX(700);
+            $drawing->setOffsetY(500);
+        }
+
         $drawing->setWorksheet($sheet);
 
         $time = time();
@@ -703,9 +742,9 @@ class DocumentSignatureController extends Controller
     }
 
     /**
-     * ✅ RTF: конвертируем в DOCX и ставим QR
+     * ✅ RTF: конвертируем в DOCX и ставим QR (позиция как у DOCX, в % от A4)
      */
-    private function processRtfSigning($document, $qrPayload, $qrSize = 100, $signerName = '', $signedDate = '')
+    private function processRtfSigning($document, $qrPayload, $qrSize = 100, $signerName = '', $signedDate = '', array $position = [])
     {
         $originalPath = storage_path('app/public/' . $document->file_path);
         if (!File::exists($originalPath)) {
@@ -770,20 +809,12 @@ class DocumentSignatureController extends Controller
 
         $stampPath = $this->generateStamp($qrPayload, $signerName, $signedDate, $qrSize);
 
-        $qr_size_mm = $qrSize * self::PIXEL_TO_MM_FACTOR;
-        $stamp_height_mm = ($qrSize + 70) * self::PIXEL_TO_MM_FACTOR;
+        $pos = $this->resolvePagePosition($position, self::A4_WIDTH_MM, self::A4_HEIGHT_MM, $qrSize);
 
-        $margin = 15;
-        $pageWidthMm = self::A4_WIDTH_MM;
-        $pageHeightMm = self::A4_HEIGHT_MM;
-
-        $qr_x_mm = $pageWidthMm - $qr_size_mm - $margin;
-        $qr_y_mm = $pageHeightMm - $stamp_height_mm - $margin;
-
-        $qr_x_twips = round($qr_x_mm * self::MM_TO_TWIPS_FACTOR);
-        $qr_y_twips = round($qr_y_mm * self::MM_TO_TWIPS_FACTOR);
-        $qr_width_pt = round($qr_size_mm * self::MM_TO_PT_FACTOR);
-        $qr_height_pt = round($stamp_height_mm * self::MM_TO_PT_FACTOR);
+        $qr_x_twips = round($pos['x_mm'] * self::MM_TO_TWIPS_FACTOR);
+        $qr_y_twips = round($pos['y_mm'] * self::MM_TO_TWIPS_FACTOR);
+        $qr_width_pt = round($pos['width_mm'] * self::MM_TO_PT_FACTOR);
+        $qr_height_pt = round($pos['height_mm'] * self::MM_TO_PT_FACTOR);
 
         $section->addImage($stampPath, [
             'width'            => $qr_width_pt,
@@ -855,9 +886,6 @@ class DocumentSignatureController extends Controller
         return !DocumentWorkflow::where('document_id', $document->id)->where('status', 'pending')->exists();
     }
 
-    /**
-     * ✅ УЛУЧШЕННЫЙ МЕТОД ЛОГИРОВАНИЯ
-     */
     private function logAction($docId, $action, $desc) {
         try {
             DocumentLog::create([
@@ -884,79 +912,68 @@ class DocumentSignatureController extends Controller
         }
     }
 
-     // 🔒 БЕЗОПАСНОСТЬ: Проверка права на просмотр подписи (ИСПРАВЛЕНО ДЛЯ ХОСТИНГА)
     private function checkSignatureAccess($signature)
     {
         $user = Auth::user();
         $userId = (int)$user->id;
 
-        // 1. Админы видят всё
         if ($user->isAdmin()) {
             return;
         }
 
-        // 2. Загружаем документ, если еще не загружен
         if (!$signature->relationLoaded('document')) {
             $signature->load('document');
         }
-        
+
         $document = $signature->document;
 
         if (!$document) {
             abort(404, 'Документ для этой подписи не найден.');
         }
 
-        // 3. Базовые проверки (с приведением к int для надежности)
         $isOwner = (int)$signature->user_id === $userId;
         $isCreator = (int)$document->created_by === $userId;
         $isSender = (int)$document->sender_id === $userId;
         $isDirectReceiver = (int)$document->receiver_id === $userId;
 
         if ($isOwner || $isCreator || $isSender || $isDirectReceiver) {
-            return; // ✅ Доступ разрешен
+            return;
         }
 
-        // 4. Проверка через Workflow (очередь согласования)
         $isInWorkflow = \App\Models\DocumentWorkflow::where('document_id', $document->id)
             ->where('user_id', $userId)
             ->exists();
 
         if ($isInWorkflow) {
-            return; // ✅ Доступ разрешен
+            return;
         }
 
-        // 5. Проверка через множественных получателей
         try {
             $isRecipient = \App\Models\DocumentRecipient::where('document_id', $document->id)
                 ->where('user_id', $userId)
                 ->exists();
 
             if ($isRecipient) {
-                return; // ✅ Доступ разрешен
+                return;
             }
         } catch (\Exception $e) {
-            // Если таблицы нет, просто пропускаем
         }
 
-        // Если ничего не сработало — блокируем
         \Log::warning("🚨 Попытка доступа к чужой подписи", [
             'user_id' => $userId,
             'signature_id' => $signature->id,
             'document_id' => $document->id
         ]);
-        
+
         abort(403, 'У вас нет прав доступа к просмотру этой подписи.');
     }
 
-    // 🔒 БЕЗОПАСНОСТЬ: Проверка права на подписание документа
     private function checkDocumentSigningAccess($document, $user)
     {
-        // Админы могут подписывать всё
         if ($user->isAdmin()) {
             return;
         }
 
-        // Проверка: юзер должен быть получателем документа или его создателем
         $hasAccess = (
             $document->receiver_id == $user->id ||
             $document->created_by == $user->id ||
@@ -967,16 +984,12 @@ class DocumentSignatureController extends Controller
             abort(403, 'У вас нет прав на подписание этого документа');
         }
     }
-        /**
-     * ✅ ОТДАЧА ФАЙЛА ДЛЯ ПРОСМОТРА (inline в браузере)
-     * Роут: GET /documents/{id}/stream
-     */
+
     public function stream($id)
     {
         $document = Document::findOrFail($id);
         $user = Auth::user();
 
-        // 🔒 БЕЗОПАСНОСТЬ: Проверяем доступ к документу
         if (!$user->isAdmin()) {
             $hasAccess = (
                 (int)$document->created_by === (int)$user->id ||
@@ -984,21 +997,18 @@ class DocumentSignatureController extends Controller
                 (int)$document->sender_id === (int)$user->id
             );
 
-            // Проверяем через Workflow
             if (!$hasAccess) {
                 $hasAccess = DocumentWorkflow::where('document_id', $document->id)
                     ->where('user_id', $user->id)
                     ->exists();
             }
 
-            // Проверяем через Recipients
             if (!$hasAccess) {
                 try {
                     $hasAccess = \App\Models\DocumentRecipient::where('document_id', $document->id)
                         ->where('user_id', $user->id)
                         ->exists();
                 } catch (\Exception $e) {
-                    // Таблица может не существовать
                 }
             }
 
@@ -1032,7 +1042,6 @@ class DocumentSignatureController extends Controller
 
         $mime = $mimeTypes[$extension] ?? 'application/octet-stream';
 
-        // ✅ inline = браузер попытается показать файл, а не скачать
         return response()->file($fullPath, [
             'Content-Type'        => $mime,
             'Content-Disposition' => 'inline; filename="' . $filename . '"',
@@ -1041,16 +1050,11 @@ class DocumentSignatureController extends Controller
         ]);
     }
 
-    /**
-     * ✅ СКАЧИВАНИЕ ФАЙЛА (принудительное)
-     * Роут: GET /documents/{id}/download
-     */
     public function download($id)
     {
         $document = Document::findOrFail($id);
         $user = Auth::user();
 
-        // 🔒 БЕЗОПАСНОСТЬ: Проверяем доступ к документу
         if (!$user->isAdmin()) {
             $hasAccess = (
                 (int)$document->created_by === (int)$user->id ||
@@ -1086,19 +1090,14 @@ class DocumentSignatureController extends Controller
         $fullPath = Storage::disk('public')->path($path);
         $filename = $document->title . '.' . strtolower(pathinfo($path, PATHINFO_EXTENSION));
 
-        // ✅ attachment = браузер предложит скачать файл
         return response()->download($fullPath, $filename);
     }
-        /**
-     * ✅ ОТДАЧА QR-КАРТИНКИ ПОДПИСИ
-     * Роут: GET /signatures/{id}/qr
-     */
+
     public function qrImage($id)
     {
         $signature = DocumentSignature::findOrFail($id);
         $signature->load('document');
 
-        // 🔒 БЕЗОПАСНОСТЬ: та же проверка, что и в show()
         $this->checkSignatureAccess($signature);
 
         if (!$signature->signature || !Storage::disk('public')->exists($signature->signature)) {

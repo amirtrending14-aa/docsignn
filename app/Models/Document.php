@@ -72,7 +72,7 @@ const STATUS_REJECTED   = 'rejected';
     }
 
 
-    public function signatures(): HasMany
+      public function signatures(): HasMany
     {
         return $this->hasMany(DocumentSignature::class);
     }
@@ -80,6 +80,12 @@ const STATUS_REJECTED   = 'rejected';
     public function logs(): HasMany
     {
         return $this->hasMany(DocumentLog::class);
+    }
+
+    // ✅ ДОБАВЬ ЭТОТ МЕТОД СЮДА:
+    public function comments(): HasMany
+    {
+        return $this->hasMany(DocumentComment::class);
     }
 
 

@@ -515,12 +515,13 @@ public function storeDepartmentSelection(Request $request)
     /**
      * ✅ ДОБАВЛЕНО: Отображение списка документов (обязательно для Route::resource)
      */
-   public function index(Request $request)
+public function index(Request $request)
 {
     $user = Auth::user();
-    $tab  = $request->query('tab', 'all'); // ← дефолт теперь "all"
+    $tab = $request->query('tab', 'all');
 
-    $query = Document::with(['createdBy', 'receiver', 'signatures']);
+    // ✅ ЕДИНСТВЕННАЯ правильная строка загрузки связей (включая comments.user!)
+    $query = Document::with(['createdBy', 'receiver', 'logs.user', 'signatures.user', 'comments.user']);
 
     // Админ видит всё, обычный юзер — только своё
     if (!$user->isAdmin()) {
@@ -531,10 +532,7 @@ public function storeDepartmentSelection(Request $request)
     }
 
     switch ($tab) {
-
-        // 📋 ВСЕ ДОКУМЕНТЫ (кнопка "ДОКУМЕНТЫ" в верхнем меню)
         case 'all':
-            // фильтр только по видимости (уже выше), статусов не трогаем
             break;
 
         case 'incoming':
@@ -547,18 +545,45 @@ public function storeDepartmentSelection(Request $request)
                   ->where('status', '!=', Document::STATUS_DRAFT);
             break;
 
+        case 'processing':
         case 'signing':
-            $query->where('receiver_id', $user->id)
-                  ->whereIn('status', [Document::STATUS_ACTIVE, 'processing'])
-                  ->whereDoesntHave('signatures', function ($q) use ($user) {
-                      $q->where('user_id', $user->id)->where('signature', '!=', '');
+            $query->whereIn('status', [Document::STATUS_ACTIVE, Document::STATUS_PROCESSING])
+                  ->where(function ($q) use ($user) {
+                      $q->where('receiver_id', $user->id)
+                        ->whereDoesntHave('signatures', function ($subQ) use ($user) {
+                            $subQ->where('user_id', $user->id)
+                                 ->where(function ($sigQuery) {
+                                     $sigQuery->whereNull('signature')->orWhere('signature', '');
+                                 });
+                        })
+                        ->orWhere(function ($orQ) use ($user) {
+                            $orQ->where('created_by', $user->id)
+                                ->whereDoesntHave('signatures', function ($subQ) use ($user) {
+                                    $subQ->whereNotNull('signature')
+                                         ->where('signature', '!=', '');
+                                });
+                        });
                   });
             break;
 
-        case 'archive':
-            $query->whereIn('status', ['completed', 'approved', Document::STATUS_REJECTED])
+        case 'rejected':
+            $query->where('status', Document::STATUS_REJECTED)
                   ->where(function ($q) use ($user) {
-                      $q->where('created_by', $user->id)->orWhere('receiver_id', $user->id);
+                      $q->where('created_by', $user->id)
+                        ->orWhere('receiver_id', $user->id);
+                  });
+            
+            $documents = $query->latest()->paginate(15)->withQueryString();
+            
+            return view('document.rejected', compact('documents'))
+                ->with('currentTab', 'rejected')
+                ->with('tabTitle', 'Отклонённые документы');
+
+        case 'archive':
+            $query->whereIn('status', ['completed', 'approved'])
+                  ->where(function ($q) use ($user) {
+                      $q->where('created_by', $user->id)
+                        ->orWhere('receiver_id', $user->id);
                   });
             break;
 
@@ -572,12 +597,13 @@ public function storeDepartmentSelection(Request $request)
     $documents = $query->latest()->paginate(15)->withQueryString();
 
     $tabTitles = [
-        'all'      => 'Документы',     // ← для верхней кнопки
-        'incoming' => 'Входящие',
-        'outgoing' => 'Исходящие',
-        'signing'  => 'На подписании',
-        'archive'  => 'Архив',
-        'draft'    => 'Черновики',
+        'all'        => 'Документы',
+        'incoming'   => 'Входящие',
+        'outgoing'   => 'Исходящие',
+        'processing' => 'На подписании',
+        'rejected'   => 'Отклонённые',
+        'archive'    => 'Архив',
+        'draft'      => 'Черновики',
     ];
 
     return view('document.index', compact('documents'))

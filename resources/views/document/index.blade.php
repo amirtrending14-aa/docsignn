@@ -754,11 +754,48 @@ body {
     </div>
 
     <!-- Пагинация -->
-    @if($documents->hasPages())
-    <div class="pagination-wrap">
-        {{ $documents->links() }}
-    </div>
-    @endif
+   @if($documents->hasPages())
+<div class="pagination-wrap">
+    <nav>
+        <ul class="pagination">
+            {{-- Previous Page Link --}}
+            @if($documents->onFirstPage())
+                <li class="disabled" aria-disabled="true">
+                    <span>&laquo;</span>
+                </li>
+            @else
+                <li>
+                    <a href="{{ $documents->previousPageUrl() }}" rel="prev">&laquo;</a>
+                </li>
+            @endif
+
+            {{-- Pagination Elements --}}
+            @foreach($documents->getUrlRange(1, $documents->lastPage()) as $page => $url)
+                @if($page == $documents->currentPage())
+                    <li class="active" aria-current="page">
+                        <span>{{ $page }}</span>
+                    </li>
+                @else
+                    <li>
+                        <a href="{{ $url }}">{{ $page }}</a>
+                    </li>
+                @endif
+            @endforeach
+
+            {{-- Next Page Link --}}
+            @if($documents->hasMorePages())
+                <li>
+                    <a href="{{ $documents->nextPageUrl() }}" rel="next">&raquo;</a>
+                </li>
+            @else
+                <li class="disabled" aria-disabled="true">
+                    <span>&raquo;</span>
+                </li>
+            @endif
+        </ul>
+    </nav>
+</div>
+@endif
 </div>
 
 <script>

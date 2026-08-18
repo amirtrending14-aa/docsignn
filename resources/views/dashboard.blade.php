@@ -18,6 +18,9 @@
                         <span data-i18n="welcomeBack">Доброе утро</span>, {{ explode(' ', auth()->user()->name)[0] }} !
                     </h1>
                     @endauth
+                    <style>
+                        
+                        </style>
                     <p class="dashboard-subtitle mb-0">
                         <span data-i18n="dashSubtitle">
                             У вас {{ $stats['pending'] ?? 0 }} документов ожидают подписания и {{ $stats['incoming'] ?? 0 }} новых входящих.
