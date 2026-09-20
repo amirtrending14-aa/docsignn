@@ -11,10 +11,9 @@ class ActivityController extends Controller
 {
     public function index(Request $request)
     {
-        // Используем DocumentLog вместо Activity
         $query = DocumentLog::with(['user', 'document'])  ;
 
-        // Фильтры
+     
         if ($request->filled('action')) {
             $query->where('action', $request->action)  ;
         }
@@ -39,7 +38,6 @@ class ActivityController extends Controller
 
         $activities = $query->orderBy('created_at', 'desc')->paginate(50);
 
-        // Статистика
         $totalActivities = DocumentLog::count();
 
         $todayLogins = DocumentLog::where('action', 'like', '%вход%')

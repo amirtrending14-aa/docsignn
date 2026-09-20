@@ -563,6 +563,64 @@
     }
 </style>
 
+<style>
+    html[data-theme="light"] .att-page-custom {
+        color: #0f172a !important;
+        font-weight: 500;
+    }
+    html[data-theme="light"] .att-page-custom h1,
+    html[data-theme="light"] .att-panel-title,
+    html[data-theme="light"] .att-card-name,
+    html[data-theme="light"] .att-company-note b {
+        color: #0f172a !important;
+        font-weight: 800 !important;
+    }
+    html[data-theme="light"] .att-subtitle,
+    html[data-theme="light"] .att-stat-label,
+    html[data-theme="light"] .att-label,
+    html[data-theme="light"] .att-company-note,
+    html[data-theme="light"] .att-card-role {
+        color: #475569 !important;
+        font-weight: 600;
+    }
+    html[data-theme="light"] .att-date-form,
+    html[data-theme="light"] .att-input,
+    html[data-theme="light"] .att-stat,
+    html[data-theme="light"] .att-filter,
+    html[data-theme="light"] .att-panel,
+    html[data-theme="light"] .att-card,
+    html[data-theme="light"] .att-info-box,
+    html[data-theme="light"] .att-money-box {
+        background: #ffffff !important;
+        border-color: #b8c4d3 !important;
+        box-shadow: 0 6px 18px rgba(15, 23, 42, 0.07);
+    }
+    html[data-theme="light"] .att-input {
+        color: #0f172a !important;
+    }
+    html[data-theme="light"] .att-input:focus {
+        background: #ffffff !important;
+        border-color: rgba(var(--glow), .65) !important;
+    }
+    html[data-theme="light"] .att-panel-head,
+    html[data-theme="light"] .att-card-actions {
+        border-color: #cbd5e1 !important;
+        background: #f8fafc;
+    }
+    html[data-theme="light"] .att-filter {
+        font-weight: 700;
+        color: #334155 !important;
+    }
+    html[data-theme="light"] .att-filter.active {
+        color: #0f172a !important;
+        border-color: rgba(var(--glow), .65) !important;
+    }
+    html[data-theme="light"] .att-act {
+        border-color: #b8c4d3 !important;
+        background: #f8fafc !important;
+    }
+</style>
+
 <div class="att-page-custom">
 
     {{-- ===== ШАПКА ===== --}}
@@ -743,7 +801,7 @@
             <div class="att-card c-{{ $cClass }}" style="animation-delay:{{ min($loop->index, 8) * 0.05 }}s">
                 <div class="att-card-photo">
                     @if ($user->avatar)
-                        <img src="{{ asset('storage/' . $user->avatar) }}" alt="">
+                        <img src="{{ $user->avatar_url }}" alt="">
                     @else
                         <div class="att-card-initials">{{ $initials }}</div>
                     @endif

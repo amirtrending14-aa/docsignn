@@ -74,13 +74,7 @@ class CompanyTreeController extends Controller
         return $ids;
     }
 
-    /**
-     * Преобразует коллекцию компаний в плоский массив для статистики
-     */
-        /**
-     * Преобразует коллекцию компаний в плоский список с расчётом глубины
-     */
-    private function flatten(Collection $companies): Collection {
+ private function flatten(Collection $companies): Collection {
         if ($companies->isEmpty()) {
             return collect();
         }
@@ -113,9 +107,7 @@ class CompanyTreeController extends Controller
         ])->values(); // Возвращаем Коллекцию, а не массив!
     }
 
-    /**
-     * ✅ Строит вложенное дерево из плоской коллекции
-     */
+
     private function buildNestedTree(Collection $companies, $parentId = null): Collection {
         return $companies->where('parent_id', $parentId)
             ->sortBy('id')
@@ -129,21 +121,15 @@ class CompanyTreeController extends Controller
         public function index() {
         $user = auth()->user();
 
-        // ✅ ИЗМЕНЕНО: Все пользователи (включая админов) видят ТОЛЬКО своё дерево
-        // managedCompanies() возвращает компанию пользователя и всех её потомков
-                $visible = $user->managedCompanies();
-        // 2. Формируем плоский список для статистики
-        $tree = $this->flatten($visible);
+          $visible = $user->managedCompanies();
+      $tree = $this->flatten($visible);
 
-        // 3. Формируем вложенное дерево
-        $nestedTree = collect();
+     $nestedTree = collect();
         if ($visible->isNotEmpty() && Schema::hasColumn('companies', 'parent_id')) {
             $nestedTree = $this->buildNestedTree($visible);
         }
 
-        // ✅ ДОБАВЛЕНО: Подготовка данных для JavaScript (модальное окно выбора пользователей)
-        // Преобразуем коллекцию компаний в массив, содержащий ID, имя и список пользователей
-        $companiesData = $visible->map(function ($company) {
+     $companiesData = $visible->map(function ($company) {
             return [
                 'id' => $company->id,
                 'name' => $company->name,
@@ -163,9 +149,7 @@ class CompanyTreeController extends Controller
     public function show(Company $company) {
         $user = auth()->user();
         
-        // Проверка: может ли пользователь видеть эту конкретную компанию?
-        // canViewCompany проверяет, входит ли компания в дерево пользователя
-        abort_unless($user->canViewCompany($company), 403);
+       abort_unless($user->canViewCompany($company), 403);
 
         $company->load(['owner', 'region', 'city']);
         $team = User::where('company_id', $company->id)->get();
@@ -175,20 +159,15 @@ class CompanyTreeController extends Controller
 
     public function createForm(Request $request) {
         $user = auth()->user();
-        
-        // ✅ ИЗМЕНЕНО: При создании новой компании можно выбрать родителя 
-        // только из СВОЕГО дерева
-        $visible = $user->managedCompanies();
+      $visible = $user->managedCompanies();
         
         $parentId = $request->query('parent');
-        // Если parent_id передан, проверяем, что он принадлежит пользователю
-        $parent = null;
+       $parent = null;
         if ($parentId) {
             $parent = $visible->firstWhere('id', $parentId);
         }
         
-        // Если родитель не найден или не передан, берем корневую компанию пользователя
-        if (!$parent) {
+      if (!$parent) {
             $parent = $visible->first(); 
         }
 
@@ -205,7 +184,7 @@ class CompanyTreeController extends Controller
 
         $v = $request->validate([
             'company_name' => ['required', 'string', 'max:255'],
-            'parent_id'    => ['nullable', 'integer'], // Убрали exists, чтобы отловить любые значения
+            'parent_id'    => ['nullable', 'integer'],
             'company_type' => ['required', 'string', 'max:100'],
             'region_id'    => ['required', 'in:1,2,3,4,5'],
             'city_id'      => ['required', 'integer', Rule::in($validCityIds)],
@@ -238,8 +217,7 @@ class CompanyTreeController extends Controller
             }
         }
 
-        // 🔍 ОТЛАДКА: Если уровень всё равно 1, хотя parent_id был передан, мы это узнаем
-        if ($newLevel === 1 && !empty($v['parent_id'])) {
+       if ($newLevel === 1 && !empty($v['parent_id'])) {
             \Log::error('COMPANY LEVEL CALCULATION FAILED', [
                 'parent_id_from_request' => $v['parent_id'],
                 'parent_found_in_db' => $parentCompany ? 'YES (ID: '.$parentCompany->id.')' : 'NO',
@@ -250,7 +228,6 @@ class CompanyTreeController extends Controller
 
         $child = null;
         DB::transaction(function () use ($v, $user, $newLevel, $finalParentId, &$child) {
-            // 1. Создаём Админа с тем же уровнем
             $admin = User::create([
                 'name' => $v['name'],
                 'email' => $v['email'],
@@ -262,11 +239,10 @@ class CompanyTreeController extends Controller
                 'created_by' => $user->id,
             ]);
 
-            // 2. Создаём Компанию с рассчитанным уровнем
-            $child = Company::create([
+          $child = Company::create([
                 'name' => $v['company_name'],
                 'type' => $v['company_type'],
-                'level' => $newLevel, // <-- ЗДЕСЬ СОХРАНЯЕТСЯ УРОВЕНЬ
+                'level' => $newLevel, 
                 'region_id' => $v['region_id'],
                 'city_id' => $v['city_id'],
                 'email' => $v['email'],
@@ -276,11 +252,11 @@ class CompanyTreeController extends Controller
                 'parent_id' => $finalParentId,
             ]);
 
-            // 3. Привязываем админа к компании
+          
             $admin->update(['company_id' => $child->id]);
         });
 
-        // В сообщении об успехе мы явно покажем уровень
+     
         return redirect()->route('companies.show', $child)
             ->with('success', 'Компания «' . $child->name . '» успешно создана на УРОВНЕ ' . $newLevel . '!');
     }

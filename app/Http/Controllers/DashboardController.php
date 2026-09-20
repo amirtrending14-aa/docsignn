@@ -13,15 +13,12 @@ class DashboardController extends Controller
     {
         $user = auth()->user();
 
-        // Фильтр: документы пользователя
-        $userDocs = function($q) use ($user) {
+       $userDocs = function($q) use ($user) {
             $q->where('created_by', $user->id)
                 ->orWhere('receiver_id', $user->id);
         };
 
-        // ===== СТАТИСТИКА (реальная) =====
-        // ===== СТАТИСТИКА (реальная) =====
-        // ===== СТАТИСТИКА (реальная) =====
+     
         $stats = [
             'total'          => Document::where($userDocs)->count(),
             'active'         => Document::where($userDocs)->where('status', 'active')->count(),
@@ -36,8 +33,7 @@ class DashboardController extends Controller
         ];
         $totalDocs = $stats['total'];
 
-        // ===== СПАРКЛАЙНЫ (реальные данные за 10 дней) =====
-        $sparklineData = [];
+       $sparklineData = [];
         for ($i = 9; $i >= 0; $i--) {
             $dateStart = now()->copy()->subDays($i)->startOfDay();
             $dateEnd   = now()->copy()->subDays($i)->endOfDay();
@@ -63,8 +59,7 @@ class DashboardController extends Controller
         }
         $sparklineData['users'] = array_fill(0, 10, round(User::count() / 10));
 
-        // ===== ГРАФИК (реальные данные за 12 месяцев) =====
-        $chartData = ['labels' => [], 'values' => [], 'raw_data' => []];
+      $chartData = ['labels' => [], 'values' => [], 'raw_data' => []];
         for ($i = 11; $i >= 0; $i--) {
             $month = now()->copy()->subMonths($i);
             $chartData['labels'][] = $month->format('M');
@@ -81,16 +76,14 @@ class DashboardController extends Controller
             ];
         }
 
-        // ===== ОЖИДАЮЩИЕ ПОДПИСИ =====
-        $pendingDocuments = Document::with(['createdBy', 'receiver'])
+       $pendingDocuments = Document::with(['createdBy', 'receiver'])
             ->where($userDocs)
             ->where('status', 'active')
             ->latest()
             ->take(5)
             ->get();
 
-        // ===== РОСТ (реальный) =====
-        $currentMonthStart = now()->copy()->startOfMonth();
+       $currentMonthStart = now()->copy()->startOfMonth();
         $lastMonthDocs = Document::where($userDocs)
             ->where('created_at', '>=', $currentMonthStart)
             ->count();
@@ -105,8 +98,7 @@ class DashboardController extends Controller
             ? round((($lastMonthDocs - $previousMonthDocs) / $previousMonthDocs) * 100)
             : ($lastMonthDocs > 0 ? 100 : 0);
 
-        // Рост подписей
-        $lastMonthSigned = Document::where($userDocs)
+       $lastMonthSigned = Document::where($userDocs)
             ->where('status', 'completed')
             ->where('updated_at', '>=', $currentMonthStart)
             ->count();
@@ -120,15 +112,13 @@ class DashboardController extends Controller
             ? round((($lastMonthSigned - $previousMonthSigned) / $previousMonthSigned) * 100)
             : ($lastMonthSigned > 0 ? 100 : 0);
 
-        // ===== ПОСЛЕДНИЕ ДОКУМЕНТЫ =====
-        $documents = Document::with(['createdBy', 'receiver'])
+      $documents = Document::with(['createdBy', 'receiver'])
             ->where($userDocs)
             ->latest()
             ->take(5)
             ->get();
 
-        // ===== АКТИВНОСТЬ =====
-        $activities = Document::with(['createdBy', 'receiver'])
+      $activities = Document::with(['createdBy', 'receiver'])
             ->where($userDocs)
             ->latest()
             ->take(10)

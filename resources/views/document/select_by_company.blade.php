@@ -231,6 +231,61 @@
     }
 </style>
 
+<style>
+    html[data-theme="light"] .ot-page {
+        --text: #0f172a;
+        --muted: #475569;
+        --line: #cbd5e1;
+        --card-bg: #ffffff;
+        color: #0f172a !important;
+        background: #eef2f7 !important;
+    }
+    html[data-theme="light"] .ot-topbar-title,
+    html[data-theme="light"] .ot-tree-header h2,
+    html[data-theme="light"] .oc-name,
+    html[data-theme="light"] .m-hd h4,
+    html[data-theme="light"] .m-nm {
+        color: #0f172a !important;
+    }
+    html[data-theme="light"] .ot-topbar-subtitle,
+    html[data-theme="light"] .ot-tree-header p,
+    html[data-theme="light"] .oc-info-row,
+    html[data-theme="light"] .m-hd span,
+    html[data-theme="light"] .m-em {
+        color: #475569 !important;
+    }
+    html[data-theme="light"] .ot-btn-back,
+    html[data-theme="light"] .ot-tree-wrap,
+    html[data-theme="light"] .org-card,
+    html[data-theme="light"] .ot-empty-icon,
+    html[data-theme="light"] .m-bx {
+        background: #ffffff !important;
+        border-color: #cbd5e1 !important;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+    }
+    html[data-theme="light"] .org-card:hover {
+        box-shadow: 0 12px 28px rgba(15, 23, 42, 0.14);
+    }
+    html[data-theme="light"] .oc-footer,
+    html[data-theme="light"] .m-ft,
+    html[data-theme="light"] .m-hd {
+        border-color: #cbd5e1 !important;
+    }
+    html[data-theme="light"] .oc-act,
+    html[data-theme="light"] .m-cl,
+    html[data-theme="light"] .m-btn-cancel {
+        background: #f8fafc;
+        border-color: #b8c4d3;
+        color: #334155;
+    }
+    html[data-theme="light"] .m-user-row:hover {
+        background: #f1f5f9;
+    }
+    html[data-theme="light"] .oc-subdivs span {
+        color: #166534;
+    }
+</style>
+
 <div class="ot-page" id="otPage">
     <div class="ot-blob ot-blob-1"></div>
     <div class="ot-blob ot-blob-2"></div>

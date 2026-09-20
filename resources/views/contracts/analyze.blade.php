@@ -601,6 +601,68 @@
     }
 </style>
 
+<style>
+    html[data-theme="light"] .analyze-page {
+        color: #0f172a !important;
+    }
+    html[data-theme="light"] .analyze-page h1,
+    html[data-theme="light"] .form-section-title,
+    html[data-theme="light"] .drop-title,
+    html[data-theme="light"] .file-preview-name,
+    html[data-theme="light"] .result-title,
+    html[data-theme="light"] .empty-hint-text strong {
+        color: #0f172a !important;
+    }
+    html[data-theme="light"] .page-sub,
+    html[data-theme="light"] .back-label,
+    html[data-theme="light"] .form-section-sub,
+    html[data-theme="light"] .drop-sub,
+    html[data-theme="light"] .file-preview-meta,
+    html[data-theme="light"] .result-meta,
+    html[data-theme="light"] .empty-hint-text {
+        color: #475569 !important;
+    }
+    html[data-theme="light"] .back-btn,
+    html[data-theme="light"] .form-section,
+    html[data-theme="light"] .result-section {
+        background: #ffffff;
+        border-color: #cbd5e1 !important;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.07);
+    }
+    html[data-theme="light"] .form-section-head,
+    html[data-theme="light"] .result-head {
+        border-bottom-color: #cbd5e1 !important;
+    }
+    html[data-theme="light"] .drop-zone {
+        background: #f8fafc;
+        border-color: #94a3b8 !important;
+    }
+    html[data-theme="light"] .drop-zone:hover,
+    html[data-theme="light"] .drop-zone.has-file {
+        background: rgba(77, 208, 225, 0.08);
+        border-color: #0891b2 !important;
+    }
+    html[data-theme="light"] .file-preview {
+        background: #ecfeff;
+        border-color: #67e8f9;
+    }
+    html[data-theme="light"] .result-text {
+        color: #1e293b !important;
+    }
+    html[data-theme="light"] .empty-hint {
+        background: #f8fafc;
+        border-color: #94a3b8 !important;
+    }
+    html[data-theme="light"] .file-preview-remove {
+        color: #dc2626;
+    }
+    html[data-theme="light"] .submit-btn {
+        color: #083344;
+        border: 1px solid #0891b2;
+        box-shadow: 0 6px 18px rgba(8, 145, 178, 0.22);
+    }
+</style>
+
 <div class="analyze-page">
 
     {{-- 🔙 Кнопка назад --}}
@@ -639,7 +701,7 @@
         </div>
 
         <div class="drop-zone" id="dropZone">
-            <input type="file" name="doc" id="anFile" accept=".docx,.pdf,.doc,.txt" required>
+            <input type="file" name="doc" id="anFile" accept=".docx,.pdf,.doc" required>
             <div class="drop-icon">
                 <i class="bi bi-file-earmark-arrow-up-fill"></i>
             </div>
@@ -650,7 +712,7 @@
             <div class="drop-chips">
                 <span class="format-chip word">DOCX</span>
                 <span class="format-chip pdf">PDF</span>
-                <span class="format-chip txt">TXT</span>
+
             </div>
         </div>
 
@@ -682,7 +744,7 @@
                 <i class="bi bi-lightbulb-fill"></i>
             </div>
             <div class="empty-hint-text" data-i18n="hint_text">
-                <strong>Маслиҳат:</strong> ИИ метавонад ҳуҷҷатҳои калонро (то 10 МБ) хонда, асосиашро ҷудо кунад, нуқтаҳои муҳимро бардорад ва ба саволҳои шумо ҷавоб диҳад.
+                <strong>AI</strong>
             </div>
         </div>
     </form>
@@ -718,8 +780,7 @@ document.addEventListener('DOMContentLoaded', function () {
             analyzing: '⏳ ИИ ҳуҷҷатро мехонад...',
             result_title: '🤖 Натиҷаи таҳлил',
             result_error: '❌ Хатои таҳлил',
-            hint_text: '<strong>Маслиҳат:</strong> ИИ метавонад ҳуҷҷатҳои калонро (то 10 МБ) хонда, асосиашро ҷудо кунад, нуқтаҳои муҳимро бардорад ва ба саволҳои шумо ҷавоб диҳад.',
-            unknown_error: 'Хатои номаълум',
+           unknown_error: 'Хатои номаълум',
             file_selected: 'Интихоб шуд'
         },
         ru: {
@@ -735,8 +796,7 @@ document.addEventListener('DOMContentLoaded', function () {
             analyzing: '⏳ ИИ читает документ...',
             result_title: '🤖 Результат анализа',
             result_error: '❌ Ошибка анализа',
-            hint_text: '<strong>Совет:</strong> ИИ может читать большие документы (до 10 МБ), выделять главное, находить ключевые моменты и отвечать на ваши вопросы.',
-            unknown_error: 'Неизвестная ошибка',
+          unknown_error: 'Неизвестная ошибка',
             file_selected: 'Выбран'
         },
         en: {
@@ -752,8 +812,7 @@ document.addEventListener('DOMContentLoaded', function () {
             analyzing: '⏳ AI is reading the document...',
             result_title: '🤖 Analysis result',
             result_error: '❌ Analysis error',
-            hint_text: '<strong>Tip:</strong> AI can read large documents (up to 10 MB), extract the main points, find key insights and answer your questions.',
-            unknown_error: 'Unknown error',
+           unknown_error: 'Unknown error',
             file_selected: 'Selected'
         }
     };

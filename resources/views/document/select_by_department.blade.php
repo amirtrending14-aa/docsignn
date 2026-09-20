@@ -211,6 +211,64 @@
     @media(max-width:576px){ .dp{padding:18px 12px 100px;} .dp-top{margin-bottom:18px;gap:10px;} .dp-top__t{font-size:17px;} .dp-top__s{font-size:10px;} .dp-top__ic{width:38px;height:38px;border-radius:10px;} .dp-top__ic i{font-size:16px;} .dp-top__l{gap:11px;} .dp-stats{margin-bottom:22px;gap:8px;} .dp-st{padding:12px 10px;gap:10px;border-radius:11px;} .dp-st__v{font-size:18px;} .dp-st__l{font-size:8px;letter-spacing:.6px;} .dp-st__ic{width:30px;height:30px;border-radius:8px;} .dp-st__ic i{font-size:13px;} :root{--room-w:200px;--room-h:192px;--sign-w:132px;--ppl-w:13px;--ppl-h:28px;} .iso-fl{gap:50px 18px;padding:64px 2px 18px;} .iso-lv{margin-bottom:28px;} .iso-lnk{height:20px;margin-bottom:20px;} .iso-lnk::before,.iso-lnk::after{width:6px;height:6px;} .iso-lv__bg{padding:7px 12px;font-size:11px;border-radius:9px;gap:8px;} .iso-lv__bg .cnt{font-size:8px;padding:1px 5px;border-radius:5px;} .room__sign{top:-50px;padding:7px 8px;border-radius:10px;} .room__sign::after{height:10px;bottom:-10px;} .room__sign .ic{width:28px;height:28px;font-size:14px;margin-bottom:4px;border-radius:7px;} .room__sign .nm{font-size:10px;} .room__sign .lv{font-size:7px;} .room__select-btn{padding:5px 5px;font-size:9px;margin-top:5px;border-radius:6px;gap:4px;} .room__select-btn i{font-size:9px;} .room__select-btn .num{font-size:9px;} .ppl-badge{font-size:8px;padding:1px 5px;border-radius:6px;} .ppl__head{width:8px;height:8px;} .ppl__head::before{height:4px;} .ppl__body{width:12px;height:18px;top:7px;border-radius:5px 5px 3px 3px;} .ppl__body::before,.ppl__body::after{width:3px;height:11px;} .ppl__legs{width:10px;height:6px;} .ppl__legs::before,.ppl__legs::after{width:3px;height:6px;} .ppl__shadow{width:11px;height:3px;} .m-ov{padding:14px;} .m-bx{max-width:340px;border-radius:13px;} .m-hd{padding:14px 16px;} .m-hd h4{font-size:13px;} .m-hd span{font-size:10px;} .m-cl{width:26px;height:26px;font-size:11px;} .m-bd{padding:7px;} .m-user-row{padding:7px 8px;gap:8px;border-radius:8px;} .m-av{width:30px;height:30px;font-size:9px;border-radius:8px;} .m-nm{font-size:11px;} .m-em{font-size:9px;} .m-rl{font-size:7px;padding:2px 5px;} .m-no{padding:28px 16px;font-size:11px;} .m-no i{font-size:24px;} .ab-count { font-size: 18px; padding: 3px 10px; } .ab-text { font-size: 12px; } .btn-ab { padding: 10px 16px; font-size: 11px; } }
 </style>
 
+<style>
+    html[data-theme="light"] .dp {
+        --text: #0f172a;
+        --muted: #475569;
+        --line: #cbd5e1;
+        --bg: #ffffff;
+        color: #0f172a !important;
+        background: transparent !important;
+    }
+    html[data-theme="light"] .dp-top__t,
+    html[data-theme="light"] .dp-st__v,
+    html[data-theme="light"] .iso-lv__bg,
+    html[data-theme="light"] .room__sign .nm,
+    html[data-theme="light"] .m-hd h4,
+    html[data-theme="light"] .m-nm {
+        color: #0f172a !important;
+    }
+    html[data-theme="light"] .dp-top__s,
+    html[data-theme="light"] .dp-st__l,
+    html[data-theme="light"] .m-hd span,
+    html[data-theme="light"] .m-em,
+    html[data-theme="light"] .m-no,
+    html[data-theme="light"] .ab-text {
+        color: #475569 !important;
+    }
+    html[data-theme="light"] .dp-st,
+    html[data-theme="light"] .iso-lv__bg,
+    html[data-theme="light"] .room__sign,
+    html[data-theme="light"] .m-bx {
+        background: #ffffff !important;
+        border-color: #cbd5e1 !important;
+        box-shadow: 0 8px 22px rgba(15, 23, 42, 0.08);
+    }
+    html[data-theme="light"] .room__sign .nm {
+        font-weight: 800;
+    }
+    html[data-theme="light"] .room__select-btn {
+        font-weight: 800;
+    }
+    html[data-theme="light"] .m-hd {
+        border-bottom-color: #cbd5e1;
+    }
+    html[data-theme="light"] .m-cl,
+    html[data-theme="light"] .btn-ab-cancel {
+        background: #f8fafc;
+        border-color: #b8c4d3;
+        color: #334155;
+    }
+    html[data-theme="light"] .m-user-row:hover {
+        background: #f1f5f9;
+    }
+    html[data-theme="light"] .action-bar {
+        background: rgba(255, 255, 255, 0.96);
+        border-top-color: #cbd5e1;
+        box-shadow: 0 -8px 22px rgba(15, 23, 42, 0.08);
+    }
+</style>
+
 <div class="dp">
     <div class="dp-top">
         <div class="dp-top__l">

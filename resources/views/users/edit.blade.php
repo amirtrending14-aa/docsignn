@@ -330,7 +330,7 @@
                     <div class="avatar-block">
                         <div class="avatar-box">
                             @if($user->avatar)
-                                <img id="avatarPreview" src="{{ asset('storage/' . $user->avatar) }}">
+                                <img id="avatarPreview" src="{{ $user->avatar_url }}">
                                 <span id="avatarLetter" class="avatar-letter" style="display: none;">{{ Str::upper(Str::substr($user->name, 0, 1)) }}</span>
                             @else
                                 <img id="avatarPreview" src="" style="display: none;">

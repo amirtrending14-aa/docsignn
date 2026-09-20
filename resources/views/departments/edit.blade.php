@@ -680,6 +680,84 @@ $curColor = old('color', $department->color ?? ($levelColors[$curLevel] ?? '#4f8
     }
 </style>
 
+<style>
+    html[data-theme="light"] .ep {
+        color: #0f172a !important;
+        background: transparent !important;
+    }
+    html[data-theme="light"] .ep-title,
+    html[data-theme="light"] .ep-logo i,
+    html[data-theme="light"] .fl i,
+    html[data-theme="light"] .pv-nm {
+        color: #0f172a !important;
+    }
+    html[data-theme="light"] .ep-sub,
+    html[data-theme="light"] .ep-badge,
+    html[data-theme="light"] .fh,
+    html[data-theme="light"] .fl,
+    html[data-theme="light"] .lv-sb,
+    html[data-theme="light"] .pv-hd,
+    html[data-theme="light"] .pv-ds,
+    html[data-theme="light"] .pv-mt {
+        color: #475569 !important;
+    }
+    html[data-theme="light"] .ep-back,
+    html[data-theme="light"] .ep-logo,
+    html[data-theme="light"] .ep-card,
+    html[data-theme="light"] .pv-card {
+        background: #ffffff;
+        border-color: #cbd5e1 !important;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+    }
+    html[data-theme="light"] .fi,
+    html[data-theme="light"] .fs,
+    html[data-theme="light"] .ft,
+    html[data-theme="light"] .clr-hex,
+    html[data-theme="light"] .lv-cur,
+    html[data-theme="light"] .icon-pv,
+    html[data-theme="light"] .pv-vis,
+    html[data-theme="light"] .pv-mt {
+        background: #f8fafc !important;
+        border-color: #b8c4d3 !important;
+        color: #0f172a !important;
+    }
+    html[data-theme="light"] .fi::placeholder,
+    html[data-theme="light"] .ft::placeholder {
+        color: #64748b !important;
+    }
+    html[data-theme="light"] .fi:focus,
+    html[data-theme="light"] .fs:focus,
+    html[data-theme="light"] .ft:focus {
+        border-color: #0891b2 !important;
+        box-shadow: 0 0 0 3px rgba(8, 145, 178, 0.14);
+        background: #ffffff !important;
+    }
+    html[data-theme="light"] .fs option,
+    html[data-theme="light"] .lv-dd {
+        background: #ffffff !important;
+        color: #0f172a !important;
+    }
+    html[data-theme="light"] .lv-dd {
+        border-color: #cbd5e1 !important;
+        box-shadow: 0 18px 40px rgba(15, 23, 42, 0.16);
+    }
+    html[data-theme="light"] .lv-o:hover,
+    html[data-theme="light"] .lv-o.sel {
+        background: #f1f5f9 !important;
+    }
+    html[data-theme="light"] .btn-s,
+    html[data-theme="light"] .btn-c,
+    html[data-theme="light"] .clr-rst {
+        color: #334155 !important;
+        background: #f8fafc !important;
+        border-color: #b8c4d3 !important;
+    }
+    html[data-theme="light"] .ep-acts,
+    html[data-theme="light"] .pv-hd {
+        border-color: #cbd5e1 !important;
+    }
+</style>
+
 <div class="ep">
 
     <div class="ep-top">
@@ -793,13 +871,7 @@ $curColor = old('color', $department->color ?? ($levelColors[$curLevel] ?? '#4f8
                     </div>
                 </div>
 
-                <div class="fg">
-                    <label class="fl" for="description">
-                        <i class="bi bi-card-text"></i>
-                        <span data-i18n="descLabel">Описание</span>
-                    </label>
-                    <textarea id="description" name="description" rows="3" class="ft" data-i18n-placeholder="descPlaceholder" placeholder="Краткое описание отдела..." maxlength="1000">{{ old('description', $department->description) }}</textarea>
-                </div>
+
 
                 <div class="ep-acts">
                     <button type="submit" class="btn-s">

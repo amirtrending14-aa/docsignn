@@ -74,7 +74,7 @@
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 rounded-full bg-gradient-to-br from-red-500 to-purple-600 flex items-center justify-center text-white font-semibold text-sm ring-2 ring-white/10">
                             @if($user->avatar)
-                            <img src="{{ asset('storage/' . $user->avatar) }}" alt="" class="w-10 h-10 rounded-full object-cover">
+                            <img src="{{ $user->avatar_url }}" alt="" class="w-10 h-10 rounded-full object-cover">
                             @else
                             {{ Str::upper(Str::substr($user->name, 0, 1)) }}
                             @endif

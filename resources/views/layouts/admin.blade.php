@@ -18,6 +18,8 @@
     <script>
         (function(){
             try {
+                const theme = localStorage.getItem('docsign_theme') || 'dark';
+                document.documentElement.dataset.theme = theme;
                 const s = JSON.parse(localStorage.getItem('docsign_ambient') || '{}');
                 const rgb = s.color || '79,140,255';
                 const intensity = s.intensity || 80;
@@ -49,6 +51,15 @@
           --glow-intensity: 80;
           --glow-spread: 60;
         }
+                html[data-theme="light"]{
+                    --bg-0:#f4f7fb;
+                    --bg-1:#ffffff;
+                    --bg-2:#eef2f7;
+                    --bg-3:#e5eaf1;
+                    --line:rgba(15,23,42,0.12);
+                    --text:#172033;
+                    --muted:#64748b;
+                }
         *{box-sizing:border-box}
         html,body{margin:0;padding:0;height:100%}
         body{
@@ -73,6 +84,64 @@
           pointer-events:none;
           z-index:0;
         }
+                html[data-theme="light"] body{
+                    background:
+                        radial-gradient(1200px 600px at 80% -10%, rgba(var(--glow),0.12), transparent 60%),
+                        radial-gradient(900px 500px at -10% 110%, rgba(var(--glow),0.08), transparent 60%),
+                        var(--bg-0) !important;
+                }
+                html[data-theme="light"] body::before{
+                    background-image:
+                        linear-gradient(rgba(15,23,42,0.035) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(15,23,42,0.035) 1px, transparent 1px);
+                }
+                html[data-theme="light"] .topbar,
+                html[data-theme="light"] .mobile-search-bar{
+                    background:rgba(255,255,255,0.88);
+                }
+                html[data-theme="light"] .sidebar,
+                html[data-theme="light"] .card,
+                html[data-theme="light"] .panel,
+                html[data-theme="light"] .signer{
+                    background:linear-gradient(180deg, rgba(255,255,255,0.96), rgba(248,250,252,0.9));
+                }
+                html[data-theme="light"] .nav,
+                html[data-theme="light"] .search,
+                html[data-theme="light"] .icon-btn,
+                html[data-theme="light"] .btn,
+                html[data-theme="light"] .tabs,
+                html[data-theme="light"] .storage,
+                html[data-theme="light"] .mobile-search,
+                html[data-theme="light"] .mobile-search-bar-form{
+                    background:rgba(15,23,42,0.045);
+                }
+                html[data-theme="light"] .lang-menu,
+                html[data-theme="light"] .amb-panel,
+                html[data-theme="light"] .profile-menu,
+                html[data-theme="light"] .notif-dropdown{
+                    background:linear-gradient(180deg, rgba(255,255,255,0.99), rgba(241,245,249,0.99));
+                    box-shadow:0 20px 50px rgba(15,23,42,0.16), 0 0 30px rgba(var(--glow),0.12);
+                }
+                html[data-theme="light"] .amb-panel::before{ background:#fff; }
+                html[data-theme="light"] .nav button.active,
+                html[data-theme="light"] .side-item.active,
+                html[data-theme="light"] .mode.active,
+                html[data-theme="light"] .tabs button.active{
+                    color:#172033;
+                }
+                html[data-theme="light"] .sidebar .side-item{ color:var(--muted); }
+                html[data-theme="light"] .sidebar .side-item:hover,
+                html[data-theme="light"] .sidebar .side-item.active{ color:var(--text); }
+                html[data-theme="light"] .sidebar .side-title{ color:#64748b; }
+                html[data-theme="light"] .search input,
+                html[data-theme="light"] .mobile-search input,
+                html[data-theme="light"] .mobile-search-bar-form input{ color:var(--text); }
+                html[data-theme="light"] .btn.primary{ color:#fff; }
+
+                .theme-switcher{display:flex;align-items:center;gap:4px;}
+                .theme-btn{width:34px;height:34px;padding:0;}
+                .theme-btn.active{color:var(--text);border-color:rgba(var(--glow),0.5);box-shadow:0 0 14px rgba(var(--glow),0.2);}
+                .theme-btn svg{width:15px;height:15px;}
 
         /* ===== AMBIENT LIGHT STRIP ===== */
         .ambient{
@@ -1509,6 +1578,15 @@
         </div>
     </div>
 
+    <div class="theme-switcher" aria-label="Тема интерфейса">
+        <button type="button" class="icon-btn theme-btn" id="darkThemeBtn" title="Тёмная тема" aria-label="Тёмная тема">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <button type="button" class="icon-btn theme-btn" id="lightThemeBtn" title="Светлая тема" aria-label="Светлая тема">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        </button>
+    </div>
+
     <div id="notifWrapper" class="position-relative d-inline-block" style="position:relative;">
         <button type="button" id="notifBtn" class="icon-btn position-relative {{ $unreadCount > 0 ? 'bell-shaking' : '' }}"
                 data-i18n-title="notifications"
@@ -1780,7 +1858,7 @@
     <div class="profile-dropdown" id="profileWrapper">
         <button type="button" class="profile-btn" id="profileBtn">
             @if(auth()->user()->avatar)
-            <img src="{{ asset('storage/' . auth()->user()->avatar) }}"
+            <img src="{{ auth()->user()->avatar_url }}"
                  alt="{{ auth()->user()->name }}"
                  class="profile-avatar">
             @else
@@ -2098,6 +2176,132 @@
     <!-- MAIN -->
     @yield('content')
 </div>
+
+<style>
+    html[data-theme="light"] body,
+    html[data-theme="light"] #pjax-container {
+        color: #172033 !important;
+    }
+    html[data-theme="light"] body {
+        background: var(--bg-0) !important;
+    }
+    html[data-theme="light"] body,
+    html[data-theme="light"] :root {
+        --bg-dark: #eef2f7;
+        --bg-card: #ffffff;
+        --bg-panel: #ffffff;
+        --border-color: #cbd5e1;
+        --text-primary: #0f172a;
+        --text-secondary: #475569;
+        --text-muted: #64748b;
+    }
+    html[data-theme="light"] .topbar {
+        border-bottom-color: #cbd5e1 !important;
+        box-shadow: 0 2px 12px rgba(15, 23, 42, 0.08);
+    }
+    html[data-theme="light"] .sidebar,
+    html[data-theme="light"] .stat-card,
+    html[data-theme="light"] .panel {
+        border-color: #cbd5e1 !important;
+        box-shadow: 0 6px 20px rgba(15, 23, 42, 0.06);
+    }
+    html[data-theme="light"] .stat-card:hover,
+    html[data-theme="light"] .panel:hover {
+        box-shadow: 0 10px 28px rgba(15, 23, 42, 0.12);
+    }
+    html[data-theme="light"] .side-item {
+        color: #475569 !important;
+    }
+    html[data-theme="light"] .side-item:hover,
+    html[data-theme="light"] .side-item.active {
+        color: #0f172a !important;
+        background: rgba(var(--glow), 0.12) !important;
+    }
+    html[data-theme="light"] .page-head p,
+    html[data-theme="light"] .breadcrumb-custom,
+    html[data-theme="light"] .dashboard-subtitle,
+    html[data-theme="light"] .panel-head .sub,
+    html[data-theme="light"] .stat-label {
+        color: #475569 !important;
+    }
+    html[data-theme="light"] .dashboard-title {
+        background: none !important;
+        -webkit-text-fill-color: #0f172a !important;
+        color: #0f172a !important;
+    }
+    html[data-theme="light"] .btn-primary-custom {
+        background: linear-gradient(135deg, #c084fc, #a855f7) !important;
+        color: #1e1b4b !important;
+        border: 1px solid #9333ea !important;
+        box-shadow: 0 5px 16px rgba(126, 34, 206, 0.25) !important;
+    }
+    html[data-theme="light"] .table-modern td,
+    html[data-theme="light"] .table-modern th {
+        border-bottom-color: #cbd5e1 !important;
+    }
+    html[data-theme="light"] body,
+    html[data-theme="light"] button,
+    html[data-theme="light"] input,
+    html[data-theme="light"] select,
+    html[data-theme="light"] textarea {
+        font-weight: 500;
+    }
+    html[data-theme="light"] h1,
+    html[data-theme="light"] h2,
+    html[data-theme="light"] h3,
+    html[data-theme="light"] h4,
+    html[data-theme="light"] strong,
+    html[data-theme="light"] b,
+    html[data-theme="light"] .stat-value,
+    html[data-theme="light"] .dashboard-title {
+        font-weight: 700 !important;
+    }
+    html[data-theme="light"] .sidebar,
+    html[data-theme="light"] .card,
+    html[data-theme="light"] .panel,
+    html[data-theme="light"] .stat-card,
+    html[data-theme="light"] .search,
+    html[data-theme="light"] .nav,
+    html[data-theme="light"] .btn,
+    html[data-theme="light"] .icon-btn,
+    html[data-theme="light"] .lang-btn,
+    html[data-theme="light"] .table-modern,
+    html[data-theme="light"] .table-modern td,
+    html[data-theme="light"] .table-modern th {
+        border-width: 1.5px !important;
+        border-color: #b8c4d3 !important;
+    }
+    html[data-theme="light"] .sidebar .side-item {
+        font-weight: 600 !important;
+        color: #334155 !important;
+    }
+    html[data-theme="light"] .sidebar .side-item svg {
+        color: #475569;
+        stroke-width: 2.2;
+    }
+    html[data-theme="light"] .sidebar .side-item:hover,
+    html[data-theme="light"] .sidebar .side-item.active {
+        font-weight: 700 !important;
+        color: #0f172a !important;
+    }
+    html[data-theme="light"] .sidebar .side-title {
+        color: #475569 !important;
+        font-weight: 700;
+    }
+    html[data-theme="light"] .table-modern thead th {
+        background: rgba(15, 23, 42, 0.04) !important;
+        color: #475569 !important;
+    }
+    html[data-theme="light"] .modal-box,
+    html[data-theme="light"] .toast {
+        background: #ffffff !important;
+        color: #172033 !important;
+    }
+    html[data-theme="light"] .pagination-wrapper .page-link {
+        background: #ffffff !important;
+        color: #475569 !important;
+    }
+</style>
 
 <script>
     // ============================================================
@@ -2737,6 +2941,25 @@ const oldBell = document.getElementById('notifBtn');
 
     }, 5000); // Строго каждые 5 секунд
     
+</script>
+
+<script>
+    (function () {
+        const root = document.documentElement;
+        const darkButton = document.getElementById('darkThemeBtn');
+        const lightButton = document.getElementById('lightThemeBtn');
+
+        function applyTheme(theme) {
+            root.dataset.theme = theme;
+            localStorage.setItem('docsign_theme', theme);
+            darkButton.classList.toggle('active', theme === 'dark');
+            lightButton.classList.toggle('active', theme === 'light');
+        }
+
+        applyTheme(root.dataset.theme || 'dark');
+        darkButton.addEventListener('click', function () { applyTheme('dark'); });
+        lightButton.addEventListener('click', function () { applyTheme('light'); });
+    })();
 </script>
 
 @endif

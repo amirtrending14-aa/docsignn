@@ -239,6 +239,48 @@
     }
 </style>
 
+<style>
+    html[data-theme="light"] .doc-create-page {
+        color: #0f172a !important;
+    }
+    html[data-theme="light"] .hero-title,
+    html[data-theme="light"] .big-btn-title {
+        color: #0f172a !important;
+    }
+    html[data-theme="light"] .hero-subtitle,
+    html[data-theme="light"] .big-btn-desc,
+    html[data-theme="light"] .big-btn-arrow {
+        color: #475569 !important;
+    }
+    html[data-theme="light"] .big-btn {
+        background: #ffffff !important;
+        border: 1.5px solid #cbd5e1 !important;
+        box-shadow: 0 8px 22px rgba(15, 23, 42, 0.07);
+    }
+    html[data-theme="light"] .big-btn:hover {
+        border-color: rgba(var(--glow), 0.55) !important;
+        box-shadow: 0 12px 28px rgba(15, 23, 42, 0.13), 0 0 20px rgba(var(--glow), 0.12);
+    }
+    html[data-theme="light"] .big-btn.btn-rag {
+        background: linear-gradient(135deg, #ffffff, #fffbeb) !important;
+        border-color: #f1c453 !important;
+    }
+    html[data-theme="light"] .big-btn.btn-analyze {
+        background: linear-gradient(135deg, #ffffff, #ecfeff) !important;
+        border-color: #67e8f9 !important;
+    }
+    html[data-theme="light"] .big-btn-arrow {
+        background: #f8fafc;
+        border-color: #cbd5e1;
+    }
+    html[data-theme="light"] .big-btn.btn-rag .big-btn-title {
+        color: #713f12 !important;
+    }
+    html[data-theme="light"] .big-btn.btn-analyze .big-btn-title {
+        color: #164e63 !important;
+    }
+</style>
+
 <div class="doc-create-page">
     <!-- HERO СЕКЦИЯ -->
     <div class="hero-section">
@@ -255,7 +297,7 @@
     <div class="big-buttons-section">
 
         <!-- Кнопка 1: RAG + ИИ -->
-        <a href="{{ route('contracts.create') }}" class="big-btn btn-rag">
+        <a href="{{ route('ai.chat') }}" class="big-btn btn-rag">
             <span class="big-btn-arrow">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
                     <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/>

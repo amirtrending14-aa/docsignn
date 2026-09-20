@@ -9,9 +9,7 @@ use Illuminate\Validation\ValidationException;
 
 class ContractController extends Controller
 {
-    /**
-     * Индекс — список всех созданных документов пользователя
-     */
+   
     public function index()
     {
         $contracts = \App\Models\Contract::where('user_id', auth()->id())
@@ -23,8 +21,7 @@ class ContractController extends Controller
 
   public function create()
 {
-    // Та же логика — только свои документы
-    $contracts = \App\Models\Contract::where('user_id', auth()->id())
+  $contracts = \App\Models\Contract::where('user_id', auth()->id())
         ->orderBy('created_at', 'desc')
         ->take(5)
         ->get();
@@ -32,9 +29,7 @@ class ContractController extends Controller
     return view('contracts.create', ['contracts' => $contracts]);
 }
 
-    /**
-     * Генерация (обычная форма, fallback)
-     */
+   
 public function generate(Request $request)
 {
     set_time_limit(300);
@@ -55,9 +50,7 @@ public function generate(Request $request)
     if ($format === 'pdf' && empty($contract->pdf_filepath)) {
         $this->ensurePdf($contract);
     }
-
-    // ✅ ВСЕГДА идём на preview (и для PDF, и для Word)
-    return redirect()->route('contracts.preview', ['id' => $contract->id])
+  return redirect()->route('contracts.preview', ['id' => $contract->id])
         ->with('success', 'Документ создан!');
 }
 
@@ -92,7 +85,7 @@ public function generateAjax(Request $request)
             $contract->refresh();
         }
 
-        // ✅ ВСЕГДА редирект на preview
+       
         return response()->json([
             'success'  => true,
             'redirect' => route('contracts.preview', ['id' => $contract->id]),
@@ -111,10 +104,7 @@ public function generateAjax(Request $request)
     }
 }
 
-    /**
-     * 📎 Сохраняет прикреплённый файл и добавляет путь в данные для Python
-     */
-    private function attachFile(Request $request, array $validated): array
+  private function attachFile(Request $request, array $validated): array
     {
         if ($request->hasFile('attachment')) {
             $file = $request->file('attachment');
@@ -127,15 +117,13 @@ public function generateAjax(Request $request)
             $absPath = $dir . '/' . time() . '_' . $file->getClientOriginalName();
             $file->move($dir, basename($absPath));
 
-            $validated['attachment_path'] = $absPath; // Python может использовать как образец
+            $validated['attachment_path'] = $absPath; 
         }
 
         return $validated;
     }
 
-    /**
-     * 📕 Создаёт PDF, если Python его не создал
-     */
+
     private function ensurePdf($contract): void
     {
         try {
@@ -157,14 +145,11 @@ public function generateAjax(Request $request)
 
             $contract->update(['pdf_filepath' => $absPath]);
         } catch (\Throwable $e) {
-            // Если dompdf не установлен — пишем в лог и работаем дальше (Word)
-            Log::error('PDF generation failed: ' . $e->getMessage());
+           Log::error('PDF generation failed: ' . $e->getMessage());
         }
     }
 
-    /**
-     * Общая валидация анкеты
-     */
+    
     private function validateForm(Request $request): array
     {
         $validated = $request->validate([
@@ -194,9 +179,7 @@ public function generateAjax(Request $request)
         return $validated;
     }
 
-    /**
-     * Запуск Python с обработкой кодировки Windows
-     */
+
     private function runPythonGenerator(array $validated): array
     {
         $jsonPath = base_path('python/temp_input.json');
@@ -301,8 +284,7 @@ public function generateAjax(Request $request)
 {
     if (mb_check_encoding($str, 'UTF-8') && !preg_match('/[\x80-\xFF]/', $str)) return $str;
     
-    // ✅ ИСПРАВЛЕНО: ISO-8859-5 (было ISO-8851-5)
-    $utf8 = @mb_convert_encoding($str, 'UTF-8', 'UTF-8,Windows-1251,CP866,ISO-8859-5');
+   $utf8 = @mb_convert_encoding($str, 'UTF-8', 'UTF-8,Windows-1251,CP866,ISO-8859-5');
     if ($utf8 !== false && mb_check_encoding($utf8, 'UTF-8')) return $utf8;
     
     $cp = @iconv('CP866', 'UTF-8//IGNORE', $str);
@@ -344,9 +326,7 @@ public function generateAjax(Request $request)
         return $m[$num] ?? '';
     }
 
-    /**
-     * ШАГ 1: ИИ анализирует анкету и задаёт вопросы
-     */
+   
     public function analyzeAjax(Request $request)
     {
         set_time_limit(300);

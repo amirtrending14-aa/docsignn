@@ -421,6 +421,80 @@
     }
 </style>
 
+<style>
+    html[data-theme="light"] .doc-create-page {
+        color: #0f172a !important;
+    }
+    html[data-theme="light"] .form-card,
+    html[data-theme="light"] .ai-generator-card {
+        background: #ffffff !important;
+        border-color: #cbd5e1 !important;
+        box-shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
+    }
+    html[data-theme="light"] .page-title,
+    html[data-theme="light"] .mode-btn .mode-title,
+    html[data-theme="light"] .byregion-title,
+    html[data-theme="light"] .existing-file .file-name,
+    html[data-theme="light"] .ai-title,
+    html[data-theme="light"] .question-text {
+        color: #0f172a !important;
+    }
+    html[data-theme="light"] .page-subtitle,
+    html[data-theme="light"] .field-label,
+    html[data-theme="light"] .section-title,
+    html[data-theme="light"] .mode-btn .mode-desc,
+    html[data-theme="light"] .dropdown-item .meta,
+    html[data-theme="light"] .carried-meta span,
+    html[data-theme="light"] .ai-subtitle {
+        color: #475569 !important;
+    }
+    html[data-theme="light"] .back-btn,
+    html[data-theme="light"] .input-field,
+    html[data-theme="light"] .receiver-block,
+    html[data-theme="light"] .mode-btn,
+    html[data-theme="light"] .existing-file,
+    html[data-theme="light"] .ai-textarea,
+    html[data-theme="light"] .ai-questions,
+    html[data-theme="light"] .format-label,
+    html[data-theme="light"] .question-input,
+    html[data-theme="light"] .file-upload {
+        background: #f8fafc !important;
+        border-color: #b8c4d3 !important;
+        color: #0f172a !important;
+    }
+    html[data-theme="light"] .input-field::placeholder,
+    html[data-theme="light"] .ai-textarea::placeholder {
+        color: #64748b !important;
+    }
+    html[data-theme="light"] .input-field:focus,
+    html[data-theme="light"] .ai-textarea:focus,
+    html[data-theme="light"] .question-input:focus {
+        background: #ffffff !important;
+        border-color: #4f8cff !important;
+    }
+    html[data-theme="light"] .mode-btn:hover,
+    html[data-theme="light"] .mode-btn.active {
+        background: rgba(79, 140, 255, 0.1) !important;
+    }
+    html[data-theme="light"] .search-dropdown {
+        background: #ffffff !important;
+        border-color: #b8c4d3 !important;
+        box-shadow: 0 14px 30px rgba(15, 23, 42, 0.16);
+    }
+    html[data-theme="light"] .dropdown-item {
+        border-bottom-color: #e2e8f0;
+    }
+    html[data-theme="light"] .dropdown-item .name,
+    html[data-theme="light"] .ai-status-text {
+        color: #0f172a !important;
+    }
+    html[data-theme="light"] .btn-submit,
+    html[data-theme="light"] .btn-delete,
+    html[data-theme="light"] .byregion-add-btn {
+        font-weight: 800;
+    }
+</style>
+
 <div class="doc-create-page">
     <div class="max-w-3xl mx-auto">
 
@@ -440,40 +514,7 @@
         </div>
         @endif
 
-        <div class="ai-generator-card">
-            <div class="ai-header">
-                <div class="ai-icon"><i class="bi bi-stars"></i></div>
-                <div>
-                    <div class="ai-title" data-i18n="aiTitle">ИИ Помощник редактирования</div>
-                    <div class="ai-subtitle" data-i18n="aiSubtitle">Опиши изменения — ИИ поможет обновить документ</div>
-                </div>
-            </div>
-            <div class="ai-input-group">
-                <textarea id="aiPrompt" class="ai-textarea" placeholder="Например: Измени сумму договора на 70000 руб/мес, добавь пункт о штрафе..." rows="3"></textarea>
-                <div class="ai-format-selector">
-                    <label class="format-option">
-                        <input type="radio" name="ai_format" value="pdf" checked>
-                        <span class="format-label"><i class="bi bi-file-earmark-pdf"></i> PDF</span>
-                    </label>
-                    <label class="format-option">
-                        <input type="radio" name="ai_format" value="word">
-                        <span class="format-label"><i class="bi bi-file-earmark-word"></i> Word</span>
-                    </label>
-                </div>
-            </div>
-            <button type="button" id="generateBtn" class="ai-generate-btn"><i class="bi bi-magic"></i> <span data-i18n="aiGenerate">Применить изменения с ИИ</span></button>
-            <div id="aiStatus" class="ai-status hidden"><div class="ai-status-icon"><i class="bi bi-hourglass-split"></i></div><div class="ai-status-text" data-i18n="aiStatus">ИИ обрабатывает изменения...</div></div>
-            <div id="aiQuestions" class="ai-questions hidden">
-                <div class="questions-title"><i class="bi bi-question-circle"></i> <span data-i18n="aiQuestionsTitle">ИИ задаёт уточняющие вопросы:</span></div>
-                <div id="questionsList"></div>
-                <button type="button" id="submitAnswers" class="ai-submit-btn"><i class="bi bi-check-circle"></i> <span data-i18n="aiSubmitAnswers">Отправить ответы</span></button>
-            </div>
-            <div id="aiResult" class="ai-result hidden">
-                <div class="result-header"><i class="bi bi-check-circle-fill"></i> <span data-i18n="aiResultTitle">Изменения применены!</span></div>
-                <div class="result-actions"><a id="downloadLink" href="#" class="download-btn" download><i class="bi bi-download"></i> <span data-i18n="aiDownload">Скачать обновлённый документ</span></a></div>
-            </div>
-            <div id="aiError" class="ai-error hidden"></div>
-        </div>
+
 
         <div class="form-card">
             <h1 class="page-title" data-i18n="pageTitle">Редактирование документа</h1>

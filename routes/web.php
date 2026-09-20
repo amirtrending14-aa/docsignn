@@ -35,7 +35,7 @@ use App\Http\Controllers\CompanyTreeController;
 use App\Http\Controllers\FaceController;
 use App\Http\Controllers\Admin\AttendanceReportController;
 use App\Http\Controllers\Admin\CompanySettingsController;
-
+use App\Http\Controllers\ChatController;
 /*
 |--------------------------------------------------------------------------
 | 1. ПУБЛИЧНЫЕ МАРШРУТЫ (без авторизации)
@@ -44,9 +44,18 @@ use App\Http\Controllers\Admin\CompanySettingsController;
 Route::get('/', fn() => view('layouts.site'))->name('site.home');
 Route::get('/site', fn() => view('layouts.site'))->name('site.main');
 
+// Отдача аватаров напрямую из storage/app/public, включая Windows без симлинка.
+Route::get('/avatar/{path}', function (string $path) {
+    $path = ltrim(str_replace('\\', '/', $path), '/');
+
+    abort_unless(str_starts_with($path, 'avatars/') && !str_contains($path, '..'), 404);
+    abort_unless(Storage::disk('public')->exists($path), 404);
+
+    return response()->file(Storage::disk('public')->path($path));
+})->where('path', '.*')->name('avatar.show');
+
 // 🔒 Публичная проверка подлинности документа по коду
 Route::get('/verify/{code}', [DocumentSignatureController::class, 'verify'])
-    ->middleware('throttle:30,1') // 30 проверок в минуту
     ->name('document.verify');
 
 /*
@@ -132,7 +141,6 @@ Route::middleware(['auth', 'last.seen'])->group(function () {
     // ============================================
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard/chart-data', [DashboardController::class, 'getChartData'])
-        ->middleware('throttle:60,1')
         ->name('dashboard.chart-data');
     Route::get('/analysis', [AnalysisController::class, 'index'])->name('analysis.index');
 
@@ -141,11 +149,9 @@ Route::middleware(['auth', 'last.seen'])->group(function () {
     // ============================================
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])
-        ->middleware('throttle:10,1')
-        ->name('profile.update');
+   Route::patch('/profile', [ProfileController::class, 'update'])
+    ->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])
-        ->middleware('throttle:3,1')
         ->name('profile.destroy');
 
     // ============================================
@@ -153,36 +159,28 @@ Route::middleware(['auth', 'last.seen'])->group(function () {
     // ============================================
     Route::get('/setting', fn() => view('settings.index'))->name('settings');
     Route::post('/settings/signature', [ProfileController::class, 'updateSignature'])
-        ->middleware('throttle:10,1')
         ->name('settings.signature.update');
     Route::post('/settings/general', [ProfileController::class, 'updateGeneral'])
-        ->middleware('throttle:10,1')
         ->name('settings.general.update');
     Route::put('/settings/edi', [SettingsController::class, 'update'])
-        ->middleware('throttle:10,1')
         ->name('settings.update');
 
     // ============================================
     // DOCUMENTS (🔒 IDOR Protection через Route Model Binding)
     // ============================================
     Route::get('/documents/{document}/download-pdf', [DocumentController::class, 'downloadPdf'])
-        ->middleware('throttle:10,1')
         ->name('documents.downloadPdf');
 
     Route::get('/documents/{document}/download-word', [DocumentController::class, 'downloadWord'])
-        ->middleware('throttle:10,1')
         ->name('documents.downloadWord');
 
     Route::post('/documents/contracts-process', [DocumentController::class, 'storeFromPdf'])
-        ->middleware('throttle:10,1')
         ->name('documents.contracts-process');
 
     Route::post('/documents/{document}/sign', [DocumentController::class, 'sign'])
-        ->middleware('throttle:signing')
         ->name('documents.sign');
 
     Route::post('/documents/{document}/reject', [DocumentController::class, 'reject'])
-        ->middleware('throttle:10,1')
         ->name('documents.reject');
 // Временная загрузка файла (AJAX) — внутри группы auth
     Route::post('/documents/upload-temp', [DocumentController::class, 'uploadTemp'])->name('documents.upload-temp');
@@ -202,7 +200,6 @@ Route::post('/documents/recipients/store-region', [DocumentController::class, 's
     // ============================================
     Route::resource('logs', DocumentLogController::class);
     Route::post('/logs/clear', [DocumentLogController::class, 'clear'])
-        ->middleware('throttle:3,1')
         ->name('logs.clear');
     Route::get('/documents/{document}/logs', [DocumentLogController::class, 'documentLogs'])
         ->name('logs.document');
@@ -220,7 +217,6 @@ Route::post('/documents/recipients/store-region', [DocumentController::class, 's
     // SEARCH
     // ============================================
     Route::get('/search', [SearchController::class, 'index'])
-        ->middleware('throttle:30,1')
         ->name('search');
 
     // 🔒 Защита от перебора email (User Enumeration)
@@ -234,7 +230,7 @@ Route::post('/documents/recipients/store-region', [DocumentController::class, 's
             'exists' => !!$user,
             // 🔒 НЕ отдаём имя для защиты приватности
         ]);
-    })->middleware('throttle:10,1')->name('users.search_api');
+    })->name('users.search_api');
 });
 
 Route::middleware(['auth', 'last.seen'])->group(function () {
@@ -249,12 +245,10 @@ Route::middleware(['auth', 'last.seen'])->group(function () {
     // COMMENTS (🔒 IDOR Protection)
     // ============================================
     Route::post('/comments', [DocumentCommentController::class, 'store'])
-        ->middleware('throttle:10,1')
         ->name('comments.store');
     Route::get('/documents/{document}/comments', [DocumentCommentController::class, 'index'])
         ->name('comments.index');
     Route::delete('/comments/{comment}', [DocumentCommentController::class, 'destroy'])
-        ->middleware('throttle:10,1')
         ->name('comments.destroy');
 
     // ============================================
@@ -264,22 +258,17 @@ Route::middleware(['auth', 'last.seen'])->group(function () {
         Route::get('/', [NotificationController::class, 'index'])->name('index');
         Route::get('/create', [NotificationController::class, 'create'])->name('create');
         Route::get('/check', [NotificationController::class, 'checkNew'])
-            ->middleware('throttle:60,1')
             ->name('check');
         Route::any('/{notification}/read', [NotificationController::class, 'read'])->name('read');
         Route::patch('/{notification}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('read_patch');
         Route::delete('/{notification}', [NotificationController::class, 'destroy'])
-            ->middleware('throttle:10,1')
             ->name('destroy');
         Route::delete('/clear-all', [NotificationController::class, 'clearAll'])
-            ->middleware('throttle:3,1')
             ->name('clearAll');
         Route::post('/read-all', [NotificationController::class, 'readAll'])
-            ->middleware('throttle:10,1')
             ->name('readAll');
     });
     Route::post('/comments/store_notification', [NotificationController::class, 'store'])
-        ->middleware('throttle:forms')
         ->name('comments.store_notification');
 
     // ============================================
@@ -288,14 +277,12 @@ Route::middleware(['auth', 'last.seen'])->group(function () {
     Route::resource('messages', MessageController::class);
 
     // ============================================
-    // AI (🔒 Строгий Rate Limiting)
+    // AI
     // ============================================
     Route::post('/contracts/generate-document', [AIController::class, 'generateDocument'])
-        ->middleware('throttle:contracts-generation')
         ->name('contracts.generate-document');
 // Алиас для старого адреса (чтобы кэш браузера не ломал работу)
 Route::post('/ai/generate-document', [AIController::class, 'generateDocument'])
-    ->middleware('throttle:contracts-generation')
     ->name('ai.generate-document');
     // ============================================
     // HEARTBEAT (🔒 Защита от спама)
@@ -308,7 +295,7 @@ Route::post('/ai/generate-document', [AIController::class, 'generateDocument'])
 
         DB::table('users')->where('id', $user->id)->update(['last_seen_at' => now()]);
         return response()->json(['status' => 'ok', 'online' => true]);
-    })->middleware('throttle:60,1')->name('heartbeat');
+    })->name('heartbeat');
 
     // ============================================
     // STREL
@@ -343,21 +330,17 @@ Route::middleware(['auth', 'superadmin', 'last.seen'])
             ->name('users.no-companies');
 
         Route::get('users/export', [SuperAdminUserController::class, 'exportUsers'])
-            ->middleware('throttle:5,1') // 🔒 Защита экспорта
             ->name('users.export');
 
         Route::post('users/bulk-delete', [SuperAdminUserController::class, 'bulkDelete'])
-            ->middleware('throttle:3,1') // 🔒 Строгая защита массового удаления
             ->name('users.bulk');
 
         Route::resource('users', SuperAdminUserController::class);
 
         Route::post('users/{user}/reset-password', [SuperAdminUserController::class, 'resetPassword'])
-            ->middleware('throttle:5,1')
             ->name('users.reset-password');
 
         Route::post('users/{user}/toggle-status', [SuperAdminUserController::class, 'toggleStatus'])
-            ->middleware('throttle:10,1')
             ->name('users.toggle-status');
 
         Route::get('users/{user}/activity', [SuperAdminUserController::class, 'userActivity'])
@@ -378,7 +361,6 @@ Route::middleware(['auth', 'superadmin', 'last.seen'])
         // ============================================
         Route::get('profile', [SuperAdminController::class, 'profile'])->name('profile');
         Route::put('profile', [SuperAdminController::class, 'updateProfile'])
-            ->middleware('throttle:10,1')
             ->name('profile.update');
     });
 
@@ -389,7 +371,7 @@ Route::middleware(['auth', 'superadmin', 'last.seen'])
 */
 // 🔒 Защищённый маршрут обновления dashboard
 Route::get('/dashboard-update', fn() => 'Данные обновлены успешно!')
-    ->middleware(['auth', 'throttle:60,1'])
+    ->middleware('auth')
     ->name('dashboard.update');
 
 /*
@@ -481,6 +463,12 @@ Route::post('documents/recipients/department', [DocumentController::class, 'depa
     ->name('documents.recipients.department.store');
 
 Route::get('/documents/{id}/stream', [DocumentSignatureController::class, 'stream'])->name('documents.stream');
+
+// ✅ ДОБАВЛЕНО: роут для предпросмотра Word/PDF в едином PDF-виджете подписи
+// (без него view: 'Route [documents.previewPdf] not defined.')
+Route::get('/documents/{id}/preview-pdf', [DocumentSignatureController::class, 'previewPdf'])
+    ->name('documents.previewPdf');
+
 Route::get('/documents/{id}/download', [DocumentSignatureController::class, 'download'])->name('documents.download');
 Route::get('/signatures/{id}/qr', [DocumentSignatureController::class, 'qrImage'])
     ->name('signatures.qr');
@@ -570,4 +558,25 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->controlle
     // Анализатор
     Route::get('/contracts/analyze-page', [ContractController::class, 'analyzePage'])->name('contracts.analyze-page');
     Route::post('/contracts/analyze-upload', [ContractController::class, 'analyzeUpload'])->name('contracts.analyze-upload');
+});
+
+
+
+/*
+|--------------------------------------------------------------------------
+| AI CHAT — ПОМОЩНИК ЭДО
+|--------------------------------------------------------------------------
+*/
+Route::middleware('auth')->group(function () {
+    Route::get('/ai-chat', [ChatController::class, 'index'])->name('ai.chat');
+
+    Route::get('/ai-chat/{id}', [ChatController::class, 'index'])->name('ai.chat.show');
+
+    Route::post('/ai-chat/send', [ChatController::class, 'send'])->name('ai.send');
+
+    Route::get('/ai-chat/download/{id}/{format}', [ChatController::class, 'download'])
+        ->where('format', 'docx|pdf')
+        ->name('ai.download');
+
+    Route::delete('/ai-chat/{id}', [ChatController::class, 'destroy'])->name('ai.chat.delete');
 });

@@ -13,7 +13,7 @@
                 <div class="relative inline-block">
                     <div class="w-32 h-32 rounded-full overflow-hidden border-4 border-red-500/30 shadow-2xl shadow-red-500/20 mx-auto">
                         @if($user->avatar)
-                        <img src="{{ asset('storage/' . $user->avatar) }}" alt="" class="w-full h-full object-cover">
+                        <img src="{{ $user->avatar_url }}" alt="" class="w-full h-full object-cover">
                         @else
                         <div class="w-full h-full bg-gradient-to-br from-red-600 to-red-800 flex items-center justify-center text-4xl font-bold text-white">
                             {{ Str::upper(Str::substr($user->name, 0, 1)) }}

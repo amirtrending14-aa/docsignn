@@ -24,10 +24,7 @@ class DepartmentController extends Controller
         })->only(['create', 'store', 'edit', 'update', 'destroy', 'assignUser', 'removeUser']);
     }
 
-    // =========================================================
-    //  СПИСОК ОТДЕЛОВ (ДЕРЕВО)
-    // =========================================================
-    public function index()
+  public function index()
     {
         $user      = auth()->user();
         $companyId = $user->company_id;
@@ -45,10 +42,7 @@ class DepartmentController extends Controller
         return view('departments.index', compact('departments', 'tree', 'levelNames'));
     }
 
-    // =========================================================
-    //  ПРОСМОТР ОТДЕЛА
-    // =========================================================
-    public function show(Department $department)
+  public function show(Department $department)
     {
         $user = auth()->user();
         $this->authorizeCompany($user, $department);
@@ -58,11 +52,9 @@ class DepartmentController extends Controller
         $levelNames = Department::levelNames();
         $ancestors  = $this->getAncestors($department);
 
-        // Пользователи для привязки (только своей компании)
-        $companyUsers = $this->getAvailableUsers($user, $department);
+       $companyUsers = $this->getAvailableUsers($user, $department);
 
-        // Сколько мест свободно
-        $currentCount = $department->users()->count();
+       $currentCount = $department->users()->count();
         $remainingSlots = self::MAX_USERS_PER_DEPARTMENT - $currentCount;
 
         return view('departments.show', compact(
@@ -73,11 +65,7 @@ class DepartmentController extends Controller
             'remainingSlots'
         ));
     }
-
-    // =========================================================
-    //  ФОРМА СОЗДАНИЯ
-    // =========================================================
-    public function create()
+ public function create()
     {
         $user       = auth()->user();
         $levelNames = Department::levelNames();
@@ -86,10 +74,7 @@ class DepartmentController extends Controller
         return view('departments.create', compact('levelNames', 'tree'));
     }
 
-    // =========================================================
-    //  СОХРАНИТЬ ОТДЕЛ
-    // =========================================================
-    public function store(Request $request)
+  public function store(Request $request)
     {
         $user = auth()->user();
 
@@ -102,13 +87,10 @@ class DepartmentController extends Controller
             'description' => 'nullable|string|max:1000',
         ]);
 
-        // Привязка к компании
         $validated['company_id'] = $user->company_id;
 
-        // Валидация родителя
-        $this->validateParent($validated, $user->company_id);
+      $this->validateParent($validated, $user->company_id);
 
-        // Дефолтные значения
         $validated['icon']  = $validated['icon']  ?? '🏢';
         $validated['color'] = $validated['color'] ?? Department::levelColor($validated['level']);
 
@@ -119,10 +101,7 @@ class DepartmentController extends Controller
             ->with('success', 'Отдел успешно создан!');
     }
 
-    // =========================================================
-    //  ФОРМА РЕДАКТИРОВАНИЯ
-    // =========================================================
-    public function edit(Department $department)
+  public function edit(Department $department)
     {
         $user = auth()->user();
         $this->authorizeCompany($user, $department);
@@ -133,10 +112,7 @@ class DepartmentController extends Controller
         return view('departments.edit', compact('department', 'levelNames', 'tree'));
     }
 
-    // =========================================================
-    //  ОБНОВИТЬ ОТДЕЛ
-    // =========================================================
-    public function update(Request $request, Department $department)
+  public function update(Request $request, Department $department)
     {
         $user = auth()->user();
         $this->authorizeCompany($user, $department);
@@ -150,8 +126,7 @@ class DepartmentController extends Controller
             'description' => 'nullable|string|max:1000',
         ]);
 
-        // Валидация родителя + запрет быть родителем самому себе
-        $this->validateParent($validated, $user->company_id, $department->id);
+       $this->validateParent($validated, $user->company_id, $department->id);
 
         $department->update($validated);
 
@@ -160,10 +135,7 @@ class DepartmentController extends Controller
             ->with('success', 'Отдел обновлён!');
     }
 
-    // =========================================================
-    //  УДАЛИТЬ ОТДЕЛ
-    // =========================================================
-    public function destroy(Department $department)
+  public function destroy(Department $department)
     {
         $user = auth()->user();
         $this->authorizeCompany($user, $department);
@@ -188,13 +160,7 @@ class DepartmentController extends Controller
             ->with('success', "Отдел «{$name}» удалён.");
     }
 
-    // =========================================================
-    //  ДОБАВИТЬ ПОЛЬЗОВАТЕЛЯ В ОТДЕЛ
-    //  — НЕТ выбора должности
-    //  — Роль присваивается АВТОМАТИЧЕСКИ
-    //  — Максимум 10 пользователей
-    // =========================================================
-    public function assignUser(Request $request, Department $department)
+ public function assignUser(Request $request, Department $department)
     {
         $user = auth()->user();
         $this->authorizeCompany($user, $department);
@@ -203,8 +169,7 @@ class DepartmentController extends Controller
             'user_id' => 'required|exists:users,id',
         ]);
 
-        // Лимит 10
-        if ($department->users()->count() >= self::MAX_USERS_PER_DEPARTMENT) {
+      if ($department->users()->count() >= self::MAX_USERS_PER_DEPARTMENT) {
             return back()->withErrors([
                 'error' => 'Достигнут лимит: максимум ' . self::MAX_USERS_PER_DEPARTMENT . ' сотрудников.',
             ]);
@@ -220,15 +185,11 @@ class DepartmentController extends Controller
             return back()->withErrors(['user_id' => 'Этот сотрудник уже в отделе.']);
         }
 
-        // ✅ Просто привязка. Роль пользователя НЕ меняем!
-        $department->users()->attach($targetUser->id);
+       $department->users()->attach($targetUser->id);
 
         return back()->with('success', "Сотрудник «{$targetUser->name}» добавлен в отдел.");
     }
 
-    // =========================================================
-    //  УБРАТЬ ПОЛЬЗОВАТЕЛЯ ИЗ ОТДЕЛА
-    // =========================================================
     public function removeUser(Department $department, int $userId)
     {
         $user = auth()->user();
@@ -245,13 +206,7 @@ class DepartmentController extends Controller
         return back()->with('success', "Сотрудник «{$targetUser->name}» удалён из отдела.");
     }
 
-    // =========================================================
-    //  PRIVATE HELPERS
-    // =========================================================
-
-    /**
-     * Проверка прав на отдел (принадлежность к компании)
-     */
+  
     private function authorizeCompany($user, Department $department): void
     {
         if (!$user->is_super_admin && $department->company_id !== $user->company_id) {
@@ -259,9 +214,7 @@ class DepartmentController extends Controller
         }
     }
 
-    /**
-     * Валидация родительского отдела
-     */
+   
     private function validateParent(array &$validated, ?int $companyId, ?int $excludeId = null): void
     {
         if (!empty($validated['parent_id'])) {

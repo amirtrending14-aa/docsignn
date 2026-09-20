@@ -87,8 +87,9 @@ class DocumentSignatureController extends Controller
             'qr_x_percent'   => 'required_if:position_mode,page|nullable|numeric|min:0|max:100',
             'qr_y_percent'   => 'required_if:position_mode,page|nullable|numeric|min:0|max:100',
             'qr_cell'        => 'required_if:position_mode,cell|nullable|string|max:12',
-            'qr_offset_x'    => 'nullable|integer|min:0|max:5000',
-            'qr_offset_y'    => 'nullable|integer|min:0|max:5000',
+            // офсет внутри ячейки Excel — теперь ПРОЦЕНТЫ (0-100), а не сырые пиксели
+            'qr_offset_x'    => 'nullable|numeric|min:0|max:100',
+            'qr_offset_y'    => 'nullable|numeric|min:0|max:100',
         ], [
             'document_id.required'   => 'Идентификатор документа обязателен.',
             'document_id.exists'     => 'Выбранный документ не найден в базе данных.',
@@ -274,8 +275,8 @@ class DocumentSignatureController extends Controller
             'qr_x_percent'   => 'required_if:position_mode,page|nullable|numeric|min:0|max:100',
             'qr_y_percent'   => 'required_if:position_mode,page|nullable|numeric|min:0|max:100',
             'qr_cell'        => 'required_if:position_mode,cell|nullable|string|max:12',
-            'qr_offset_x'    => 'nullable|integer|min:0|max:5000',
-            'qr_offset_y'    => 'nullable|integer|min:0|max:5000',
+            'qr_offset_x'    => 'nullable|numeric|min:0|max:100',
+            'qr_offset_y'    => 'nullable|numeric|min:0|max:100',
         ], [
             'position_mode.required'   => 'Укажите место для QR-кода, кликнув по документу.',
             'qr_x_percent.required_if' => 'Укажите место для QR-кода, кликнув по документу.',
@@ -417,8 +418,9 @@ class DocumentSignatureController extends Controller
     }
 
     /**
-     * ✅ НОВОЕ: рассчитывает координаты QR на "странице" (мм) по проценту клика
-     * $position = ['x_percent' => .., 'y_percent' => ..]
+     * ✅ Рассчитывает координаты QR на "странице" (мм) по проценту клика.
+     * Работает с реальными размерами страницы, которые передаются вызывающим кодом
+     * (для PDF — из самого файла, для DOCX/RTF — из секции документа).
      */
     private function resolvePagePosition(array $position, float $pageWidthMm, float $pageHeightMm, float $qrSize)
     {
@@ -447,6 +449,102 @@ class DocumentSignatureController extends Controller
             'width_mm'  => $qrWidthMm,
             'height_mm' => $qrHeightMm,
         ];
+    }
+
+    /**
+     * ✅ ИСПРАВЛЕНО: реальный размер страницы Word-документа (в мм).
+     * Читаем напрямую из XML файла (word/document.xml, тег w:pgSz) —
+     * это ТОЧНО ТО ЖЕ значение, которое видит docx-preview.js в браузере,
+     * поскольку оба читают один и тот же исходный XML документа.
+     * API PhpWord (getPageSizeW/H) в некоторых версиях может возвращать
+     * дефолтные значения вместо реальных, из-за чего клик по превью
+     * "уезжал" не в то место — прямое чтение XML устраняет это расхождение.
+     */
+    private function getDocxPageSizeMm($filePath, $section = null)
+    {
+        try {
+            $zip = new \ZipArchive();
+            if ($zip->open($filePath) === true) {
+                $xml = $zip->getFromName('word/document.xml');
+                $zip->close();
+
+                if ($xml && preg_match('/<w:pgSz\b([^>]*)\/?>/', $xml, $tagMatch)) {
+                    $attrs = $tagMatch[1];
+                    preg_match('/w:w="(\d+)"/', $attrs, $wMatch);
+                    preg_match('/w:h="(\d+)"/', $attrs, $hMatch);
+
+                    $wTwips = isset($wMatch[1]) ? (int)$wMatch[1] : null;
+                    $hTwips = isset($hMatch[1]) ? (int)$hMatch[1] : null;
+
+                    if ($wTwips && $hTwips) {
+                        return [
+                            'width_mm'  => $wTwips / self::MM_TO_TWIPS_FACTOR,
+                            'height_mm' => $hTwips / self::MM_TO_TWIPS_FACTOR,
+                        ];
+                    }
+                }
+            }
+        } catch (Exception $e) {
+            \Log::warning("Не удалось прочитать размер страницы DOCX из XML: " . $e->getMessage());
+        }
+
+        // Фолбэк на API PhpWord, если прямое чтение XML не удалось
+        if ($section) {
+            try {
+                $style = $section->getStyle();
+                $wTwips = $style ? $style->getPageSizeW() : null;
+                $hTwips = $style ? $style->getPageSizeH() : null;
+
+                if ($wTwips && $hTwips) {
+                    return [
+                        'width_mm'  => $wTwips / self::MM_TO_TWIPS_FACTOR,
+                        'height_mm' => $hTwips / self::MM_TO_TWIPS_FACTOR,
+                    ];
+                }
+            } catch (Exception $e) {
+            }
+        }
+
+        return ['width_mm' => self::A4_WIDTH_MM, 'height_mm' => self::A4_HEIGHT_MM];
+    }
+
+    /**
+     * ✅ НОВОЕ: реальная ширина столбца Excel в пикселях (для правильного офсета QR).
+     * Excel хранит ширину в "символьных" единицах — конвертируем по стандартной формуле.
+     */
+    private function getColumnWidthPx($sheet, $columnLetter)
+    {
+        try {
+            $colDim = $sheet->getColumnDimension($columnLetter);
+            $width = $colDim->getWidth();
+        } catch (Exception $e) {
+            $width = null;
+        }
+
+        if ($width === null || $width < 0) {
+            $width = 8.43; // стандартная ширина столбца Excel по умолчанию
+        }
+
+        return (int) round(($width * 7) + 5);
+    }
+
+    /**
+     * ✅ НОВОЕ: реальная высота строки Excel в пикселях.
+     */
+    private function getRowHeightPx($sheet, $rowNumber)
+    {
+        try {
+            $rowDim = $sheet->getRowDimension($rowNumber);
+            $height = $rowDim->getRowHeight();
+        } catch (Exception $e) {
+            $height = null;
+        }
+
+        if ($height === null || $height < 0) {
+            $height = 15; // стандартная высота строки Excel в пунктах
+        }
+
+        return (int) round($height * 96 / 72);
     }
 
     private function generateStamp($qrPayload, $signerName, $signedDate, $qrSizePx = 100)
@@ -497,8 +595,12 @@ class DocumentSignatureController extends Controller
 
         $stamp = imagecreatetruecolor($stampWidthHiRes, $stampHeightHiRes);
         imageantialias($stamp, true);
-        imagealphablending($stamp, false);
-        imagesavealpha($stamp, true);
+        // ВАЖНО: раньше здесь сохранялся альфа-канал (imagesavealpha=true).
+        // PNG с прозрачностью в связке с абсолютным позиционированием "за текстом"
+        // в Word иногда даёт битую картинку (плейсхолдер "заблокировано").
+        // Фон у штампа и так белый — прозрачность не нужна, делаем PNG непрозрачным.
+        imagealphablending($stamp, true);
+        imagesavealpha($stamp, false);
 
         $white = imagecolorallocate($stamp, 255, 255, 255);
         $black = imagecolorallocate($stamp, 0, 0, 0);
@@ -529,8 +631,8 @@ class DocumentSignatureController extends Controller
 
         $finalStamp = imagecreatetruecolor($stampWidth, $stampHeight);
         imageantialias($finalStamp, true);
-        imagealphablending($finalStamp, false);
-        imagesavealpha($finalStamp, true);
+        imagealphablending($finalStamp, true);
+        imagesavealpha($finalStamp, false);
 
         imagecopyresampled(
             $finalStamp, $stamp,
@@ -554,7 +656,9 @@ class DocumentSignatureController extends Controller
     }
 
     /**
-     * ✅ PDF: QR на ПОСЛЕДНЕЙ странице, позиция — по клику пользователя
+     * ✅ PDF: QR на ПОСЛЕДНЕЙ странице, позиция — по клику пользователя.
+     * Здесь всегда используется реальный размер страницы из самого PDF ($size['width']/['height']),
+     * поэтому позиционирование точное.
      */
     private function processPdfSigning($document, $qrPayload, $qrSize = 100, $signerName = '', $signedDate = '', array $position = [])
     {
@@ -608,7 +712,10 @@ class DocumentSignatureController extends Controller
     }
 
     /**
-     * ✅ DOCX: QR на ПОСЛЕДНЕЙ странице (секции), позиция — по клику пользователя (в % от A4)
+     * ✅ DOCX: QR на ПОСЛЕДНЕЙ странице (секции), позиция — по клику пользователя.
+     * ИСПРАВЛЕНО: размер страницы теперь берётся из реального документа
+     * (getDocxPageSizeMm), а не считается всегда A4 — это устраняет смещение
+     * между тем, где кликнул пользователь в превью, и тем, куда встаёт QR.
      */
     private function processDocxSigning($document, $qrPayload, $qrSize = 100, $signerName = '', $signedDate = '', array $position = [])
     {
@@ -628,7 +735,8 @@ class DocumentSignatureController extends Controller
         $sectionIndex = count($sections) > 0 ? count($sections) - 1 : 0;
         $section = $sections[$sectionIndex] ?? $phpWord->addSection();
 
-        $pos = $this->resolvePagePosition($position, self::A4_WIDTH_MM, self::A4_HEIGHT_MM, $qrSize);
+        $pageSize = $this->getDocxPageSizeMm($originalPath, $section);
+        $pos = $this->resolvePagePosition($position, $pageSize['width_mm'], $pageSize['height_mm'], $qrSize);
 
         $qr_x_twips = round($pos['x_mm'] * self::MM_TO_TWIPS_FACTOR);
         $qr_y_twips = round($pos['y_mm'] * self::MM_TO_TWIPS_FACTOR);
@@ -645,7 +753,7 @@ class DocumentSignatureController extends Controller
             'posVerticalRel'   => \PhpOffice\PhpWord\Style\Image::POSITION_RELATIVE_TO_PAGE,
             'marginLeft'       => $qr_x_twips,
             'marginTop'        => $qr_y_twips,
-            'wrappingStyle'    => \PhpOffice\PhpWord\Style\Image::WRAPPING_STYLE_BEHIND,
+            'wrappingStyle'    => \PhpOffice\PhpWord\Style\Image::WRAPPING_STYLE_SQUARE,
         ]);
 
         $time = time();
@@ -672,7 +780,12 @@ class DocumentSignatureController extends Controller
     }
 
     /**
-     * ✅ XLSX: QR на ПОСЛЕДНЕМ листе, позиция — по клику на ячейку
+     * ✅ XLSX: QR на ПОСЛЕДНЕМ листе, позиция — по клику на ячейку.
+     * ИСПРАВЛЕНО: offset_x/offset_y теперь приходят из формы как ПРОЦЕНТЫ (0-100)
+     * положения клика внутри ячейки, а не сырые пиксели браузерной таблицы.
+     * Здесь они пересчитываются в реальные пиксели по фактической ширине
+     * столбца и высоте строки конкретно этой ячейки в самом файле —
+     * поэтому QR больше не улетает за пределы видимой области.
      */
     private function processXlsxSigning($document, $qrPayload, $qrSize = 100, $signerName = '', $signedDate = '', array $position = [])
     {
@@ -704,17 +817,29 @@ class DocumentSignatureController extends Controller
             if (!preg_match('/^[A-Z]{1,3}[0-9]{1,7}$/', $cell)) {
                 $cell = 'A1';
             }
-            $offsetX = isset($position['offset_x']) ? max(0, (int)$position['offset_x']) : 5;
-            $offsetY = isset($position['offset_y']) ? max(0, (int)$position['offset_y']) : 5;
+
+            preg_match('/^([A-Z]+)([0-9]+)$/', $cell, $m);
+            $colLetter = $m[1] ?? 'A';
+            $rowNum = isset($m[2]) ? (int)$m[2] : 1;
+
+            $colWidthPx = $this->getColumnWidthPx($sheet, $colLetter);
+            $rowHeightPx = $this->getRowHeightPx($sheet, $rowNum);
+
+            // offset_x / offset_y приходят как проценты (0-100) положения клика внутри ячейки
+            $offsetXPercent = isset($position['offset_x']) ? max(0, min(100, (float)$position['offset_x'])) : 10;
+            $offsetYPercent = isset($position['offset_y']) ? max(0, min(100, (float)$position['offset_y'])) : 10;
+
+            $offsetX = (int) round(($offsetXPercent / 100) * $colWidthPx);
+            $offsetY = (int) round(($offsetYPercent / 100) * $rowHeightPx);
 
             $drawing->setCoordinates($cell);
             $drawing->setOffsetX($offsetX);
             $drawing->setOffsetY($offsetY);
         } else {
-            // fallback — как раньше, если позиция не пришла
+            // fallback — если позиция не пришла
             $drawing->setCoordinates('A1');
-            $drawing->setOffsetX(700);
-            $drawing->setOffsetY(500);
+            $drawing->setOffsetX(5);
+            $drawing->setOffsetY(5);
         }
 
         $drawing->setWorksheet($sheet);
@@ -742,7 +867,8 @@ class DocumentSignatureController extends Controller
     }
 
     /**
-     * ✅ RTF: конвертируем в DOCX и ставим QR (позиция как у DOCX, в % от A4)
+     * ✅ RTF: конвертируем в DOCX и ставим QR (позиция — реальный размер страницы
+     * итогового DOCX, как и в processDocxSigning).
      */
     private function processRtfSigning($document, $qrPayload, $qrSize = 100, $signerName = '', $signedDate = '', array $position = [])
     {
@@ -809,7 +935,8 @@ class DocumentSignatureController extends Controller
 
         $stampPath = $this->generateStamp($qrPayload, $signerName, $signedDate, $qrSize);
 
-        $pos = $this->resolvePagePosition($position, self::A4_WIDTH_MM, self::A4_HEIGHT_MM, $qrSize);
+        $pageSize = $this->getDocxPageSizeMm($docxTempPath, $section);
+        $pos = $this->resolvePagePosition($position, $pageSize['width_mm'], $pageSize['height_mm'], $qrSize);
 
         $qr_x_twips = round($pos['x_mm'] * self::MM_TO_TWIPS_FACTOR);
         $qr_y_twips = round($pos['y_mm'] * self::MM_TO_TWIPS_FACTOR);
@@ -826,7 +953,7 @@ class DocumentSignatureController extends Controller
             'posVerticalRel'   => \PhpOffice\PhpWord\Style\Image::POSITION_RELATIVE_TO_PAGE,
             'marginLeft'       => $qr_x_twips,
             'marginTop'        => $qr_y_twips,
-            'wrappingStyle'    => \PhpOffice\PhpWord\Style\Image::WRAPPING_STYLE_BEHIND,
+            'wrappingStyle'    => \PhpOffice\PhpWord\Style\Image::WRAPPING_STYLE_SQUARE,
         ]);
 
         $time = time();
@@ -859,16 +986,29 @@ class DocumentSignatureController extends Controller
     private function findLibreOffice()
     {
         $paths = [
+            // Linux / production
             '/usr/bin/libreoffice',
             '/usr/bin/soffice',
             '/usr/lib/libreoffice/program/soffice',
             '/opt/libreoffice/program/soffice',
+            // ✅ Windows (OSPanel/XAMPP/локальная разработка)
+            'C:\\Program Files\\LibreOffice\\program\\soffice.exe',
+            'C:\\Program Files (x86)\\LibreOffice\\program\\soffice.exe',
         ];
 
         foreach ($paths as $path) {
             if (File::exists($path)) {
                 return $path;
             }
+        }
+
+        if (stripos(PHP_OS, 'WIN') === 0) {
+            $which = trim(shell_exec('where soffice 2>NUL') ?: '');
+            if ($which) {
+                $firstLine = trim(strtok($which, "\r\n"));
+                if ($firstLine && File::exists($firstLine)) return $firstLine;
+            }
+            return null;
         }
 
         $which = trim(shell_exec('which libreoffice 2>/dev/null') ?: '');
@@ -1091,6 +1231,124 @@ class DocumentSignatureController extends Controller
         $filename = $document->title . '.' . strtolower(pathinfo($path, PATHINFO_EXTENSION));
 
         return response()->download($fullPath, $filename);
+    }
+
+    /**
+     * ✅ НОВОЕ: отдаёт документ в PDF специально для превью-виджета подписи.
+     * Для PDF — просто отдаёт исходный файл. Для DOCX/DOC/RTF — конвертирует
+     * в PDF через LibreOffice (headless) и отдаёт результат. Это позволяет
+     * рисовать превью Word ТОЧНО ТЕМ ЖЕ pdf.js-кодом, что и обычный PDF —
+     * клик мышкой получает ту же точность позиционирования, что и на PDF.
+     * Результат конвертации кэшируется на диске и пересчитывается только
+     * если исходный файл изменился (по времени модификации).
+     * Роут: GET /documents/{id}/preview-pdf
+     */
+    public function previewPdf($id)
+    {
+        $document = Document::findOrFail($id);
+        $user = Auth::user();
+
+        if (!$user->isAdmin()) {
+            $hasAccess = (
+                (int)$document->created_by === (int)$user->id ||
+                (int)$document->receiver_id === (int)$user->id ||
+                (int)$document->sender_id === (int)$user->id
+            );
+
+            if (!$hasAccess) {
+                $hasAccess = DocumentWorkflow::where('document_id', $document->id)
+                    ->where('user_id', $user->id)
+                    ->exists();
+            }
+
+            if (!$hasAccess) {
+                try {
+                    $hasAccess = \App\Models\DocumentRecipient::where('document_id', $document->id)
+                        ->where('user_id', $user->id)
+                        ->exists();
+                } catch (\Exception $e) {}
+            }
+
+            if (!$hasAccess) {
+                abort(403, 'У вас нет доступа к этому документу.');
+            }
+        }
+
+        $path = $document->file_path;
+
+        if (!Storage::disk('public')->exists($path)) {
+            abort(404, 'Файл не найден на сервере.');
+        }
+
+        $fullPath = Storage::disk('public')->path($path);
+        $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+
+        // PDF отдаём как есть — конвертация не нужна
+        if ($extension === 'pdf') {
+            return response()->file($fullPath, [
+                'Content-Type'        => 'application/pdf',
+                'Content-Disposition' => 'inline; filename="preview.pdf"',
+                'Cache-Control'       => 'private, max-age=300',
+            ]);
+        }
+
+        if (!in_array($extension, ['docx', 'doc', 'rtf'])) {
+            abort(415, 'Предпросмотр в PDF недоступен для этого формата.');
+        }
+
+        $cacheDir = storage_path('app/preview_cache');
+        if (!File::exists($cacheDir)) {
+            File::makeDirectory($cacheDir, 0755, true, true);
+        }
+
+        $cachePdfPath = $cacheDir . '/doc_' . $document->id . '_' . md5($path) . '.pdf';
+
+        $needsConvert = true;
+        if (File::exists($cachePdfPath) && filemtime($cachePdfPath) >= filemtime($fullPath)) {
+            $needsConvert = false;
+        }
+
+        if ($needsConvert) {
+            $libreOfficePath = $this->findLibreOffice();
+            if (!$libreOfficePath) {
+                // ✅ 501 (а не голый 500) — фронтенд по этому коду понимает,
+                // что LibreOffice недоступен, и сам переключается на
+                // клиентский рендер docx-preview.js вместо показа ошибки.
+                return response()->json([
+                    'error'  => 'libreoffice_missing',
+                    'message' => 'LibreOffice не найден на сервере — точный PDF-предпросмотр Word недоступен.',
+                ], 501);
+            }
+
+            $cmd = sprintf(
+                '%s --headless --convert-to pdf --outdir %s %s 2>&1',
+                escapeshellarg($libreOfficePath),
+                escapeshellarg($cacheDir),
+                escapeshellarg($fullPath)
+            );
+            shell_exec($cmd);
+
+            $expectedPdf = $cacheDir . '/' . pathinfo($fullPath, PATHINFO_FILENAME) . '.pdf';
+            if (File::exists($expectedPdf)) {
+                if (File::exists($cachePdfPath)) {
+                    File::delete($cachePdfPath);
+                }
+                File::move($expectedPdf, $cachePdfPath);
+            }
+        }
+
+        if (!File::exists($cachePdfPath)) {
+            return response()->json([
+                'error'   => 'conversion_failed',
+                'message' => 'Не удалось сконвертировать документ для предпросмотра.',
+            ], 501);
+        }
+
+        return response()->file($cachePdfPath, [
+            'Content-Type'        => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="preview.pdf"',
+            'Cache-Control'       => 'private, max-age=300',
+        ]);
     }
 
     public function qrImage($id)

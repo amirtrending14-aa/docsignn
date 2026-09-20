@@ -109,6 +109,48 @@
     }
 </style>
 
+<style>
+    html[data-theme="light"] .ur-page {
+        color: #0f172a !important;
+    }
+    html[data-theme="light"] .ur-user-name,
+    html[data-theme="light"] .ur-day,
+    html[data-theme="light"] .ur-detail-item .v {
+        color: #0f172a !important;
+    }
+    html[data-theme="light"] .ur-user-meta,
+    html[data-theme="light"] .ur-sum-label,
+    html[data-theme="light"] .ur-weekdays span,
+    html[data-theme="light"] .ur-legend-item,
+    html[data-theme="light"] .ur-detail-item .l {
+        color: #475569 !important;
+    }
+    html[data-theme="light"] .ur-back,
+    html[data-theme="light"] .ur-nav-btn,
+    html[data-theme="light"] .ur-sum,
+    html[data-theme="light"] .ur-cal-panel,
+    html[data-theme="light"] .ur-detail {
+        background: #ffffff !important;
+        border-color: #cbd5e1 !important;
+        box-shadow: 0 6px 18px rgba(15, 23, 42, 0.07);
+    }
+    html[data-theme="light"] .ur-day {
+        background: #f8fafc;
+        border-color: #b8c4d3;
+    }
+    html[data-theme="light"] .ur-day.blank {
+        background: transparent;
+        border-color: transparent;
+        box-shadow: none;
+    }
+    html[data-theme="light"] .ur-legend {
+        border-top-color: #cbd5e1;
+    }
+    html[data-theme="light"] .ur-detail-date {
+        font-weight: 900;
+    }
+</style>
+
 <div class="ur-page">
 
     {{-- ===== ШАПКА ===== --}}
@@ -120,7 +162,7 @@
         <div class="ur-user">
             <div class="ur-avatar">
                 @if ($user->avatar)
-                    <img src="{{ asset('storage/' . $user->avatar) }}" alt="">
+                    <img src="{{ $user->avatar_url }}" alt="">
                 @else
                     {{ strtoupper(mb_substr($user->name, 0, 1)) }}
                 @endif

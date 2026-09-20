@@ -1,14 +1,4 @@
 {
-    "doc_type": "Валиак",
-    "doc_type_custom": "Валиак",
-    "to_whom": "ба муалими химияи  мактаб",
-    "from_whom": "Аминов Амир",
-    "from_details": "г худжанд улица р.аюб 44  +926625252",
-    "city": "Худжанд",
-    "subject": "ман мехохам аз мактаб хорич карда шавам",
-    "extra": "кабл кун",
-    "day": "18",
-    "month": "августа",
-    "year": "2026",
-    "attachment_path": "C:\\OSPanel\\home\\docsign\\storage\\app\/temp_uploads\/1787047814_Тақриз ИФМ.docx"
+    "mode": "summarize",
+    "filepath": "C:\\OSPanel\\home\\docsign\\storage\\app\/temp_uploads\/1789356346_рус амир.docx"
 }

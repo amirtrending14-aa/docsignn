@@ -11,9 +11,6 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\RateLimiter; // <-- ДОБАВЛЕНО: Для регистрации лимитов
-use Illuminate\Http\Request;                 // <-- ДОБАВЛЕНО: Для работы RateLimiter
-use Illuminate\Cache\RateLimiting\Limit;     // <-- ДОБАВЛЕНО: Для создания лимитов
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -31,22 +28,6 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         Carbon::setLocale('ru');
-
-        // 🛡️ РЕГИСТРАЦИЯ ЛИМИТОВ ДЛЯ MIDDLEWARE
-        // Это необходимо, чтобы маршруты с ->middleware('throttle:...') не падали с ошибкой 500.
-        // Наши умные проверки через RateLimitService::check() в контроллерах продолжают работать параллельно.
-
-        RateLimiter::for('contracts-generation', function (Request $request) {
-            return Limit::perMinute(3)->by($request->user()?->id ?: $request->ip());
-        });
-
-        RateLimiter::for('login', function (Request $request) {
-            return Limit::perMinute(5)->by($request->ip() . $request->input('email', ''));
-        });
-
-        RateLimiter::for('api', function (Request $request) {
-            return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
-        });
 
         // 🔒 БЕЗОПАСНОСТЬ: View composer только для авторизованных пользователей
         View::composer('*', function ($view) {

@@ -1147,7 +1147,7 @@
             </div>
             <a href="{{ route('superadmin.profile') }}" class="avatar">
                 @if(auth()->user()->avatar)
-                <img src="{{ asset('storage/' . auth()->user()->avatar) }}" alt="">
+                <img src="{{ auth()->user()->avatar_url }}" alt="">
                 @else
                 {{ Str::upper(Str::substr(auth()->user()->name, 0, 1)) }}
                 @endif

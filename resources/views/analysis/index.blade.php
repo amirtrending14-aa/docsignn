@@ -456,6 +456,61 @@
         50% { transform: scale(1.2); }
     }
 
+    /* === NAVIGATION BUTTONS === */
+    .month-nav {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 32px;
+        flex-wrap: wrap;
+    }
+
+    .month-nav-btn {
+        background: linear-gradient(135deg, rgba(var(--glow), 0.15), rgba(var(--glow), 0.05));
+        border: 1px solid rgba(var(--glow), 0.3);
+        color: var(--text);
+        padding: 12px 24px;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 15px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        cursor: pointer;
+        box-shadow: 0 4px 16px rgba(var(--glow), 0.1);
+    }
+
+    .month-nav-btn:hover {
+        background: linear-gradient(135deg, rgba(var(--glow), 0.25), rgba(var(--glow), 0.1));
+        border-color: rgba(var(--glow), 0.5);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(var(--glow), 0.3);
+        color: var(--text);
+    }
+
+    .month-nav-btn:active {
+        transform: translateY(0);
+    }
+
+    .month-nav-btn i {
+        font-size: 18px;
+    }
+
+    .month-current-label {
+        background: rgba(255,255,255,0.08);
+        border: 1px solid var(--line);
+        padding: 12px 24px;
+        border-radius: 12px;
+        font-weight: 800;
+        font-size: 16px;
+        color: var(--text);
+        letter-spacing: 0.5px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
     /* === CHART CONTAINERS === */
     #mainChart, #userChart {
         width: 100%;
@@ -507,6 +562,8 @@
         .dash-blob-2 { width: 500px; height: 500px; }
         .dash-blob-3 { width: 350px; height: 350px; }
         .dash-blob { filter: blur(100px); }
+        .month-nav-btn { padding: 10px 20px; font-size: 14px; }
+        .month-current-label { padding: 10px 20px; font-size: 15px; }
     }
 
     /* Планшеты (до 768px) */
@@ -519,6 +576,10 @@
         .section-title .accent { width: 4px; height: 26px; }
         .badge-live { padding: 5px 12px; font-size: 10px; gap: 5px; }
         .slabel { font-size: 9px; letter-spacing: 1.1px; }
+        .month-nav { gap: 12px; margin-bottom: 24px; }
+        .month-nav-btn { padding: 9px 18px; font-size: 13px; gap: 6px; }
+        .month-nav-btn i { font-size: 16px; }
+        .month-current-label { padding: 9px 18px; font-size: 14px; }
 
         #mainChart, #userChart { max-height: 250px; }
         #statusChart { max-height: 320px; }
@@ -542,6 +603,10 @@
         .badge-live i { font-size: 9px; }
         .slabel { font-size: 9px; letter-spacing: 1px; }
         .mega-divider { margin: 16px 0; }
+        .month-nav { gap: 8px; margin-bottom: 20px; }
+        .month-nav-btn { padding: 8px 14px; font-size: 12px; gap: 4px; border-radius: 10px; }
+        .month-nav-btn i { font-size: 14px; }
+        .month-current-label { padding: 8px 14px; font-size: 13px; border-radius: 10px; }
 
         .icon-box { width: 36px; height: 36px; border-radius: 8px; }
         .icon-box i { font-size: 16px; }
@@ -565,6 +630,9 @@
         .section-title { font-size: 15px; gap: 8px; }
         .bignum { font-size: 18px; }
         .badge-live { padding: 3px 8px; font-size: 8px; }
+        .month-nav { gap: 6px; margin-bottom: 16px; }
+        .month-nav-btn { padding: 7px 12px; font-size: 11px; }
+        .month-current-label { padding: 7px 12px; font-size: 12px; }
         #mainChart, #userChart { max-height: 200px; }
         #statusChart { max-height: 220px; }
         div[style*="height:380px"] { height: 220px !important; }
@@ -575,7 +643,33 @@
 <div class="dash">
     {{-- Фоновые blob-ы --}}
 
+    {{-- === НАВИГАЦИЯ ПО МЕСЯЦАМ (ДВЕ КНОПКИ) === --}}
+    <div class="month-nav">
+        @php
+            $prev = \Carbon\Carbon::createFromDate($year, $month, 1)->subMonth();
+            $next = \Carbon\Carbon::createFromDate($year, $month, 1)->addMonth();
+            $isCurrentMonth = ($year == \Carbon\Carbon::now()->year && $month == \Carbon\Carbon::now()->month);
+        @endphp
 
+        <a href="{{ url()->current() }}?month={{ $prev->month }}&year={{ $prev->year }}"
+           class="month-nav-btn"
+           title="{{ $prev->translatedFormat('F Y') }}">
+            <i class="bi bi-chevron-left"></i>
+            <span>{{ $prev->translatedFormat('M') }}</span>
+        </a>
+
+        <div class="month-current-label">
+            {{ $startDate->translatedFormat('F Y') }}
+        </div>
+
+        <a href="{{ url()->current() }}?month={{ $next->month }}&year={{ $next->year }}"
+           class="month-nav-btn {{ $isCurrentMonth ? 'opacity-50' : '' }}"
+           @if($isCurrentMonth) style="pointer-events: none; opacity: 0.5;" @endif
+           title="{{ $next->translatedFormat('F Y') }}">
+            <span>{{ $next->translatedFormat('M') }}</span>
+            <i class="bi bi-chevron-right"></i>
+        </a>
+    </div>
 
     {{-- === СЕКЦИЯ: АНАЛИТИКА ДОКУМЕНТООБОРОТА === --}}
     <div class="section-title">
@@ -584,8 +678,6 @@
     </div>
 
     <div class="mega-card">
-
-
         <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
             <div>
                 <div class="slabel" data-i18n="systemStats">Статистика системы</div>
@@ -606,8 +698,6 @@
 
     <div class="mega-card">
         <div class="stat-highlight" style="background: radial-gradient(circle, rgba(168, 85, 247, 0.04) 0%, transparent 70%);"></div>
-
-
 
         <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
             <div>
@@ -652,7 +742,6 @@
     </div>
 
 </div>
-</div>
 
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -663,182 +752,129 @@
             ru: {
                 docAnalytics: "Аналитика документооборота",
                 systemStats: "Статистика системы",
-                incomingFlow: "Поток входящих документов",
-                totalDocs: "Всего документов",
-                processedFiles: "обработано файлов",
-                signedRate: "Доля подписанных",
-                rejectedTitle: "Отказы (Rejected)",
-                requireAttention: "требуют внимания",
+                incomingFlow: "Поток документов",
                 userAnalytics: "Аналитика пользователей",
                 baseActivity: "Активность базы",
                 audienceDynamics: "Динамика прироста аудитории",
                 registrations: "Регистрации",
                 deletions: "Удаления",
-                usersCount: "Пользователи",
-                activeProfiles: "активных профилей",
-                new30Days: "Новые (30 дней)",
-                churnRate: "Churn Rate",
-                churnDesc: "коэффициент оттока",
                 docStatuses: "Статусы документов",
                 distByCat: "Распределение по категориям",
                 forMonth: "За месяц:",
-                incoming: "Входящие",
-                acceptedBySys: "принято системой",
-                outgoing: "Исходящие",
-                sentByYou: "отправлено вами",
-                signed: "Подписанные",
-                successDone: "завершено успешно",
-                pending: "В очереди",
-                waitAction: "ожидают действия",
                 documents: "ДОКУМЕНТОВ",
-                live: "Live"
+                live: "Live",
+                // 6 категорий статусов
+                incoming: "Входящие",
+                outgoing: "Исходящие",
+                processing: "На подписании",
+                draft: "Черновики",
+                rejected: "Отклоненные",
+                archive: "Архив (Подписанные)"
             },
             tj: {
                 docAnalytics: "Таҳлили ҳуҷҷатгардонӣ",
                 systemStats: "Омори система",
-                incomingFlow: "Ҷараёни ҳуҷҷатҳои воридотӣ",
-                totalDocs: "Ҳамаи ҳуҷҷатҳо",
-                processedFiles: "файлҳо коркард шуданд",
-                signedRate: "Ҳиссаи имзошуда",
-                rejectedTitle: "Радшуда",
-                requireAttention: "диққатро талаб мекунад",
+                incomingFlow: "Ҷараёни ҳуҷҷатҳо",
                 userAnalytics: "Таҳлили корбарон",
                 baseActivity: "Фаъолияти база",
                 audienceDynamics: "Динамикаи афзоиши аудитория",
                 registrations: "Бақайдгириҳо",
                 deletions: "Ҳазфшудаҳо",
-                usersCount: "Корбарон",
-                activeProfiles: "профилҳои фаъол",
-                new30Days: "Нав (30 рӯз)",
-                churnRate: "Churn Rate",
-                churnDesc: "коэффисиенти хориҷшавӣ",
                 docStatuses: "Ҳолатҳои ҳуҷҷатҳо",
                 distByCat: "Тақсимшавӣ аз рӯи категорияҳо",
                 forMonth: "Дар моҳ:",
-                incoming: "Воридотӣ",
-                acceptedBySys: "аз ҷониби система қабул шуд",
-                outgoing: "Содиротӣ",
-                sentByYou: "аз ҷониби шумо фиристода шуд",
-                signed: "Имзошуда",
-                successDone: "бомуваффақият анҷом ёфт",
-                pending: "Дар навбат",
-                waitAction: "интизори амал",
                 documents: "ҲУҶҶАТҲО",
-                live: "Зинда"
+                live: "Зинда",
+                // 6 категорий статусов
+                incoming: "Воридотӣ",
+                outgoing: "Содиротӣ",
+                processing: "Дар имзокунӣ",
+                draft: "Пешнависҳо",
+                rejected: "Радшуда",
+                archive: "Архив (Имзошуда)"
             },
             en: {
                 docAnalytics: "Document Analytics",
                 systemStats: "System Statistics",
-                incomingFlow: "Incoming Document Flow",
-                totalDocs: "Total Documents",
-                processedFiles: "processed files",
-                signedRate: "Signed Rate",
-                rejectedTitle: "Rejected",
-                requireAttention: "require attention",
+                incomingFlow: "Document Flow",
                 userAnalytics: "User Analytics",
                 baseActivity: "Base Activity",
                 audienceDynamics: "Audience Dynamics",
                 registrations: "Registrations",
                 deletions: "Deletions",
-                usersCount: "Users",
-                activeProfiles: "active profiles",
-                new30Days: "New (30 days)",
-                churnRate: "Churn Rate",
-                churnDesc: "churn coefficient",
                 docStatuses: "Document Statuses",
                 distByCat: "Distribution by category",
                 forMonth: "For month:",
-                incoming: "Incoming",
-                acceptedBySys: "accepted by system",
-                outgoing: "Outgoing",
-                sentByYou: "sent by you",
-                signed: "Signed",
-                successDone: "successfully completed",
-                pending: "Pending",
-                waitAction: "waiting for action",
                 documents: "DOCUMENTS",
-                live: "Live"
+                live: "Live",
+                // 6 категорий статусов
+                incoming: "Incoming",
+                outgoing: "Outgoing",
+                processing: "Processing",
+                draft: "Drafts",
+                rejected: "Rejected",
+                archive: "Archive (Signed)"
             }
         };
 
-        // ===== Получение текущего языка (синхронизация с layout) =====
         function getCurrentLang() {
-            return localStorage.getItem('docsign_lang')
-                || localStorage.getItem('app-lang')
-                || 'ru';
+            return localStorage.getItem('docsign_lang') || localStorage.getItem('app-lang') || 'ru';
         }
 
-        // ===== Применение переводов к HTML =====
         function applyAnalyticsTranslations() {
             const lang = getCurrentLang();
             const t = translations[lang] || translations['ru'];
-
-            // Обновляем все элементы с data-i18n
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
-                if (t[key] !== undefined) {
-                    el.textContent = t[key];
-                }
+                if (t[key] !== undefined) el.textContent = t[key];
             });
-
             return t;
         }
 
         let currentTranslations = applyAnalyticsTranslations();
-
-        // ===== Определяем тему (dark/light) =====
-        const dk = () => document.body.classList.contains('dark') ||
-            document.documentElement.classList.contains('dark') ||
-            (window.matchMedia && window.matchMedia('(prefers-color-scheme:dark)').matches);
-
-        const isDark = dk();
+        const isDark = document.body.classList.contains('dark') || document.documentElement.classList.contains('dark');
         const fc = isDark ? '#94a3b8' : '#64748b';
 
-        // ===== Общие настройки ApexCharts =====
         const co = {
             chart: { type: 'area', height: 280, toolbar: { show: false }, zoom: { enabled: false }, foreColor: fc },
             dataLabels: { enabled: false },
             stroke: { curve: 'smooth', width: 3 },
             markers: { size: 4, strokeWidth: 2, strokeColors: isDark ? '#151d30' : '#fff' },
             grid: { borderColor: isDark ? 'rgba(255,255,255,.05)' : '#f1f5f9', strokeDashArray: 4 },
-            tooltip: {
-                theme: isDark ? 'dark' : 'light',
-                x: { show: true },
-                style: { fontSize: '12px' }
-            },
+            tooltip: { theme: isDark ? 'dark' : 'light', x: { show: true }, style: { fontSize: '12px' } },
             xaxis: { axisBorder: { show: false }, axisTicks: { show: false } }
         };
 
-        // ===== Данные из Laravel =====
+        // ===== Данные из Laravel (теперь 6 категорий) =====
         const dailyActivityData = @json($dailyActivity->pluck('count'));
         const dailyActivityDates = @json($dailyActivity->pluck('date'));
         const userActivityReg = @json($userActivity->pluck('reg'));
         const userActivityDel = @json($userActivity->pluck('del'));
         const userActivityDates = @json($userActivity->pluck('date'));
 
-        const statusIncoming = {{ $statusData['incoming'] ?? 0 }};
-        const statusOutgoing = {{ $statusData['outgoing'] ?? 0 }};
-        const statusSigned = {{ $statusData['signed'] ?? 0 }};
-        const statusPending = {{ $statusData['pending'] ?? 0 }};
+        const statusIncoming   = {{ $statusData['incoming'] ?? 0 }};
+        const statusOutgoing   = {{ $statusData['outgoing'] ?? 0 }};
+        const statusProcessing = {{ $statusData['processing'] ?? 0 }};
+        const statusDraft      = {{ $statusData['draft'] ?? 0 }};
+        const statusRejected   = {{ $statusData['rejected'] ?? 0 }};
+        const statusArchive    = {{ $statusData['archive'] ?? 0 }};
 
-        // ===== СОЗДАЁМ ГРАФИКИ И СОХРАНЯЕМ ССЫЛКИ =====
-
-        // 1. Main Chart (ApexCharts)
+        // 1. Main Chart
         const mainChart = new ApexCharts(document.querySelector('#mainChart'), {
             ...co,
-            series: [{ name: currentTranslations.incoming || 'Incoming', data: dailyActivityData }],
+            series: [{ name: currentTranslations.incomingFlow, data: dailyActivityData }],
             colors: ['#3b82f6'],
             xaxis: { categories: dailyActivityDates },
             fill: { type: 'gradient', gradient: { opacityFrom: .45, opacityTo: .06 } }
         });
         mainChart.render();
 
-        // 2. User Chart (ApexCharts)
+        // 2. User Chart
         const userChart = new ApexCharts(document.querySelector('#userChart'), {
             ...co,
             series: [
-                { name: currentTranslations.registrations || 'Registrations', data: userActivityReg },
-                { name: currentTranslations.deletions || 'Deletions', data: userActivityDel }
+                { name: currentTranslations.registrations, data: userActivityReg },
+                { name: currentTranslations.deletions, data: userActivityDel }
             ],
             colors: ['#3b82f6', '#ef4444'],
             xaxis: { categories: userActivityDates },
@@ -846,7 +882,7 @@
         });
         userChart.render();
 
-        // 3. Status Chart (Chart.js)
+        // 3. Status Chart (6 категорий)
         const centerText = {
             id: 'centerText',
             afterDraw(c) {
@@ -858,7 +894,7 @@
                 const subTextColor = isDark ? '#94a3b8' : '#64748b';
                 ctx.font = '800 11px Inter, sans-serif';
                 ctx.fillStyle = subTextColor;
-                ctx.fillText(currentTranslations.documents || 'DOCUMENTS', width / 2, height / 2 + 25);
+                ctx.fillText(currentTranslations.documents, width / 2, height / 2 + 25);
                 ctx.restore();
             }
         };
@@ -869,16 +905,18 @@
                 labels: [
                     currentTranslations.incoming,
                     currentTranslations.outgoing,
-                    currentTranslations.signed,
-                    currentTranslations.pending
+                    currentTranslations.processing,
+                    currentTranslations.draft,
+                    currentTranslations.rejected,
+                    currentTranslations.archive
                 ],
                 datasets: [{
-                    data: [statusIncoming, statusOutgoing, statusSigned, statusPending],
+                    data: [statusIncoming, statusOutgoing, statusProcessing, statusDraft, statusRejected, statusArchive],
                     borderWidth: 0,
                     hoverOffset: 18,
                     borderRadius: 14,
                     spacing: 6,
-                    backgroundColor: ['#3b82f6', '#8b5cf6', '#10b981', '#f59e0b']
+                    backgroundColor: ['#3b82f6', '#8b5cf6', '#f59e0b', '#6b7280', '#ef4444', '#10b981']
                 }]
             },
             plugins: [centerText],
@@ -898,42 +936,26 @@
                         }
                     }
                 },
-                animation: {
-                    animateScale: true,
-                    animateRotate: true
-                }
+                animation: { animateScale: true, animateRotate: true }
             }
         });
 
-        // ===== ФУНКЦИЯ ОБНОВЛЕНИЯ ГРАФИКОВ ПРИ СМЕНЕ ЯЗЫКА =====
         function updateChartsLanguage(t) {
-            // Обновляем ApexCharts (mainChart)
-            mainChart.updateOptions({
-                series: [{ name: t.incoming || 'Incoming', data: dailyActivityData }]
-            });
-
-            // Обновляем ApexCharts (userChart)
+            mainChart.updateOptions({ series: [{ name: t.incomingFlow, data: dailyActivityData }] });
             userChart.updateOptions({
                 series: [
-                    { name: t.registrations || 'Registrations', data: userActivityReg },
-                    { name: t.deletions || 'Deletions', data: userActivityDel }
+                    { name: t.registrations, data: userActivityReg },
+                    { name: t.deletions, data: userActivityDel }
                 ]
             });
-
-            // Обновляем Chart.js (statusChart)
             statusChart.data.labels = [
-                t.incoming,
-                t.outgoing,
-                t.signed,
-                t.pending
+                t.incoming, t.outgoing, t.processing, t.draft, t.rejected, t.archive
             ];
             statusChart.update();
-
-            // Обновляем центральный текст doughnut (перерисовка)
             statusChart.ctx.canvas.dispatchEvent(new Event('render'));
         }
 
-        // ===== ПАРАЛЛАКС ДЛЯ BLOB-ОВ =====
+        // Параллакс
         const blobs = document.querySelectorAll('.dash-blob');
         document.addEventListener('mousemove', (e) => {
             const x = (e.clientX / window.innerWidth - 0.5) * 30;
@@ -944,18 +966,12 @@
             });
         });
 
-        // ===== СЛУШАТЕЛЬ СМЕНЫ ЯЗЫКА ИЗ LAYOUT =====
         window.addEventListener('docsign:lang-changed', function(e) {
-            // Синхронизируем localStorage
             if (e.detail && e.detail.lang) {
                 localStorage.setItem('docsign_lang', e.detail.lang);
                 localStorage.setItem('app-lang', e.detail.lang);
             }
-
-            // Обновляем HTML-тексты
             currentTranslations = applyAnalyticsTranslations();
-
-            // Обновляем графики
             updateChartsLanguage(currentTranslations);
         });
     });

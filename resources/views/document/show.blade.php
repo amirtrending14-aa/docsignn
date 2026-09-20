@@ -1276,6 +1276,124 @@
     }
 </style>
 
+<style>
+    html[data-theme="light"] .doc-show-page {
+        color: #0f172a !important;
+    }
+    html[data-theme="light"] .doc-card,
+    html[data-theme="light"] .file-card,
+    html[data-theme="light"] .modal-box,
+    html[data-theme="light"] .error-toast-inner {
+        background: #ffffff !important;
+        border-color: #cbd5e1 !important;
+        box-shadow: 0 10px 28px rgba(15, 23, 42, 0.1);
+    }
+    html[data-theme="light"] .page-header,
+    html[data-theme="light"] .comments-section,
+    html[data-theme="light"] .comment-item {
+        border-color: #cbd5e1 !important;
+    }
+    html[data-theme="light"] .back-label,
+    html[data-theme="light"] .file-meta,
+    html[data-theme="light"] .modal-desc,
+    html[data-theme="light"] .comment-meta,
+    html[data-theme="light"] .comment-text {
+        color: #475569 !important;
+    }
+    html[data-theme="light"] .doc-title,
+    html[data-theme="light"] .modal-title,
+    html[data-theme="light"] .comment-author,
+    html[data-theme="light"] .file-name {
+        color: #0f172a !important;
+    }
+    html[data-theme="light"] .back-btn,
+    html[data-theme="light"] .comment-input,
+    html[data-theme="light"] .reject-textarea,
+    html[data-theme="light"] .file-card,
+    html[data-theme="light"] .comment-item {
+        background: #f8fafc !important;
+        border-color: #b8c4d3 !important;
+    }
+    html[data-theme="light"] .comment-input:focus,
+    html[data-theme="light"] .reject-textarea:focus {
+        background: #ffffff !important;
+        border-color: #4f8cff !important;
+    }
+    html[data-theme="light"] .comment-input::placeholder,
+    html[data-theme="light"] .reject-textarea::placeholder {
+        color: #64748b !important;
+    }
+    html[data-theme="light"] .modal-title i,
+    html[data-theme="light"] .error-toast-title {
+        color: #dc2626;
+    }
+</style>
+
+<style>
+    html[data-theme="light"] .sidebar-card {
+        background: #ffffff !important;
+        border-color: #cbd5e1 !important;
+        box-shadow: 0 10px 26px rgba(15, 23, 42, 0.1);
+    }
+    html[data-theme="light"] .sidebar-title,
+    html[data-theme="light"] .participants-title,
+    html[data-theme="light"] .sidebar-label,
+    html[data-theme="light"] .participant-role,
+    html[data-theme="light"] .participant-email {
+        color: #475569 !important;
+        font-weight: 700;
+    }
+    html[data-theme="light"] .sidebar-value,
+    html[data-theme="light"] .participant-name {
+        color: #0f172a !important;
+        font-weight: 800;
+    }
+    html[data-theme="light"] .sidebar-row + .sidebar-row,
+    html[data-theme="light"] .participants-section,
+    html[data-theme="light"] .participant-item {
+        border-color: #cbd5e1 !important;
+    }
+    html[data-theme="light"] .comment-item {
+        background: #fffbeb !important;
+        border-color: #f1c453 !important;
+    }
+    html[data-theme="light"] .comment-header {
+        border-bottom-color: #e5d59b !important;
+    }
+    html[data-theme="light"] .comment-author,
+    html[data-theme="light"] .comment-text {
+        color: #334155 !important;
+        font-weight: 700;
+    }
+    html[data-theme="light"] .comment-time {
+        color: #475569 !important;
+        background: #f8fafc !important;
+        border: 1px solid #cbd5e1;
+    }
+    html[data-theme="light"] .comments-empty {
+        background: #f8fafc !important;
+        border-color: #b8c4d3 !important;
+    }
+    html[data-theme="light"] .sidebar-card [style*="color:#c5cdd9"],
+    html[data-theme="light"] .sidebar-card [style*="color: #c5cdd9"],
+    html[data-theme="light"] .sidebar-card [style*="color:#8892a6"],
+    html[data-theme="light"] .sidebar-card [style*="color: #8892a6"] {
+        color: #334155 !important;
+        font-weight: 700 !important;
+    }
+    html[data-theme="light"] .sidebar-card .sidebar-label,
+    html[data-theme="light"] .sidebar-card .participants-title,
+    html[data-theme="light"] .sidebar-card .participant-role {
+        color: #475569 !important;
+        font-weight: 800 !important;
+    }
+    html[data-theme="light"] .sidebar-card .sidebar-value,
+    html[data-theme="light"] .sidebar-card .participant-name {
+        color: #0f172a !important;
+        font-weight: 800 !important;
+    }
+</style>
+
 @if(session('error') || $errors->any())
 <div class="error-toast" x-data="{ show: true }"
      x-init="setTimeout(() => show = false, 4000)"

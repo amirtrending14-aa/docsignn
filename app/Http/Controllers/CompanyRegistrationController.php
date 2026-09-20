@@ -9,15 +9,14 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash; // ✅ ДОБАВЛЕНО
+use Illuminate\Support\Facades\Hash; 
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
-use Illuminate\Validation\Rule; // ✅ ДОБАВЛЕНО
+use Illuminate\Validation\Rule; 
 
 class CompanyRegistrationController extends Controller
 {
-    // ✅ ДОБАВЛЕНО: Массив городов для валидации (чтобы избежать ошибки 1452)
-    private function getValidCityIds(): array 
+   private function getValidCityIds(): array 
     {
         return [
             101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118,
@@ -42,8 +41,7 @@ class CompanyRegistrationController extends Controller
         $validated = $request->validate([
             'company_name' => ['required', 'string', 'max:255'],
             'company_type' => ['required', 'string', 'max:100'],
-            // ✅ ИСПРАВЛЕНО: Строгая валидация через Rule::in для предотвращения FK 1452
-            'region_id'    => ['required', Rule::in([1, 2, 3, 4, 5])],
+          'region_id'    => ['required', Rule::in([1, 2, 3, 4, 5])],
             'city_id'      => ['required', 'integer', Rule::in($validCityIds)],
             
             'name'         => ['required', 'string', 'max:255'],
@@ -52,15 +50,13 @@ class CompanyRegistrationController extends Controller
         ], [
             'city_id.in' => 'Выбран некорректный город или район.',
             'region_id.in' => 'Выбрана некорректная область.',
-            // ... остальные твои сообщения об ошибках ...
         ]);
 
         $user = null;
         $company = null;
 
         DB::transaction(function () use ($validated, &$user, &$company) {
-            // ✅ ИСПРАВЛЕНО: Явное хеширование пароля для гарантии безопасности
-            $user = User::create([
+          $user = User::create([
                 'name'           => $validated['name'],
                 'email'          => $validated['email'],
                 'password'       => Hash::make($validated['password']), 

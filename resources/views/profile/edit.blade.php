@@ -758,6 +758,70 @@
     }
 </style>
 
+<style>
+    html[data-theme="light"] .edit-page {
+        color: #0f172a !important;
+    }
+    html[data-theme="light"] .section-header,
+    html[data-theme="light"] .edit-card,
+    html[data-theme="light"] .danger-zone,
+    html[data-theme="light"] .modal-content {
+        background: #ffffff !important;
+        border-color: #cbd5e1 !important;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+    }
+    html[data-theme="light"] .section-header,
+    html[data-theme="light"] .danger-header,
+    html[data-theme="light"] .ep-acts {
+        border-bottom-color: #cbd5e1 !important;
+    }
+    html[data-theme="light"] .section-title,
+    html[data-theme="light"] .form-label,
+    html[data-theme="light"] .company-hint,
+    html[data-theme="light"] .modal-description {
+        color: #475569 !important;
+    }
+    html[data-theme="light"] .form-input,
+    html[data-theme="light"] .modal-input,
+    html[data-theme="light"] .avatar-upload input[type="file"],
+    html[data-theme="light"] .phone-input-wrapper {
+        background: #f8fafc !important;
+        border-color: #b8c4d3 !important;
+        color: #0f172a !important;
+    }
+    html[data-theme="light"] .form-input::placeholder,
+    html[data-theme="light"] .modal-input::placeholder {
+        color: #64748b !important;
+    }
+    html[data-theme="light"] .form-input:focus,
+    html[data-theme="light"] .modal-input:focus,
+    html[data-theme="light"] .phone-input-wrapper:focus-within {
+        background: #ffffff !important;
+        border-color: rgba(var(--glow), 0.65) !important;
+    }
+    html[data-theme="light"] .phone-input-wrapper .flag-icon {
+        background: #e2e8f0;
+        border-right-color: #cbd5e1;
+    }
+    html[data-theme="light"] .company-info-box {
+        background: rgba(var(--glow), 0.1);
+        border-color: rgba(var(--glow), 0.35);
+    }
+    html[data-theme="light"] .company-info-box p {
+        color: #0e7490;
+    }
+    html[data-theme="light"] .btn-danger,
+    html[data-theme="light"] .btn-modal.cancel {
+        border-color: #cbd5e1;
+    }
+    html[data-theme="light"] .alert {
+        border-width: 1.5px;
+    }
+    html[data-theme="light"] .modal-title {
+        color: #0f172a !important;
+    }
+</style>
+
 <div class="edit-page font-inter">
 
     {{-- Уведомления --}}
@@ -806,7 +870,7 @@
                         <label class="form-label">Аватар</label>
                         <div class="avatar-section">
                             @if($user->avatar)
-                            <img src="{{ asset('storage/' . $user->avatar) }}" alt="Avatar" class="avatar-preview">
+                            <img src="{{ $user->avatar_url }}" alt="Avatar" class="avatar-preview">
                             @else
                             <div class="avatar-placeholder">
                                 {{ strtoupper(substr($user->name, 0, 1)) }}
@@ -1226,4 +1290,5 @@
         if (event.target === this) closeCustomDeleteModal();
     });
 </script>
+
 @endsection

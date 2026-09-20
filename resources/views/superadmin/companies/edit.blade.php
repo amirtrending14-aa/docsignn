@@ -120,7 +120,7 @@
                 <div class="flex items-center gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition">
                     <div class="avatar">
                         @if($user->avatar)
-                        <img src="{{ asset('storage/' . $user->avatar) }}" alt="">
+                        <img src="{{ $user->avatar_url }}" alt="">
                         @else
                         {{ Str::upper(Str::substr($user->name, 0, 1)) }}
                         @endif

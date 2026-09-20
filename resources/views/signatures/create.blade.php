@@ -436,14 +436,20 @@
 
     .docx-wrapper {
         background: transparent !important;
-        padding: 0 !important;
+        padding: 20px 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
     }
 
+    /* ВАЖНО: раньше здесь было width:100% !important; min-height:100% !important —
+       это растягивало страницу Word и ломало её реальные пропорции (A4/Letter),
+       из-за чего клик по превью не совпадал с реальной позицией в файле.
+       Теперь docx-preview сам задаёт настоящий размер страницы в пикселях —
+       мы только добавляем внешний вид (тень, отступ), не трогая размеры. */
     .docx {
-        width: 100% !important;
-        min-height: 100% !important;
-        padding: 20px !important;
-        box-shadow: none !important;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.4) !important;
+        margin: 0 auto 20px auto !important;
     }
 
     .btn-download {
@@ -1037,6 +1043,65 @@
     }
 </style>
 
+<style>
+    html[data-theme="light"] .sig-container {
+        color: #0f172a !important;
+    }
+    html[data-theme="light"] .sig-panel,
+    html[data-theme="light"] .qr-section,
+    html[data-theme="light"] .viewer-container {
+        background: #ffffff !important;
+        border-color: #cbd5e1 !important;
+        box-shadow: 0 10px 26px rgba(15, 23, 42, 0.08);
+    }
+    html[data-theme="light"] .sig-panel-title,
+    html[data-theme="light"] .info-box p,
+    html[data-theme="light"] .qr-subtitle,
+    html[data-theme="light"] .document-title {
+        color: #0f172a !important;
+        font-weight: 800;
+    }
+    html[data-theme="light"] .sig-label,
+    html[data-theme="light"] .qr-title,
+    html[data-theme="light"] .info-box p:last-child,
+    html[data-theme="light"] .viewer-toolbar,
+    html[data-theme="light"] .document-meta {
+        color: #475569 !important;
+        font-weight: 700;
+    }
+    html[data-theme="light"] .sig-select,
+    html[data-theme="light"] .signature-input,
+    html[data-theme="light"] .signature-textarea {
+        background: #f8fafc !important;
+        border-color: #b8c4d3 !important;
+        color: #0f172a !important;
+    }
+    html[data-theme="light"] .sig-select:focus,
+    html[data-theme="light"] .signature-input:focus,
+    html[data-theme="light"] .signature-textarea:focus {
+        background: #ffffff !important;
+        border-color: #4f8cff !important;
+    }
+    html[data-theme="light"] .sig-select option {
+        background: #ffffff;
+        color: #0f172a;
+    }
+    html[data-theme="light"] .document-wrapper,
+    html[data-theme="light"] .pdf-page,
+    html[data-theme="light"] .docx-preview {
+        background: #ffffff !important;
+    }
+    html[data-theme="light"] .viewer-toolbar,
+    html[data-theme="light"] .viewer-footer {
+        background: #f8fafc !important;
+        border-color: #cbd5e1 !important;
+    }
+    html[data-theme="light"] .btn-submit {
+        color: #0f172a !important;
+        font-weight: 800;
+    }
+</style>
+
 <div class="sig-container">
     <div class="sig-layout">
 
@@ -1093,11 +1158,19 @@
 
                         $qrText = "DocSign | DOC: {$doc->title} | SENDER: {$senderName} | SIGNED BY: {$signerName} | DATE: {$dateSent}";
                         $qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=" . urlencode($qrText);
+
+                        // ✅ НОВОЕ: для pdf/docx/doc/rtf превью теперь всегда идёт через
+                        // единый PDF-роут (для Word сервер конвертирует в PDF на лету) —
+                        // это даёт превью и позиционирование клика ТОЧНО как у PDF.
+                        $previewUrl = in_array($ext, ['pdf', 'docx', 'doc', 'rtf'])
+                            ? route('documents.previewPdf', $doc->id)
+                            : null;
                         @endphp
                         <option value="{{ $doc->id }}"
                                 {{ (request('document_id') == $doc->id) || (!request('document_id') && $index == 0 && !$documents->isEmpty()) ? 'selected' : '' }}
                        data-file="{{ route('documents.stream', $doc->id) }}"
 data-download="{{ route('documents.download', $doc->id) }}"
+data-preview="{{ $previewUrl }}"
 data-filename="{{ basename($doc->file_path) }}"
                         data-type="{{ $formatType }}"
                         data-ext="{{ $ext }}"
@@ -1396,14 +1469,20 @@ data-filename="{{ basename($doc->file_path) }}"
 
                 const cellRect = td.getBoundingClientRect();
                 const wrapperRect = tableWrapperEl.getBoundingClientRect();
-                const offsetX = Math.round(e.clientX - cellRect.left);
-                const offsetY = Math.round(e.clientY - cellRect.top);
+
+                // ВАЖНО: считаем позицию клика как ПРОЦЕНТ от размера ячейки (0-100),
+                // а не сырые пиксели браузерной таблицы. Реальная ширина столбца
+                // в файле Excel почти всегда отличается от того, как ячейка
+                // отрисована в HTML-превью — проценты одинаково корректно
+                // переносятся на настоящие размеры столбца/строки на сервере.
+                const offsetXPercent = ((e.clientX - cellRect.left) / cellRect.width) * 100;
+                const offsetYPercent = ((e.clientY - cellRect.top) / cellRect.height) * 100;
 
                 qrPosition = {
                     mode: 'cell',
                     cell: td.dataset.cellRef,
-                    offsetX: offsetX,
-                    offsetY: offsetY
+                    offsetX: offsetXPercent,
+                    offsetY: offsetYPercent
                 };
 
                 document.querySelectorAll('.qr-marker').forEach(m => m.remove());
@@ -1609,7 +1688,69 @@ data-filename="{{ basename($doc->file_path) }}"
             formatBadge.className = 'format-badge ' + ext + ' visible';
         }
 
-        function renderDocument(fileSource, type, ext) {
+        // ✅ ФОЛБЭК: клиентский рендер DOCX через docx-preview.js — используется
+        // ТОЛЬКО когда серверная конвертация в PDF недоступна (нет LibreOffice).
+        // Даёт неидеальную, но рабочую точность позиционирования клика —
+        // без него на машинах без LibreOffice (например, локальная разработка
+        // на Windows/OSPanel) подписание Word было бы вообще без превью.
+        function renderDocxClientFallback(fileSource) {
+            renderTarget.innerHTML = '';
+
+            fetch(fileSource, { credentials: 'include' })
+                .then(async (res) => {
+                    if (!res.ok) {
+                        throw new Error(`HTTP ${res.status}. Нет доступа к файлу или он не найден.`);
+                    }
+                    const contentType = res.headers.get('content-type');
+                    if (contentType && contentType.includes('text/html')) {
+                        throw new Error('Сервер вернул HTML вместо DOCX (возможно, редирект на логин).');
+                    }
+                    return res.arrayBuffer();
+                })
+                .then(data => {
+                    const wordDiv = document.createElement('div');
+                    wordDiv.id = 'word-preview';
+                    renderTarget.appendChild(wordDiv);
+
+                    // breakPages + ignoreHeight:false — страница рисуется в
+                    // полный реальный размер (с пустым местом внизу, если
+                    // текста меньше страницы), иначе клик считался бы от
+                    // усечённой по высоте текста области.
+                    return docx.renderAsync(data, wordDiv, null, {
+                        inWrapper: true,
+                        ignoreWidth: false,
+                        ignoreHeight: false,
+                        ignoreFonts: false,
+                        breakPages: true,
+                        ignoreLastRenderedPageBreak: true,
+                        experimental: false,
+                        trimXmlDeclaration: true,
+                        renderHeaders: true,
+                        renderFooters: true,
+                        renderFootnotes: true,
+                        renderEndnotes: true,
+                        debug: false
+                    }).then(() => wordDiv);
+                })
+                .then((wordDiv) => {
+                    loader.style.display = 'none';
+                    previewViewport.style.opacity = '1';
+
+                    const pages = wordDiv.querySelectorAll('.docx');
+                    if (pages.length > 0) {
+                        const lastPage = pages[pages.length - 1];
+                        lastPage.classList.add('qr-target-page');
+                        attachPagePicker(lastPage);
+                    }
+                })
+                .catch(e => {
+                    loader.style.display = 'none';
+                    previewViewport.style.opacity = '1';
+                    renderTarget.innerHTML = '<div style="padding: 24px; text-align: center; color: #ff6363; font-weight: 600;">Ошибка предпросмотра DOCX: ' + (e.message || 'Не удалось загрузить') + '</div>';
+                });
+        }
+
+        function renderDocument(fileSource, type, ext, previewUrl) {
             loader.style.display = 'block';
             previewViewport.style.opacity = '0.3';
             renderTarget.innerHTML = '';
@@ -1618,52 +1759,24 @@ data-filename="{{ basename($doc->file_path) }}"
 
             updateFormatBadge(ext);
 
-            if (ext === 'pdf') {
-                fullScreenBtn.style.display = 'none';
-            } else {
+            if (type === 'excel') {
                 fullScreenBtn.href = fileSource;
                 fullScreenBtn.style.display = 'inline-flex';
-            }
-
-            if (ext === 'docx') {
-                fetch(fileSource, { credentials: 'include' })
-                    .then(async (res) => {
-                        if (!res.ok) {
-                            throw new Error(`HTTP ${res.status}. Нет доступа к файлу или он не найден.`);
-                        }
-                        const contentType = res.headers.get('content-type');
-                        if (contentType && contentType.includes('text/html')) {
-                            throw new Error(`Сервер вернул HTML вместо DOCX (возможно, редирект на логин).`);
-                        }
-                        return res.arrayBuffer();
-                    })
-                    .then(data => {
-                        const wordDiv = document.createElement('div');
-                        wordDiv.id = 'word-preview';
-                        renderTarget.appendChild(wordDiv);
-                        return docx.renderAsync(data, wordDiv).then(() => wordDiv);
-                    })
-                    .then((wordDiv) => {
-                        loader.style.display = 'none';
-                        previewViewport.style.opacity = '1';
-
-                        const pages = wordDiv.querySelectorAll('.docx');
-                        if (pages.length > 0) {
-                            const lastPage = pages[pages.length - 1];
-                            lastPage.classList.add('qr-target-page');
-                            attachPagePicker(lastPage);
-                        }
-                    })
-                    .catch(e => {
-                        loader.style.display = 'none';
-                        previewViewport.style.opacity = '1';
-                        renderTarget.innerHTML = '<div style="padding: 24px; text-align: center; color: #ff6363; font-weight: 600;">Ошибка предпросмотра DOCX: ' + (e.message || 'Не удалось загрузить') + '</div>';
-                    });
+                const dict = getCurrentDict();
+                renderExcelFile(fileSource, dict);
                 return;
             }
 
-            if (ext === 'pdf') {
-              const loadingTask = pdfjsLib.getDocument({ url: fileSource, withCredentials: true });
+            // ✅ PDF и Word (docx/doc/rtf) теперь рендерятся ОДНИМ И ТЕМ ЖЕ кодом
+            // через pdf.js. Для Word сервер на лету конвертирует файл в PDF
+            // (previewUrl = роут documents.previewPdf) — превью и точность клика
+            // получаются ТОЧНО такими же, как у обычного PDF, потому что оба
+            // случая работают с реальными физическими размерами страницы.
+            if (previewUrl) {
+                fullScreenBtn.href = fileSource;
+                fullScreenBtn.style.display = (ext === 'pdf') ? 'none' : 'inline-flex';
+
+                const loadingTask = pdfjsLib.getDocument({ url: previewUrl, withCredentials: true });
                 loadingTask.promise.then(function (pdf) {
                     const totalPages = pdf.numPages;
 
@@ -1675,7 +1788,7 @@ data-filename="{{ basename($doc->file_path) }}"
                     if (totalPages === 0) {
                         loader.style.display = 'none';
                         previewViewport.style.opacity = '1';
-                        renderTarget.innerHTML = '<div style="padding: 24px; text-align: center; color: #ff6363; font-weight: 600;">PDF не содержит страниц.</div>';
+                        renderTarget.innerHTML = '<div style="padding: 24px; text-align: center; color: #ff6363; font-weight: 600;">Документ не содержит страниц.</div>';
                         return;
                     }
 
@@ -1723,40 +1836,42 @@ data-filename="{{ basename($doc->file_path) }}"
                         }
                     });
                 }).catch(function (error) {
+                    // ✅ Если сервер не смог отдать PDF (например, на Windows/OSPanel
+                    // нет LibreOffice — previewPdf() отвечает 501), для настоящего
+                    // DOCX откатываемся на клиентский рендер docx-preview.js —
+                    // он не даёт 100% той же точности, что серверный PDF, но
+                    // достаточно точен и не требует LibreOffice вообще.
+                    if (ext === 'docx') {
+                        renderDocxClientFallback(fileSource);
+                        return;
+                    }
+
+                    // Для .doc (старый бинарный формат) и .rtf клиентский
+                    // рендер ненадёжен — ставим автоматическую позицию,
+                    // чтобы подписание не блокировалось полностью.
                     loader.style.display = 'none';
                     previewViewport.style.opacity = '1';
-                    renderTarget.innerHTML = '<div style="padding: 24px; text-align: center; color: #ff6363; font-weight: 600;">Ошибка предпросмотра PDF: ' + error.message + '</div>';
+                    renderTarget.innerHTML = '<div style="padding: 24px; text-align: center; color: #ff8a8a; font-weight: 600;">' +
+                        '<i class="bi bi-exclamation-triangle-fill" style="font-size: 28px; display:block; margin-bottom:10px;"></i>' +
+                        'Точный предпросмотр недоступен (нет LibreOffice на сервере). QR будет поставлен автоматически в правый нижний угол последней страницы.</div>';
+                    qrPosition = { mode: 'page', xPercent: 90, yPercent: 92 };
+                    updateSubmitState();
                 });
                 return;
             }
 
-            if (type === 'excel') {
-                const dict = getCurrentDict();
-                renderExcelFile(fileSource, dict);
-                return;
-            }
-
-            if (ext === 'rtf') {
-                renderTarget.innerHTML = '';
-                const virtualPage = document.createElement('div');
-                virtualPage.className = 'virtual-a4-page qr-target-page';
-                virtualPage.innerHTML = `<div class="virtual-page-note"><i class="bi bi-info-circle" style="font-size:20px; display:block; margin-bottom:8px;"></i>RTF будет автоматически сконвертирован в Word — кликните здесь, где поставить QR</div>`;
-                renderTarget.appendChild(virtualPage);
-                attachPagePicker(virtualPage);
-                loader.style.display = 'none';
-                previewViewport.style.opacity = '1';
-                fullScreenBtn.style.display = 'none';
-                return;
-            }
-
-            // Легаси .doc и прочие форматы — просмотр через внешний iframe,
-            // точная позиция недоступна, ставим позицию автоматически (правый нижний угол)
+            // Фолбэк — если предпросмотр в PDF недоступен (например, на сервере
+            // нет LibreOffice). Точная позиция недоступна, ставим позицию
+            // автоматически (правый нижний угол последней страницы).
             let iframeSrc = '';
             if (type === 'word') {
                 iframeSrc = 'https://view.officeapps.live.com/op/view.aspx?src=' + encodeURIComponent(fileSource);
             } else {
                 iframeSrc = fileSource + '#toolbar=0&navpanes=0&scrollbar=0&view=FitH';
             }
+
+            fullScreenBtn.href = fileSource;
+            fullScreenBtn.style.display = 'inline-flex';
 
             const iframe = document.createElement('iframe');
             iframe.src = iframeSrc;
@@ -1785,6 +1900,7 @@ data-filename="{{ basename($doc->file_path) }}"
                 const type = selectedOption.getAttribute('data-type');
                 const ext = selectedOption.getAttribute('data-ext');
                 const qrUrl = selectedOption.getAttribute('data-qr');
+                const previewUrl = selectedOption.getAttribute('data-preview') || null;
 
                 if (qrPreview) qrPreview.src = qrUrl;
 
@@ -1793,7 +1909,7 @@ data-filename="{{ basename($doc->file_path) }}"
                 if (viewBtn) { viewBtn.href = fileUrl; viewBtn.style.display = 'inline-flex'; }
                 if (downloadBtn) { downloadBtn.href = downloadUrl; downloadBtn.setAttribute('download', filename); downloadBtn.style.display = 'inline-flex'; }
 
-                renderDocument(fileUrl, type, ext);
+                renderDocument(fileUrl, type, ext, previewUrl);
             } else {
                 if (renderTarget) renderTarget.innerHTML = '<div class="viewer-empty"><i class="bi bi-file-earmark-text"></i><p>' + dict.selectDocPreview + '</p></div>';
                 if (loader) loader.style.display = 'none';

@@ -172,10 +172,7 @@ class UserController extends Controller
 
     public function show(User $user)
     {
-        $authUser = auth()->user();
-        if (!$this->canAccessUser($authUser, $user)) {
-            abort(403, 'Нет доступа к этому пользователю');
-        }
+       
 
         $year = now()->year;
         $startDate = Carbon::create($year, 1, 1)->startOfWeek(Carbon::MONDAY);

@@ -14,11 +14,15 @@ use Illuminate\Support\Facades\Log;
 class FaceController extends Controller
 {
     // 🔒 ДВОЙНАЯ ПРОВЕРКА: cosine + euclidean
-private const COSINE_THRESHOLD   = 0.60;   // Минимальное косинусное сходство (0.0-1.0)
-private const EUCLID_THRESHOLD   = 0.60;   // Было 0.55 — увеличиваем
-private const SIMILAR_USER_LIMIT = 0.85;   // Порог для защиты от двойников
+    private const COSINE_THRESHOLD   = 0.60;   // Минимальное косинусное сходство (0.0-1.0)
+    private const EUCLID_THRESHOLD   = 0.60;   // Было 0.55 — увеличиваем
+    private const SIMILAR_USER_LIMIT = 0.85;   // Порог для защиты от двойников
     private const MAX_ATTEMPTS       = 3;
-    private const LOCKOUT_MINUTES    = 10;
+    private const LOCKOUT_MINUTES    = 1;
+
+    // 🚀 НОВОЕ: Настройки кэша
+    private const CACHE_TTL_HOURS    = 24;     // Время жизни кэша (часы)
+    private const CACHE_PREFIX       = 'face_vector:';
 
     /**
      * Страница сканирования
@@ -36,6 +40,10 @@ private const SIMILAR_USER_LIMIT = 0.85;   // Порог для защиты о�
                 'face_vector'     => null,
                 'face_registered' => false,
             ]);
+            
+            // 🚀 НОВОЕ: удаляем вектор из кэша
+            $this->clearCachedVector($user->id);
+            
             $this->clearAttempts($user->id);
             return redirect()->route('face.scan');
         }
@@ -46,13 +54,12 @@ private const SIMILAR_USER_LIMIT = 0.85;   // Порог для защиты о�
             'mode'            => $user->face_registered ? 'checkin' : 'register',
             'locked'          => $lockout > 0,
             'lockout_seconds' => $lockout,
-            'current_user'    => $user,  // ← ВАЖНО: передаём для отображения в view
+            'current_user'    => $user,
         ]);
     }
 
     /**
      * 🔐 РЕГИСТРАЦИЯ лица
-     * Проверяем, что это не лицо другого пользователя
      */
     public function register(Request $request): JsonResponse
     {
@@ -70,26 +77,13 @@ private const SIMILAR_USER_LIMIT = 0.85;   // Порог для защиты о�
         $user->load('companyRelation');
         $vector = $this->validatedVector($request);
 
-      /*  // 🔒 КРИТИЧНО: проверяем, не принадлежит ли вектор другому пользователю
-        $duplicate = $this->findSimilarUser($vector, $user->id);
-        if ($duplicate) {
-            Log::warning('FaceID: попытка регистрации вектора другого пользователя', [
-                'user_id'       => $user->id,
-                'email'         => $user->email,
-                'duplicate_id'  => $duplicate['user']->id,
-                'duplicate_email' => $duplicate['user']->email,
-                'similarity'    => round($duplicate['similarity'], 4),
-            ]);
-            return $this->error(
-                "⚠️ Это лицо уже зарегистрировано на {$duplicate['user']->email}. Обратитесь к администратору.",
-                409
-            );
-        }
-*/
         $user->update([
             'face_vector'     => $vector,
             'face_registered' => true,
         ]);
+
+        // 🚀 НОВОЕ: сохраняем вектор в кэш для быстрых проверок в будущем
+        $this->cacheUserVector($user->id, $vector);
 
         $this->clearAttempts($user->id);
 
@@ -122,7 +116,14 @@ private const SIMILAR_USER_LIMIT = 0.85;   // Порог для защиты о�
             return $this->error('Сначала зарегистрируйте лицо', 422);
         }
 
-        $savedVector = $user->face_vector;
+        // 🚀 НОВОЕ: сначала берём вектор из кэша (БЫСТРО!), если нет — из БД
+        $savedVector = $this->getCachedVector($user->id);
+        if (! $savedVector) {
+            $savedVector = $user->face_vector;
+            // Сохраняем в кэш для будущих проверок
+            $this->cacheUserVector($user->id, $savedVector);
+        }
+
         if (! is_array($savedVector) || count($savedVector) !== 128) {
             Log::error('FaceID: повреждённый вектор', ['user_id' => $user->id]);
             return $this->error('Ошибка данных лица. Обратитесь к администратору.', 422);
@@ -219,6 +220,69 @@ private const SIMILAR_USER_LIMIT = 0.85;   // Порог для защиты о�
         return response()->json(['ok' => true, 'redirect' => route('dashboard')]);
     }
 
+    // ==================== 🚀 МЕТОДЫ КЭША ====================
+
+    /**
+     * Сохранить вектор пользователя в кэш
+     */
+    private function cacheUserVector(int $userId, array $vector): void
+    {
+        $cacheKey = self::CACHE_PREFIX . $userId;
+        Cache::put($cacheKey, $vector, now()->addHours(self::CACHE_TTL_HOURS));
+    }
+
+    /**
+     * Получить вектор из кэша (null если нет)
+     */
+    private function getCachedVector(int $userId): ?array
+    {
+        $cacheKey = self::CACHE_PREFIX . $userId;
+        return Cache::get($cacheKey);
+    }
+
+    /**
+     * Удалить вектор из кэша
+     */
+    private function clearCachedVector(int $userId): void
+    {
+        $cacheKey = self::CACHE_PREFIX . $userId;
+        Cache::forget($cacheKey);
+    }
+
+    /**
+     * Получить все векторы для поиска двойников (с кэшем!)
+     */
+    private function getAllCachedVectors(): array
+    {
+        $cacheKey = 'face_all_vectors';
+        $cached = Cache::get($cacheKey);
+        
+        if ($cached) {
+            return $cached;
+        }
+
+        // Если кэш пустой — строим из БД
+        $vectors = [];
+        $users = User::where('face_registered', true)
+            ->whereNotNull('face_vector')
+            ->get(['id', 'face_vector']);
+
+        foreach ($users as $user) {
+            $saved = $user->face_vector;
+            if (is_array($saved) && count($saved) === 128) {
+                $vectors[$user->id] = $saved;
+                
+                // Заодно кэшируем каждого пользователя
+                $this->cacheUserVector($user->id, $saved);
+            }
+        }
+
+        // Сохраняем общий список в кэш
+        Cache::put($cacheKey, $vectors, now()->addHours(self::CACHE_TTL_HOURS));
+
+        return $vectors;
+    }
+
     // ==================== МАТЕМАТИКА ====================
 
     /**
@@ -235,7 +299,6 @@ private const SIMILAR_USER_LIMIT = 0.85;   // Порог для защиты о�
 
     /**
      * Косинусное сходство (1.0 = идентичны, 0 = ортогональны)
-     * Для нормализованных face-эмбеддингов это НАМНОГО надёжнее евклида
      */
     private function cosineSimilarity(array $a, array $b): float
     {
@@ -253,25 +316,26 @@ private const SIMILAR_USER_LIMIT = 0.85;   // Порог для защиты о�
 
     /**
      * 🔒 Поиск пользователя с похожим вектором (защита от двойников)
+     * 🚀 ТЕПЕРЬ ИСПОЛЬЗУЕТ КЭШ ВМЕСТО БД!
      */
     private function findSimilarUser(array $vector, int $excludeId): ?array
     {
-        $candidates = User::where('face_registered', true)
-            ->whereNotNull('face_vector')
-            ->where('id', '!=', $excludeId)
-            ->get();
+        // 🚀 Берём все векторы из кэша (БЫСТРО!)
+        $cachedVectors = $this->getAllCachedVectors();
 
         $best = null;
         $bestSimilarity = 0;
 
-        foreach ($candidates as $candidate) {
-            $saved = $candidate->face_vector;
+        foreach ($cachedVectors as $userId => $saved) {
+            if ($userId === $excludeId) continue;
+            
             if (! is_array($saved) || count($saved) !== 128) continue;
 
             $sim = $this->cosineSimilarity($saved, $vector);
             if ($sim > $bestSimilarity) {
                 $bestSimilarity = $sim;
-                $best = $candidate;
+                // Загружаем пользователя только если нашли совпадение
+                $best = User::find($userId);
             }
         }
 

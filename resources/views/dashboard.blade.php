@@ -564,6 +564,68 @@
         }
     </style>
 
+    <style>
+        html[data-theme="light"] #pjax-container {
+            --bg-dark: #eef2f7;
+            --bg-card: #ffffff;
+            --bg-panel: #ffffff;
+            --border-color: #cbd5e1;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #64748b;
+            color: #0f172a;
+        }
+        html[data-theme="light"] .dashboard-title {
+            background: none !important;
+            -webkit-text-fill-color: #0f172a !important;
+            color: #0f172a !important;
+            font-weight: 800 !important;
+        }
+        html[data-theme="light"] .breadcrumb-custom,
+        html[data-theme="light"] .dashboard-subtitle,
+        html[data-theme="light"] .stat-label,
+        html[data-theme="light"] .panel-head .sub,
+        html[data-theme="light"] .counterparty-cell,
+        html[data-theme="light"] .type-cell,
+        html[data-theme="light"] .date-cell {
+            color: #475569 !important;
+            font-weight: 600;
+        }
+        html[data-theme="light"] .stat-card,
+        html[data-theme="light"] .panel {
+            background: #ffffff !important;
+            border: 1.5px solid #cbd5e1 !important;
+            box-shadow: 0 8px 22px rgba(15, 23, 42, 0.07);
+        }
+        html[data-theme="light"] .stat-card:hover,
+        html[data-theme="light"] .panel:hover {
+            box-shadow: 0 12px 28px rgba(15, 23, 42, 0.13);
+        }
+        html[data-theme="light"] .stat-value,
+        html[data-theme="light"] .panel-head h3,
+        html[data-theme="light"] .doc-meta b {
+            color: #0f172a !important;
+            font-weight: 800;
+        }
+        html[data-theme="light"] .table-modern thead th {
+            background: #f1f5f9 !important;
+            color: #334155 !important;
+            border-bottom: 1.5px solid #b8c4d3 !important;
+            font-weight: 800;
+        }
+        html[data-theme="light"] .table-modern td {
+            border-bottom-color: #d5dde7 !important;
+        }
+        html[data-theme="light"] .table-row-hover:hover {
+            background: rgba(var(--glow), 0.08) !important;
+        }
+        html[data-theme="light"] .btn-primary-custom {
+            color: #172033 !important;
+            border: 1px solid rgba(var(--glow), 0.65) !important;
+            font-weight: 800;
+        }
+    </style>
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const translations = {

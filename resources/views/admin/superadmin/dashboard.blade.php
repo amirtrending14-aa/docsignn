@@ -249,7 +249,7 @@
                             <div class="d-flex align-items-center">
                                 <div class="avatar-wrapper me-3">
                                     @if($user->avatar)
-                                    <img src="{{ asset('storage/' . $user->avatar) }}"
+                                    <img src="{{ $user->avatar_url }}"
                                          alt="{{ $user->name }}"
                                          class="avatar-img">
                                     @else

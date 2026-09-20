@@ -582,6 +582,60 @@ body {
     }
 </style>
 
+<style>
+    html[data-theme="light"] .doc-page-custom {
+        color: #0f172a !important;
+    }
+    html[data-theme="light"] .doc-page-custom h1,
+    html[data-theme="light"] .doc-title,
+    html[data-theme="light"] .doc-card-title,
+    html[data-theme="light"] .empty-title {
+        color: #0f172a !important;
+        font-weight: 800 !important;
+    }
+    html[data-theme="light"] .doc-author,
+    html[data-theme="light"] .doc-desc,
+    html[data-theme="light"] .doc-date,
+    html[data-theme="light"] .doc-id,
+    html[data-theme="light"] .doc-card-meta,
+    html[data-theme="light"] .doc-card-desc,
+    html[data-theme="light"] .empty-sub {
+        color: #475569 !important;
+        font-weight: 600;
+    }
+    html[data-theme="light"] .doc-table-wrap,
+    html[data-theme="light"] .doc-card-item,
+    html[data-theme="light"] .pagination-wrap nav {
+        background: #ffffff !important;
+        border-color: #cbd5e1 !important;
+        box-shadow: 0 8px 22px rgba(15, 23, 42, 0.07);
+    }
+    html[data-theme="light"] .doc-table th {
+        background: #f1f5f9 !important;
+        color: #334155 !important;
+        border-bottom: 1.5px solid #b8c4d3 !important;
+        font-weight: 800;
+    }
+    html[data-theme="light"] .doc-table td,
+    html[data-theme="light"] .doc-card-footer {
+        border-color: #d5dde7 !important;
+    }
+    html[data-theme="light"] .doc-table tbody tr:hover,
+    html[data-theme="light"] .doc-card-item:hover {
+        background: rgba(var(--glow), 0.08) !important;
+    }
+    html[data-theme="light"] .status-pill,
+    html[data-theme="light"] .action-btn,
+    html[data-theme="light"] .empty-btn {
+        font-weight: 800;
+    }
+    html[data-theme="light"] .action-btn,
+    html[data-theme="light"] .empty-btn,
+    html[data-theme="light"] .pagination-wrap nav {
+        border-color: #b8c4d3 !important;
+    }
+</style>
+
 <div class="doc-page-custom">
     <!-- Заголовок страницы -->
     <div class="page-head-custom">
@@ -598,15 +652,16 @@ body {
     <!-- Таблица документов (для десктопов и планшетов) -->
     <div class="doc-table-wrap">
         <table class="doc-table">
-            <thead>
-            <tr>
-                <th><span data-i18n="doc_id">ID</span></th>
-                <th><span data-i18n="docInfo">Document</span></th>
-                <th class="center"><span data-i18n="doc_deadline">Date</span></th>
-                <th class="center"><span data-i18n="status">Status</span></th>
-                <th class="right"><span data-i18n="doc_actions">Action</span></th>
-            </tr>
-            </thead>
+           <thead>
+<tr>
+    <th><span data-i18n="doc_id">ID</span></th>
+    <th><span data-i18n="docInfo">Document</span></th>
+    <th class="center"><span data-i18n="doc_created">Created</span></th>
+    <th class="center"><span data-i18n="doc_deadline">Date</span></th>
+    <th class="center"><span data-i18n="status">Status</span></th>
+    <th class="right"><span data-i18n="doc_actions">Action</span></th>
+</tr>
+</thead>
             <tbody>
             @forelse($documents as $index => $doc)
             @php
@@ -645,6 +700,11 @@ body {
                     </div>
                 </td>
                 <td class="center">
+    <span class="doc-date">
+        {{ $doc->created_at?->format('d.m.Y') ?? '—' }}
+    </span>
+</td>
+                <td class="center">
                     <span class="doc-date">
                         {{ $doc->deadline ? $doc->deadline->format('d.m.Y') : '—' }}
                     </span>
@@ -665,7 +725,7 @@ body {
             </tr>
             @empty
             <tr>
-                <td colspan="5">
+                <td colspan="6">
                     <div class="empty-state">
                         <div class="empty-icon">
                             <i class="bi bi-search"></i>
@@ -708,22 +768,26 @@ body {
                 <div class="doc-card-title">{{ Str::limit($doc->title, 50) }}</div>
                 <span class="doc-card-number">{{ $doc->number ?? $doc->id }}</span>
             </div>
-            <div class="doc-card-meta">
-                <span class="doc-card-meta-item">
-                    <i class="bi bi-hash"></i>
-                    #{{ ($documents->currentPage() - 1) * $documents->perPage() + $index + 1 }}
-                </span>
-                @if(auth()->user()->is_admin)
-                <span class="doc-card-meta-item">
-                    <i class="bi bi-person"></i>
-                    {{ $doc->createdBy->name ?? 'System' }}
-                </span>
-                @endif
-                <span class="doc-card-meta-item">
-                    <i class="bi bi-calendar3"></i>
-                    {{ $doc->deadline ? $doc->deadline->format('d.m.Y') : '—' }}
-                </span>
-            </div>
+         <div class="doc-card-meta">
+    <span class="doc-card-meta-item">
+        <i class="bi bi-hash"></i>
+        #{{ ($documents->currentPage() - 1) * $documents->perPage() + $index + 1 }}
+    </span>
+    @if(auth()->user()->is_admin)
+    <span class="doc-card-meta-item">
+        <i class="bi bi-person"></i>
+        {{ $doc->createdBy->name ?? 'System' }}
+    </span>
+    @endif
+    <span class="doc-card-meta-item">
+        <i class="bi bi-calendar-plus"></i>
+        <span data-i18n="doc_created">Создан</span>: {{ $doc->created_at?->format('d.m.Y') ?? '—' }}
+    </span>
+    <span class="doc-card-meta-item">
+        <i class="bi bi-calendar3"></i>
+        <span data-i18n="doc_deadline">Срок</span>: {{ $doc->deadline ? $doc->deadline->format('d.m.Y') : '—' }}
+    </span>
+</div>
             <div class="doc-card-desc">
                 {{ Str::limit($doc->content, 60) ?: __('No description') }}
             </div>
@@ -822,7 +886,9 @@ body {
                 status_draft: 'Черновик',
                 status_processing: 'В процессе',
                 status_completed: 'Завершено',
-                status_rejected: 'Отклонён'
+                status_rejected: 'Отклонён',
+                 doc_deadline: 'Срок',
+        doc_created: 'Создан',
             },
             tj: {
                 documents: 'ҲУҶҶАТҲО',
@@ -841,9 +907,14 @@ body {
                 status_draft: 'Лоиҳа',
                 status_processing: 'Дар раванд',
                 status_completed: 'Анҷом ёфт',
-                status_rejected: 'Рад шуд'
+                status_rejected: 'Рад шуд',
+                   doc_deadline: 'Мӯҳлат',
+        doc_created: 'Эҷод шуд',
+
             },
             en: {
+                   doc_deadline: 'Date',
+        doc_created: 'Created',
                 documents: 'DOCUMENTS',
                 newDocument: 'New Document',
                 doc_id: 'ID',

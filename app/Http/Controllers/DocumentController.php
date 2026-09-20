@@ -13,7 +13,6 @@ use App\Models\DocumentWorkflow;
 use App\Models\Notification;
 use App\Models\User;
 use App\Helpers\ActivityLogger;
-use App\Services\RateLimitService; // <-- ДОБАВЛЕНО: Сервис лимитов
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -29,41 +28,30 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class DocumentController extends Controller
 {
-    /**
-     * AJAX: Временная загрузка файла (до отправки формы)
-     * Файл сохраняется на сервер СРАЗУ, чтобы не потерять при переходе на страницу региона
-     */
-    // Показать страницу выбора по отделам
+   
 public function selectByDepartment(Request $request)
 {
-    // Получаем все отделы с количеством пользователей
     $departments = \App\Models\Department::withCount('users')->get();
     
-    // Получаем выбранные отделы из сессии
     $selectedDepartmentIds = session('selected_department_ids', []);
     
-    // URL для возврата (по умолчанию - страница создания документа)
-    $returnUrl = $request->get('return_url', route('documents.create')); // или 'document.create', если у тебя так
+   $returnUrl = $request->get('return_url', route('documents.create')); // или 'document.create', если у тебя так
     
-    // ✅ ВАЖНО: здесь указано 'document.select_by_department' (единственное число)
-    return view('document.select_by_department', compact(
+   return view('document.select_by_department', compact(
         'departments',
         'selectedDepartmentIds',
         'returnUrl'
     ));
 }
 
-// Сохранить выбор отделов
 public function storeDepartmentSelection(Request $request)
 {
     $request->validate([
         'selected_departments' => 'required|string',
     ]);
     
-    // Преобразуем строку "1,2,3" в массив чисел [1, 2, 3]
-    $departmentIds = array_map('intval', array_filter(explode(',', $request->selected_departments)));
+   $departmentIds = array_map('intval', array_filter(explode(',', $request->selected_departments)));
     
-    // Сохраняем в сессию
     session(['selected_department_ids' => $departmentIds]);
     
     $returnUrl = $request->input('return_url', route('documents.create'));
@@ -105,17 +93,9 @@ public function storeDepartmentSelection(Request $request)
     {
         $document = Document::with(['createdBy', 'receiver', 'signatures.users'])->findOrFail($id);
 
-        // 🔒 БЕЗОПАСНОСТЬ: Проверка прав доступа
-        $this->checkDocumentAccess($document);
+      $this->checkDocumentAccess($document);
 
-        // 🛡️ ЛИМИТ: Экспорт в Word (10 раз, далее 15 мин, 20 раз -> 1 час)
-        $check = RateLimitService::check('export_word:' . Auth::id(), 10, [20 => 60]);
-        if ($check['blocked']) {
-            return back()->with('error', $check['message']);
-        }
-
-        // 📝 ИСТОРИЯ: Экспорт в Word
-        DocumentLog::create([
+       DocumentLog::create([
             'document_id' => $document->id,
             'user_id' => Auth::id(),
             'action' => 'экспорт',
@@ -200,17 +180,9 @@ public function storeDepartmentSelection(Request $request)
     {
         $document = Document::with(['createdBy', 'receiver', 'signatures'])->findOrFail($id);
 
-        // 🔒 БЕЗОПАСНОСТЬ: Проверка прав доступа
-        $this->checkDocumentAccess($document);
+       $this->checkDocumentAccess($document);
 
-        // 🛡️ ЛИМИТ: Экспорт в PDF (10 раз, далее 15 мин, 20 раз -> 1 час)
-        $check = RateLimitService::check('export_pdf:' . Auth::id(), 10, [20 => 60]);
-        if ($check['blocked']) {
-            return back()->with('error', $check['message']);
-        }
-
-        // 📝 ИСТОРИЯ: Экспорт в PDF
-        DocumentLog::create([
+      DocumentLog::create([
             'document_id' => $document->id,
             'user_id' => Auth::id(),
             'action' => 'экспорт',
@@ -238,12 +210,6 @@ public function storeDepartmentSelection(Request $request)
 
     public function storeFromPdf(Request $request)
     {
-        // 🛡️ ЛИМИТ: ИИ-анализ (3 раза, 6 раз -> 30 мин, 9 раз -> 2 часа)
-        $check = RateLimitService::check('ai_parse:' . Auth::id(), 3, [6 => 30, 9 => 120]);
-        if ($check['blocked']) {
-            return response()->json(['status' => 'error', 'message' => $check['message']], 429);
-        }
-
         $request->validate(['pdf_file' => 'required|mimes:pdf,docx,rtf|max:51200']);
 
         $file = $request->file('pdf_file');
@@ -287,7 +253,6 @@ public function storeDepartmentSelection(Request $request)
         $aiResult = $response->json()['choices'][0]['message']['content'] ?? '{}';
         $data = json_decode($aiResult, true);
 
-        // 📝 ИСТОРИЯ: Анализ ИИ
         DocumentLog::create([
             'document_id' => null,
             'user_id' => Auth::id(),
@@ -311,14 +276,7 @@ public function storeDepartmentSelection(Request $request)
     {
         $document = Document::with('createdBy')->findOrFail($id);
 
-        // 🔒 БЕЗОПАСНОСТЬ: Проверка прав доступа
         $this->checkDocumentAccess($document);
-
-        // 🛡️ ЛИМИТ: Подписание (5 раз, 10 раз -> 1 час, 15 раз -> 6 часов)
-        $check = RateLimitService::check('doc_sign:' . Auth::id(), 5, [10 => 60, 15 => 360]);
-        if ($check['blocked']) {
-            return back()->with('error', $check['message']);
-        }
 
         $signatureData = $request->input('signature');
         $fullPathToFile = storage_path('app/public/' . $document->file_path);
@@ -348,8 +306,7 @@ public function storeDepartmentSelection(Request $request)
 
                 $this->processWorkflow($document, $currentWorkflow);
 
-                // 📝 ИСТОРИЯ: Подписание (не PDF)
-                DocumentLog::create([
+               DocumentLog::create([
                     'document_id' => $id,
                     'user_id' => $signer->id,
                     'action' => 'подписание',
@@ -462,7 +419,6 @@ public function storeDepartmentSelection(Request $request)
                     'status' => ($this->isLastStep($document)) ? 'completed' : 'processing'
                 ]);
 
-                // 📝 ИСТОРИЯ: Подписание PDF
                 DocumentLog::create([
                     'document_id' => $document->id,
                     'user_id' => $signer->id,
@@ -512,18 +468,14 @@ public function storeDepartmentSelection(Request $request)
             }
         }
     }
-    /**
-     * ✅ ДОБАВЛЕНО: Отображение списка документов (обязательно для Route::resource)
-     */
+   
 public function index(Request $request)
 {
     $user = Auth::user();
     $tab = $request->query('tab', 'all');
 
-    // ✅ ЕДИНСТВЕННАЯ правильная строка загрузки связей (включая comments.user!)
-    $query = Document::with(['createdBy', 'receiver', 'logs.user', 'signatures.user', 'comments.user']);
+   $query = Document::with(['createdBy', 'receiver', 'logs.user', 'signatures.user', 'comments.user']);
 
-    // Админ видит всё, обычный юзер — только своё
     if (!$user->isAdmin()) {
         $query->where(function ($q) use ($user) {
             $q->where('created_by', $user->id)
@@ -618,8 +570,7 @@ public function index(Request $request)
         $selectedDepartmentIds = session('selected_department_ids', []);
         $selectedDepartments = \App\Models\Department::whereIn('id', $selectedDepartmentIds)->with('users')->get();
 
-        // ✅ ДОБАВЛЕНО: Данные для режима "Из дерева компаний"
-        $selectedCompanyId = session('selected_company_id');
+       $selectedCompanyId = session('selected_company_id');
         $selectedCompanyUsers = session('selected_company_users', []);
 
         $teamUsers = \App\Models\User::where('company_id', $user->company_id)->where('id', '!=', $user->id)->get();
@@ -645,8 +596,8 @@ public function index(Request $request)
         return view('document.create', compact(
             'selectedDepartments',
             'selectedDepartmentIds',
-            'selectedCompanyId',       // ✅ ДОБАВЛЕНО
-            'selectedCompanyUsers',    // ✅ ДОБАВЛЕНО
+            'selectedCompanyId',      
+            'selectedCompanyUsers',    
             'teamUsers',
             'otherUsers',
             'teamUsersArray',
@@ -656,12 +607,6 @@ public function index(Request $request)
 
 public function store(Request $request)
 {
-    // 🛡️ ЛИМИТ
-    $check = RateLimitService::check('doc_store:' . Auth::id(), 10, [20 => 60, 30 => 360]);
-    if ($check['blocked']) {
-        return back()->withErrors(['file_path' => $check['message']]);
-    }
-
     $data = $request->validate([
         'number'            => 'required|string|max:255',
         'type'              => 'required|string|max:255',
@@ -682,11 +627,7 @@ public function store(Request $request)
     ]);
 
     $authUser = auth()->user();
-
-    // ═══════════════════════════════════════════════════════════
-    // ✅ ЛОГИКА ФАЙЛА
-    // ═══════════════════════════════════════════════════════════
-    if ($request->hasFile('file_path')) {
+ if ($request->hasFile('file_path')) {
         $filePath = $request->file('file_path')->store('documents', 'public');
     } elseif (!empty($data['temp_file_path'])) {
         $filePath = $data['temp_file_path'];
@@ -696,11 +637,7 @@ public function store(Request $request)
     } else {
         return back()->withErrors(['file_path' => 'Необходимо прикрепить файл']);
     }
-
-    // ═══════════════════════════════════════════════════════════
-    // ЕСЛИ ЧЕРНОВИК
-    // ═══════════════════════════════════════════════════════════
-    if ($data['status'] === 'draft') {
+ if ($data['status'] === 'draft') {
         $document = Document::create([
             'number'      => $data['number'],
             'type'        => $data['type'],
@@ -733,10 +670,7 @@ public function store(Request $request)
         return redirect()->route('documents.index')->with('success', 'Черновик успешно сохранён');
     }
 
-    // ═══════════════════════════════════════════════════════════
-    // ЕСЛИ АКТИВНЫЙ — определяем получателей
-    // ═══════════════════════════════════════════════════════════
-    $receivers = [];
+  $receivers = [];
 
     if (empty($data['receiver_mode'])) {
         return back()->withErrors(['receiver_mode' => 'Выберите способ отправки для активного документа']);
@@ -777,10 +711,7 @@ public function store(Request $request)
         }
         $receivers = [$data['other_receiver_id']];
 
-    // ═══════════════════════════════════════════════════════════
-    // ✅ РЕЖИМ "ПО РЕГИОНУ" — ИСПРАВЛЕННАЯ ВЕРСИЯ
-    // ═══════════════════════════════════════════════════════════
-    } elseif ($data['receiver_mode'] === 'by_region') {
+  } elseif ($data['receiver_mode'] === 'by_region') {
         $recipientIds = session('selected_recipients', []);
         
         // Приводим к массиву чисел на всякий случай
@@ -1496,12 +1427,6 @@ public function update(Request $request, Document $document)
 
     public function generateWithAI(Request $request)
     {
-        // 🛡️ ЛИМИТ: ИИ-генерация (3 раза, 6 раз -> 30 мин, 9 раз -> 2 часа)
-        $check = RateLimitService::check('ai_generate:' . Auth::id(), 3, [6 => 30, 9 => 120]);
-        if ($check['blocked']) {
-            return response()->json(['message' => $check['message']], 429);
-        }
-
         $validated = $request->validate([
             'type'      => 'required|in:contract,invoice,act,nda',
             'recipient' => 'required|string|max:255',
@@ -1615,18 +1540,15 @@ public function update(Request $request, Document $document)
         return redirect()->route('documents.show', $id)->with('success', 'Документ успешно отклонён');
     }
 
-    // 🔒 БЕЗОПАСНОСТЬ: Метод проверки прав доступа к документу
     private function checkDocumentAccess($document)
     {
         $user = Auth::user();
 
-        // Админы имеют доступ ко всему
         if ($user->isAdmin()) {
             return;
         }
 
-        // Проверяем, что пользователь является создателем, отправителем или получателем
-        $hasAccess = (
+      $hasAccess = (
             $document->created_by == $user->id ||
             $document->sender_id == $user->id ||
             $document->receiver_id == $user->id
@@ -1656,9 +1578,7 @@ public function update(Request $request, Document $document)
 
         $fullPath = Storage::disk('public')->path($relativePath);
         $extension = strtolower(pathinfo($relativePath, PATHINFO_EXTENSION));
-
-        // Определяем Content-Type по расширению
-        $mimeTypes = [
+      $mimeTypes = [
             'pdf' => 'application/pdf',
             'doc' => 'application/msword',
             'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
@@ -1672,9 +1592,7 @@ public function update(Request $request, Document $document)
 
         $mimeType = $mimeTypes[$extension] ?? 'application/octet-stream';
 
-        // Для PDF и изображений открываем в браузере (inline)
-        // Для Word/Excel — предлагаем скачать (attachment)
-        $disposition = in_array($extension, ['pdf', 'jpg', 'jpeg', 'png', 'gif'])
+      $disposition = in_array($extension, ['pdf', 'jpg', 'jpeg', 'png', 'gif'])
             ? 'inline'
             : 'attachment';
 
@@ -1720,21 +1638,16 @@ public function update(Request $request, Document $document)
         $user = auth()->user();
         $this->authorizeCompany($user, $department);
 
-        // Сотрудники этого отдела (кому можно отправить)
-        $members = $department->users()->orderBy('name')->get();
+   $members = $department->users()->orderBy('name')->get();
 
-        // Документы компании (что можно отправить)
-        $documents = Document::where('company_id', $user->company_id)
+       $documents = Document::where('company_id', $user->company_id)
             ->orderBy('created_at', 'desc')
             ->get();
 
         return view('departments.send-document', compact('department', 'members', 'documents'));
     }
 
-// =========================================================
-//  ОТПРАВКА ДОКУМЕНТА
-// =========================================================
-    public function sendDocument(Request $request, Department $department)
+ public function sendDocument(Request $request, Department $department)
     {
         $user = auth()->user();
         $this->authorizeCompany($user, $department);
@@ -1745,15 +1658,13 @@ public function update(Request $request, Document $document)
             'message'      => 'nullable|string|max:1000',
         ]);
 
-        // Получатель должен быть из ЭТОГО отдела
-        $recipient = $department->users()->where('users.id', $validated['recipient_id'])->first();
+       $recipient = $department->users()->where('users.id', $validated['recipient_id'])->first();
 
         if (!$recipient) {
             return back()->withErrors(['recipient_id' => 'Получатель не принадлежит этому отделу.'])->withInput();
         }
 
-        // Документ должен быть из компании админа
-        $document = Document::where('id', $validated['document_id'])
+       $document = Document::where('id', $validated['document_id'])
             ->where('company_id', $user->company_id)
             ->first();
 
@@ -1774,26 +1685,17 @@ public function update(Request $request, Document $document)
             ->route('departments.show', $department)
             ->with('success', "Документ «{$document->name}» отправлен сотруднику {$recipient->name}.");
     }
-        /**
-     * Показать страницу выбора компании и сотрудников из дерева
-     */
-    public function selectByCompany(Request $request)
+  public function selectByCompany(Request $request)
     {
         $user = auth()->user();
 
-        // 1. Получаем компании, которые пользователь имеет право видеть
-        // Если у пользователя есть метод managedCompanies (из CompanyTreeController), используем его.
-        // Иначе (для супер-админа) берем все компании.
-        if (method_exists($user, 'managedCompanies')) {
+     if (method_exists($user, 'managedCompanies')) {
             $companies = $user->managedCompanies();
-            // Связи region, city, users уже подгружены в методе managedCompanies()
         } else {
             $companies = \App\Models\Company::with(['region', 'city', 'users'])->get();
         }
-        // 2. Строим вложенное дерево (рекурсивно, поддерживает любую глубину)
-        $nestedTree = $this->buildNestedTree($companies);
+       $nestedTree = $this->buildNestedTree($companies);
 
-        // 3. Формируем плоский массив для JavaScript (для модального окна выбора)
         $companiesData = $companies->map(function ($company) {
             return [
                 'id' => $company->id,
@@ -1808,16 +1710,12 @@ public function update(Request $request, Document $document)
             ];
         })->values()->toArray();
 
-        // URL, куда вернуться после выбора (по умолчанию - создание документа)
-        $returnUrl = $request->get('return_url', route('documents.create'));
+      $returnUrl = $request->get('return_url', route('documents.create'));
 
-        // ВАЖНО: Убедись, что файл лежит в resources/views/document/select_by_company.blade.php
-        return view('document.select_by_company', compact('nestedTree', 'companiesData', 'returnUrl'));
+  return view('document.select_by_company', compact('nestedTree', 'companiesData', 'returnUrl'));
     }
 
-    /**
-     * Сохранить выбор компании и сотрудников в сессию
-     */
+    
     public function storeCompanySelection(Request $request)
     {
         $request->validate([
@@ -1826,14 +1724,14 @@ public function update(Request $request, Document $document)
             'return_url' => 'nullable|url',
         ]);
 
-        // Преобразуем строку "1,2,3" в массив [1, 2, 3]
+      
         $userIds = array_map('intval', array_filter(explode(',', $request->user_ids)));
 
         if (empty($userIds)) {
             return back()->withErrors(['user_ids' => 'Выберите хотя бы одного сотрудника']);
         }
 
-        // Сохраняем в сессию. Метод store() в этом же контроллере уже умеет их читать!
+       
         session([
             'selected_company_id' => $request->company_id,
             'selected_company_users' => $userIds
@@ -1846,10 +1744,10 @@ public function update(Request $request, Document $document)
  private function buildNestedTree($companies, $parentId = null)
     {
         return $companies->where('parent_id', $parentId)
-            ->sortBy('name') // Сортируем по имени для красивого отображения
+            ->sortBy('name') 
             ->values()
             ->map(function ($company) use ($companies) {
-                // Рекурсивный вызов для дочерних элементов
+              
                 $company->nestedChildren = $this->buildNestedTree($companies, $company->id);
                 return $company;
             });

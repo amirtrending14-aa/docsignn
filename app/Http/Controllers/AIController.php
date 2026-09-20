@@ -5,8 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Auth; // <-- ДОБАВЛЕНО: для получения ID пользователя
-use App\Services\RateLimitService;   // <-- ДОБАВЛЕНО: Сервис лимитов
+use Illuminate\Support\Facades\Auth; 
 use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\IOFactory;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -15,29 +14,15 @@ class AIController extends Controller
 {
     public function generateDocument(Request $request)
     {
-        // 🛡️ ЛИМИТ: ИИ-генерация документов (3 раза, 6 раз -> 30 мин, 9 раз -> 2 часа)
-        // Используем ID пользователя, а если он не авторизован (гость) — его IP-адрес
-        $userId = Auth::id() ?: $request->ip();
-        $check = RateLimitService::check('ai_generate_doc:' . $userId, 3, [6 => 30, 9 => 120]);
-
-        if ($check['blocked']) {
-            return response()->json([
-                'status' => 'error',
-                'message' => $check['message']
-            ], 429); // 429 Too Many Requests
-        }
-
         try {
             $prompt = $request->input('prompt', 'Документ');
             $format = $request->input('format', 'pdf');
 
-            // Сначала пробуем Gemini
             try {
                 $documentData = $this->generateWithGemini($prompt);
                 $documentData['_source'] = 'gemini';
             } catch (\Exception $e) {
-                // Если Gemini не работает - используем УМНЫЕ шаблоны
-                $documentData = $this->generateSmartLocal($prompt);
+               $documentData = $this->generateSmartLocal($prompt);
                 $documentData['_source'] = 'local';
             }
 
@@ -59,8 +44,7 @@ class AIController extends Controller
         }
     }
 
-    // 🧠 Gemini генерация
-    private function generateWithGemini(string $prompt): array
+   private function generateWithGemini(string $prompt): array
     {
         $apiKey = env('GEMINI_API_KEY');
 
@@ -96,113 +80,94 @@ class AIController extends Controller
         return $this->parseAIResponse($text, $language);
     }
 
-    // 🧠 УМНАЯ локальная генерация (когда Gemini недоступен)
-    private function generateSmartLocal(string $prompt): array
+   private function generateSmartLocal(string $prompt): array
     {
         $language = $this->detectLanguage($prompt);
         $promptLower = mb_strtolower($prompt);
 
-        // 🔍 Умное определение типа документа
         $docType = $this->smartDetectType($promptLower, $language);
 
-        // 🔎 Извлечение данных
-        $extracted = $this->extractData($prompt, $language);
+       $extracted = $this->extractData($prompt, $language);
 
-        // 🎨 Генерация документа — вызываем метод по языку
-        $generator = "generate_{$docType}_{$language}";
+       $generator = "generate_{$docType}_{$language}";
 
         if (method_exists($this, $generator)) {
             return $this->$generator($extracted, $prompt);
         }
 
-        // Fallback - объяснительная (универсальный тип)
-        return $language === 'tj'
+       return $language === 'tj'
             ? $this->generate_explanation_tj($extracted, $prompt)
             : $this->generate_explanation_ru($extracted, $prompt);
     }
 
-    // 🔍 УМНОЕ определение типа документа
-    private function smartDetectType(string $prompt, string $lang): string
+   private function smartDetectType(string $prompt, string $lang): string
     {
-        // Приоритетные проверки (от специфичных к общим)
-
-        // Объяснительная записка
-        $explanationRu = ['объяснит', 'прогул', 'драк', 'опоздан', 'нарушен', 'причин', 'почему', 'случи', 'инцидент', 'конфликт'];
+       $explanationRu = ['объяснит', 'прогул', 'драк', 'опоздан', 'нарушен', 'причин', 'почему', 'случи', 'инцидент', 'конфликт'];
         $explanationTj = ['баёнот', 'сабаб', 'сабаби', 'чаро', 'чаро ки', 'дарҳодиса', 'ҳодиса'];
 
         foreach ($lang === 'tj' ? $explanationTj : $explanationRu as $keyword) {
             if (mb_strpos($prompt, $keyword) !== false) return 'explanation';
         }
 
-        // Заявление
-        $applicationRu = ['заявлен', 'прош', 'принят', 'увол', 'отпуск', 'отгул', 'помощ', 'справк'];
+       $applicationRu = ['заявлен', 'прош', 'принят', 'увол', 'отпуск', 'отгул', 'помощ', 'справк'];
         $applicationTj = ['ариза', 'дархост', 'қабул', 'озод', 'рухсат', 'таътил'];
 
         foreach ($lang === 'tj' ? $applicationTj : $applicationRu as $keyword) {
             if (mb_strpos($prompt, $keyword) !== false) return 'application';
         }
 
-        // Протокол
-        $protocolRu = ['протокол', 'собран', 'заседан', 'совещан', 'сход', 'встреч'];
+       $protocolRu = ['протокол', 'собран', 'заседан', 'совещан', 'сход', 'встреч'];
         $protocolTj = ['баёнотнома', 'маҷлис', 'ҷаласа', 'вохӯрӣ'];
 
         foreach ($lang === 'tj' ? $protocolTj : $protocolRu as $keyword) {
             if (mb_strpos($prompt, $keyword) !== false) return 'protocol';
         }
 
-        // Доверенность
-        $powerRu = ['доверенност', 'представл', 'полномоч', 'уполномоч'];
+       $powerRu = ['доверенност', 'представл', 'полномоч', 'уполномоч'];
         $powerTj = ['исҳотнома', 'ваколат', 'намоянда'];
 
         foreach ($lang === 'tj' ? $powerTj : $powerRu as $keyword) {
             if (mb_strpos($prompt, $keyword) !== false) return 'power_of_attorney';
         }
 
-        // Расписка
-        $receiptRu = ['расписк', 'получил', 'получен', 'денег', 'денежн'];
+    $receiptRu = ['расписк', 'получил', 'получен', 'денег', 'денежн'];
         $receiptTj = ['расписка', 'қабул', 'гирифт', 'маблағ'];
 
         foreach ($lang === 'tj' ? $receiptTj : $receiptRu as $keyword) {
             if (mb_strpos($prompt, $keyword) !== false) return 'receipt';
         }
 
-        // Акт
-        $actRu = ['акт', 'выполнен', 'работ', 'сдач', 'приём'];
+       $actRu = ['акт', 'выполнен', 'работ', 'сдач', 'приём'];
         $actTj = ['амал', 'корҳо', 'иҷро', 'супориш'];
 
         foreach ($lang === 'tj' ? $actTj : $actRu as $keyword) {
             if (mb_strpos($prompt, $keyword) !== false) return 'act';
         }
 
-        // Приказ
-        $orderRu = ['приказ', 'распоряж', 'назнач'];
+       $orderRu = ['приказ', 'распоряж', 'назнач'];
         $orderTj = ['фармон', 'дастур', 'таъинот'];
 
         foreach ($lang === 'tj' ? $orderTj : $orderRu as $keyword) {
             if (mb_strpos($prompt, $keyword) !== false) return 'order';
         }
 
-        // Накладная
-        $invoiceRu = ['накладн', 'товар', 'поставк', 'закуп', 'отгрузк'];
+      $invoiceRu = ['накладн', 'товар', 'поставк', 'закуп', 'отгрузк'];
         $invoiceTj = ['накладная', 'мол', 'таъминот', 'бор'];
 
         foreach ($lang === 'tj' ? $invoiceTj : $invoiceRu as $keyword) {
             if (mb_strpos($prompt, $keyword) !== false) return 'invoice';
         }
 
-        // Договор (по умолчанию)
-        $contractRu = ['договор', 'контракт', 'соглашен', 'аренд', 'купл', 'продаж', 'услуг'];
+       $contractRu = ['договор', 'контракт', 'соглашен', 'аренд', 'купл', 'продаж', 'услуг'];
         $contractTj = ['шартнома', 'қарордод', 'иҷора', 'харид', 'фурӯш'];
 
         foreach ($lang === 'tj' ? $contractTj : $contractRu as $keyword) {
             if (mb_strpos($prompt, $keyword) !== false) return 'contract';
         }
 
-        // Если ничего не нашли - объяснительная (универсальный документ)
-        return 'explanation';
+       return 'explanation';
     }
 
-    // 🌍 Определение языка
     private function detectLanguage(string $text): string
     {
         $tajikMarkers = ['шартнома', 'ҳуҷҷат', 'дастхат', 'имзо', 'маблағ', 'сомонӣ',
@@ -221,7 +186,6 @@ class AIController extends Controller
         return $count >= 2 ? 'tj' : 'ru';
     }
 
-    // 🔎 Извлечение данных
     private function extractData(string $prompt, string $lang): array
     {
         $data = [
@@ -236,25 +200,20 @@ class AIController extends Controller
             'language' => $lang,
         ];
 
-        // Суммы
-        if (preg_match('/(\d+[\s\d]*)\s*(сомони|рубл|долл|tjs|usd|₽|\$)/iu', $prompt, $matches)) {
+    if (preg_match('/(\d+[\s\d]*)\s*(сомони|рубл|долл|tjs|usd|₽|\$)/iu', $prompt, $matches)) {
             $data['amount'] = trim($matches[1]) . ' ' . $matches[2];
         } elseif (preg_match('/(\d+)/u', $prompt, $matches)) {
             $data['amount'] = $matches[1] . ($lang === 'tj' ? ' сомонӣ' : ' сомони');
         }
 
-        // Периоды
-        if (preg_match('/(\d+)\s*(месяц|месяцев|год|лет|моҳ|сол|дней|кун)/iu', $prompt, $matches)) {
+       if (preg_match('/(\d+)\s*(месяц|месяцев|год|лет|моҳ|сол|дней|кун)/iu', $prompt, $matches)) {
             $data['period'] = $matches[1] . ' ' . $matches[2];
         }
-
-        // Имена
-        preg_match_all('/([А-ЯA-Z][а-яa-z]+\s+[А-ЯA-Z][а-яa-z]+(?:\s+[А-ЯA-Z][а-яa-z]+)?)/u', $prompt, $matches);
+ preg_match_all('/([А-ЯA-Z][а-яa-z]+\s+[А-ЯA-Z][а-яa-z]+(?:\s+[А-ЯA-Z][а-яa-z]+)?)/u', $prompt, $matches);
         if (!empty($matches[1])) {
             $data['parties'] = array_slice($matches[1], 0, 3);
         }
 
-        // Предмет
         if (preg_match('/(?:квартир|хона|мошин|автомобил|участок|мағоза|офис|улица|кӯча)/iu', $prompt, $matches)) {
             $data['subject'] = $matches[0];
         }
@@ -262,8 +221,7 @@ class AIController extends Controller
         return $data;
     }
 
-    // 🧠 Системный промпт для Gemini
-    private function getSmartSystemPrompt(string $language): string
+   private function getSmartSystemPrompt(string $language): string
     {
         if ($language === 'tj') {
             return "Ту ёрдамчии ҳушёри таҳияи ҳуҷҷатҳои расмӣ ҳастӣ. Вазифаи ту фаҳмидани мақсади аслии корбар аст — ҳатто агар дархост кӯтоҳ, бо хато, бо забони гуфтугӯӣ ё нофаҳмо навишта шуда бошад. Аз ҳар гуна дархост ҳуҷҷати расмии зебо, босавод ва мураттаб таҳия кун. Ҳуҷҷат бояд сохтори дуруст дошта бошад: сарлавҳа, қисми асосӣ, хулоса ва имзо. Забони ҳуҷҷат — расмӣ, адабӣ ва фаҳмо. Ҳамаи майдонҳо БОЯД пурра бо забони тоҷикӣ бошанд. ҶАВОБРО ФАҚАТ ВА ФАҚАТ ДАР ФОРМАТИ JSON, БЕ ЯГОН МАТНИ ИЛОВАГӢ, БЕ MARKDOWN, БЕ ШАРҲ БИДЕҲ. Сохтори JSON: {\"number\": \"№ 123-26\", \"type\": \"Намуди ҳуҷҷат\", \"title\": \"Сарлавҳа\", \"content\": \"МАТНИ ПУРРАИ РАСМӢ ВА ЗЕБОИ ҲУҶҶАТ (КАМ-КАМ 2 САҲИФА)\", \"deadline\": \"YYYY-MM-DD ё null\", \"status\": \"draft\"}";
@@ -272,7 +230,6 @@ class AIController extends Controller
         return "Ты — интеллектуальный ассистент по созданию официальных документов. Твоя главная задача — понять истинный смысл запроса пользователя, даже если он написан коротко, с ошибками, просторечием или нечетко. Из любого, даже самого небрежного запроса, ты должен составить красивый, грамотный и структурированный официальный документ. Документ обязан иметь правильную структуру: шапку, основную часть, заключение и место для подписи. Стиль текста — официально-деловой, литературный, понятный. ВСЕ поля ДОЛЖНЫ быть полностью на РУССКОМ языке. Документ должен быть ОБЪЁМНЫМ — минимум на 2 листа A4. Отвечай СТРОГО в формате JSON, без какого-либо дополнительного текста, приветствий, пояснений или markdown-разметки. Структура JSON: {\"number\": \"№ 123-26\", \"type\": \"Тип документа\", \"title\": \"Заголовок\", \"content\": \"ПОЛНЫЙ КРАСИВЫЙ ОФИЦИАЛЬНЫЙ ТЕКСТ ДОКУМЕНТА (МИНИМУМ 2 ЛИСТА)\", \"deadline\": \"YYYY-MM-DD или null\", \"status\": \"draft\"}";
     }
 
-    // 📝 Парсинг ответа
     private function parseAIResponse(string $text, string $language): array
     {
         $text = preg_replace('/```json\s*/i', '', $text);
@@ -303,9 +260,7 @@ class AIController extends Controller
         ];
     }
 
-    // ==================== ОБЪЯСНИТЕЛЬНАЯ ЗАПИСКА ====================
-
-    private function generate_explanation_ru(array $data, string $prompt): array
+  private function generate_explanation_ru(array $data, string $prompt): array
     {
         $director = $data['parties'][0] ?? '___________________________________';
         $from = $data['parties'][1] ?? '___________________________________';
@@ -524,9 +479,7 @@ class AIController extends Controller
     Хоҳиш мекунам ин масъаларо бо назардошти тамоми ҳолатҳо, собиқаи кории ман ва обрӯи бемалол пешинаам баррасӣ намоед.";
     }
 
-    // ==================== ЗАЯВЛЕНИЕ ====================
-
-    private function generate_application_ru(array $data, string $prompt): array
+   private function generate_application_ru(array $data, string $prompt): array
     {
         $director = $data['parties'][0] ?? '___________________________________';
         $from = $data['parties'][1] ?? '___________________________________';

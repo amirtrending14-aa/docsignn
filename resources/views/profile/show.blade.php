@@ -560,7 +560,7 @@
         <div class="profile-card avatar-card">
             <div class="avatar-box">
                 @if($user->avatar)
-                <img src="{{ asset('storage/' . $user->avatar) }}" alt="{{ $user->name }}">
+                <img src="{{ $user->avatar_url }}" alt="{{ $user->name }}">
                 @else
                 <span class="avatar-letter">{{ Str::upper(Str::substr($user->name, 0, 1)) }}</span>
                 @endif

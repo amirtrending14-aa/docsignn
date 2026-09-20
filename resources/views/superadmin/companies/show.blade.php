@@ -154,7 +154,7 @@
         <div class="text-center">
             <div class="w-20 h-20 rounded-full overflow-hidden border-4 border-purple-500/30 shadow-xl shadow-purple-500/20 mx-auto mb-3">
                 @if($company->owner->avatar)
-                <img src="{{ asset('storage/' . $company->owner->avatar) }}" alt="" class="w-full h-full object-cover">
+                <img src="{{ $company->owner->avatar_url }}" alt="" class="w-full h-full object-cover">
                 @else
                 <div class="w-full h-full bg-gradient-to-br from-purple-600 to-purple-800 flex items-center justify-center text-2xl font-bold text-white">
                     {{ Str::upper(Str::substr($company->owner->name, 0, 1)) }}
@@ -230,7 +230,7 @@
         <div class="flex items-center gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition group">
             <div class="avatar group-hover:border-blue-500/50">
                 @if($user->avatar)
-                <img src="{{ asset('storage/' . $user->avatar) }}" alt="">
+                <img src="{{ $user->avatar_url }}" alt="">
                 @else
                 {{ Str::upper(Str::substr($user->name, 0, 1)) }}
                 @endif

@@ -333,6 +333,68 @@
     }
 </style>
 
+<style>
+    html[data-theme="light"] .rejected-docs-page {
+        color: #0f172a !important;
+    }
+    html[data-theme="light"] .rejected-page-header {
+        border-bottom: 2px solid #cbd5e1;
+    }
+    html[data-theme="light"] .rejected-page-header h1,
+    html[data-theme="light"] .rejected-card-title,
+    html[data-theme="light"] .empty-title {
+        color: #0f172a !important;
+    }
+    html[data-theme="light"] .rejected-card {
+        background: #ffffff;
+        border: 1.5px solid #f87171;
+        box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+    }
+    html[data-theme="light"] .rejected-card:hover {
+        border-color: #ef4444;
+        box-shadow: 0 12px 28px rgba(15, 23, 42, 0.14);
+    }
+    html[data-theme="light"] .rejected-card-meta,
+    html[data-theme="light"] .rejection-reason-empty,
+    html[data-theme="light"] .empty-sub {
+        color: #475569;
+    }
+    html[data-theme="light"] .rejected-card-content {
+        color: #334155;
+        background: #f8fafc;
+        border: 1px solid #cbd5e1;
+        border-left: 3px solid #ef4444;
+    }
+    html[data-theme="light"] .rejection-reason-block {
+        background: #fffbeb;
+        border: 1.5px solid #f59e0b;
+    }
+    html[data-theme="light"] .rejection-reason-label {
+        color: #b45309;
+    }
+    html[data-theme="light"] .rejection-reason-text {
+        color: #92400e;
+        background: #fef3c7;
+        border-left: 3px solid #f59e0b;
+    }
+    html[data-theme="light"] .rejected-card-footer {
+        border-top: 1px solid #cbd5e1;
+    }
+    html[data-theme="light"] .action-btn {
+        color: #475569;
+        background: #f8fafc;
+        border-color: #cbd5e1;
+    }
+    html[data-theme="light"] .pagination-wrap nav {
+        background: #ffffff;
+        border-color: #cbd5e1;
+    }
+    html[data-theme="light"] .pagination-wrap .pagination li a,
+    html[data-theme="light"] .pagination-wrap .pagination li span {
+        color: #475569;
+    }
+</style>
+
 <div class="rejected-docs-page">
     <div class="max-w-7xl mx-auto">
         

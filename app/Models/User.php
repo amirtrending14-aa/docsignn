@@ -206,7 +206,7 @@ public function departments(): BelongsToMany
             return $this->avatar;
         }
 
-        return Storage::disk('public')->url($this->avatar);
+        return route('avatar.show', ['path' => ltrim($this->avatar, '/')]);
     }
 
     public function getAvatarColorAttribute(): string

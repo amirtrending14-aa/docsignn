@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DocSign</title>
-<!-- ✅ ДОБАВЛЕНО: Значок сайта (Favicon) -->
+ 
 <link rel="icon" type="image/png" href="{{ asset('img/dss.png') }}">
 <link rel="apple-touch-icon" href="{{ asset('img/dss.png') }}">
 <script src="https://cdn.tailwindcss.com"></script>
@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/inter@5.0.16/index.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 <script>
-// Твой дальнейший код...
+
 tailwind.config = {
 theme: {
 extend: {
@@ -112,6 +112,12 @@ background: linear-gradient(135deg, #3b82f6, #8b5cf6, #ec4899);
 -webkit-text-fill-color: transparent;
 background-clip: text;
 }
+.gradient-ai {
+background: linear-gradient(135deg, #06b6d4, #8b5cf6, #ec4899);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+}
 .glass {
 background: rgba(20, 20, 20, 0.55);
 backdrop-filter: blur(24px) saturate(180%);
@@ -186,6 +192,9 @@ background: linear-gradient(135deg, #06b6d4, transparent 40%, transparent 60%, #
 }
 .card-red:hover .card-border {
 background: linear-gradient(135deg, #ef4444, transparent 40%, transparent 60%, #ef4444);
+}
+.card-ai:hover .card-border {
+background: linear-gradient(135deg, #06b6d4, transparent 40%, transparent 60%, #8b5cf6);
 }
 .btn-primary {
 background: linear-gradient(135deg, #fff, #ccc);
@@ -380,6 +389,11 @@ background: linear-gradient(135deg, rgba(239,68,68,0.2), rgba(239,68,68,0.05));
 border: 1px solid rgba(239,68,68,0.3);
 box-shadow: 0 0 20px rgba(239,68,68,0.2);
 }
+.icon-ai {
+background: linear-gradient(135deg, rgba(6,182,212,0.2), rgba(139,92,246,0.1));
+border: 1px solid rgba(6,182,212,0.35);
+box-shadow: 0 0 25px rgba(6,182,212,0.25), 0 0 50px rgba(139,92,246,0.1);
+}
 .feature-icon-box {
 background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
 border: 1px solid rgba(255,255,255,0.1);
@@ -403,6 +417,10 @@ border: 1px solid rgba(16,185,129,0.15);
 .stat-card-orange {
 background: linear-gradient(135deg, rgba(245,158,11,0.08), rgba(245,158,11,0.02));
 border: 1px solid rgba(245,158,11,0.15);
+}
+.stat-card-ai {
+background: linear-gradient(135deg, rgba(6,182,212,0.1), rgba(139,92,246,0.05));
+border: 1px solid rgba(6,182,212,0.2);
 }
 /* Donut Chart Animation */
 .donut-segment {
@@ -569,6 +587,340 @@ animation: arrowFloat 1.8s ease-in-out infinite;
 0%, 100% { transform: translateY(0); }
 50% { transform: translateY(10px); }
 }
+
+/* ===== AI / RAG SECTION ===== */
+.ai-section-bg {
+position: relative;
+overflow: hidden;
+}
+.ai-section-bg::before {
+content: '';
+position: absolute;
+inset: 0;
+background:
+radial-gradient(ellipse at 20% 30%, rgba(6,182,212,0.12) 0%, transparent 55%),
+radial-gradient(ellipse at 80% 70%, rgba(139,92,246,0.1) 0%, transparent 55%);
+pointer-events: none;
+z-index: 0;
+}
+.ai-brain-wrap {
+position: relative;
+width: 320px;
+height: 320px;
+margin: 0 auto;
+}
+.ai-brain-core {
+position: absolute;
+inset: 0;
+display: flex;
+align-items: center;
+justify-content: center;
+}
+.ai-brain-core svg {
+width: 180px;
+height: 180px;
+filter: drop-shadow(0 0 30px rgba(6,182,212,0.5));
+}
+.ai-orbit {
+position: absolute;
+inset: 0;
+border-radius: 50%;
+border: 1px dashed rgba(6,182,212,0.25);
+animation: aiOrbitSpin 20s linear infinite;
+}
+.ai-orbit-2 {
+position: absolute;
+inset: 30px;
+border-radius: 50%;
+border: 1px dashed rgba(139,92,246,0.25);
+animation: aiOrbitSpin 14s linear infinite reverse;
+}
+.ai-orbit-3 {
+position: absolute;
+inset: 70px;
+border-radius: 50%;
+border: 1px dashed rgba(236,72,153,0.2);
+animation: aiOrbitSpin 10s linear infinite;
+}
+@keyframes aiOrbitSpin {
+from { transform: rotate(0deg); }
+to { transform: rotate(360deg); }
+}
+.ai-node {
+position: absolute;
+width: 34px;
+height: 34px;
+border-radius: 12px;
+display: flex;
+align-items: center;
+justify-content: center;
+background: rgba(15,15,15,0.9);
+border: 1px solid rgba(6,182,212,0.4);
+box-shadow: 0 0 20px rgba(6,182,212,0.3);
+backdrop-filter: blur(10px);
+}
+.ai-node svg { width: 16px; height: 16px; }
+.ai-node-1 { top: -17px; left: 50%; transform: translateX(-50%); color: #06b6d4; }
+.ai-node-2 { top: 50%; right: -17px; transform: translateY(-50%); color: #8b5cf6; border-color: rgba(139,92,246,0.4); box-shadow: 0 0 20px rgba(139,92,246,0.3); }
+.ai-node-3 { bottom: -17px; left: 50%; transform: translateX(-50%); color: #ec4899; border-color: rgba(236,72,153,0.4); box-shadow: 0 0 20px rgba(236,72,153,0.3); }
+.ai-node-4 { top: 50%; left: -17px; transform: translateY(-50%); color: #10b981; border-color: rgba(16,185,129,0.4); box-shadow: 0 0 20px rgba(16,185,129,0.3); }
+
+.ai-pulse-ring {
+position: absolute;
+inset: 40px;
+border-radius: 50%;
+border: 2px solid rgba(6,182,212,0.4);
+animation: aiPulseRing 3s ease-out infinite;
+}
+.ai-pulse-ring-2 {
+position: absolute;
+inset: 40px;
+border-radius: 50%;
+border: 2px solid rgba(139,92,246,0.4);
+animation: aiPulseRing 3s ease-out infinite 1.5s;
+}
+@keyframes aiPulseRing {
+0% { transform: scale(0.6); opacity: 0.8; }
+100% { transform: scale(1.4); opacity: 0; }
+}
+
+/* RAG Demo Chat */
+.rag-demo {
+background: linear-gradient(135deg, rgba(15,15,15,0.9), rgba(10,10,10,0.95));
+border: 1px solid rgba(6,182,212,0.2);
+border-radius: 20px;
+padding: 20px;
+position: relative;
+overflow: hidden;
+}
+.rag-demo::before {
+content: '';
+position: absolute;
+top: 0; left: 0; right: 0;
+height: 1px;
+background: linear-gradient(90deg, transparent, #06b6d4, #8b5cf6, transparent);
+}
+.rag-header {
+display: flex;
+align-items: center;
+justify-content: space-between;
+padding-bottom: 14px;
+border-bottom: 1px solid rgba(255,255,255,0.06);
+margin-bottom: 16px;
+}
+.rag-header-left {
+display: flex;
+align-items: center;
+gap: 10px;
+}
+.rag-avatar {
+width: 32px; height: 32px;
+border-radius: 10px;
+background: linear-gradient(135deg, #06b6d4, #8b5cf6);
+display: flex;
+align-items: center;
+justify-content: center;
+box-shadow: 0 0 20px rgba(6,182,212,0.4);
+}
+.rag-title {
+font-size: 13px;
+font-weight: 700;
+color: #fff;
+}
+.rag-subtitle {
+font-size: 10px;
+color: #64748b;
+}
+.rag-status {
+display: inline-flex;
+align-items: center;
+gap: 5px;
+padding: 4px 10px;
+border-radius: 999px;
+background: rgba(16,185,129,0.1);
+border: 1px solid rgba(16,185,129,0.25);
+font-size: 10px;
+font-weight: 700;
+color: #6ee7b7;
+}
+.rag-status-dot {
+width: 5px; height: 5px;
+border-radius: 50%;
+background: #10b981;
+box-shadow: 0 0 8px #10b981;
+animation: pulseDot 1.6s ease-in-out infinite;
+}
+.rag-messages {
+display: flex;
+flex-direction: column;
+gap: 12px;
+min-height: 280px;
+}
+.rag-msg {
+display: flex;
+gap: 10px;
+align-items: flex-start;
+opacity: 0;
+transform: translateY(10px);
+animation: ragMsgIn 0.5s ease-out forwards;
+}
+@keyframes ragMsgIn {
+to { opacity: 1; transform: translateY(0); }
+}
+.rag-msg-user { justify-content: flex-end; }
+.rag-msg-bubble {
+max-width: 80%;
+padding: 10px 14px;
+border-radius: 14px;
+font-size: 12.5px;
+line-height: 1.5;
+}
+.rag-msg-user .rag-msg-bubble {
+background: linear-gradient(135deg, rgba(59,130,246,0.2), rgba(139,92,246,0.15));
+border: 1px solid rgba(59,130,246,0.25);
+color: #e0e7ff;
+border-bottom-right-radius: 4px;
+}
+.rag-msg-ai .rag-msg-bubble {
+background: rgba(255,255,255,0.03);
+border: 1px solid rgba(6,182,212,0.2);
+color: #cbd5e1;
+border-bottom-left-radius: 4px;
+}
+.rag-msg-avatar {
+width: 28px; height: 28px;
+border-radius: 8px;
+flex-shrink: 0;
+display: flex;
+align-items: center;
+justify-content: center;
+}
+.rag-msg-user .rag-msg-avatar {
+background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+order: 2;
+}
+.rag-msg-ai .rag-msg-avatar {
+background: linear-gradient(135deg, #06b6d4, #8b5cf6);
+box-shadow: 0 0 15px rgba(6,182,212,0.3);
+}
+.rag-sources {
+margin-top: 10px;
+padding: 10px;
+border-radius: 10px;
+background: rgba(6,182,212,0.05);
+border: 1px solid rgba(6,182,212,0.15);
+}
+.rag-sources-title {
+font-size: 10px;
+font-weight: 700;
+color: #06b6d4;
+text-transform: uppercase;
+letter-spacing: 0.1em;
+margin-bottom: 6px;
+display: flex;
+align-items: center;
+gap: 6px;
+}
+.rag-source-item {
+display: flex;
+align-items: center;
+gap: 8px;
+padding: 5px 0;
+font-size: 11px;
+color: #94a3b8;
+}
+.rag-source-item + .rag-source-item {
+border-top: 1px dashed rgba(255,255,255,0.05);
+}
+.rag-source-icon {
+width: 18px; height: 18px;
+border-radius: 4px;
+background: rgba(6,182,212,0.15);
+display: flex;
+align-items: center;
+justify-content: center;
+flex-shrink: 0;
+}
+.rag-source-icon svg { width: 10px; height: 10px; color: #06b6d4; }
+.rag-source-name {
+flex: 1;
+color: #cbd5e1;
+font-weight: 500;
+}
+.rag-source-score {
+font-size: 10px;
+color: #10b981;
+font-weight: 700;
+}
+.rag-typing {
+display: inline-flex;
+gap: 3px;
+padding: 4px 0;
+}
+.rag-typing span {
+width: 5px; height: 5px;
+border-radius: 50%;
+background: #06b6d4;
+animation: ragTyping 1.4s ease-in-out infinite;
+}
+.rag-typing span:nth-child(2) { animation-delay: 0.2s; }
+.rag-typing span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes ragTyping {
+0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
+30% { opacity: 1; transform: translateY(-3px); }
+}
+.rag-pipeline {
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 8px;
+margin-top: 16px;
+padding: 12px;
+border-radius: 12px;
+background: rgba(255,255,255,0.02);
+border: 1px solid rgba(255,255,255,0.05);
+}
+.rag-step {
+flex: 1;
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 6px;
+position: relative;
+}
+.rag-step-icon {
+width: 32px; height: 32px;
+border-radius: 10px;
+display: flex;
+align-items: center;
+justify-content: center;
+background: rgba(6,182,212,0.1);
+border: 1px solid rgba(6,182,212,0.25);
+transition: all 0.4s ease;
+}
+.rag-step-icon svg { width: 14px; height: 14px; color: #06b6d4; }
+.rag-step.active .rag-step-icon {
+background: linear-gradient(135deg, rgba(6,182,212,0.3), rgba(139,92,246,0.2));
+border-color: rgba(6,182,212,0.6);
+box-shadow: 0 0 20px rgba(6,182,212,0.4);
+transform: scale(1.1);
+}
+.rag-step-label {
+font-size: 9px;
+color: #64748b;
+font-weight: 600;
+text-transform: uppercase;
+letter-spacing: 0.05em;
+text-align: center;
+}
+.rag-step.active .rag-step-label { color: #06b6d4; }
+.rag-step-arrow {
+color: rgba(255,255,255,0.15);
+flex-shrink: 0;
+}
+.rag-step.active + .rag-step-arrow,
+.rag-step-arrow.active { color: #06b6d4; }
+
 /* ===== ПОЛНАЯ АДАПТИВНОСТЬ ===== */
 /* Большие ноутбуки и маленькие десктопы (до 1200px) */
 @media (max-width: 1200px) {
@@ -585,6 +937,7 @@ animation: arrowFloat 1.8s ease-in-out infinite;
 .blob-3, .blob-4 { width: 300px; height: 300px; }
 .superadmin-card { padding: 32px; }
 #donutChart { width: 220px !important; height: 220px !important; }
+.ai-brain-wrap { width: 280px; height: 280px; }
 }
 /* Планшеты (до 768px) */
 @media (max-width: 768px) {
@@ -605,6 +958,12 @@ section { padding-top: 60px !important; padding-bottom: 60px !important; }
 .faceid-tilt { transform: none !important; }
 .faceid-layer-frame, .faceid-layer-status, .faceid-layer-chip { transform: none !important; }
 .faceid-layer-chip { display: none !important; }
+.ai-brain-wrap { width: 240px; height: 240px; }
+.ai-brain-core svg { width: 140px; height: 140px; }
+.ai-node { width: 28px; height: 28px; }
+.ai-node svg { width: 13px; height: 13px; }
+.rag-pipeline { flex-wrap: wrap; }
+.rag-step-arrow { display: none; }
 }
 /* Большие телефоны (до 576px) */
 @media (max-width: 576px) {
@@ -622,16 +981,17 @@ section { padding-top: 60px !important; padding-bottom: 60px !important; }
 .glass { padding: 16px; border-radius: 20px !important; }
 .card-3d { border-radius: 20px !important; }
 section { padding-top: 48px !important; padding-bottom: 48px !important; }
-.icon-blue, .icon-purple, .icon-green, .icon-orange, .icon-pink, .icon-indigo, .icon-cyan {
+.icon-blue, .icon-purple, .icon-green, .icon-orange, .icon-pink, .icon-indigo, .icon-cyan, .icon-ai {
 width: 44px !important;
 height: 44px !important;
 }
-.icon-blue svg, .icon-purple svg, .icon-green svg, .icon-orange svg, .icon-pink svg, .icon-indigo svg, .icon-cyan svg {
+.icon-blue svg, .icon-purple svg, .icon-green svg, .icon-orange svg, .icon-pink svg, .icon-indigo svg, .icon-cyan svg, .icon-ai svg {
 width: 20px !important;
 height: 20px !important;
 }
 .nav-link { font-size: 13px; }
 footer .grid { gap: 24px; }
+.ai-brain-wrap { width: 220px; height: 220px; }
 }
 /* Телефоны (до 480px) */
 @media (max-width: 480px) {
@@ -664,6 +1024,8 @@ footer .grid { grid-template-columns: 1fr !important; gap: 20px !important; }
 footer .text-xs { font-size: 11px; }
 footer .flex-col { gap: 12px; }
 .lang-select { padding: 5px 24px 5px 8px; font-size: 10px; }
+.rag-demo { padding: 14px; }
+.rag-msg-bubble { font-size: 11.5px; padding: 8px 12px; }
 }
 /* Очень маленькие телефоны (до 380px) */
 @media (max-width: 380px) {
@@ -680,6 +1042,7 @@ footer .flex-col { gap: 12px; }
 section { padding-top: 32px !important; padding-bottom: 32px !important; }
 .text-3xl, .text-4xl, .text-5xl { font-size: 1.25rem !important; }
 .grid-cols-2 { grid-template-columns: 1fr !important; }
+.ai-brain-wrap { width: 200px; height: 200px; }
 }
 /* Мобильное меню */
 @media (max-width: 1024px) {
@@ -795,6 +1158,7 @@ modal.classList.add('hidden');
 <div class="hidden lg:flex items-center gap-4 xl:gap-7">
 <a href="#features" class="nav-link text-sm font-medium text-gray-400" data-i18n="nav_features">Возможности</a>
 <a href="#faceid" class="nav-link text-sm font-medium text-gray-400" data-i18n="nav_faceid">Face ID</a>
+<a href="#ai" class="nav-link text-sm font-medium text-gray-400" data-i18n="nav_ai">ИИ</a>
 <a href="#departments" class="nav-link text-sm font-medium text-gray-400" data-i18n="nav_departments">Отделы</a>
 <a href="#geography" class="nav-link text-sm font-medium text-gray-400" data-i18n="nav_geography">География</a>
 <a href="#analytics" class="nav-link text-sm font-medium text-gray-400" data-i18n="nav_analytics">Аналитика</a>
@@ -840,6 +1204,7 @@ modal.classList.add('hidden');
 </div>
 <a href="#features" class="block text-sm font-medium text-gray-300 hover:text-white py-2" data-i18n="nav_features">Возможности</a>
 <a href="#faceid" class="block text-sm font-medium text-gray-300 hover:text-white py-2" data-i18n="nav_faceid">Face ID</a>
+<a href="#ai" class="block text-sm font-medium text-gray-300 hover:text-white py-2" data-i18n="nav_ai">ИИ</a>
 <a href="#departments" class="block text-sm font-medium text-gray-300 hover:text-white py-2" data-i18n="nav_departments">Отделы</a>
 <a href="#geography" class="block text-sm font-medium text-gray-300 hover:text-white py-2" data-i18n="nav_geography">География</a>
 <a href="#analytics" class="block text-sm font-medium text-gray-300 hover:text-white py-2" data-i18n="nav_analytics">Аналитика</a>
@@ -857,13 +1222,10 @@ modal.classList.add('hidden');
 <span class="pulse-dot"></span>
 <span class="text-xs font-medium text-gray-300" data-i18n="hero_badge">Система нового поколения</span>
 </div>
-
 <h1 class="hero-title text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight mb-6 leading-[1.05]">
 <span class="block gradient-text text-3xl sm:text-4xl md:text-5xl lg:text-6xl" data-i18n="hero_title_1">Электронный документооборот</span>
 <span class="hero-arrows flex items-end justify-center gap-10 sm:gap-16 md:gap-24 text-4xl sm:text-5xl md:text-6xl mt-3 mb-3" aria-hidden="true">
-
 </h1>
-
 <p class="max-w-2xl mx-auto text-base sm:text-lg text-gray-400 mb-10 leading-relaxed" data-i18n="hero_subtitle">
 DocSign — современная платформа для работы с документами. Подписывайте, отправляйте и храните файлы в один клик. Просто и надёжно — для людей, чтобы работа стала легче.
 </p>
@@ -1046,6 +1408,314 @@ DocSign — современная платформа для работы с д�
 </div>
 </div>
 </section>
+
+<!-- ===================== AI / RAG SECTION (NEW) ===================== -->
+<section id="ai" class="relative py-24 overflow-hidden ai-section-bg">
+<div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<!-- Section header -->
+<div class="text-center mb-14 scroll-reveal">
+<span class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest mb-4 px-4 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/25" style="color:#22d3ee;">
+<span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+<span data-i18n="ai_label">Искусственный интеллект • RAG</span>
+</span>
+<h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-white mb-4 tracking-tight">
+<span class="gradient-ai" data-i18n="ai_title">Умный помощник в каждом документе</span>
+</h2>
+<p class="max-w-2xl mx-auto text-sm sm:text-base text-gray-400" data-i18n="ai_subtitle">
+ИИ на базе технологии RAG понимает ваши документы, находит нужную информацию за секунды и отвечает на вопросы — как живой эксперт.
+</p>
+</div>
+
+<!-- Main grid: Brain + RAG Demo -->
+<div class="grid lg:grid-cols-2 gap-8 mb-10 items-center">
+<!-- Left: AI Brain visualization -->
+<div class="scroll-reveal">
+<div class="glass rounded-3xl p-6 md:p-8 card-3d card-ai relative">
+<div class="card-shine"></div>
+<div class="card-border"></div>
+<div class="card-inner">
+<div class="flex items-center justify-between mb-5">
+<div class="flex items-center gap-2">
+<div class="icon-ai w-10 h-10 rounded-xl flex items-center justify-center">
+<svg class="w-5 h-5" fill="none" stroke="#22d3ee" viewBox="0 0 24 24">
+<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+</svg>
+</div>
+<div>
+<div class="text-sm font-bold text-white" data-i18n="ai_brain_title">Нейросеть DocSign</div>
+<div class="text-[10px] text-gray-500 uppercase tracking-wider" data-i18n="ai_brain_sub">RAG • Embeddings • LLM</div>
+</div>
+</div>
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-[10px] font-bold text-emerald-400">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+<span data-i18n="ai_brain_online">Онлайн</span>
+</span>
+</div>
+
+<!-- Brain visualization -->
+<div class="ai-brain-wrap">
+<!-- Pulse rings -->
+<div class="ai-pulse-ring"></div>
+<div class="ai-pulse-ring-2"></div>
+<!-- Orbits -->
+<div class="ai-orbit"></div>
+<div class="ai-orbit-2"></div>
+<div class="ai-orbit-3"></div>
+<!-- Nodes on orbit -->
+<div class="ai-node ai-node-1" title="Поиск">
+<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+</div>
+<div class="ai-node ai-node-2" title="Документы">
+<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+</div>
+<div class="ai-node ai-node-3" title="Ответ">
+<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+</div>
+<div class="ai-node ai-node-4" title="Анализ">
+<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+</div>
+<!-- Core brain -->
+<div class="ai-brain-core">
+<svg viewBox="0 0 200 200">
+<defs>
+<radialGradient id="brainGrad" cx="50%" cy="50%">
+<stop offset="0%" stop-color="#22d3ee" stop-opacity="0.9"/>
+<stop offset="50%" stop-color="#8b5cf6" stop-opacity="0.6"/>
+<stop offset="100%" stop-color="#ec4899" stop-opacity="0.3"/>
+</radialGradient>
+<filter id="brainGlow">
+<feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+<feMerge>
+<feMergeNode in="coloredBlur"/>
+<feMergeNode in="SourceGraphic"/>
+</feMerge>
+</filter>
+</defs>
+<!-- Outer glow -->
+<circle cx="100" cy="100" r="70" fill="url(#brainGrad)" opacity="0.3" filter="url(#brainGlow)"/>
+<!-- Brain shape -->
+<g filter="url(#brainGlow)" stroke="#22d3ee" stroke-width="1.5" fill="none" opacity="0.9">
+<path d="M 70 70 Q 60 50, 80 45 Q 95 35, 110 45 Q 130 40, 135 60 Q 150 65, 145 85 Q 155 100, 140 115 Q 145 135, 125 140 Q 115 155, 95 150 Q 75 155, 65 140 Q 50 130, 55 110 Q 45 95, 55 80 Q 50 65, 70 70 Z"/>
+<!-- Inner connections -->
+<path d="M 80 75 L 120 75 L 125 100 L 115 125 L 85 125 L 75 100 Z" opacity="0.6"/>
+<path d="M 100 60 L 100 140" opacity="0.4"/>
+<path d="M 65 100 L 135 100" opacity="0.4"/>
+<!-- Nodes -->
+<circle cx="100" cy="100" r="8" fill="#22d3ee" opacity="0.9"/>
+<circle cx="80" cy="75" r="4" fill="#8b5cf6"/>
+<circle cx="120" cy="75" r="4" fill="#8b5cf6"/>
+<circle cx="125" cy="100" r="4" fill="#ec4899"/>
+<circle cx="115" cy="125" r="4" fill="#ec4899"/>
+<circle cx="85" cy="125" r="4" fill="#10b981"/>
+<circle cx="75" cy="100" r="4" fill="#10b981"/>
+</g>
+</svg>
+</div>
+</div>
+
+<!-- Stats under brain -->
+<div class="grid grid-cols-3 gap-3 mt-6">
+<div class="text-center p-3 rounded-xl bg-white/[0.02] border border-white/5">
+<div class="text-lg font-black gradient-ai">0.8<span class="text-xs text-gray-500">с</span></div>
+<div class="text-[9px] uppercase tracking-wider text-gray-500 font-bold mt-1" data-i18n="ai_stat_speed">Ответ</div>
+</div>
+<div class="text-center p-3 rounded-xl bg-white/[0.02] border border-white/5">
+<div class="text-lg font-black gradient-ai">98%</div>
+<div class="text-[9px] uppercase tracking-wider text-gray-500 font-bold mt-1" data-i18n="ai_stat_accuracy">Точность</div>
+</div>
+<div class="text-center p-3 rounded-xl bg-white/[0.02] border border-white/5">
+<div class="text-lg font-black gradient-ai">24/7</div>
+<div class="text-[9px] uppercase tracking-wider text-gray-500 font-bold mt-1" data-i18n="ai_stat_uptime">Работа</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Right: RAG Demo Chat -->
+<div class="scroll-reveal" style="transition-delay:0.15s">
+<div class="rag-demo">
+<div class="rag-header">
+<div class="rag-header-left">
+<div class="rag-avatar">
+<svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+</svg>
+</div>
+<div>
+<div class="rag-title">DocSign AI</div>
+<div class="rag-subtitle" data-i18n="ai_rag_sub">RAG • Поиск по базе знаний</div>
+</div>
+</div>
+<div class="rag-status">
+<span class="rag-status-dot"></span>
+<span data-i18n="ai_rag_active">Активен</span>
+</div>
+</div>
+
+<!-- Messages container -->
+<div class="rag-messages" id="ragMessages">
+<!-- Messages will be injected by JS -->
+</div>
+
+<!-- Pipeline visualization -->
+<div class="rag-pipeline">
+<div class="rag-step" data-step="1">
+<div class="rag-step-icon">
+<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+</div>
+<div class="rag-step-label" data-i18n="ai_step_query">Запрос</div>
+</div>
+<svg class="rag-step-arrow w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+<div class="rag-step" data-step="2">
+<div class="rag-step-icon">
+<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
+</div>
+<div class="rag-step-label" data-i18n="ai_step_retrieve">Поиск</div>
+</div>
+<svg class="rag-step-arrow w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+<div class="rag-step" data-step="3">
+<div class="rag-step-icon">
+<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+</div>
+<div class="rag-step-label" data-i18n="ai_step_generate">ИИ</div>
+</div>
+<svg class="rag-step-arrow w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+<div class="rag-step" data-step="4">
+<div class="rag-step-icon">
+<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+</div>
+<div class="rag-step-label" data-i18n="ai_step_answer">Ответ</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- AI Features grid -->
+<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5 mb-8">
+<!-- Feature 1 -->
+<div class="glass rounded-3xl p-6 card-3d card-ai scroll-reveal group">
+<div class="card-shine"></div>
+<div class="card-border"></div>
+<div class="card-inner">
+<div class="icon-ai w-12 h-12 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
+<svg class="w-6 h-6" fill="none" stroke="#22d3ee" viewBox="0 0 24 24">
+<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+</svg>
+</div>
+<h3 class="text-base font-bold text-white mb-2" data-i18n="ai_f1_title">Умный поиск</h3>
+<p class="text-sm text-gray-400 leading-relaxed" data-i18n="ai_f1_desc">ИИ понимает смысл вопроса, а не просто слова. Находит нужный документ даже если вы не помните точное название.</p>
+</div>
+</div>
+<!-- Feature 2 -->
+<div class="glass rounded-3xl p-6 card-3d card-cyan scroll-reveal group" style="transition-delay:0.1s">
+<div class="card-shine"></div>
+<div class="card-border"></div>
+<div class="card-inner">
+<div class="icon-cyan w-12 h-12 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
+<svg class="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"/>
+</svg>
+</div>
+<h3 class="text-base font-bold text-white mb-2" data-i18n="ai_f2_title">База знаний</h3>
+<p class="text-sm text-gray-400 leading-relaxed" data-i18n="ai_f2_desc">Все ваши документы превращаются в единую базу знаний. ИИ отвечает на вопросы, ссылаясь на конкретные файлы.</p>
+</div>
+</div>
+<!-- Feature 3 -->
+<div class="glass rounded-3xl p-6 card-3d card-purple scroll-reveal group" style="transition-delay:0.2s">
+<div class="card-shine"></div>
+<div class="card-border"></div>
+<div class="card-inner">
+<div class="icon-purple w-12 h-12 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
+<svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+</svg>
+</div>
+<h3 class="text-base font-bold text-white mb-2" data-i18n="ai_f3_title">Генерация ответов</h3>
+<p class="text-sm text-gray-400 leading-relaxed" data-i18n="ai_f3_desc">ИИ читает документы и формулирует чёткие ответы. Вы получаете суть без необходимости читать сотни страниц.</p>
+</div>
+</div>
+<!-- Feature 4 -->
+<div class="glass rounded-3xl p-6 card-3d card-green scroll-reveal group">
+<div class="card-shine"></div>
+<div class="card-border"></div>
+<div class="card-inner">
+<div class="icon-green w-12 h-12 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
+<svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+</svg>
+</div>
+<h3 class="text-base font-bold text-white mb-2" data-i18n="ai_f4_title">Только ваши данные</h3>
+<p class="text-sm text-gray-400 leading-relaxed" data-i18n="ai_f4_desc">ИИ работает только с документами вашей компании. Никаких утечек — все данные остаются внутри системы.</p>
+</div>
+</div>
+<!-- Feature 5 -->
+<div class="glass rounded-3xl p-6 card-3d card-orange scroll-reveal group" style="transition-delay:0.1s">
+<div class="card-shine"></div>
+<div class="card-border"></div>
+<div class="card-inner">
+<div class="icon-orange w-12 h-12 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
+<svg class="w-6 h-6 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/>
+</svg>
+</div>
+<h3 class="text-base font-bold text-white mb-2" data-i18n="ai_f5_title">Анализ документов</h3>
+<p class="text-sm text-gray-400 leading-relaxed" data-i18n="ai_f5_desc">ИИ автоматически извлекает ключевые данные: суммы, даты, стороны договора. Экономит часы ручной работы.</p>
+</div>
+</div>
+<!-- Feature 6 -->
+<div class="glass rounded-3xl p-6 card-3d card-pink scroll-reveal group" style="transition-delay:0.2s">
+<div class="card-shine"></div>
+<div class="card-border"></div>
+<div class="card-inner">
+<div class="icon-pink w-12 h-12 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
+<svg class="w-6 h-6 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
+</svg>
+</div>
+<h3 class="text-base font-bold text-white mb-2" data-i18n="ai_f6_title">Диалог на вашем языке</h3>
+<p class="text-sm text-gray-400 leading-relaxed" data-i18n="ai_f6_desc">Общайтесь с ИИ на русском, таджикском или английском. Он понимает контекст и отвечает естественно.</p>
+</div>
+</div>
+</div>
+
+<!-- Bottom CTA card -->
+<div class="glass rounded-3xl p-6 md:p-8 card-3d card-ai scroll-reveal relative overflow-hidden">
+<div class="card-shine"></div>
+<div class="card-border"></div>
+<div class="card-inner">
+<div class="absolute -top-20 -right-20 w-60 h-60 rounded-full" style="background: radial-gradient(circle, rgba(6,182,212,0.15) 0%, transparent 70%); pointer-events:none;"></div>
+<div class="absolute -bottom-20 -left-20 w-60 h-60 rounded-full" style="background: radial-gradient(circle, rgba(139,92,246,0.15) 0%, transparent 70%); pointer-events:none;"></div>
+<div class="relative flex flex-col md:flex-row items-center justify-between gap-6">
+<div class="flex items-center gap-5">
+<div class="icon-ai w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0">
+<svg class="w-7 h-7" fill="none" stroke="#22d3ee" viewBox="0 0 24 24">
+<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+</svg>
+</div>
+<div>
+<h3 class="text-xl md:text-2xl font-black text-white mb-1" data-i18n="ai_cta_title">Попробуйте ИИ прямо сейчас</h3>
+<p class="text-sm text-gray-400" data-i18n="ai_cta_desc">Задайте вопрос по вашим документам — получите ответ за секунды со ссылками на источники.</p>
+</div>
+</div>
+<div class="flex flex-wrap gap-3">
+<a href="/login" class="btn-primary px-6 py-3 rounded-xl text-sm font-semibold shadow-2xl flex items-center gap-2 whitespace-nowrap">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+</svg>
+<span data-i18n="ai_cta_btn">Запустить ИИ</span>
+</a>
+<a href="#features" class="btn-outline px-6 py-3 rounded-xl text-sm font-semibold text-gray-300 flex items-center gap-2 whitespace-nowrap">
+<span data-i18n="ai_cta_learn">Узнать больше</span>
+</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
 <!-- Analytics Section -->
 <section id="analytics" class="relative py-24 overflow-hidden">
 <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -1495,6 +2165,10 @@ Live
 </div>
 </div>
 </section>
+
+
+
+
 <!-- ===================== GEOGRAPHY SECTION (NEW) ===================== -->
 <section id="geography" class="relative py-24 overflow-hidden">
 <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -1509,6 +2183,8 @@ Live
 </div>
 <div class="grid lg:grid-cols-5 gap-5 mb-6">
 <!-- Map card -->
+
+
 <div class="lg:col-span-3 glass rounded-3xl p-6 card-3d card-blue scroll-reveal">
 <div class="card-shine"></div>
 <div class="card-border"></div>
@@ -1537,68 +2213,58 @@ Live
 <stop offset="100%" stop-color="#ec4899"/>
 </linearGradient>
 </defs>
-<!-- Country outline (glow + main) -->
-<path d="M 42 128 C 55 95, 75 70, 100 62 C 118 56, 128 40, 150 32 C 172 24, 200 20, 224 28 C 244 34, 258 30, 272 38 C 288 47, 286 62, 274 72 C 262 82, 260 92, 272 98 C 292 106, 316 100, 336 112 C 362 126, 392 138, 396 162 C 399 180, 380 196, 358 204 C 340 211, 332 228, 314 238 C 292 250, 262 246, 240 238 C 222 232, 210 248, 190 252 C 168 256, 150 244, 132 238 C 112 232, 96 216, 84 196 C 70 174, 50 156, 42 128 Z"
+<!-- Country outline (glow + main) — точный контур Таджикистана, построен из реальных географических данных -->
+<path d="M 200.49 82.63 Q 182.81 97.53 156.53 93.49 Q 130.25 89.44 127.96 103.36 Q 125.67 117.28 151.85 115.41 Q 178.03 113.54 207.87 121.38 Q 237.70 129.22 283.35 125.56 Q 329.00 121.89 335.12 144.24 Q 341.24 166.58 349.18 164.15 Q 357.11 161.72 371.77 167.22 Q 386.44 172.71 385.60 182.10 Q 384.76 191.49 388.38 205.25 Q 392.00 219.02 367.10 218.98 Q 342.20 218.94 325.57 217.16 Q 308.94 215.38 293.90 226.19 Q 278.85 237.00 268.13 239.40 Q 257.42 241.79 249.01 246.87 Q 240.59 251.94 231.03 244.03 Q 221.47 236.13 223.72 215.84 Q 225.97 195.56 218.67 194.41 Q 211.37 193.26 213.99 185.88 Q 216.62 178.50 203.55 173.01 Q 190.48 167.52 180.08 175.92 Q 169.69 184.32 167.13 194.06 Q 164.58 203.80 160.86 207.34 Q 157.14 210.89 142.71 210.39 Q 128.28 209.89 120.49 220.94 Q 112.70 232.00 104.57 227.33 Q 96.44 222.67 78.96 230.43 Q 61.48 238.18 54.10 235.24 Q 46.73 232.30 60.30 207.86 Q 73.87 183.42 68.65 165.45 Q 63.44 147.47 45.72 141.71 Q 28.00 135.95 34.26 125.32 Q 40.52 114.69 60.68 115.82 Q 80.84 116.96 92.31 103.61 Q 103.79 90.27 111.46 74.77 Q 119.14 59.28 151.42 53.67 Q 183.71 48.06 178.67 59.26 Q 173.64 70.45 177.10 77.16 Q 180.56 83.87 190.52 83.25 Q 200.49 82.63 191.65 90.08 Z"
 fill="none" stroke="url(#tjStroke)" stroke-width="5" opacity="0.12"/>
-<path d="M 42 128 C 55 95, 75 70, 100 62 C 118 56, 128 40, 150 32 C 172 24, 200 20, 224 28 C 244 34, 258 30, 272 38 C 288 47, 286 62, 274 72 C 262 82, 260 92, 272 98 C 292 106, 316 100, 336 112 C 362 126, 392 138, 396 162 C 399 180, 380 196, 358 204 C 340 211, 332 228, 314 238 C 292 250, 262 246, 240 238 C 222 232, 210 248, 190 252 C 168 256, 150 244, 132 238 C 112 232, 96 216, 84 196 C 70 174, 50 156, 42 128 Z"
+<path d="M 200.49 82.63 Q 182.81 97.53 156.53 93.49 Q 130.25 89.44 127.96 103.36 Q 125.67 117.28 151.85 115.41 Q 178.03 113.54 207.87 121.38 Q 237.70 129.22 283.35 125.56 Q 329.00 121.89 335.12 144.24 Q 341.24 166.58 349.18 164.15 Q 357.11 161.72 371.77 167.22 Q 386.44 172.71 385.60 182.10 Q 384.76 191.49 388.38 205.25 Q 392.00 219.02 367.10 218.98 Q 342.20 218.94 325.57 217.16 Q 308.94 215.38 293.90 226.19 Q 278.85 237.00 268.13 239.40 Q 257.42 241.79 249.01 246.87 Q 240.59 251.94 231.03 244.03 Q 221.47 236.13 223.72 215.84 Q 225.97 195.56 218.67 194.41 Q 211.37 193.26 213.99 185.88 Q 216.62 178.50 203.55 173.01 Q 190.48 167.52 180.08 175.92 Q 169.69 184.32 167.13 194.06 Q 164.58 203.80 160.86 207.34 Q 157.14 210.89 142.71 210.39 Q 128.28 209.89 120.49 220.94 Q 112.70 232.00 104.57 227.33 Q 96.44 222.67 78.96 230.43 Q 61.48 238.18 54.10 235.24 Q 46.73 232.30 60.30 207.86 Q 73.87 183.42 68.65 165.45 Q 63.44 147.47 45.72 141.71 Q 28.00 135.95 34.26 125.32 Q 40.52 114.69 60.68 115.82 Q 80.84 116.96 92.31 103.61 Q 103.79 90.27 111.46 74.77 Q 119.14 59.28 151.42 53.67 Q 183.71 48.06 178.67 59.26 Q 173.64 70.45 177.10 77.16 Q 180.56 83.87 190.52 83.25 Q 200.49 82.63 191.65 90.08 Z"
 fill="url(#tjFill)" stroke="url(#tjStroke)" stroke-width="1.5" opacity="0.9"/>
 <!-- Delivery routes from Dushanbe -->
-<line class="route-line" x1="118" y1="138" x2="170" y2="48"  stroke="rgba(59,130,246,0.5)" stroke-width="1.2"/>
-<line class="route-line" x1="118" y1="138" x2="108" y2="78"  stroke="rgba(139,92,246,0.5)" stroke-width="1.2" style="animation-delay:.6s"/>
-<line class="route-line" x1="118" y1="138" x2="130" y2="196" stroke="rgba(16,185,129,0.5)" stroke-width="1.2" style="animation-delay:1.2s"/>
-<line class="route-line" x1="118" y1="138" x2="178" y2="200" stroke="rgba(245,158,11,0.5)" stroke-width="1.2" style="animation-delay:1.8s"/>
-<line class="route-line" x1="118" y1="138" x2="310" y2="215" stroke="rgba(236,72,153,0.5)" stroke-width="1.2" style="animation-delay:2.4s"/>
-<line class="route-line" x1="118" y1="138" x2="252" y2="44"  stroke="rgba(6,182,212,0.5)" stroke-width="1.2" style="animation-delay:3s"/>
+<line class="route-line" x1="92.9" y1="164.0" x2="133.4" y2="80.7"  stroke="rgba(59,130,246,0.5)" stroke-width="1.2"/>
+<line class="route-line" x1="92.9" y1="164.0" x2="182.1" y2="88.8"  stroke="rgba(139,92,246,0.5)" stroke-width="1.2" style="animation-delay:.6s"/>
+<line class="route-line" x1="92.9" y1="164.0" x2="92.6" y2="199.0" stroke="rgba(16,185,129,0.5)" stroke-width="1.2" style="animation-delay:1.2s"/>
+<line class="route-line" x1="92.9" y1="164.0" x2="141.2" y2="195.2" stroke="rgba(245,158,11,0.5)" stroke-width="1.2" style="animation-delay:1.8s"/>
+<line class="route-line" x1="92.9" y1="164.0" x2="226.4" y2="215.6" stroke="rgba(236,72,153,0.5)" stroke-width="1.2" style="animation-delay:2.4s"/>
 <!-- Flying documents -->
 <circle r="2.6" fill="#3b82f6">
-<animateMotion dur="3.6s" repeatCount="indefinite" path="M118 138 L170 48"/>
+<animateMotion dur="3.6s" repeatCount="indefinite" path="M92.9 164.0 L133.4 80.7"/>
 </circle>
 <circle r="2.6" fill="#ec4899">
-<animateMotion dur="5s" repeatCount="indefinite" path="M118 138 L310 215"/>
+<animateMotion dur="5s" repeatCount="indefinite" path="M92.9 164.0 L226.4 215.6"/>
 </circle>
 <circle r="2.2" fill="#10b981">
-<animateMotion dur="3s" repeatCount="indefinite" path="M118 138 L130 196"/>
+<animateMotion dur="3s" repeatCount="indefinite" path="M92.9 164.0 L92.6 199.0"/>
 </circle>
-<!-- Cities (small dots) -->
-<circle cx="78"  cy="132" r="2.4" fill="#60a5fa"/>
-<circle cx="108" cy="78"  r="2.4" fill="#a78bfa"/>
-<circle cx="162" cy="84"  r="2.4" fill="#a78bfa"/>
-<circle cx="236" cy="58"  r="2.4" fill="#22d3ee"/>
-<circle cx="205" cy="128" r="2.4" fill="#f59e0b"/>
-<circle cx="160" cy="182" r="2.4" fill="#34d399"/>
-<circle cx="148" cy="226" r="2.4" fill="#34d399"/>
-<circle cx="352" cy="170" r="2.4" fill="#f472b6"/>
 <!-- Major cities with ping -->
 <g>
-<circle class="map-ping" cx="170" cy="48" r="8" fill="rgba(59,130,246,0.35)"/>
-<circle cx="170" cy="48" r="3.4" fill="#3b82f6"/>
-<text x="170" y="34" text-anchor="middle" class="map-label">Худжанд</text>
+<circle class="map-ping" cx="133.4" cy="80.7" r="8" fill="rgba(59,130,246,0.35)"/>
+<circle cx="133.4" cy="80.7" r="3.4" fill="#3b82f6"/>
+<text x="133.4" y="67" text-anchor="middle" class="map-label">Худжанд</text>
 </g>
 <g>
-<circle class="map-ping" cx="252" cy="44" r="7" fill="rgba(6,182,212,0.3)" style="animation-delay:.8s"/>
-<circle cx="252" cy="44" r="3" fill="#06b6d4"/>
-<text x="252" y="30" text-anchor="middle" class="map-label">Исфара</text>
+<circle class="map-ping" cx="182.1" cy="88.8" r="7" fill="rgba(6,182,212,0.3)" style="animation-delay:.8s"/>
+<circle cx="182.1" cy="88.8" r="3" fill="#06b6d4"/>
+<text x="182.1" y="76" text-anchor="middle" class="map-label">Исфара</text>
 </g>
 <g>
-<circle class="map-ping" cx="130" cy="196" r="8" fill="rgba(16,185,129,0.3)" style="animation-delay:1.4s"/>
-<circle cx="130" cy="196" r="3.4" fill="#10b981"/>
-<text x="130" y="212" text-anchor="middle" class="map-label">Бохтар</text>
+<circle class="map-ping" cx="92.6" cy="199.0" r="8" fill="rgba(16,185,129,0.3)" style="animation-delay:1.4s"/>
+<circle cx="92.6" cy="199.0" r="3.4" fill="#10b981"/>
+<text x="92.6" y="215" text-anchor="middle" class="map-label">Бохтар</text>
 </g>
 <g>
-<circle class="map-ping" cx="178" cy="200" r="8" fill="rgba(245,158,11,0.3)" style="animation-delay:2s"/>
-<circle cx="178" cy="200" r="3.4" fill="#f59e0b"/>
-<text x="178" y="216" text-anchor="middle" class="map-label">Кулоб</text>
+<circle class="map-ping" cx="141.2" cy="195.2" r="8" fill="rgba(245,158,11,0.3)" style="animation-delay:2s"/>
+<circle cx="141.2" cy="195.2" r="3.4" fill="#f59e0b"/>
+<text x="141.2" y="211" text-anchor="middle" class="map-label">Кулоб</text>
 </g>
 <g>
-<circle class="map-ping" cx="310" cy="215" r="8" fill="rgba(236,72,153,0.3)" style="animation-delay:2.6s"/>
-<circle cx="310" cy="215" r="3.4" fill="#ec4899"/>
-<text x="310" y="203" text-anchor="middle" class="map-label">Хорог</text>
+<circle class="map-ping" cx="226.4" cy="215.6" r="8" fill="rgba(236,72,153,0.3)" style="animation-delay:2.6s"/>
+<circle cx="226.4" cy="215.6" r="3.4" fill="#ec4899"/>
+<text x="226.4" y="232" text-anchor="middle" class="map-label">Хорог</text>
 </g>
 <!-- Capital: Dushanbe -->
 <g>
-<circle class="map-ping" cx="118" cy="138" r="11" fill="rgba(59,130,246,0.35)" style="animation-duration:2s"/>
-<circle cx="118" cy="138" r="4.6" fill="#3b82f6" stroke="#bfdbfe" stroke-width="1.2"/>
-<text x="118" y="158" text-anchor="middle" class="map-label-capital">Душанбе</text>
+<circle class="map-ping" cx="92.9" cy="164.0" r="11" fill="rgba(59,130,246,0.35)" style="animation-duration:2s"/>
+<circle cx="92.9" cy="164.0" r="4.6" fill="#3b82f6" stroke="#bfdbfe" stroke-width="1.2"/>
+<text x="92.9" y="184" text-anchor="middle" class="map-label-capital">Душанбе</text>
 </g>
 </svg>
 <!-- Floating badge -->
@@ -1611,6 +2277,7 @@ fill="url(#tjFill)" stroke="url(#tjStroke)" stroke-width="1.5" opacity="0.9"/>
 </div>
 </div>
 </div>
+
 <!-- Regions list -->
 <div class="lg:col-span-2 flex flex-col gap-3 scroll-reveal" style="transition-delay:0.1s">
 <div class="region-card glass rounded-2xl p-4 flex items-center gap-4 flex-1">
@@ -1644,7 +2311,7 @@ fill="url(#tjFill)" stroke="url(#tjStroke)" stroke-width="1.5" opacity="0.9"/>
 </div>
 <div class="min-w-0">
 <div class="text-sm font-bold text-white mb-0.5" data-i18n="g3_title">Хатлонская область</div>
-<div class="text-xs text-gray-400 truncate" data-i18n="g3_desc">Бохтар, Кулоб, Левакант, Дангара</div>
+<div class="text-xs text-gray-400 truncate" data-i18n="g3_desc">Бохтер, Кулоб, Левакант, Дангара</div>
 </div>
 </div>
 <div class="region-card glass rounded-2xl p-4 flex items-center gap-4 flex-1">
@@ -1718,7 +2385,7 @@ fill="url(#tjFill)" stroke="url(#tjStroke)" stroke-width="1.5" opacity="0.9"/>
 <div class="flex flex-wrap gap-2">
 <span class="geo-chip inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full glass text-xs text-gray-300 font-medium"><span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>Душанбе</span>
 <span class="geo-chip inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full glass text-xs text-gray-300 font-medium"><span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span>Худжанд</span>
-<span class="geo-chip inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full glass text-xs text-gray-300 font-medium"><span class="w-1.5 h-1.5 rounded-full bg-green-400"></span>Бохтар</span>
+<span class="geo-chip inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full glass text-xs text-gray-300 font-medium"><span class="w-1.5 h-1.5 rounded-full bg-green-400"></span>Бохтер</span>
 <span class="geo-chip inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full glass text-xs text-gray-300 font-medium"><span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>Кулоб</span>
 <span class="geo-chip inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full glass text-xs text-gray-300 font-medium"><span class="w-1.5 h-1.5 rounded-full bg-pink-400"></span>Хорог</span>
 <span class="geo-chip inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full glass text-xs text-gray-300 font-medium"><span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>Вахдат</span>
@@ -1738,8 +2405,9 @@ fill="url(#tjFill)" stroke="url(#tjStroke)" stroke-width="1.5" opacity="0.9"/>
 <span class="geo-chip inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full glass text-xs text-gray-300 font-medium"><span class="w-1.5 h-1.5 rounded-full bg-red-400"></span>+ <span data-i18n="geo_more">вся страна</span></span>
 </div>
 </div>
-</div>
 </section>
+
+
 <!-- Security Section -->
 <section id="security" class="relative py-24 overflow-hidden">
 <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -1891,6 +2559,7 @@ fill="url(#tjFill)" stroke="url(#tjStroke)" stroke-width="1.5" opacity="0.9"/>
 <ul class="space-y-2 text-sm text-gray-400">
 <li><a href="#features" class="hover:text-blue-400 transition-colors" data-i18n="footer_features">Возможности</a></li>
 <li><a href="#faceid" class="hover:text-cyan-400 transition-colors" data-i18n="footer_faceid">Face ID</a></li>
+<li><a href="#ai" class="hover:text-cyan-400 transition-colors" data-i18n="footer_ai">ИИ / RAG</a></li>
 <li><a href="#departments" class="hover:text-pink-400 transition-colors" data-i18n="footer_departments">Отделы</a></li>
 <li><a href="#geography" class="hover:text-green-400 transition-colors" data-i18n="footer_geography">География</a></li>
 <li><a href="#analytics" class="hover:text-purple-400 transition-colors" data-i18n="footer_analytics">Аналитика</a></li>
@@ -2037,7 +2706,7 @@ card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0)';
 // ===== TRANSLATIONS =====
 const translations = {
 ru: {
-nav_features: "Возможности", nav_faceid: "Face ID", nav_departments: "Отделы", nav_geography: "География", nav_analytics: "Аналитика", nav_security: "Безопасность", nav_admin: "Админ", nav_contact: "Контакты", nav_start: "Начать",
+nav_features: "Возможности", nav_faceid: "Face ID", nav_ai: "ИИ", nav_departments: "Отделы", nav_geography: "География", nav_analytics: "Аналитика", nav_security: "Безопасность", nav_admin: "Админ", nav_contact: "Контакты", nav_start: "Начать",
 hero_badge: "Система нового поколения",
 hero_title_1: "Электронный документооборот", hero_title_2: "Просто", hero_title_3: "Быстро", hero_title_4: "Надёжно",
 hero_subtitle: "DocSign — современная платформа для работы с документами. Подписывайте, отправляйте и храните файлы в один клик. Просто и надёжно — для людей, чтобы работа стала легче.",
@@ -2057,6 +2726,38 @@ faceid_cta: "Подключить Face ID", faceid_report: "Смотреть о�
 faceid_accuracy: "точность", faceid_speed: "сек",
 faceid_demo_note: "Живая демонстрация",
 faceid_status_scanning: "Сканирование лица...", faceid_status_ok: "Личность подтверждена",
+ai_label: "Искусственный интеллект • RAG",
+ai_title: "Умный помощник в каждом документе",
+ai_subtitle: "ИИ на базе технологии RAG понимает ваши документы, находит нужную информацию за секунды и отвечает на вопросы — как живой эксперт.",
+ai_brain_title: "Нейросеть DocSign",
+ai_brain_sub: "RAG • Embeddings • LLM",
+ai_brain_online: "Онлайн",
+ai_stat_speed: "Ответ",
+ai_stat_accuracy: "Точность",
+ai_stat_uptime: "Работа",
+ai_rag_sub: "RAG • Поиск по базе знаний",
+ai_rag_active: "Активен",
+ai_step_query: "Запрос",
+ai_step_retrieve: "Поиск",
+ai_step_generate: "ИИ",
+ai_step_answer: "Ответ",
+ai_f1_title: "Умный поиск", ai_f1_desc: "ИИ понимает смысл вопроса, а не просто слова. Находит нужный документ даже если вы не помните точное название.",
+ai_f2_title: "База знаний", ai_f2_desc: "Все ваши документы превращаются в единую базу знаний. ИИ отвечает на вопросы, ссылаясь на конкретные файлы.",
+ai_f3_title: "Генерация ответов", ai_f3_desc: "ИИ читает документы и формулирует чёткие ответы. Вы получаете суть без необходимости читать сотни страниц.",
+ai_f4_title: "Только ваши данные", ai_f4_desc: "ИИ работает только с документами вашей компании. Никаких утечек — все данные остаются внутри системы.",
+ai_f5_title: "Анализ документов", ai_f5_desc: "ИИ автоматически извлекает ключевые данные: суммы, даты, стороны договора. Экономит часы ручной работы.",
+ai_f6_title: "Диалог на вашем языке", ai_f6_desc: "Общайтесь с ИИ на русском, таджикском или английском. Он понимает контекст и отвечает естественно.",
+ai_cta_title: "Попробуйте ИИ прямо сейчас",
+ai_cta_desc: "Задайте вопрос по вашим документам — получите ответ за секунды со ссылками на источники.",
+ai_cta_btn: "Запустить ИИ",
+ai_cta_learn: "Узнать больше",
+ai_demo_q1: "Какая сумма по договору №45 от 12 марта?",
+ai_demo_a1: "По договору №45 от 12 марта 2026 общая сумма составляет 245 000 сомони. Срок оплаты — до 30 апреля.",
+ai_demo_src_title: "Источники:",
+ai_demo_src1: "Договор №45 от 12.03.2026",
+ai_demo_src2: "Счёт-фактура №128",
+ai_demo_q2: "Кто подписал акт выполненных работ?",
+ai_demo_a2: "Акт выполненных работ подписан директором Аминовым А. и главным бухгалтером Рахимовой М. 15 августа 2026.",
 analytics_label: "Аналитика", analytics_title: "Всё под контролем", analytics_subtitle: "Следите за регистрациями, документами и активностью в реальном времени",
 analysis_reg_title: "Регистрации", analysis_reg_desc: "пользователей зарегистрировано",
 analysis_doc_title: "Документы", analysis_doc_desc: "документов отправлено",
@@ -2096,7 +2797,7 @@ geo_map_title: "Карта покрытия",
 geo_badge1: "Покрытие 100%", geo_badge2: "Доставка за секунды",
 g1_title: "Душанбе", g1_desc: "Столица • все районы города",
 g2_title: "Согдийская область", g2_desc: "Худжанд, Истаравшан, Исфара, Канибадам, Пенджикент",
-g3_title: "Хатлонская область", g3_desc: "Бохтар, Кулоб, Левакант, Дангара",
+g3_title: "Хатлонская область", g3_desc: "Бохтер, Кулоб, Левакант, Дангара",
 g4_title: "ГБАО", g4_desc: "Хорог, Мургаб, Рушан, Ишкашим",
 g5_title: "Районы республиканского подчинения", g5_desc: "Вахдат, Турсунзода, Рудаки, Гиссар",
 geo_stat1: "регионов", geo_stat2: "районов", geo_stat4: "городов", geo_stat3: "покрытие",
@@ -2112,12 +2813,12 @@ admin_contact: "Написать в Telegram",
 contact_title: "Готовы начать?", contact_subtitle: "Присоединяйтесь к компаниям, которые уже используют DocSign",
 contact_cta: "Начать бесплатно", contact_tg: "Связаться в Telegram",
 footer_desc: "Платформа электронного документооборота, которая облегчает работу людей в Таджикистане.",
-footer_product: "Продукт", footer_features: "Возможности", footer_faceid: "Face ID", footer_departments: "Отделы", footer_geography: "География", footer_analytics: "Аналитика", footer_security: "Безопасность",
+footer_product: "Продукт", footer_features: "Возможности", footer_faceid: "Face ID", footer_ai: "ИИ / RAG", footer_departments: "Отделы", footer_geography: "География", footer_analytics: "Аналитика", footer_security: "Безопасность",
 footer_company: "Компания", footer_admin: "Администратор", footer_contact: "Контакты",
 footer_rights: "Все права защищены.", footer_made: "Сделано в Таджикистане"
 },
 en: {
-nav_features: "Features", nav_faceid: "Face ID", nav_departments: "Departments", nav_geography: "Geography", nav_analytics: "Analytics", nav_security: "Security", nav_admin: "Admin", nav_contact: "Contact", nav_start: "Get Started",
+nav_features: "Features", nav_faceid: "Face ID", nav_ai: "AI", nav_departments: "Departments", nav_geography: "Geography", nav_analytics: "Analytics", nav_security: "Security", nav_admin: "Admin", nav_contact: "Contact", nav_start: "Get Started",
 hero_badge: "Next-generation system",
 hero_title_1: "Electronic document management", hero_title_2: "Simple", hero_title_3: "Fast", hero_title_4: "Reliable",
 hero_subtitle: "DocSign is a modern platform for working with documents. Sign, send and store files in one click. Simple and reliable — for people, to make work easier.",
@@ -2137,6 +2838,38 @@ faceid_cta: "Enable Face ID", faceid_report: "View reports",
 faceid_accuracy: "accuracy", faceid_speed: "sec",
 faceid_demo_note: "Live demo",
 faceid_status_scanning: "Scanning face...", faceid_status_ok: "Identity verified",
+ai_label: "Artificial Intelligence • RAG",
+ai_title: "Smart assistant in every document",
+ai_subtitle: "AI powered by RAG technology understands your documents, finds the right information in seconds and answers questions — like a live expert.",
+ai_brain_title: "DocSign Neural Network",
+ai_brain_sub: "RAG • Embeddings • LLM",
+ai_brain_online: "Online",
+ai_stat_speed: "Response",
+ai_stat_accuracy: "Accuracy",
+ai_stat_uptime: "Uptime",
+ai_rag_sub: "RAG • Knowledge base search",
+ai_rag_active: "Active",
+ai_step_query: "Query",
+ai_step_retrieve: "Search",
+ai_step_generate: "AI",
+ai_step_answer: "Answer",
+ai_f1_title: "Smart Search", ai_f1_desc: "AI understands the meaning of the question, not just words. Finds the right document even if you don't remember the exact title.",
+ai_f2_title: "Knowledge Base", ai_f2_desc: "All your documents become a single knowledge base. AI answers questions by referencing specific files.",
+ai_f3_title: "Answer Generation", ai_f3_desc: "AI reads documents and formulates clear answers. You get the essence without having to read hundreds of pages.",
+ai_f4_title: "Only your data", ai_f4_desc: "AI works only with your company's documents. No leaks — all data stays inside the system.",
+ai_f5_title: "Document Analysis", ai_f5_desc: "AI automatically extracts key data: amounts, dates, contract parties. Saves hours of manual work.",
+ai_f6_title: "Dialog in your language", ai_f6_desc: "Chat with AI in Russian, Tajik or English. It understands context and responds naturally.",
+ai_cta_title: "Try AI right now",
+ai_cta_desc: "Ask a question about your documents — get an answer in seconds with links to sources.",
+ai_cta_btn: "Launch AI",
+ai_cta_learn: "Learn more",
+ai_demo_q1: "What is the amount for contract #45 dated March 12?",
+ai_demo_a1: "Contract #45 dated March 12, 2026 has a total amount of 245,000 somoni. Payment deadline — by April 30.",
+ai_demo_src_title: "Sources:",
+ai_demo_src1: "Contract #45 dated 12.03.2026",
+ai_demo_src2: "Invoice #128",
+ai_demo_q2: "Who signed the certificate of work performed?",
+ai_demo_a2: "The certificate of work performed was signed by Director Aminov A. and Chief Accountant Rakhimova M. on August 15, 2026.",
 analytics_label: "Analytics", analytics_title: "Everything under control", analytics_subtitle: "Track registrations, documents and activity in real time",
 analysis_reg_title: "Registrations", analysis_reg_desc: "users registered",
 analysis_doc_title: "Documents", analysis_doc_desc: "documents sent",
@@ -2192,12 +2925,12 @@ admin_contact: "Write on Telegram",
 contact_title: "Ready to start?", contact_subtitle: "Join companies already using DocSign",
 contact_cta: "Start for free", contact_tg: "Contact on Telegram",
 footer_desc: "Electronic document management platform that makes work easier for people in Tajikistan.",
-footer_product: "Product", footer_features: "Features", footer_faceid: "Face ID", footer_departments: "Departments", footer_geography: "Geography", footer_analytics: "Analytics", footer_security: "Security",
+footer_product: "Product", footer_features: "Features", footer_faceid: "Face ID", footer_ai: "AI / RAG", footer_departments: "Departments", footer_geography: "Geography", footer_analytics: "Analytics", footer_security: "Security",
 footer_company: "Company", footer_admin: "Administrator", footer_contact: "Contact",
 footer_rights: "All rights reserved.", footer_made: "Made in Tajikistan"
 },
 tj: {
-nav_features: "Имкониятҳо", nav_faceid: "Face ID", nav_departments: "Шуъбаҳо", nav_geography: "Ҷуғрофия", nav_analytics: "Таҳлил", nav_security: "Амният", nav_admin: "Админ", nav_contact: "Тамос", nav_start: "Оғоз",
+nav_features: "Имкониятҳо", nav_faceid: "Face ID", nav_ai: "Зеҳн", nav_departments: "Шуъбаҳо", nav_geography: "Ҷуғрофия", nav_analytics: "Таҳлил", nav_security: "Амният", nav_admin: "Админ", nav_contact: "Тамос", nav_start: "Оғоз",
 hero_badge: "Системаи насли нав",
 hero_title_1: "Идоракунии электронии ҳуҷҷатҳо", hero_title_2: "Содда", hero_title_3: "Тез", hero_title_4: "Боэътимод",
 hero_subtitle: "DocSign — платформаи муосир барои кор бо ҳуҷҷатҳо. Имзо кунед, фиристед ва файлҳоро дар як клик нигоҳ доред. Содда ва боэътимод — барои одамон, то кор осонтар шавад.",
@@ -2217,6 +2950,38 @@ faceid_cta: "Face ID-ро пайваст кунед", faceid_report: "Ҳисоб
 faceid_accuracy: "дақиқӣ", faceid_speed: "сония",
 faceid_demo_note: "Намоиши зинда",
 faceid_status_scanning: "Сканкунии чеҳра...", faceid_status_ok: "Шахсият тасдиқ шуд",
+ai_label: "Зеҳни сунъӣ • RAG",
+ai_title: "Ёвари ҳушманд дар ҳар як ҳуҷҷат",
+ai_subtitle: "Зеҳни сунъӣ дар асоси технологияи RAG ҳуҷҷатҳои шуморо мефаҳмад, маълумоти лозимиро дар чанд сония меёбад ва ба саволҳо ҷавоб медиҳад — мисли мутахассиси зинда.",
+ai_brain_title: "Шабакаи асабии DocSign",
+ai_brain_sub: "RAG • Embeddings • LLM",
+ai_brain_online: "Онлайн",
+ai_stat_speed: "Ҷавоб",
+ai_stat_accuracy: "Дақиқӣ",
+ai_stat_uptime: "Кор",
+ai_rag_sub: "RAG • Ҷустуҷӯ дар пойгоҳи дониш",
+ai_rag_active: "Фаъол",
+ai_step_query: "Дархост",
+ai_step_retrieve: "Ҷустуҷӯ",
+ai_step_generate: "Зеҳн",
+ai_step_answer: "Ҷавоб",
+ai_f1_title: "Ҷустуҷӯи ҳушманд", ai_f1_desc: "Зеҳни сунъӣ маънои саволро мефаҳмад, на танҳо калимаҳоро. Ҳуҷҷати лозимиро меёбад, ҳатто агар номи дақиқро дар ёд надошта бошед.",
+ai_f2_title: "Пойгоҳи дониш", ai_f2_desc: "Ҳамаи ҳуҷҷатҳои шумо ба пойгоҳи ягонаи дониш табдил меёбанд. Зеҳни сунъӣ ба саволҳо бо истинод ба файлҳои мушаххас ҷавоб медиҳад.",
+ai_f3_title: "Эҷоди ҷавобҳо", ai_f3_desc: "Зеҳни сунъӣ ҳуҷҷатҳоро мехонад ва ҷавобҳои равшан медиҳад. Шумо моҳиятро бе хондани садҳо саҳифа мегиред.",
+ai_f4_title: "Танҳо маълумоти шумо", ai_f4_desc: "Зеҳни сунъӣ танҳо бо ҳуҷҷатҳои ширкати шумо кор мекунад. Ҳеҷ гуна ихроҷ — ҳамаи маълумот дар дохили система мемонад.",
+ai_f5_title: "Таҳлили ҳуҷҷатҳо", ai_f5_desc: "Зеҳни сунъӣ ба таври худкор маълумоти калидиро мегирад: маблағҳо, санаҳо, тарафҳои шартнома. Соатҳои кори дастиро сарфа мекунад.",
+ai_f6_title: "Муколама бо забони шумо", ai_f6_desc: "Бо зеҳни сунъӣ бо забони русӣ, тоҷикӣ ё англисӣ сӯҳбат кунед. Вазъиятро мефаҳмад ва табиӣ ҷавоб медиҳад.",
+ai_cta_title: "Зеҳни сунъиро ҳозир санҷед",
+ai_cta_desc: "Дар бораи ҳуҷҷатҳои худ савол диҳед — дар чанд сония ҷавоб бо истинод ба манбаъҳо гиред.",
+ai_cta_btn: "Зеҳнро оғоз кунед",
+ai_cta_learn: "Бештар донед",
+ai_demo_q1: "Маблағи шартномаи №45 аз 12 март чанд аст?",
+ai_demo_a1: "Мувофиқи шартномаи №45 аз 12 марти 2026 маблағи умумӣ 245 000 сомонӣ аст. Мӯҳлати пардохт — то 30 апрел.",
+ai_demo_src_title: "Манбаъҳо:",
+ai_demo_src1: "Шартномаи №45 аз 12.03.2026",
+ai_demo_src2: "Ҳисоб-фактураи №128",
+ai_demo_q2: "Кӣ далолатномаи иҷрои корро имзо кард?",
+ai_demo_a2: "Далолатномаи иҷрои кор аз ҷониби директор Аминов А. ва сармуҳосиб Раҳимова М. 15 августи 2026 имзо шудааст.",
 analytics_label: "Таҳлил", analytics_title: "Ҳама чиз зери назорат", analytics_subtitle: "Бақайдгириҳо, ҳуҷҷатҳо ва фаъолиятро дар вақти воқеӣ пайгирӣ кунед",
 analysis_reg_title: "Бақайдгириҳо", analysis_reg_desc: "корбарон ба қайд гирифта шуданд",
 analysis_doc_title: "Ҳуҷҷатҳо", analysis_doc_desc: "ҳуҷҷатҳо фиристода шуданд",
@@ -2272,7 +3037,7 @@ admin_contact: "Дар Telegram нависед",
 contact_title: "Омодаед оғоз кунед?", contact_subtitle: "Ба ширкатҳое, ки аллакай DocSign-ро истифода мебаранд, ҳамроҳ шавед",
 contact_cta: "Ройгон оғоз кунед", contact_tg: "Дар Telegram тамос гиред",
 footer_desc: "Платформаи идоракунии электронии ҳуҷҷатҳо, ки кори одамонро дар Тоҷикистон осон мекунад.",
-footer_product: "Маҳсулот", footer_features: "Имкониятҳо", footer_faceid: "Face ID", footer_departments: "Шуъбаҳо", footer_geography: "Ҷуғрофия", footer_analytics: "Таҳлил", footer_security: "Амният",
+footer_product: "Маҳсулот", footer_features: "Имкониятҳо", footer_faceid: "Face ID", footer_ai: "Зеҳн / RAG", footer_departments: "Шуъбаҳо", footer_geography: "Ҷуғрофия", footer_analytics: "Таҳлил", footer_security: "Амният",
 footer_company: "Ширкат", footer_admin: "Маъмур", footer_contact: "Тамос",
 footer_rights: "Ҳамаи ҳуқуқҳо ҳифз шудаанд.", footer_made: "Дар Тоҷикистон сохта шудааст"
 }
@@ -2292,7 +3057,7 @@ if (desktopSelect) desktopSelect.value = lang;
 if (mobileSelect) mobileSelect.value = lang;
 document.documentElement.lang = lang;
 localStorage.setItem('docsign_lang', lang);
-// Уведомляем динамические элементы (Face ID статус)
+// Уведомляем динамические элементы (Face ID статус + RAG демо)
 document.dispatchEvent(new CustomEvent('docsign-lang-change'));
 }
 const langSelectDesktop = document.getElementById('lang-select');
@@ -2552,6 +3317,179 @@ isVerified = !isVerified;
 renderFaceStatus();
 }, 4200);
 document.addEventListener('docsign-lang-change', renderFaceStatus);
+})();
+
+// ===== RAG DEMO: animated chat cycle =====
+(function() {
+const messagesEl = document.getElementById('ragMessages');
+if (!messagesEl) return;
+
+const scenarios = [
+{
+qKey: 'ai_demo_q1',
+aKey: 'ai_demo_a1',
+src: [
+{ key: 'ai_demo_src1', score: '98%' },
+{ key: 'ai_demo_src2', score: '94%' }
+]
+},
+{
+qKey: 'ai_demo_q2',
+aKey: 'ai_demo_a2',
+src: [
+{ key: 'ai_demo_src1', score: '96%' }
+]
+}
+];
+
+let currentScenario = 0;
+let pipelineStep = 0;
+
+function getTr() {
+return translations[currentLang] || translations.ru;
+}
+
+function clearMessages() {
+messagesEl.innerHTML = '';
+}
+
+function addMessage(type, content, sources) {
+const tr = getTr();
+const msg = document.createElement('div');
+msg.className = `rag-msg rag-msg-${type}`;
+
+if (type === 'user') {
+msg.innerHTML = `
+<div class="rag-msg-bubble">${content}</div>
+<div class="rag-msg-avatar">
+<svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+</svg>
+</div>
+`;
+} else {
+let sourcesHtml = '';
+if (sources && sources.length > 0) {
+sourcesHtml = `
+<div class="rag-sources">
+<div class="rag-sources-title">
+<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+<span>${tr.ai_demo_src_title}</span>
+</div>
+${sources.map(s => `
+<div class="rag-source-item">
+<div class="rag-source-icon">
+<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+</div>
+<span class="rag-source-name">${tr[s.key]}</span>
+<span class="rag-source-score">${s.score}</span>
+</div>
+`).join('')}
+</div>
+`;
+}
+msg.innerHTML = `
+<div class="rag-msg-avatar">
+<svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+</svg>
+</div>
+<div class="rag-msg-bubble">
+<div>${content}</div>
+${sourcesHtml}
+</div>
+`;
+}
+messagesEl.appendChild(msg);
+return msg;
+}
+
+function addTypingIndicator() {
+const msg = document.createElement('div');
+msg.className = 'rag-msg rag-msg-ai';
+msg.id = 'ragTyping';
+msg.innerHTML = `
+<div class="rag-msg-avatar">
+<svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+</svg>
+</div>
+<div class="rag-msg-bubble">
+<div class="rag-typing"><span></span><span></span><span></span></div>
+</div>
+`;
+messagesEl.appendChild(msg);
+return msg;
+}
+
+function setActivePipelineStep(step) {
+document.querySelectorAll('.rag-step').forEach(el => {
+const s = parseInt(el.dataset.step);
+if (s <= step) el.classList.add('active');
+else el.classList.remove('active');
+});
+document.querySelectorAll('.rag-step-arrow').forEach((el, i) => {
+if (i < step - 1) el.classList.add('active');
+else el.classList.remove('active');
+});
+}
+
+async function runScenario() {
+const tr = getTr();
+const scenario = scenarios[currentScenario];
+
+clearMessages();
+setActivePipelineStep(0);
+
+// Step 1: user query
+await sleep(300);
+setActivePipelineStep(1);
+addMessage('user', tr[scenario.qKey]);
+
+// Step 2: retrieve
+await sleep(1200);
+setActivePipelineStep(2);
+
+// Step 3: generate (typing)
+await sleep(900);
+setActivePipelineStep(3);
+const typing = addTypingIndicator();
+
+// Step 4: answer
+await sleep(1400);
+typing.remove();
+addMessage('ai', tr[scenario.aKey], scenario.src);
+
+// Wait before next scenario
+await sleep(5000);
+currentScenario = (currentScenario + 1) % scenarios.length;
+runScenario();
+}
+
+function sleep(ms) {
+return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// Start demo when section is visible
+const aiSection = document.getElementById('ai');
+let demoStarted = false;
+const aiObserver = new IntersectionObserver((entries) => {
+entries.forEach(entry => {
+if (entry.isIntersecting && !demoStarted) {
+demoStarted = true;
+runScenario();
+}
+});
+}, { threshold: 0.3 });
+if (aiSection) aiObserver.observe(aiSection);
+
+// Restart demo on language change
+document.addEventListener('docsign-lang-change', () => {
+if (demoStarted) {
+currentScenario = 0;
+runScenario();
+}
+});
 })();
 </script>
 </body>
