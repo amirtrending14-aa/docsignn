@@ -11,11 +11,10 @@ class ActivityController extends Controller
 {
     public function index(Request $request)
     {
-        $query = DocumentLog::with(['user', 'document'])  ;
+        $query = DocumentLog::with(['user', 'document']);
 
-     
         if ($request->filled('action')) {
-            $query->where('action', $request->action)  ;
+            $query->where('action', $request->input('action'));
         }
 
         if ($request->filled('user_id')) {
@@ -31,8 +30,17 @@ class ActivityController extends Controller
         }
 
         if ($request->filled('search')) {
-            $query->where(function($q) use ($request) {
-                $q->where('description', 'like', '%' . $request->search . '%');
+            $search = trim($request->input('search'));
+            $query->where(function ($q) use ($search) {
+                $q->where('description', 'like', "%{$search}%")
+                    ->orWhereHas('document', function ($documentQuery) use ($search) {
+                        $documentQuery->where('title', 'like', "%{$search}%")
+                            ->orWhere('number', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('user', function ($userQuery) use ($search) {
+                        $userQuery->where('name', 'like', "%{$search}%")
+                            ->orWhere('email', 'like', "%{$search}%");
+                    });
             });
         }
 
@@ -40,19 +48,30 @@ class ActivityController extends Controller
 
         $totalActivities = DocumentLog::count();
 
-        $todayLogins = DocumentLog::where('action', 'like', '%вход%')
-            ->orWhere('action', 'like', '%login%')
-            ->whereDate('created_at', Carbon::today())
+        $todayLogins = DocumentLog::whereDate('created_at', Carbon::today())
+            ->where(function ($query) {
+                $query->where('action', 'like', '%вход%')
+                    ->orWhere('action', 'like', '%login%');
+            })
             ->count();
 
         $documentActions = DocumentLog::whereIn('action', [
-            'создание', 'обновление', 'удаление', 'подписание',
-            'create', 'update', 'delete', 'sign', 'signed'
+            'создание', 'обновление', 'удаление', 'подписание', 'отправка',
+            'отклонение', 'экспорт', 'скачивание', 'анализ ИИ', 'генерация ИИ',
+            'CREATED', 'RECEIVED', 'UPDATED', 'DELETED', 'SIGNED', 'REJECTED',
+            'create', 'update', 'delete', 'sign', 'signed', 'document_created',
+            'document_updated', 'document_deleted', 'document_signed',
         ])->count();
 
         $activeUsersCount = User::count();
 
         $users = User::orderBy('name')->get();
+        $actions = DocumentLog::query()
+            ->whereNotNull('action')
+            ->where('action', '!=', '')
+            ->distinct()
+            ->orderBy('action')
+            ->pluck('action');
 
         return view('superadmin.activity', compact(
             'activities',
@@ -60,7 +79,8 @@ class ActivityController extends Controller
             'totalActivities',
             'todayLogins',
             'documentActions',
-            'activeUsersCount'
+            'activeUsersCount',
+            'actions'
         ));
     }
 }

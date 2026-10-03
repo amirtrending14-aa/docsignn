@@ -1,5 +1,5 @@
 <?php
-
+use App\Http\Controllers\ArchivistController; 
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\AIChatController;
 use App\Http\Controllers\ContractController;
@@ -8,6 +8,7 @@ use App\Http\Controllers\DocumentRecipientController;
 use App\Http\Controllers\SuperAdminController;
 use App\Http\Controllers\SuperAdmin\UserController as SuperAdminUserController;
 use App\Http\Controllers\SuperAdmin\CompanyController as SuperAdminCompanyController;
+use App\Http\Controllers\SuperAdmin\DocumentController as SuperAdminDocumentController;
 use App\Http\Controllers\Admin\AvatarController;
 use App\Http\Controllers\StrelController;
 use App\Http\Controllers\CompanyController;
@@ -245,10 +246,13 @@ Route::middleware(['auth', 'last.seen'])->group(function () {
     // COMMENTS (🔒 IDOR Protection)
     // ============================================
     Route::post('/comments', [DocumentCommentController::class, 'store'])
+        ->middleware('auth')
         ->name('comments.store');
     Route::get('/documents/{document}/comments', [DocumentCommentController::class, 'index'])
+        ->middleware('auth')
         ->name('comments.index');
     Route::delete('/comments/{comment}', [DocumentCommentController::class, 'destroy'])
+        ->middleware('auth')
         ->name('comments.destroy');
 
     // ============================================
@@ -326,22 +330,7 @@ Route::middleware(['auth', 'superadmin', 'last.seen'])
         // ============================================
         // USERS MANAGEMENT
         // ============================================
-        Route::get('users/no-companies', [SuperAdminUserController::class, 'noCompanies'])
-            ->name('users.no-companies');
-
-        Route::get('users/export', [SuperAdminUserController::class, 'exportUsers'])
-            ->name('users.export');
-
-        Route::post('users/bulk-delete', [SuperAdminUserController::class, 'bulkDelete'])
-            ->name('users.bulk');
-
-        Route::resource('users', SuperAdminUserController::class);
-
-        Route::post('users/{user}/reset-password', [SuperAdminUserController::class, 'resetPassword'])
-            ->name('users.reset-password');
-
-        Route::post('users/{user}/toggle-status', [SuperAdminUserController::class, 'toggleStatus'])
-            ->name('users.toggle-status');
+        Route::resource('users', SuperAdminUserController::class)->except(['show']);
 
         Route::get('users/{user}/activity', [SuperAdminUserController::class, 'userActivity'])
             ->name('users.activity');
@@ -350,6 +339,11 @@ Route::middleware(['auth', 'superadmin', 'last.seen'])
         // COMPANIES MANAGEMENT
         // ============================================
         Route::resource('companies', SuperAdminCompanyController::class);
+
+        // ============================================
+        // DOCUMENTS MANAGEMENT
+        // ============================================
+        Route::resource('documents', SuperAdminDocumentController::class)->except(['show']);
 
         // ============================================
         // ACTIVITY LOGS
@@ -577,6 +571,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/ai-chat/download/{id}/{format}', [ChatController::class, 'download'])
         ->where('format', 'docx|pdf')
         ->name('ai.download');
-
+Route::get('/ai-archivist', [ArchivistController::class, 'page'])->name('archivist.page');
+Route::post('/ai-archivist/chat', [ArchivistController::class, 'chat'])->name('archivist.chat');
     Route::delete('/ai-chat/{id}', [ChatController::class, 'destroy'])->name('ai.chat.delete');
 });

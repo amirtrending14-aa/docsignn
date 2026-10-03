@@ -1,1438 +1,1230 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>DocSign — Электронный документооборот</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>DocSign — Электронный документооборот</title>
+{{-- ✅ Favicon DocSign --}}
+<link rel="icon" type="image/png" href="{{ asset('img/dss.png') }}">
+<link rel="apple-touch-icon" href="{{ asset('img/dss.png') }}">
+<link rel="shortcut icon" href="{{ asset('img/dss.png') }}">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/inter@5.0.0/index.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/jetbrains-mono@5.0.0/index.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+<meta name="csrf-token" content="{{ csrf_token() }}">
+<script>
+(function(){
+try {
+const theme = localStorage.getItem('docsign_theme') || 'dark';
+document.documentElement.dataset.theme = theme;
+const s = JSON.parse(localStorage.getItem('docsign_ambient') || '{}');
+const rgb = s.color || '79,140,255';
+const intensity = s.intensity || 80;
+const spread = s.spread || 60;
+const mode = s.mode || 'solid';
+const lang = localStorage.getItem('docsign_lang') || 'ru';
+document.documentElement.style.setProperty('--glow', rgb);
+document.documentElement.style.setProperty('--glow-intensity', intensity);
+document.documentElement.style.setProperty('--glow-spread', spread);
+document.documentElement.style.setProperty('--glow-mode', mode);
+document.documentElement.lang = lang;
+} catch(e) {}
+})();
+</script>
+<style>
+    /* ============================================================ */
+    /* ===== TABLER-STYLE DESIGN TOKENS ===== */
+    /* ============================================================ */
+    :root{
+        --font-sans: 'Inter', 'Segoe UI', Arial, sans-serif;
+        --font-mono: 'JetBrains Mono', 'SFMono-Regular', Consolas, monospace;
+        /* Tabler: маленький радиус, плоские тени, видимые рамки */
+        --radius: 4px;
+        --bg-0:#12161c;
+        --bg-1:#1a2028;
+        --bg-2:#202730;
+        --bg-3:#273039;
+        --line:rgba(255,255,255,0.08);
+        --text:#e6eaf0;
+        --muted:#9aa5b1;
+        --accent:#206bc4;
+        --glow: 109, 135, 255;
+        --glow-soft: rgba(var(--glow),0.06);
+        --glow-intensity: 14;
+        --glow-spread: 12;
+        --shadow-soft: 0 4px 16px rgba(0,0,0,0.18);
+        --shadow-card: 0 1px 2px rgba(0,0,0,0.25);
+    }
+    html[data-theme="light"]{
+        --bg-0:#f2f5f9;
+        --bg-1:#ffffff;
+        --bg-2:#f4f6fa;
+        --bg-3:#e9edf2;
+        --line:rgba(98,105,118,0.16);
+        --text:#1e293b;
+        --muted:#626b76;
+        --shadow-soft: 0 4px 16px rgba(15,23,42,0.06);
+        --shadow-card: 0 1px 2px rgba(15,23,42,0.04);
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;height:100%}
+    html { scroll-behavior:smooth; }
+    body{
+        font-family:var(--font-sans);
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
+        background: var(--bg-0);
+        color:var(--text);
+        min-height:100vh;
+        overflow-x:hidden;
+        transition: background 0.3s ease, color 0.3s ease;
+        letter-spacing: -0.01em;
+        font-size: 14px;
+    }
+    body, button, input, select, textarea, code, pre, kbd, samp {
+        font-family: var(--font-sans);
+    }
+    h1,h2,h3,h4,h5,h6 {
+        font-family: var(--font-sans);
+        letter-spacing: -0.02em;
+        margin: 0;
+        font-weight: 600;
+    }
+    p, span, div, label, small, strong, b, a {
+        font-family: inherit;
+    }
 
-    {{-- ✅ ДОБАВЛЕНО: Favicon DocSign --}}
-    <link rel="icon" type="image/png" href="{{ asset('img/dss.png') }}">
-    <link rel="apple-touch-icon" href="{{ asset('img/dss.png') }}">
-    <link rel="shortcut icon" href="{{ asset('img/dss.png') }}">
+    .theme-switcher{display:flex;align-items:center;gap:4px;}
+    .theme-btn{width:34px;height:34px;padding:0;}
+    .theme-btn svg{width:15px;height:15px;}
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/inter@5.0.0/index.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/jetbrains-mono@5.0.0/index.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-
-    <script>
-        (function(){
-            try {
-                const theme = localStorage.getItem('docsign_theme') || 'dark';
-                document.documentElement.dataset.theme = theme;
-                const s = JSON.parse(localStorage.getItem('docsign_ambient') || '{}');
-                const rgb = s.color || '79,140,255';
-                const intensity = s.intensity || 80;
-                const spread = s.spread || 60;
-                const mode = s.mode || 'solid';
-                const lang = localStorage.getItem('docsign_lang') || 'ru';
-                document.documentElement.style.setProperty('--glow', rgb);
-                document.documentElement.style.setProperty('--glow-intensity', intensity);
-                document.documentElement.style.setProperty('--glow-spread', spread);
-                document.documentElement.style.setProperty('--glow-mode', mode);
-                document.documentElement.lang = lang;
-            } catch(e) {}
-        })();
-    </script>
-
-    <style>
-        :root{
-          --bg-0:#06070b;
-          --bg-1:#0b0d14;
-          --bg-2:#10131c;
-          --bg-3:#161a26;
-          --line:rgba(255,255,255,0.06);
-          --text:#e7ecf3;
-          --muted:#8892a6;
-          --accent:#4f8cff;
-          --glow: 79,140,255;
-          --glow-soft: rgba(var(--glow),0.18);
-          --radius:14px;
-          --glow-intensity: 80;
-          --glow-spread: 60;
-        }
-                html[data-theme="light"]{
-                    --bg-0:#f4f7fb;
-                    --bg-1:#ffffff;
-                    --bg-2:#eef2f7;
-                    --bg-3:#e5eaf1;
-                    --line:rgba(15,23,42,0.12);
-                    --text:#172033;
-                    --muted:#64748b;
-                }
-        *{box-sizing:border-box}
-        html,body{margin:0;padding:0;height:100%}
-        body{
-          font-family:'Inter',system-ui,sans-serif;
-          background:
-            radial-gradient(1200px 600px at 80% -10%, rgba(var(--glow),0.18), transparent 60%),
-            radial-gradient(900px 500px at -10% 110%, rgba(var(--glow),0.12), transparent 60%),
-            var(--bg-0);
-          color:var(--text);
-          min-height:100vh;
-          overflow-x:hidden;
-          transition: background 0.8s ease;
-        }
-        body::before{
-          content:"";
-          position:fixed; inset:0;
-          background-image:
-            linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
-          background-size: 42px 42px;
-          mask-image: radial-gradient(ellipse at 50% 30%, black 40%, transparent 80%);
-          pointer-events:none;
-          z-index:0;
-        }
-                html[data-theme="light"] body{
-                    background:
-                        radial-gradient(1200px 600px at 80% -10%, rgba(var(--glow),0.12), transparent 60%),
-                        radial-gradient(900px 500px at -10% 110%, rgba(var(--glow),0.08), transparent 60%),
-                        var(--bg-0) !important;
-                }
-                html[data-theme="light"] body::before{
-                    background-image:
-                        linear-gradient(rgba(15,23,42,0.035) 1px, transparent 1px),
-                        linear-gradient(90deg, rgba(15,23,42,0.035) 1px, transparent 1px);
-                }
-                html[data-theme="light"] .topbar,
-                html[data-theme="light"] .mobile-search-bar{
-                    background:rgba(255,255,255,0.88);
-                }
-                html[data-theme="light"] .sidebar,
-                html[data-theme="light"] .card,
-                html[data-theme="light"] .panel,
-                html[data-theme="light"] .signer{
-                    background:linear-gradient(180deg, rgba(255,255,255,0.96), rgba(248,250,252,0.9));
-                }
-                html[data-theme="light"] .nav,
-                html[data-theme="light"] .search,
-                html[data-theme="light"] .icon-btn,
-                html[data-theme="light"] .btn,
-                html[data-theme="light"] .tabs,
-                html[data-theme="light"] .storage,
-                html[data-theme="light"] .mobile-search,
-                html[data-theme="light"] .mobile-search-bar-form{
-                    background:rgba(15,23,42,0.045);
-                }
-                html[data-theme="light"] .lang-menu,
-                html[data-theme="light"] .amb-panel,
-                html[data-theme="light"] .profile-menu,
-                html[data-theme="light"] .notif-dropdown{
-                    background:linear-gradient(180deg, rgba(255,255,255,0.99), rgba(241,245,249,0.99));
-                    box-shadow:0 20px 50px rgba(15,23,42,0.16), 0 0 30px rgba(var(--glow),0.12);
-                }
-                html[data-theme="light"] .amb-panel::before{ background:#fff; }
-                html[data-theme="light"] .nav button.active,
-                html[data-theme="light"] .side-item.active,
-                html[data-theme="light"] .mode.active,
-                html[data-theme="light"] .tabs button.active{
-                    color:#172033;
-                }
-                html[data-theme="light"] .sidebar .side-item{ color:var(--muted); }
-                html[data-theme="light"] .sidebar .side-item:hover,
-                html[data-theme="light"] .sidebar .side-item.active{ color:var(--text); }
-                html[data-theme="light"] .sidebar .side-title{ color:#64748b; }
-                html[data-theme="light"] .search input,
-                html[data-theme="light"] .mobile-search input,
-                html[data-theme="light"] .mobile-search-bar-form input{ color:var(--text); }
-                html[data-theme="light"] .btn.primary{ color:#fff; }
-
-                .theme-switcher{display:flex;align-items:center;gap:4px;}
-                .theme-btn{width:34px;height:34px;padding:0;}
-                .theme-btn.active{color:var(--text);border-color:rgba(var(--glow),0.5);box-shadow:0 0 14px rgba(var(--glow),0.2);}
-                .theme-btn svg{width:15px;height:15px;}
-
-        /* ===== AMBIENT LIGHT STRIP ===== */
-        .ambient{
-          position:fixed;
-          top:64px; left:0; right:0;
-          height:2px;
-          background: linear-gradient(90deg,
+    /* ===== AMBIENT LIGHT STRIP (фирменная фишка, оставлена) ===== */
+    .ambient{
+        position:fixed;
+        top:56px; left:0; right:0;
+        height:1px;
+        background: linear-gradient(90deg,
             transparent 0%,
-            rgba(var(--glow),0.0) 5%,
-            rgba(var(--glow),0.9) 30%,
-            rgba(var(--glow),1) 50%,
-            rgba(var(--glow),0.9) 70%,
-            rgba(var(--glow),0.0) 95%,
+            rgba(var(--glow),0.15) 20%,
+            rgba(var(--glow),0.65) 50%,
+            rgba(var(--glow),0.15) 80%,
             transparent 100%);
-          box-shadow:
-            0 0 10px rgba(var(--glow),0.8),
-            0 0 24px rgba(var(--glow),0.6),
-            0 0 60px rgba(var(--glow),0.35),
-            0 0 120px rgba(var(--glow),0.2);
-          z-index:50;
-          animation: pulseGlow 4s ease-in-out infinite;
-          transition: all 0.4s ease;
-        }
-        .ambient::after{
-          content:"";
-          position:absolute;
-          top:2px; left:0; right:0;
-          height:80px;
-          background: linear-gradient(180deg, rgba(var(--glow),0.25), transparent);
-          filter: blur(10px);
-          pointer-events:none;
-        }
-        @keyframes pulseGlow{
-          0%,100%{ opacity:0.95 }
-          50%{ opacity:1 }
-        }
-        @keyframes breatheGlow{
-          0%,100%{ opacity:0.4; transform:scaleY(0.8) }
-          50%{ opacity:1; transform:scaleY(1.2) }
-        }
-        @keyframes pulseFast{
-          0%,100%{ opacity:0.6 }
-          50%{ opacity:1 }
-        }
+        box-shadow: none;
+        z-index:50;
+        animation: pulseGlow 5s ease-in-out infinite;
+        transition: all 0.4s ease;
+        opacity: 0.6;
+    }
+    .ambient::after{
+        content:"";
+        position:absolute;
+        top:1px; left:0; right:0;
+        height:20px;
+        background: linear-gradient(180deg, rgba(var(--glow),0.08), transparent);
+        filter: blur(8px);
+        pointer-events:none;
+    }
+    @keyframes pulseGlow{ 0%,100%{ opacity:0.85 } 50%{ opacity:1 } }
+    @keyframes breatheGlow{ 0%,100%{ opacity:0.4; transform:scaleY(0.8) } 50%{ opacity:1; transform:scaleY(1.2) } }
+    @keyframes pulseFast{ 0%,100%{ opacity:0.6 } 50%{ opacity:1 } }
 
-        /* ===== TOP BAR ===== */
-        .topbar{
-          position:sticky; top:0; z-index:40;
-          display:flex; align-items:center; gap:16px;
-          padding:12px 22px;
-          background: linear-gradient(180deg, rgba(10,12,18,0.85), rgba(10,12,18,0.55));
-          backdrop-filter: blur(14px);
-          -webkit-backdrop-filter: blur(14px);
-          border-bottom:1px solid var(--line);
-        }
+    /* ===== TOP BAR (Tabler navbar: сплошной, без blur) ===== */
+    .topbar{
+        position:sticky; top:0; z-index:40;
+        display:flex; align-items:center; gap:16px;
+        padding:10px 22px;
+        min-height:56px;
+        background: var(--bg-1);
+        border-bottom:1px solid var(--line);
+        box-shadow: none;
+    }
 
-        /* ===== БУРГЕР-МЕНЮ (только для мобильных) ===== */
-        .burger-btn{
-          display:none;
-          width:38px; height:38px;
-          border-radius:10px;
-          background: rgba(255,255,255,0.04);
-          border:1px solid var(--line);
-          cursor:pointer;
-          position:relative;
-          transition:all .25s ease;
-          flex-shrink:0;
-        }
-        .burger-btn:hover{
-          border-color:rgba(var(--glow),0.4);
-          box-shadow:0 0 14px rgba(var(--glow),0.25);
-        }
-        .burger-btn span{
-          position:absolute;
-          left:50%;
-          width:20px;
-          height:2px;
-          background:var(--text);
-          border-radius:2px;
-          transform:translateX(-50%);
-          transition:all .3s ease;
-        }
-        .burger-btn span:nth-child(1){ top:12px; }
-        .burger-btn span:nth-child(2){ top:18px; }
-        .burger-btn span:nth-child(3){ top:24px; }
-        .burger-btn.active span:nth-child(1){
-          top:18px;
-          transform:translateX(-50%) rotate(45deg);
-        }
-        .burger-btn.active span:nth-child(2){
-          opacity:0;
-        }
-        .burger-btn.active span:nth-child(3){
-          top:18px;
-          transform:translateX(-50%) rotate(-45deg);
-        }
+    /* ===== БУРГЕР-МЕНЮ ===== */
+    .burger-btn{
+        display:none;
+        width:38px; height:38px;
+        border-radius:var(--radius);
+        background: transparent;
+        border:1px solid var(--line);
+        cursor:pointer;
+        position:relative;
+        transition:all .2s ease;
+        flex-shrink:0;
+    }
+    .burger-btn:hover{ background: var(--bg-2); }
+    .burger-btn span{
+        position:absolute;
+        left:50%;
+        width:18px;
+        height:2px;
+        background:var(--text);
+        border-radius:2px;
+        transform:translateX(-50%);
+        transition:all .3s ease;
+    }
+    .burger-btn span:nth-child(1){ top:12px; }
+    .burger-btn span:nth-child(2){ top:18px; }
+    .burger-btn span:nth-child(3){ top:24px; }
+    .burger-btn.active span:nth-child(1){ top:18px; transform:translateX(-50%) rotate(45deg); }
+    .burger-btn.active span:nth-child(2){ opacity:0; }
+    .burger-btn.active span:nth-child(3){ top:18px; transform:translateX(-50%) rotate(-45deg); }
 
-        /* ===== OVERLAY (затемнение при открытом меню) ===== */
-        /* ВАЖНО: оверлей затемняет ТОЛЬКО область справа от сайдбара (left = ширина сайдбара),
-           поэтому он физически не может перекрывать кнопки в меню и блокировать клики */
-        .sidebar-overlay{
-          display:none;
-          position:fixed;
-          top:0; right:0; bottom:0;
-          left:280px;
-          background:rgba(0,0,0,0.6);
-          backdrop-filter:blur(4px);
-          z-index:999;
-          opacity:0;
-          transition:opacity .3s ease;
-          pointer-events:none;
-        }
-        .sidebar-overlay.active{
-          display:block;
-          opacity:1;
-          pointer-events:auto;
-        }
+    .sidebar-overlay{
+        display:none;
+        position:fixed;
+        top:0; right:0; bottom:0;
+        left:280px;
+        background:rgba(0,0,0,0.5);
+        z-index:999;
+        opacity:0;
+        transition:opacity .3s ease;
+        pointer-events:none;
+    }
+    .sidebar-overlay.active{ display:block; opacity:1; pointer-events:auto; }
 
-        .brand{
-          display:flex; align-items:center; gap:10px;
-          font-weight:700; letter-spacing:1px; font-size:15px;
-        }
-        .brand-dot{
-          width:32px; height:32px; border-radius:9px;
-          background: linear-gradient(135deg, rgba(var(--glow),0.95), rgba(var(--glow),0.4));
-          box-shadow: 0 0 18px rgba(var(--glow),0.6), inset 0 0 10px rgba(255,255,255,0.2);
-          display:grid; place-items:center;
-          transition: all .6s ease;
-          position:relative;
-        }
-        .brand-dot svg{width:18px;height:18px;color:#0a0d14}
-        .brand small{
-          display:block; font-size:9px; letter-spacing:3px;
-          color:var(--muted); font-weight:500; margin-top:1px;
-        }
-        .nav{
-          display:flex; gap:4px; margin-left:18px;
-          background: rgba(255,255,255,0.03);
-          border:1px solid var(--line);
-          padding:4px; border-radius:12px;
-        }
-        .nav button{
-          appearance:none; border:0; background:transparent;
-          color:var(--muted); font:600 13px 'Inter',sans-serif;
-          padding:8px 14px; border-radius:9px; cursor:pointer;
-          display:flex; align-items:center; gap:8px;
-          transition: all .25s ease;
-        }
-        .nav button svg{width:15px;height:15px}
-        .nav button:hover{color:var(--text); background:rgba(255,255,255,0.04)}
-        .nav button.active{
-          color:#fff;
-          background: linear-gradient(180deg, rgba(var(--glow),0.25), rgba(var(--glow),0.08));
-          box-shadow: inset 0 0 0 1px rgba(var(--glow),0.35), 0 0 18px rgba(var(--glow),0.25);
-        }
-        .spacer{flex:1}
-        .search{
-          display:flex; align-items:center; gap:8px;
-          background: rgba(255,255,255,0.04);
-          border:1px solid var(--line);
-          padding:8px 12px; border-radius:10px;
-          min-width:260px;
-        }
-        .search input{
-          background:transparent; border:0; outline:0; color:var(--text);
-          font:13px 'Inter',sans-serif; width:100%;
-        }
-        .search svg{width:14px;height:14px;color:var(--muted)}
-        .search kbd{
-          font-family:'JetBrains Mono',monospace; font-size:10px;
-          padding:2px 6px; border-radius:5px;
-          background:rgba(255,255,255,0.06); color:var(--muted);
-          border:1px solid var(--line);
-        }
-        .icon-btn{
-          width:38px; height:38px; border-radius:10px;
-          background: rgba(255,255,255,0.04);
-          border:1px solid var(--line);
-          display:grid; place-items:center; cursor:pointer;
-          color:var(--muted); transition:all .25s ease;
-          position:relative;
-        }
-        .icon-btn:hover{color:var(--text); border-color:rgba(var(--glow),0.4); box-shadow:0 0 14px rgba(var(--glow),0.25)}
-        .icon-btn svg{width:16px;height:16px}
-        .icon-btn .dot{
-          position:absolute; top:8px; right:9px;
-          width:7px; height:7px; border-radius:50%;
-          background: rgba(var(--glow),1);
-          box-shadow: 0 0 8px rgba(var(--glow),0.9);
-        }
-        .avatar{
-          width:38px; height:38px; border-radius:10px;
-          background: linear-gradient(135deg, rgba(var(--glow),0.5), rgba(var(--glow),0.15));
-          border:1px solid rgba(var(--glow),0.4);
-          display:grid; place-items:center; font-weight:700; font-size:13px;
-          cursor:pointer;
-          box-shadow: 0 0 14px rgba(var(--glow),0.25);
-          transition: all .6s ease;
-        }
+    .brand{
+        display:flex; align-items:center; gap:10px;
+        font-weight:700; letter-spacing:0.5px; font-size:15px;
+    }
+    .brand-dot{
+        width:32px; height:32px; border-radius:var(--radius);
+        background: rgba(var(--glow),0.15);
+        border:1px solid rgba(var(--glow),0.3);
+        display:grid; place-items:center;
+        transition: all .3s ease;
+        position:relative;
+    }
+    .brand-dot svg{width:18px;height:18px;color:rgb(var(--glow))}
+    .brand small{
+        display:block; font-size:9px; letter-spacing:3px;
+        color:var(--muted); font-weight:500; margin-top:1px;
+    }
 
-        /* ===== LANGUAGE SWITCHER ===== */
-        .lang-switcher{ position:relative; }
-        .lang-btn{
-          display:flex; align-items:center; gap:8px;
-          padding:8px 12px;
-          background: rgba(255,255,255,0.04);
-          border:1px solid var(--line);
-          border-radius:10px;
-          color:var(--text);
-          font:600 12px 'Inter',sans-serif;
-          cursor:pointer;
-          transition:all .25s ease;
-          min-width:90px;
-          justify-content:space-between;
-        }
-        .lang-btn:hover{
-          border-color:rgba(var(--glow),0.4);
-          box-shadow:0 0 14px rgba(var(--glow),0.2);
-          color:#fff;
-        }
-        .lang-btn .flag{ font-size:16px; line-height:1; }
-        .lang-btn .arrow{
-          width:12px; height:12px;
-          transition: transform .25s ease;
-        }
-        .lang-btn.open .arrow{ transform: rotate(180deg); }
-        .lang-menu{
-          position:absolute;
-          top:calc(100% + 8px);
-          right:0;
-          min-width:180px;
-          background: linear-gradient(180deg, rgba(18,21,30,0.98), rgba(13,15,22,0.98));
-          backdrop-filter: blur(20px);
-          border:1px solid var(--line);
-          border-radius:12px;
-          padding:6px;
-          box-shadow: 0 20px 50px rgba(0,0,0,0.5), 0 0 30px rgba(var(--glow),0.15);
-          opacity:0;
-          visibility:hidden;
-          transform: translateY(-8px);
-          transition: all .25s cubic-bezier(.2,.9,.3,1.2);
-          z-index:1000;
-        }
-        .lang-menu.open{
-          opacity:1;
-          visibility:visible;
-          transform: translateY(0);
-        }
-        .lang-menu-title{
-          font-size:10px;
-          letter-spacing:1.5px;
-          color:var(--muted);
-          text-transform:uppercase;
-          padding:8px 10px 6px;
-          font-weight:600;
-        }
-        .lang-option{
-          display:flex; align-items:center; gap:10px;
-          padding:9px 10px;
-          border-radius:8px;
-          cursor:pointer;
-          color:var(--text);
-          font-size:13px;
-          font-weight:500;
-          transition: all .2s ease;
-          border:1px solid transparent;
-        }
-        .lang-option:hover{
-          background:rgba(255,255,255,0.05);
-          color:#fff;
-        }
-        .lang-option.active{
-          background: linear-gradient(90deg, rgba(var(--glow),0.2), transparent);
-          border-color: rgba(var(--glow),0.3);
-          color:#fff;
-          box-shadow: inset 0 0 0 1px rgba(var(--glow),0.25);
-        }
-        .lang-option .flag{ font-size:18px; line-height:1; }
-        .lang-option .name{ flex:1; }
-        .lang-option .check{
-          width:14px; height:14px;
-          color:rgba(var(--glow),1);
-          opacity:0;
-          transition: opacity .2s ease;
-        }
-        .lang-option.active .check{ opacity:1; }
+    /* ===== NAV (Tabler navbar-nav: плоско, активный = accent) ===== */
+    .nav{
+        display:flex; gap:2px; margin-left:12px;
+        background: transparent;
+        border:none;
+        padding:0;
+    }
+    .nav button{
+        appearance:none; border:0; background:transparent;
+        color:var(--muted); font:500 13px 'Inter',sans-serif;
+        padding:8px 12px; border-radius:var(--radius); cursor:pointer;
+        display:flex; align-items:center; gap:8px;
+        transition: all .15s ease;
+    }
+    .nav button svg{width:15px;height:15px}
+    .nav button:hover{color:var(--text); background:rgba(128,139,155,0.10)}
+    .nav button.active{
+        color:rgb(var(--glow));
+        background: rgba(var(--glow),0.10);
+        font-weight:600;
+        box-shadow: none;
+    }
+    .spacer{flex:1}
 
-        /* ===== AMBIENT BUTTON IN TOPBAR ===== */
-        .amb-btn{
-          position:relative;
-          display:flex; align-items:center; gap:8px;
-          padding:8px 14px;
-          background: linear-gradient(135deg, rgba(var(--glow),0.15), rgba(var(--glow),0.05));
-          border:1px solid rgba(var(--glow),0.35);
-          border-radius:10px;
-          color:rgba(var(--glow),1);
-          font:600 12px 'Inter',sans-serif;
-          cursor:pointer;
-          transition:all .3s ease;
-          overflow:hidden;
-        }
-        .amb-btn::before{
-          content:"";
-          position:absolute; inset:0;
-          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-          transform: translateX(-100%);
-          transition: transform 0.6s ease;
-        }
-        .amb-btn:hover::before{ transform: translateX(100%); }
-        .amb-btn:hover{
-          border-color:rgba(var(--glow),0.7);
-          box-shadow: 0 0 20px rgba(var(--glow),0.4), inset 0 0 12px rgba(var(--glow),0.15);
-          transform: translateY(-1px);
-        }
-        .amb-btn svg{ width:16px; height:16px; }
-        .amb-btn .amb-swatch{
-          width:14px; height:14px; border-radius:50%;
-          background: rgb(var(--glow));
-          box-shadow: 0 0 10px rgba(var(--glow),0.9), inset 0 0 4px rgba(255,255,255,0.4);
-          animation: swatchPulse 2s ease-in-out infinite;
-        }
-        @keyframes swatchPulse{
-          0%,100%{ box-shadow: 0 0 8px rgba(var(--glow),0.7), inset 0 0 4px rgba(255,255,255,0.4); }
-          50%{ box-shadow: 0 0 16px rgba(var(--glow),1), inset 0 0 6px rgba(255,255,255,0.6); }
-        }
+    /* ===== SEARCH (Tabler input) ===== */
+    .search{
+        display:flex; align-items:center; gap:8px;
+        background: var(--bg-2);
+        border:1px solid var(--line);
+        padding:7px 12px; border-radius:var(--radius);
+        min-width:260px;
+        transition: border-color .15s ease;
+    }
+    .search:focus-within{ border-color: rgba(var(--glow),0.5); }
+    .search input{
+        background:transparent; border:0; outline:0; color:var(--text);
+        font:13px 'Inter',sans-serif; width:100%;
+    }
+    .search svg{width:14px;height:14px;color:var(--muted)}
+    .search kbd{
+        font-family:'JetBrains Mono',monospace; font-size:10px;
+        padding:2px 6px; border-radius:var(--radius);
+        background:rgba(128,139,155,0.12); color:var(--muted);
+        border:1px solid var(--line);
+    }
 
-        /* ===== AMBIENT PANEL (DROPDOWN FROM TOPBAR) ===== */
-        .amb-panel{
-          position:absolute;
-          top:calc(100% + 12px);
-          right:0;
-          width:340px;
-          background: linear-gradient(180deg, rgba(18,21,30,0.98), rgba(13,15,22,0.98));
-          backdrop-filter: blur(24px);
-          -webkit-backdrop-filter: blur(24px);
-          border:1px solid var(--line);
-          border-radius:18px;
-          padding:20px;
-          box-shadow: 0 30px 80px rgba(0,0,0,0.6), 0 0 50px rgba(var(--glow),0.18);
-          opacity:0;
-          visibility:hidden;
-          transform: translateY(-10px) scale(0.96);
-          transform-origin: top right;
-          transition: all .3s cubic-bezier(.2,.9,.3,1.2);
-          z-index:1000;
-        }
-        .amb-panel::before{
-          content:"";
-          position:absolute;
-          top:-6px; right:30px;
-          width:12px; height:12px;
-          background: rgba(18,21,30,0.98);
-          border-left:1px solid var(--line);
-          border-top:1px solid var(--line);
-          transform: rotate(45deg);
-        }
-        .amb-panel.open{
-          opacity:1;
-          visibility:visible;
-          transform: translateY(0) scale(1);
-        }
-        .amb-panel-head{
-          display:flex; align-items:center; justify-content:space-between;
-          margin-bottom:4px;
-        }
-        .amb-panel h4{
-          margin:0; font-size:15px; font-weight:700;
-          display:flex; align-items:center; gap:8px;
-        }
-        .amb-panel h4 .live-dot{
-          width:8px; height:8px; border-radius:50%;
-          background: rgb(var(--glow));
-          box-shadow: 0 0 10px rgba(var(--glow),1);
-          animation: swatchPulse 1.5s ease-in-out infinite;
-        }
-        .amb-panel p{
-          margin:0 0 16px; font-size:11px; color:var(--muted);
-        }
-        .amb-preview{
-          height:70px; border-radius:12px;
-          background: linear-gradient(90deg, rgba(var(--glow),0.1), rgba(var(--glow),0.6), rgba(var(--glow),0.1));
-          border:1px solid rgba(var(--glow),0.3);
-          box-shadow: inset 0 0 30px rgba(var(--glow),0.3), 0 0 20px rgba(var(--glow),0.2);
-          margin-bottom:16px;
-          position:relative; overflow:hidden;
-          transition: all .4s ease;
-        }
-        .amb-preview::before{
-          content:""; position:absolute; inset:0;
-          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
-          animation: sweep 2.5s ease-in-out infinite;
-        }
-        @keyframes sweep{
-          0%{transform:translateX(-100%)}
-          100%{transform:translateX(100%)}
-        }
-        .amb-preview-label{
-          position:absolute;
-          bottom:8px; left:12px;
-          font-size:10px;
-          font-family:'JetBrains Mono',monospace;
-          color:rgba(255,255,255,0.85);
-          letter-spacing:1px;
-          text-shadow: 0 1px 4px rgba(0,0,0,0.5);
-          z-index:2;
-        }
-        .colors{
-          display:flex;
-          flex-wrap:wrap;
-          gap:8px;
-          margin-bottom:16px;
-        }
-        .color{
-          width:38px;
-          height:38px;
-          flex:0 0 auto;
-          border-radius:10px; cursor:pointer;
-          border:2px solid transparent;
-          position:relative;
-          transition: all .25s cubic-bezier(.2,.9,.3,1.2);
-          box-shadow: 0 4px 14px rgba(0,0,0,0.3);
-        }
-        .color:hover{
-          transform:translateY(-3px) scale(1.08);
-          box-shadow: 0 8px 20px currentColor;
-        }
-        .color.active{
-          border-color:#fff;
-          box-shadow: 0 0 20px currentColor, 0 0 0 2px rgba(255,255,255,0.2);
-          transform: scale(1.05);
-        }
-        .color.active::after{
-          content:"✓"; position:absolute; inset:0;
-          display:grid; place-items:center; color:#fff; font-weight:700;
-          text-shadow:0 1px 3px rgba(0,0,0,0.7);
-          font-size:14px;
-        }
-        .intensity{display:flex; flex-direction:column; gap:6px}
-        .intensity label{
-          font-size:11px; color:var(--muted);
-          display:flex; justify-content:space-between;
-          font-weight:500;
-        }
-        .intensity label span:last-child{
-          color:rgba(var(--glow),1);
-          font-family:'JetBrains Mono',monospace;
-          font-weight:700;
-        }
-        .intensity input[type=range]{
-          -webkit-appearance:none; appearance:none;
-          width:100%; height:6px; border-radius:3px;
-          background: linear-gradient(90deg, rgba(var(--glow),0.3), rgba(var(--glow),1));
-          outline:none;
-          transition: all .3s ease;
-        }
-        .intensity input[type=range]::-webkit-slider-thumb{
-          -webkit-appearance:none; appearance:none;
-          width:18px; height:18px; border-radius:50%;
-          background:#fff; cursor:pointer;
-          box-shadow: 0 0 12px rgba(var(--glow),0.9), 0 2px 8px rgba(0,0,0,0.4);
-          border:2px solid rgba(var(--glow),0.7);
-          transition: all .2s ease;
-        }
-        .intensity input[type=range]::-webkit-slider-thumb:hover{
-          transform: scale(1.2);
-        }
-        .intensity input[type=range]::-moz-range-thumb{
-          width:18px; height:18px; border-radius:50%;
-          background:#fff; cursor:pointer;
-          box-shadow: 0 0 12px rgba(var(--glow),0.9);
-          border:2px solid rgba(var(--glow),0.7);
-        }
-        .modes{
-          display:grid;
-          grid-template-columns:repeat(3,1fr);
-          gap:6px;
-          margin-top:14px;
-        }
-        .mode{
-          padding:10px 8px; border-radius:10px;
-          font-size:11px; font-weight:600;
-          background:rgba(255,255,255,0.03);
-          border:1px solid var(--line);
-          color:var(--muted); cursor:pointer; text-align:center;
-          transition:all .25s ease;
-          display:flex; align-items:center; justify-content:center; gap:6px;
-        }
-        .mode svg{ width:12px; height:12px; }
-        .mode:hover{ color:var(--text); border-color:rgba(var(--glow),0.3); }
-        .mode.active{
-          color:#fff;
-          background: linear-gradient(135deg, rgba(var(--glow),0.25), rgba(var(--glow),0.08));
-          border-color:rgba(var(--glow),0.5);
-          box-shadow: inset 0 0 0 1px rgba(var(--glow),0.3), 0 0 14px rgba(var(--glow),0.2);
-        }
-        .amb-footer{
-          margin-top:14px;
-          padding-top:12px;
-          border-top:1px solid var(--line);
-          display:flex; justify-content:space-between; align-items:center;
-          font-size:10px; color:var(--muted);
-        }
-        .amb-footer .saved{
-          display:flex; align-items:center; gap:5px;
-          color:#4cd982;
-          opacity:0;
-          transition: opacity .3s ease;
-        }
-        .amb-footer .saved.show{ opacity:1; }
+    /* ===== ICON BTN ===== */
+    .icon-btn{
+        width:38px; height:38px; border-radius:var(--radius);
+        background: transparent;
+        border:1px solid var(--line);
+        display:grid; place-items:center; cursor:pointer;
+        color:var(--muted); transition:all .15s ease;
+        position:relative;
+    }
+    .icon-btn:hover{color:var(--text); background:var(--bg-2); border-color:rgba(128,139,155,0.35)}
+    .icon-btn svg{width:16px;height:16px}
+    .icon-btn .dot{
+        position:absolute; top:8px; right:9px;
+        width:7px; height:7px; border-radius:50%;
+        background: rgba(var(--glow),1);
+        box-shadow: 0 0 8px rgba(var(--glow),0.9);
+    }
+    .avatar{
+        width:38px; height:38px; border-radius:var(--radius);
+        background: var(--bg-2);
+        border:1px solid var(--line);
+        display:grid; place-items:center; font-weight:700; font-size:13px;
+        cursor:pointer;
+        transition: all .15s ease;
+    }
 
-        /* ===== MOBILE SEARCH TOGGLE (topbar icon + dropdown bar) ===== */
-        .mobile-search-btn{ display:none; }
-        .mobile-search-bar{
-          display:none;
-          position:fixed;
-          top:64px; left:0; right:0;
-          z-index:38;
-          padding:10px 14px;
-          background: linear-gradient(180deg, rgba(10,12,18,0.97), rgba(10,12,18,0.9));
-          backdrop-filter: blur(14px);
-          -webkit-backdrop-filter: blur(14px);
-          border-bottom:1px solid var(--line);
-          opacity:0;
-          transform: translateY(-8px);
-          transition: opacity .2s ease, transform .2s ease;
-        }
-        .mobile-search-bar.active{
-          display:block;
-          opacity:1;
-          transform: translateY(0);
-        }
-        .mobile-search-bar-form{
-          display:flex; align-items:center; gap:8px;
-          background: rgba(255,255,255,0.05);
-          border:1px solid var(--line);
-          padding:9px 12px; border-radius:10px;
-        }
-        .mobile-search-bar-form input{
-          background:transparent; border:0; outline:0; color:var(--text);
-          font:13px 'Inter',sans-serif; width:100%;
-        }
-        .mobile-search-bar-form svg{ width:14px; height:14px; color:var(--muted); flex-shrink:0; }
+    /* ===== LANGUAGE SWITCHER ===== */
+    .lang-switcher{ position:relative; }
+    .lang-btn{
+        display:flex; align-items:center; gap:8px;
+        padding:7px 12px;
+        background: transparent;
+        border:1px solid var(--line);
+        border-radius:var(--radius);
+        color:var(--text);
+        font:500 12px 'Inter',sans-serif;
+        cursor:pointer;
+        transition:all .15s ease;
+        min-width:90px;
+        justify-content:space-between;
+    }
+    .lang-btn:hover{ background:var(--bg-2); border-color:rgba(128,139,155,0.35); }
+    .lang-btn .flag{ font-size:16px; line-height:1; }
+    .lang-btn .arrow{ width:12px; height:12px; transition: transform .2s ease; }
+    .lang-btn.open .arrow{ transform: rotate(180deg); }
+    .lang-menu{
+        position:absolute;
+        top:calc(100% + 6px);
+        right:0;
+        min-width:180px;
+        background: var(--bg-1);
+        border:1px solid var(--line);
+        border-radius:var(--radius);
+        padding:4px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+        opacity:0;
+        visibility:hidden;
+        transform: translateY(-6px);
+        transition: all .2s ease;
+        z-index:1000;
+    }
+    .lang-menu.open{ opacity:1; visibility:visible; transform: translateY(0); }
+    .lang-menu-title{
+        font-size:10px;
+        letter-spacing:1px;
+        color:var(--muted);
+        text-transform:uppercase;
+        padding:8px 10px 6px;
+        font-weight:600;
+    }
+    .lang-option{
+        display:flex; align-items:center; gap:10px;
+        padding:8px 10px;
+        border-radius:var(--radius);
+        cursor:pointer;
+        color:var(--text);
+        font-size:13px;
+        font-weight:500;
+        transition: all .15s ease;
+        border:1px solid transparent;
+    }
+    .lang-option:hover{ background:rgba(128,139,155,0.10); }
+    .lang-option.active{
+        background: rgba(var(--glow),0.10);
+        color:rgb(var(--glow));
+        font-weight:600;
+    }
+    .lang-option .flag{ font-size:18px; line-height:1; }
+    .lang-option .name{ flex:1; }
+    .lang-option .check{
+        width:14px; height:14px;
+        color:rgb(var(--glow));
+        opacity:0;
+        transition: opacity .15s ease;
+    }
+    .lang-option.active .check{ opacity:1; }
 
-        /* ===== LAYOUT ===== */
-        .layout{
-          position:relative; z-index:1;
-          display:grid; grid-template-columns: 240px 1fr;
-          gap:20px; padding:22px;
-          max-width:1600px; margin:0 auto;
-        }
-        .sidebar{
-          background: linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.01));
-          border:1px solid var(--line);
-          border-radius:var(--radius);
-          padding:16px;
-          height:fit-content;
-          position:sticky; top:88px;
-          max-height:calc(100vh - 110px);
-          overflow-y:auto;
-          transition: transform .3s ease;
-        }
-        .sidebar::-webkit-scrollbar{ width:4px; }
-        .sidebar::-webkit-scrollbar-track{ background:transparent; }
-        .sidebar::-webkit-scrollbar-thumb{ background:rgba(var(--glow),0.3); border-radius:10px; }
-        .side-title{
-          font-size:10px; letter-spacing:2px; color:var(--muted);
-          text-transform:uppercase; margin:12px 8px 8px;
-        }
-        .side-item{
-          display:flex; align-items:center; gap:10px;
-          padding:9px 10px; border-radius:9px;
-          color:var(--muted); font-size:13px; font-weight:500;
-          cursor:pointer; transition: all .2s ease;
-          position:relative;
-        }
-        .side-item svg{width:15px;height:15px}
-        .side-item:hover{color:var(--text); background:rgba(255,255,255,0.04)}
-        .side-item.active{
-          color:#fff;
-          background: linear-gradient(90deg, rgba(var(--glow),0.18), transparent);
-        }
-        .side-item.active::before{
-          content:""; position:absolute; left:-16px; top:8px; bottom:8px;
-          width:3px; border-radius:0 3px 3px 0;
-          background: rgba(var(--glow),1);
-          box-shadow: 0 0 10px rgba(var(--glow),0.8);
-        }
-        .side-badge{
-          margin-left:auto; font-size:10px;
-          padding:2px 7px; border-radius:10px;
-          background: rgba(var(--glow),0.18);
-          color: rgba(var(--glow),1);
-          border:1px solid rgba(var(--glow),0.3);
-          font-family:'JetBrains Mono',monospace;
-        }
-        .storage{
-          margin-top:16px; padding:14px;
-          background: rgba(255,255,255,0.02);
-          border:1px solid var(--line);
-          border-radius:10px;
-        }
-        .storage-head{display:flex; justify-content:space-between; font-size:11px; margin-bottom:8px}
-        .storage-head b{color:var(--text)}
-        .storage-head span{color:var(--muted)}
-        .storage-bar{height:6px; background:rgba(255,255,255,0.06); border-radius:3px; overflow:hidden}
-        .storage-fill{
-          height:100%; width:62%;
-          background: linear-gradient(90deg, rgba(var(--glow),0.6), rgba(var(--glow),1));
-          box-shadow: 0 0 10px rgba(var(--glow),0.6);
-          border-radius:3px;
-          transition: all .6s ease;
-        }
-        .storage small{display:block; color:var(--muted); font-size:10px; margin-top:8px}
+    /* ===== AMBIENT BUTTON ===== */
+    .amb-btn{
+        position:relative;
+        display:flex; align-items:center; gap:8px;
+        padding:7px 14px;
+        background: transparent;
+        border:1px solid var(--line);
+        border-radius:var(--radius);
+        color:var(--text);
+        font:500 12px 'Inter',sans-serif;
+        cursor:pointer;
+        transition:all .15s ease;
+        overflow:hidden;
+    }
+    .amb-btn:hover{ background:var(--bg-2); border-color:rgba(128,139,155,0.35); }
+    .amb-btn svg{ width:16px; height:16px; }
+    .amb-btn .amb-swatch{
+        width:14px; height:14px; border-radius:50%;
+        background: rgb(var(--glow));
+        box-shadow: 0 0 8px rgba(var(--glow),0.7);
+        animation: swatchPulse 2s ease-in-out infinite;
+    }
+    @keyframes swatchPulse{
+        0%,100%{ box-shadow: 0 0 6px rgba(var(--glow),0.6); }
+        50%{ box-shadow: 0 0 12px rgba(var(--glow),0.9); }
+    }
 
-        /* ===== MAIN ===== */
-        .main{display:flex; flex-direction:column; gap:20px; min-width:0}
-        .page-head{
-          display:flex; align-items:flex-end; justify-content:space-between; gap:16px;
-          flex-wrap:wrap;
-        }
-        .page-head h1{
-          margin:0; font-size:26px; font-weight:700; letter-spacing:-0.5px;
-        }
-        .page-head p{margin:4px 0 0; color:var(--muted); font-size:13px}
-        .actions{display:flex; gap:10px}
-        .btn{
-          appearance:none; border:1px solid var(--line);
-          background: rgba(255,255,255,0.04);
-          color:var(--text); font:600 13px 'Inter',sans-serif;
-          padding:10px 14px; border-radius:10px; cursor:pointer;
-          display:inline-flex; align-items:center; gap:8px;
-          transition:all .25s ease;
-        }
-        .btn svg{width:14px;height:14px}
-        .btn:hover{border-color:rgba(var(--glow),0.4); box-shadow:0 0 14px rgba(var(--glow),0.2)}
-        .btn.primary{
-          background: linear-gradient(180deg, rgba(var(--glow),0.95), rgba(var(--glow),0.65));
-          color:#0a0d14; border-color: transparent;
-          box-shadow: 0 8px 24px rgba(var(--glow),0.35), inset 0 1px 0 rgba(255,255,255,0.3);
-        }
-        .btn.primary:hover{filter:brightness(1.08); box-shadow:0 10px 28px rgba(var(--glow),0.5)}
+    /* ===== AMBIENT PANEL ===== */
+    .amb-panel{
+        position:absolute;
+        top:calc(100% + 8px);
+        right:0;
+        width:340px;
+        background: var(--bg-1);
+        border:1px solid var(--line);
+        border-radius:6px;
+        padding:20px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+        opacity:0;
+        visibility:hidden;
+        transform: translateY(-8px) scale(0.98);
+        transform-origin: top right;
+        transition: all .2s ease;
+        z-index:1000;
+    }
+    .amb-panel::before{
+        content:"";
+        position:absolute;
+        top:-6px; right:30px;
+        width:12px; height:12px;
+        background: var(--bg-1);
+        border-left:1px solid var(--line);
+        border-top:1px solid var(--line);
+        transform: rotate(45deg);
+    }
+    .amb-panel.open{ opacity:1; visibility:visible; transform: translateY(0) scale(1); }
+    .amb-panel-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:4px; }
+    .amb-panel h4{ margin:0; font-size:14px; font-weight:600; display:flex; align-items:center; gap:8px; }
+    .amb-panel h4 .live-dot{
+        width:8px; height:8px; border-radius:50%;
+        background: rgb(var(--glow));
+        box-shadow: 0 0 8px rgba(var(--glow),0.8);
+        animation: swatchPulse 1.5s ease-in-out infinite;
+    }
+    .amb-panel p{ margin:0 0 16px; font-size:11px; color:var(--muted); }
+    .amb-preview{
+        height:64px; border-radius:var(--radius);
+        background: linear-gradient(90deg, rgba(var(--glow),0.1), rgba(var(--glow),0.5), rgba(var(--glow),0.1));
+        border:1px solid rgba(var(--glow),0.3);
+        margin-bottom:16px;
+        position:relative; overflow:hidden;
+        transition: all .4s ease;
+    }
+    .amb-preview::before{
+        content:""; position:absolute; inset:0;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        animation: sweep 2.5s ease-in-out infinite;
+    }
+    @keyframes sweep{ 0%{transform:translateX(-100%)} 100%{transform:translateX(100%)} }
+    .amb-preview-label{
+        position:absolute;
+        bottom:8px; left:12px;
+        font-size:10px;
+        font-family:'JetBrains Mono',monospace;
+        color:rgba(255,255,255,0.9);
+        letter-spacing:1px;
+        text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+        z-index:2;
+    }
+    .colors{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px; }
+    .color{
+        width:36px; height:36px; flex:0 0 auto;
+        border-radius:var(--radius); cursor:pointer;
+        border:2px solid transparent;
+        position:relative;
+        transition: all .2s ease;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+    .color:hover{ transform:translateY(-2px); box-shadow: 0 4px 12px currentColor; }
+    .color.active{
+        border-color:var(--text);
+        box-shadow: 0 0 0 2px rgba(var(--glow),0.3);
+        transform: scale(1.05);
+    }
+    .color.active::after{
+        content:"✓"; position:absolute; inset:0;
+        display:grid; place-items:center; color:#fff; font-weight:700;
+        text-shadow:0 1px 3px rgba(0,0,0,0.7);
+        font-size:13px;
+    }
+    .intensity{display:flex; flex-direction:column; gap:6px}
+    .intensity label{
+        font-size:11px; color:var(--muted);
+        display:flex; justify-content:space-between;
+        font-weight:500;
+    }
+    .intensity label span:last-child{
+        color:rgb(var(--glow));
+        font-family:'JetBrains Mono',monospace;
+        font-weight:700;
+    }
+    .intensity input[type=range]{
+        -webkit-appearance:none; appearance:none;
+        width:100%; height:4px; border-radius:2px;
+        background: linear-gradient(90deg, rgba(var(--glow),0.3), rgba(var(--glow),1));
+        outline:none;
+        transition: all .3s ease;
+    }
+    .intensity input[type=range]::-webkit-slider-thumb{
+        -webkit-appearance:none; appearance:none;
+        width:16px; height:16px; border-radius:50%;
+        background:#fff; cursor:pointer;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+        border:2px solid rgba(var(--glow),0.7);
+        transition: all .15s ease;
+    }
+    .intensity input[type=range]::-webkit-slider-thumb:hover{ transform: scale(1.15); }
+    .intensity input[type=range]::-moz-range-thumb{
+        width:16px; height:16px; border-radius:50%;
+        background:#fff; cursor:pointer;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+        border:2px solid rgba(var(--glow),0.7);
+    }
+    .modes{ display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-top:14px; }
+    .mode{
+        padding:9px 8px; border-radius:var(--radius);
+        font-size:11px; font-weight:500;
+        background:transparent;
+        border:1px solid var(--line);
+        color:var(--muted); cursor:pointer; text-align:center;
+        transition:all .15s ease;
+        display:flex; align-items:center; justify-content:center; gap:6px;
+    }
+    .mode svg{ width:12px; height:12px; }
+    .mode:hover{ color:var(--text); background:var(--bg-2); }
+    .mode.active{
+        color:rgb(var(--glow));
+        background: rgba(var(--glow),0.10);
+        border-color:rgba(var(--glow),0.4);
+        font-weight:600;
+    }
+    .amb-footer{
+        margin-top:14px; padding-top:12px;
+        border-top:1px solid var(--line);
+        display:flex; justify-content:space-between; align-items:center;
+        font-size:10px; color:var(--muted);
+    }
+    .amb-footer .saved{ display:flex; align-items:center; gap:5px; color:#2fb344; opacity:0; transition: opacity .3s ease; }
+    .amb-footer .saved.show{ opacity:1; }
 
-        /* ===== STATS GRID ===== */
-        .stats{display:grid; grid-template-columns:repeat(4,1fr); gap:16px}
-        .card{
-          position:relative;
-          background: linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.01));
-          border:1px solid var(--line);
-          border-radius:var(--radius);
-          padding:18px;
-          overflow:hidden;
-          transition: all .3s ease;
-        }
-        .card::before{
-          content:""; position:absolute; inset:-1px;
-          border-radius:var(--radius);
-          padding:1px;
-          background: linear-gradient(135deg, rgba(var(--glow),0.4), transparent 40%, transparent 60%, rgba(var(--glow),0.2));
-          -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-          -webkit-mask-composite: xor; mask-composite: exclude;
-          opacity:0; transition:opacity .3s ease;
-          pointer-events:none;
-        }
-        .card:hover::before{opacity:1}
-        .card:hover{transform:translateY(-2px); box-shadow:0 20px 40px -20px rgba(var(--glow),0.3)}
-        .stat-top{display:flex; align-items:center; justify-content:space-between}
-        .stat-label{font-size:12px; color:var(--muted); font-weight:500}
-        .stat-icon{
-          width:34px; height:34px; border-radius:9px;
-          background: rgba(var(--glow),0.12);
-          border:1px solid rgba(var(--glow),0.25);
-          display:grid; place-items:center; color:rgba(var(--glow),1);
-          box-shadow: inset 0 0 10px rgba(var(--glow),0.15);
-          transition: all .6s ease;
-        }
-        .stat-icon svg{width:16px;height:16px}
-        .stat-value{font-size:26px; font-weight:700; margin-top:12px; letter-spacing:-0.5px}
-        .stat-delta{
-          display:inline-flex; align-items:center; gap:4px;
-          font-size:11px; font-family:'JetBrains Mono',monospace;
-          padding:3px 7px; border-radius:6px; margin-top:8px;
-        }
-        .delta-up{background:rgba(76,217,130,0.12); color:#4cd982; border:1px solid rgba(76,217,130,0.25)}
-        .delta-down{background:rgba(255,99,99,0.12); color:#ff7a7a; border:1px solid rgba(255,99,99,0.25)}
-        .stat-spark{
-          margin-top:14px; height:40px;
-          background: linear-gradient(180deg, rgba(var(--glow),0.15), transparent);
-          border-radius:8px;
-          position:relative; overflow:hidden;
-        }
-        .stat-spark svg{width:100%; height:100%; display:block}
+    /* ===== MOBILE SEARCH ===== */
+    .mobile-search-btn{ display:none; }
+    .mobile-search-bar{
+        display:none;
+        position:fixed;
+        top:56px; left:0; right:0;
+        z-index:38;
+        padding:10px 14px;
+        background: var(--bg-1);
+        border-bottom:1px solid var(--line);
+        opacity:0;
+        transform: translateY(-6px);
+        transition: opacity .2s ease, transform .2s ease;
+    }
+    .mobile-search-bar.active{ display:block; opacity:1; transform: translateY(0); }
+    .mobile-search-bar-form{
+        display:flex; align-items:center; gap:8px;
+        background: var(--bg-2);
+        border:1px solid var(--line);
+        padding:8px 12px; border-radius:var(--radius);
+    }
+    .mobile-search-bar-form input{
+        background:transparent; border:0; outline:0; color:var(--text);
+        font:13px 'Inter',sans-serif; width:100%;
+    }
+    .mobile-search-bar-form svg{ width:14px; height:14px; color:var(--muted); flex-shrink:0; }
 
-        /* ===== ROWS ===== */
-        .row{display:grid; grid-template-columns: 1.6fr 1fr; gap:16px}
-        .panel{
-          background: linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.01));
-          border:1px solid var(--line);
-          border-radius:var(--radius);
-          padding:20px;
-        }
-        .panel-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; gap:10px; flex-wrap:wrap}
-        .panel-head h3{margin:0; font-size:15px; font-weight:600}
-        .panel-head .sub{font-size:11px; color:var(--muted); margin-top:2px}
-        .tabs{display:flex; gap:4px; background:rgba(255,255,255,0.03); padding:3px; border-radius:8px; border:1px solid var(--line)}
-        .tabs button{
-          border:0; background:transparent; color:var(--muted);
-          font:600 11px 'Inter',sans-serif; padding:5px 10px; border-radius:6px; cursor:pointer;
-        }
-        .tabs button.active{color:#fff; background:rgba(var(--glow),0.2); box-shadow:inset 0 0 0 1px rgba(var(--glow),0.3)}
+    /* ===== LAYOUT ===== */
+    .layout{
+        position:relative; z-index:1;
+        display:grid; grid-template-columns: 240px 1fr;
+        gap:20px; padding:22px;
+        max-width:1600px; margin:0 auto;
+    }
+    /* Tabler-сайдбар: плоская карточка */
+    .sidebar{
+        background: var(--bg-1);
+        border:1px solid var(--line);
+        border-radius:var(--radius);
+        padding:12px;
+        height:fit-content;
+        position:sticky; top:80px;
+        max-height:calc(100vh - 102px);
+        overflow-y:auto;
+        transition: transform .3s ease;
+        box-shadow: var(--shadow-card);
+    }
+    .sidebar::-webkit-scrollbar{ width:4px; }
+    .sidebar::-webkit-scrollbar-track{ background:transparent; }
+    .sidebar::-webkit-scrollbar-thumb{ background:rgba(var(--glow),0.3); border-radius:10px; }
+    .side-title{
+        font-size:10px; letter-spacing:1.5px; color:var(--muted);
+        text-transform:uppercase; margin:12px 8px 6px;
+        font-weight:600;
+    }
+    .side-item{
+        display:flex; align-items:center; gap:10px;
+        padding:8px 10px; border-radius:var(--radius);
+        color:var(--muted); font-size:13px; font-weight:500;
+        cursor:pointer; transition: all .15s ease;
+        position:relative;
+    }
+    .side-item svg{width:15px;height:15px}
+    .side-item:hover{color:var(--text); background:rgba(128,139,155,0.10)}
+    .side-item.active{
+        color:rgb(var(--glow));
+        background: rgba(var(--glow),0.10);
+        font-weight:600;
+    }
+    .side-badge{
+        margin-left:auto; font-size:10px;
+        padding:2px 7px; border-radius:var(--radius);
+        background: rgba(var(--glow),0.12);
+        color: rgb(var(--glow));
+        border:1px solid rgba(var(--glow),0.25);
+        font-family:'JetBrains Mono',monospace;
+        font-weight:600;
+    }
+    .storage{
+        margin-top:16px; padding:14px;
+        background: var(--bg-2);
+        border:1px solid var(--line);
+        border-radius:var(--radius);
+    }
+    .storage-head{display:flex; justify-content:space-between; font-size:11px; margin-bottom:8px}
+    .storage-head b{color:var(--text)}
+    .storage-head span{color:var(--muted)}
+    .storage-bar{height:4px; background:rgba(128,139,155,0.15); border-radius:2px; overflow:hidden}
+    .storage-fill{
+        height:100%; width:62%;
+        background: rgb(var(--glow));
+        border-radius:2px;
+        transition: all .6s ease;
+    }
+    .storage small{display:block; color:var(--muted); font-size:10px; margin-top:8px}
 
-        /* chart */
-        .chart{height:260px; position:relative}
-        .chart svg{width:100%; height:100%}
+    /* ===== MAIN ===== */
+    .main{display:flex; flex-direction:column; gap:20px; min-width:0}
+    .page-head{
+        display:flex; align-items:flex-end; justify-content:space-between; gap:16px;
+        flex-wrap:wrap;
+    }
+    .page-head h1{ margin:0; font-size:22px; font-weight:600; letter-spacing:-0.3px; }
+    .page-head p{margin:4px 0 0; color:var(--muted); font-size:13px}
+    .actions{display:flex; gap:10px}
+    .btn{
+        appearance:none; border:1px solid var(--line);
+        background: var(--bg-1);
+        color: var(--text); font:500 13px 'Inter',sans-serif;
+        padding:9px 14px; border-radius:var(--radius); cursor:pointer;
+        display:inline-flex; align-items:center; gap:8px;
+        transition:all .15s ease;
+    }
+    .btn svg{width:14px;height:14px}
+    .btn:hover{background:var(--bg-2); border-color:rgba(128,139,155,0.35)}
+    .btn.primary{
+        background: rgb(var(--glow));
+        color:#fff; border-color: rgb(var(--glow));
+        font-weight:600;
+        box-shadow: none;
+    }
+    .btn.primary:hover{filter:brightness(1.06);}
 
-        /* table */
-        table{width:100%; border-collapse:collapse}
-        th,td{text-align:left; padding:10px 8px; font-size:12.5px; border-bottom:1px solid var(--line)}
-        th{color:var(--muted); font-weight:500; font-size:11px; text-transform:uppercase; letter-spacing:1px}
-        td{color:var(--text)}
-        tbody tr{transition:background .2s ease}
-        tbody tr:hover{background:rgba(255,255,255,0.03)}
-        .doc-cell{display:flex; align-items:center; gap:10px}
-        .doc-icon{
-          width:32px; height:38px; border-radius:5px;
-          background: linear-gradient(135deg, rgba(var(--glow),0.25), rgba(var(--glow),0.05));
-          border:1px solid rgba(var(--glow),0.3);
-          display:grid; place-items:center;
-          font-size:9px; font-weight:700; letter-spacing:0.5px;
-          color:rgba(var(--glow),1);
-          font-family:'JetBrains Mono',monospace;
-          flex-shrink:0;
-          position:relative;
-        }
-        .doc-icon::after{
-          content:""; position:absolute; top:0; right:0;
-          width:8px; height:8px;
-          background: linear-gradient(135deg, transparent 50%, rgba(var(--glow),0.4) 50%);
-          border-bottom-left-radius:3px;
-        }
-        .doc-meta small{display:block; color:var(--muted); font-size:11px; margin-top:2px}
-        .pill{
-          display:inline-flex; align-items:center; gap:5px;
-          padding:3px 8px; border-radius:20px; font-size:11px; font-weight:500;
-          border:1px solid var(--line);
-        }
-        .pill::before{content:""; width:6px; height:6px; border-radius:50%; background:currentColor}
-        .pill.signed{color:#4cd982; background:rgba(76,217,130,0.08); border-color:rgba(76,217,130,0.25)}
-        .pill.pending{color:#ffb547; background:rgba(255,181,71,0.08); border-color:rgba(255,181,71,0.25)}
-        .pill.rejected{color:#ff7a7a; background:rgba(255,122,122,0.08); border-color:rgba(255,122,122,0.25)}
-        .pill.draft{color:#8892a6; background:rgba(136,146,166,0.08); border-color:rgba(136,146,166,0.2)}
+    /* ===== STATS / CARDS (Tabler card) ===== */
+    .stats{display:grid; grid-template-columns:repeat(4,1fr); gap:16px}
+    .card{
+        position:relative;
+        background: var(--bg-1);
+        border:1px solid var(--line);
+        border-radius:var(--radius);
+        padding:18px;
+        overflow:hidden;
+        transition: border-color .15s ease;
+        box-shadow: var(--shadow-card);
+    }
+    .card:hover{border-color:rgba(128,139,155,0.35)}
+    .stat-top{display:flex; align-items:center; justify-content:space-between}
+    .stat-label{font-size:12px; color:var(--muted); font-weight:500}
+    .stat-icon{
+        width:34px; height:34px; border-radius:var(--radius);
+        background: rgba(var(--glow),0.10);
+        border:none;
+        display:grid; place-items:center; color:rgb(var(--glow));
+        transition: all .6s ease;
+    }
+    .stat-icon svg{width:16px;height:16px}
+    .stat-value{font-size:24px; font-weight:600; margin-top:12px; letter-spacing:-0.3px}
+    .stat-delta{
+        display:inline-flex; align-items:center; gap:4px;
+        font-size:11px; font-family:'JetBrains Mono',monospace;
+        padding:2px 7px; border-radius:var(--radius); margin-top:8px;
+        font-weight:600;
+    }
+    .delta-up{background:rgba(47,179,68,0.12); color:#2fb344; border:1px solid rgba(47,179,68,0.25)}
+    .delta-down{background:rgba(214,57,57,0.12); color:#d63939; border:1px solid rgba(214,57,57,0.25)}
+    .stat-spark{
+        margin-top:14px; height:40px;
+        background: transparent;
+        position:relative; overflow:hidden;
+    }
+    .stat-spark svg{width:100%; height:100%; display:block}
 
-        /* activity */
-        .activity{display:flex; flex-direction:column; gap:14px}
-        .act{display:flex; gap:12px; align-items:flex-start}
-        .act-dot{
-          width:10px; height:10px; border-radius:50%; margin-top:6px;
-          background: rgba(var(--glow),1);
-          box-shadow: 0 0 10px rgba(var(--glow),0.8);
-          flex-shrink:0;
-        }
-        .act-body{flex:1; min-width:0}
-        .act-body p{margin:0; font-size:13px}
-        .act-body small{color:var(--muted); font-size:11px}
+    /* ===== ROWS / PANEL ===== */
+    .row{display:grid; grid-template-columns: 1.6fr 1fr; gap:16px}
+    .panel{
+        background: var(--bg-1);
+        border:1px solid var(--line);
+        border-radius:var(--radius);
+        padding:20px;
+        box-shadow: var(--shadow-card);
+    }
+    .panel-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; gap:10px; flex-wrap:wrap}
+    .panel-head h3{margin:0; font-size:14px; font-weight:600}
+    .panel-head .sub{font-size:11px; color:var(--muted); margin-top:2px}
+    .tabs{display:flex; gap:2px; background:transparent; padding:0; border-radius:var(--radius); border:1px solid var(--line)}
+    .tabs button{
+        border:0; background:transparent; color:var(--muted);
+        font:500 11px 'Inter',sans-serif; padding:5px 10px; border-radius:var(--radius); cursor:pointer;
+    }
+    .tabs button:hover{ color:var(--text); background:var(--bg-2); }
+    .tabs button.active{color:rgb(var(--glow)); background:rgba(var(--glow),0.10); font-weight:600;}
 
-        /* ===== SIGNERS LIST ===== */
-        .signers{display:flex; flex-direction:column; gap:10px}
-        .signer{
-          display:flex; align-items:center; gap:12px;
-          padding:10px; border-radius:10px;
-          background: rgba(255,255,255,0.02);
-          border:1px solid var(--line);
-          transition: all .2s ease;
-        }
-        .signer:hover{border-color:rgba(var(--glow),0.3); background:rgba(var(--glow),0.04)}
-        .signer-avatar{
-          width:36px; height:36px; border-radius:50%;
-          background: linear-gradient(135deg, rgba(var(--glow),0.5), rgba(var(--glow),0.15));
-          border:1px solid rgba(var(--glow),0.3);
-          display:grid; place-items:center; font-weight:700; font-size:12px;
-          flex-shrink:0;
-        }
-        .signer-info{flex:1; min-width:0}
-        .signer-info b{display:block; font-size:13px; font-weight:600}
-        .signer-info small{color:var(--muted); font-size:11px}
-        .signer-status{
-          font-size:10px; padding:3px 8px; border-radius:10px;
-          font-weight:600; letter-spacing:0.5px;
-        }
-        .status-ok{background:rgba(76,217,130,0.15); color:#4cd982; border:1px solid rgba(76,217,130,0.3)}
-        .status-wait{background:rgba(255,181,71,0.15); color:#ffb547; border:1px solid rgba(255,181,71,0.3)}
+    .chart{height:260px; position:relative}
+    .chart svg{width:100%; height:100%}
 
-        /* ===== NOTIFICATIONS ===== */
-        .notif-dropdown {
-            position: absolute;
-            top: calc(100% + 10px);
-            right: 0;
-            width: 340px;
-            background: linear-gradient(180deg, rgba(18,21,30,0.98), rgba(13,15,22,0.98));
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--line);
-            border-radius: 16px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5), 0 0 30px rgba(var(--glow),0.15);
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(-10px);
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-            overflow: hidden;
-        }
-        .notif-dropdown.active {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-        }
-        .notif-header {
-            padding: 14px 18px;
-            border-bottom: 1px solid var(--line);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .notif-header strong { font-size: 0.95rem; color: var(--text); }
-        .notif-list { max-height: 320px; overflow-y: auto; }
-        .notif-list::-webkit-scrollbar { width: 4px; }
-        .notif-list::-webkit-scrollbar-thumb { background: rgba(var(--glow),0.4); border-radius: 10px; }
-        .notif-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-            padding: 12px 16px;
-            text-decoration: none;
-            color: var(--text);
-            border-bottom: 1px solid var(--line);
-            transition: background 0.2s;
-            position: relative;
-        }
-        .notif-item:hover { background: rgba(var(--glow),0.05); }
-        .notif-item.unread { background: rgba(var(--glow),0.08); }
-        .notif-icon {
-            width: 38px; height: 38px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            font-size: 1.1rem;
-        }
-        .notif-body { flex: 1; min-width: 0; }
-        .notif-text { font-size: 0.82rem; line-height: 1.4; color: var(--text); }
-        .notif-dot {
-            width: 8px; height: 8px;
-            border-radius: 50%;
-            background: rgba(var(--glow),1);
-            box-shadow: 0 0 8px rgba(var(--glow),1);
-            margin-top: 6px;
-        }
-        .notif-empty { padding: 40px 20px; text-align: center; color: var(--muted); }
-        .notif-footer {
-            padding: 10px;
-            border-top: 1px solid var(--line);
-            text-align: center;
-            background: rgba(255,255,255,0.02);
-        }
-        .notif-footer a {
-            color: rgba(var(--glow),1);
-            text-decoration: none;
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
-        .notif-footer a:hover { text-decoration: underline; }
-        @keyframes notif-ping {
-            0% { transform: scale(1); opacity: 0.8; }
-            50% { transform: scale(1.5); opacity: 0; }
-            100% { transform: scale(1); opacity: 0; }
-        }
-        .bell-shaking { animation: shake 2s infinite; }
-        @keyframes shake {
-            0%, 100% { transform: rotate(0deg); }
-            10%, 30%, 50%, 70%, 90% { transform: rotate(-10deg); }
-            20%, 40%, 60%, 80% { transform: rotate(10deg); }
-        }
+    /* ===== TABLE (Tabler table) ===== */
+    table{width:100%; border-collapse:collapse}
+    th,td{text-align:left; padding:10px 8px; font-size:12.5px; border-bottom:1px solid var(--line)}
+    th{
+        color:var(--muted); font-weight:600; font-size:10px;
+        text-transform:uppercase; letter-spacing:0.05em;
+        background:transparent;
+    }
+    td{color:var(--text)}
+    tbody tr{transition:background .15s ease}
+    tbody tr:hover{background:rgba(128,139,155,0.06)}
+    .doc-cell{display:flex; align-items:center; gap:10px}
+    .doc-icon{
+        width:32px; height:38px; border-radius:var(--radius);
+        background: rgba(var(--glow),0.10);
+        border:1px solid rgba(var(--glow),0.25);
+        display:grid; place-items:center;
+        font-size:9px; font-weight:700; letter-spacing:0.5px;
+        color:rgb(var(--glow));
+        font-family:'JetBrains Mono',monospace;
+        flex-shrink:0;
+        position:relative;
+    }
+    .doc-icon::after{
+        content:""; position:absolute; top:0; right:0;
+        width:8px; height:8px;
+        background: linear-gradient(135deg, transparent 50%, rgba(var(--glow),0.35) 50%);
+        border-bottom-left-radius:3px;
+    }
+    .doc-meta small{display:block; color:var(--muted); font-size:11px; margin-top:2px}
+    .pill{
+        display:inline-flex; align-items:center; gap:5px;
+        padding:2px 8px; border-radius:var(--radius); font-size:11px; font-weight:500;
+        border:1px solid var(--line);
+    }
+    .pill::before{content:""; width:6px; height:6px; border-radius:50%; background:currentColor}
+    .pill.signed{color:#2fb344; background:rgba(47,179,68,0.10); border-color:rgba(47,179,68,0.25)}
+    .pill.pending{color:#f76707; background:rgba(247,103,7,0.10); border-color:rgba(247,103,7,0.25)}
+    .pill.rejected{color:#d63939; background:rgba(214,57,57,0.10); border-color:rgba(214,57,57,0.25)}
+    .pill.draft{color:#8892a6; background:rgba(136,146,166,0.10); border-color:rgba(136,146,166,0.2)}
 
-        /* ===== PROFILE ===== */
-        .profile-dropdown{ position:relative; }
-        .profile-btn{
-            width:40px; height:40px; border-radius:12px; border:none;
-            background:linear-gradient(135deg, rgba(var(--glow),0.9), rgba(var(--glow),0.5));
-            color:#0a0d14; font-weight:700; font-size:15px;
-            display:flex; align-items:center; justify-content:center;
-            cursor:pointer; transition:all 0.3s ease;
-            box-shadow:0 4px 15px rgba(var(--glow),0.4);
-        }
-        .profile-btn:hover{
-            transform:translateY(-2px) scale(1.05);
-            box-shadow:0 8px 25px rgba(var(--glow),0.6);
-        }
-        .profile-btn:active{ transform:translateY(0) scale(1); }
-        .profile-menu{
-            position:absolute;
-            top:calc(100% + 8px);
-            right:0;
-            min-width:200px;
-            background: linear-gradient(180deg, rgba(18,21,30,0.98), rgba(13,15,22,0.98));
-            backdrop-filter: blur(20px);
-            border:1px solid var(--line);
-            border-radius:16px;
-            padding:8px;
-            box-shadow:0 10px 40px rgba(0,0,0,0.5), 0 0 30px rgba(var(--glow),0.15);
-            opacity:0;
-            visibility:hidden;
-            transform:translateY(-10px);
-            transition:all 0.3s ease;
-            z-index:1000;
-        }
-        .profile-menu.active{
-            opacity:1;
-            visibility:visible;
-            transform:translateY(0);
-        }
-        .profile-menu .menu-item{
-            display:flex;
-            align-items:center;
-            gap:10px;
-            padding:10px 14px;
-            color:var(--text);
-            text-decoration:none;
-            border-radius:10px;
-            transition:all 0.2s ease;
-            font-size:14px;
-        }
-        .profile-menu .menu-item:hover{
-            background:rgba(var(--glow),0.1);
-            transform:translateX(4px);
-        }
-        .profile-menu .menu-item.logout{ color:#ff6b6b; }
-        .profile-menu .menu-item.logout:hover{ background:rgba(255,107,107,0.15); }
-        .profile-menu .menu-divider{
-            border:0;
-            border-top:1px solid var(--line);
-            margin:6px 0;
-            opacity:0.5;
-        }
+    .activity{display:flex; flex-direction:column; gap:14px}
+    .act{display:flex; gap:12px; align-items:flex-start}
+    .act-dot{
+        width:8px; height:8px; border-radius:50%; margin-top:6px;
+        background: rgb(var(--glow));
+        flex-shrink:0;
+    }
+    .act-body{flex:1; min-width:0}
+    .act-body p{margin:0; font-size:13px}
+    .act-body small{color:var(--muted); font-size:11px}
 
-        /* ===== MOBILE-ONLY ДУБЛИКАТ ВЕРХНЕГО МЕНЮ В САЙДБАРЕ ===== */
-        .mobile-nav-group{
-            display:none;
-            flex-direction:column;
-            gap:4px;
-            margin-bottom:14px;
-            padding-bottom:14px;
-            border-bottom:1px solid var(--line);
+    .signers{display:flex; flex-direction:column; gap:10px}
+    .signer{
+        display:flex; align-items:center; gap:12px;
+        padding:10px; border-radius:var(--radius);
+        background: var(--bg-1);
+        border:1px solid var(--line);
+        transition: all .15s ease;
+    }
+    .signer:hover{border-color:rgba(var(--glow),0.35); background:rgba(var(--glow),0.04)}
+    .signer-avatar{
+        width:36px; height:36px; border-radius:50%;
+        background: rgba(var(--glow),0.15);
+        border:1px solid rgba(var(--glow),0.3);
+        display:grid; place-items:center; font-weight:700; font-size:12px;
+        color:rgb(var(--glow));
+        flex-shrink:0;
+    }
+    .signer-info{flex:1; min-width:0}
+    .signer-info b{display:block; font-size:13px; font-weight:600}
+    .signer-info small{color:var(--muted); font-size:11px}
+    .signer-status{ font-size:10px; padding:2px 8px; border-radius:var(--radius); font-weight:600; letter-spacing:0.3px; }
+    .status-ok{background:rgba(47,179,68,0.12); color:#2fb344; border:1px solid rgba(47,179,68,0.3)}
+    .status-wait{background:rgba(247,103,7,0.12); color:#f76707; border:1px solid rgba(247,103,7,0.3)}
+
+    /* ===== NOTIFICATIONS ===== */
+    .notif-dropdown {
+        position: absolute;
+        top: calc(100% + 8px);
+        right: 0;
+        width: 340px;
+        background: var(--bg-1);
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+        z-index: 1000;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-6px);
+        transition: all 0.2s ease;
+        overflow: hidden;
+    }
+    .notif-dropdown.active { opacity: 1; visibility: visible; transform: translateY(0); }
+    .notif-header {
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--line);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .notif-header strong { font-size: 0.875rem; color: var(--text); font-weight:600; }
+    .notif-list { max-height: 320px; overflow-y: auto; }
+    .notif-list::-webkit-scrollbar { width: 4px; }
+    .notif-list::-webkit-scrollbar-thumb { background: rgba(var(--glow),0.4); border-radius: 10px; }
+    .notif-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 12px 16px;
+        text-decoration: none;
+        color: var(--text);
+        border-bottom: 1px solid var(--line);
+        transition: background 0.15s;
+        position: relative;
+    }
+    .notif-item:hover { background: rgba(128,139,155,0.06); }
+    .notif-item.unread { background: rgba(var(--glow),0.06); }
+    .notif-icon {
+        width: 36px; height: 36px;
+        border-radius: var(--radius);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        font-size: 1.05rem;
+    }
+    .notif-body { flex: 1; min-width: 0; }
+    .notif-text { font-size: 0.8rem; line-height: 1.45; color: var(--text); }
+    .notif-dot {
+        width: 8px; height: 8px;
+        border-radius: 50%;
+        background: rgb(var(--glow));
+        margin-top: 6px;
+    }
+    .notif-empty { padding: 40px 20px; text-align: center; color: var(--muted); }
+    .notif-footer {
+        padding: 10px;
+        border-top: 1px solid var(--line);
+        text-align: center;
+        background: var(--bg-2);
+    }
+    .notif-footer a {
+        color: rgb(var(--glow));
+        text-decoration: none;
+        font-size: 0.82rem;
+        font-weight: 600;
+    }
+    .notif-footer a:hover { text-decoration: underline; }
+    @keyframes notif-ping {
+        0% { transform: scale(1); opacity: 0.8; }
+        50% { transform: scale(1.5); opacity: 0; }
+        100% { transform: scale(1); opacity: 0; }
+    }
+    .bell-shaking { animation: shake 2s infinite; }
+    @keyframes shake {
+        0%, 100% { transform: rotate(0deg); }
+        10%, 30%, 50%, 70%, 90% { transform: rotate(-8deg); }
+        20%, 40%, 60%, 80% { transform: rotate(8deg); }
+    }
+
+    /* ===== PROFILE ===== */
+    .profile-dropdown{ position:relative; }
+    .profile-btn{
+        width:38px; height:38px; border-radius:50%; border:none;
+        background: rgba(var(--glow),0.15);
+        color:rgb(var(--glow)); font-weight:700; font-size:14px;
+        display:flex; align-items:center; justify-content:center;
+        cursor:pointer; transition:all 0.2s ease;
+        border:1px solid rgba(var(--glow),0.35);
+    }
+    .profile-btn:hover{ background:rgba(var(--glow),0.25); }
+    .profile-btn:active{ transform:translateY(0) scale(1); }
+    .profile-menu{
+        position:absolute;
+        top:calc(100% + 6px);
+        right:0;
+        min-width:200px;
+        background: var(--bg-1);
+        border:1px solid var(--line);
+        border-radius:6px;
+        padding:4px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+        opacity:0;
+        visibility:hidden;
+        transform:translateY(-6px);
+        transition:all 0.2s ease;
+        z-index:1000;
+    }
+    .profile-menu.active{ opacity:1; visibility:visible; transform:translateY(0); }
+    .profile-menu .menu-item{
+        display:flex;
+        align-items:center;
+        gap:10px;
+        padding:9px 12px;
+        color:var(--text);
+        text-decoration:none;
+        border-radius:var(--radius);
+        transition:all 0.15s ease;
+        font-size:13px;
+    }
+    .profile-menu .menu-item:hover{ background:rgba(128,139,155,0.10); }
+    .profile-menu .menu-item.logout{ color:#d63939; }
+    .profile-menu .menu-item.logout:hover{ background:rgba(214,57,57,0.10); }
+    .profile-menu .menu-divider{ border:0; border-top:1px solid var(--line); margin:4px 0; }
+
+    .mobile-nav-group{
+        display:none;
+        flex-direction:column;
+        gap:2px;
+        margin-bottom:12px;
+        padding-bottom:12px;
+        border-bottom:1px solid var(--line);
+    }
+    .mobile-search{
+        display:none;
+        align-items:center; gap:8px;
+        background: var(--bg-2);
+        border:1px solid var(--line);
+        padding:8px 12px; border-radius:var(--radius);
+        margin-bottom:12px;
+    }
+    .mobile-search svg{ width:14px; height:14px; color:var(--muted); flex-shrink:0; }
+    .mobile-search input{
+        background:transparent; border:0; outline:0;
+        color:var(--text); font:13px 'Inter',sans-serif; width:100%;
+    }
+    .mobile-search input::placeholder{ color:var(--muted); }
+
+    /* ===== FIX: САЙДБАР — ТОТ ЖЕ INTER, ЧТО И СВЕРХУ (перенесено из <script> в <style>) ===== */
+    html[data-theme="light"] .sidebar .side-item { font-weight: 500; color: #334155; }
+    html[data-theme="light"] .sidebar .side-item:hover,
+    html[data-theme="light"] .sidebar .side-item.active { font-weight: 600; color: #0f172a; }
+    html[data-theme="light"] .sidebar .side-title { font-weight: 600; color: #64748b; letter-spacing: 1.5px; }
+    html[data-theme="light"] .sidebar .side-item svg { stroke-width: 2; }
+    html[data-theme="light"] .side-badge { font-weight: 600; }
+
+    /* ===== ДОСТУПНОСТЬ ===== */
+    :focus-visible { outline: 2px solid rgb(var(--glow)); outline-offset: 2px; border-radius: 4px; }
+    @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
         }
+    }
 
-        /* ===== MOBILE-ONLY ПОИСК В САЙДБАРЕ (дублирует .search из топбара) ===== */
-        .mobile-search{
-            display:none;
-            align-items:center; gap:8px;
-            background: rgba(255,255,255,0.05);
-            border:1px solid var(--line);
-            padding:9px 12px; border-radius:10px;
-            margin-bottom:14px;
+    /* ===== АДАПТИВНОСТЬ ===== */
+    @media (max-width: 1200px) {
+        .topbar { padding: 10px 18px; gap: 12px; }
+        .search { min-width: 200px; }
+        .layout { padding: 18px; gap: 18px; }
+        .sidebar { padding: 12px; }
+        .panel { padding: 18px; }
+        .card { padding: 16px; }
+        .stat-value { font-size: 22px; }
+        .page-head h1 { font-size: 20px; }
+    }
+    @media (max-width: 1100px) {
+        .burger-btn { display: flex; align-items: center; justify-content: center; }
+        .mobile-search-btn{ display:grid; place-items:center; }
+        .layout { grid-template-columns: 1fr; padding: 16px; gap: 16px; }
+        .sidebar {
+            position: fixed; top: 0; left: 0;
+            width: 280px; height: 100vh; max-height: 100vh;
+            z-index: 1000; border-radius: 0;
+            transform: translateX(-100%);
+            padding-top: 72px;
+            background: var(--bg-1);
         }
-        .mobile-search svg{ width:14px; height:14px; color:var(--muted); flex-shrink:0; }
-        .mobile-search input{
-            background:transparent; border:0; outline:0;
-            color:var(--text); font:13px 'Inter',sans-serif; width:100%;
+        .sidebar.active { transform: translateX(0); }
+        .mobile-nav-group{ display:flex; }
+        .mobile-search{ display:flex; }
+        body.menu-open .ambient{ display:none; }
+        .stats { grid-template-columns: repeat(2, 1fr); }
+        .row { grid-template-columns: 1fr; }
+        .search { display: none; }
+        .topbar { padding: 10px 16px; }
+        .nav button { padding: 7px 10px; font-size: 12px; }
+        .nav button svg { width: 14px; height: 14px; }
+        .brand { font-size: 14px; gap: 8px; }
+        .brand-dot { width: 30px; height: 30px; }
+        .brand-dot svg { width: 16px; height: 16px; }
+        .lang-btn { min-width: 80px; padding: 6px 10px; font-size: 11px; }
+        .lang-btn .flag { font-size: 15px; }
+        .amb-btn { padding: 6px 12px; font-size: 11px; }
+        .amb-btn .amb-swatch { width: 12px; height: 12px; }
+        .icon-btn { width: 36px; height: 36px; }
+        .icon-btn svg { width: 15px; height: 15px; }
+        .profile-btn { width: 36px; height: 36px; font-size: 13px; }
+        .side-item { padding: 9px 12px; font-size: 13px; }
+        .side-item svg { width: 15px; height: 15px; }
+        .side-badge { font-size: 9px; padding: 2px 6px; }
+        .notif-dropdown { width: 320px; }
+        .amb-panel {
+            position: fixed; top: 56px; left: 50%; right: auto;
+            transform: translateX(-50%) translateY(-8px) scale(0.98);
+            width: 320px; padding: 18px;
         }
-        .mobile-search input::placeholder{ color:var(--muted); }
+        .amb-panel::before{ display:none; }
+        .amb-panel.open{ transform: translateX(-50%) translateY(0) scale(1); }
+        .color{ width:34px; height:34px; }
+        .profile-menu { min-width: 180px; }
+        .profile-menu .menu-item { padding: 8px 12px; font-size: 13px; }
+    }
+    @media (max-width: 768px) {
+        .topbar { padding: 8px 12px; gap: 8px; }
+        .brand { font-size: 12px; gap: 6px; }
+        .brand-dot { width: 26px; height: 26px; border-radius: 4px; }
+        .brand-dot svg { width: 14px; height: 14px; }
+        .brand small { font-size: 7px; letter-spacing: 1.5px; }
+        .nav { display: none; }
+        .layout { padding: 12px; gap: 12px; }
+        .sidebar { width: 260px; padding: 10px; border-radius: 0; }
+        .sidebar-overlay { left: 260px; }
+        .side-title { font-size: 9px; letter-spacing: 1.2px; margin: 8px 5px 5px; }
+        .side-item { padding: 8px 10px; font-size: 12px; gap: 7px; border-radius: 4px; }
+        .side-item svg { width: 14px; height: 14px; }
+        .side-badge { font-size: 8px; padding: 1px 5px; }
+        .storage { padding: 10px; margin-top: 10px; }
+        .storage-head { font-size: 9px; margin-bottom: 6px; }
+        .storage-bar { height: 4px; }
+        .storage small { font-size: 8px; margin-top: 5px; }
+        .main { gap: 14px; }
+        .page-head { gap: 12px; }
+        .page-head h1 { font-size: 18px; letter-spacing: -0.3px; }
+        .page-head p { font-size: 11px; margin-top: 3px; }
+        .actions { gap: 8px; }
+        .btn { padding: 8px 12px; font-size: 12px; border-radius: 4px; gap: 6px; }
+        .btn svg { width: 12px; height: 12px; }
+        .stats { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        .card { padding: 12px; border-radius: 4px; }
+        .stat-label { font-size: 10px; }
+        .stat-icon { width: 30px; height: 30px; border-radius: 4px; }
+        .stat-icon svg { width: 14px; height: 14px; }
+        .stat-value { font-size: 19px; margin-top: 8px; }
+        .stat-delta { font-size: 9px; padding: 2px 5px; margin-top: 5px; border-radius: 4px; }
+        .stat-spark { height: 32px; margin-top: 10px; }
+        .row { gap: 12px; }
+        .panel { padding: 14px; border-radius: 4px; }
+        .panel-head { margin-bottom: 14px; gap: 8px; }
+        .panel-head h3 { font-size: 13px; }
+        .panel-head .sub { font-size: 10px; }
+        .tabs { padding: 0; border-radius: 4px; }
+        .tabs button { font-size: 10px; padding: 4px 8px; border-radius: 4px; }
+        .chart { height: 220px; }
+        table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        th, td { padding: 7px 6px; font-size: 11px; white-space: nowrap; }
+        th { font-size: 9px; letter-spacing: 0.05em; }
+        .doc-cell { gap: 8px; }
+        .doc-icon { width: 26px; height: 32px; font-size: 8px; border-radius: 4px; }
+        .doc-meta small { font-size: 9px; }
+        .pill { font-size: 9px; padding: 2px 6px; gap: 4px; border-radius: 4px; }
+        .pill::before { width: 5px; height: 5px; }
+        .activity { gap: 10px; }
+        .act { gap: 8px; }
+        .act-dot { width: 6px; height: 6px; margin-top: 4px; }
+        .act-body p { font-size: 11px; }
+        .act-body small { font-size: 9px; }
+        .signers { gap: 7px; }
+        .signer { padding: 7px; border-radius: 4px; gap: 8px; }
+        .signer-avatar { width: 30px; height: 30px; font-size: 10px; }
+        .signer-info b { font-size: 11px; }
+        .signer-info small { font-size: 9px; }
+        .signer-status { font-size: 9px; padding: 2px 6px; border-radius: 4px; }
+        .notif-dropdown { width: calc(100vw - 20px); right: -10px; max-width: 300px; }
+        .notif-header { padding: 10px 14px; }
+        .notif-header strong { font-size: 0.82rem; }
+        .notif-list { max-height: 260px; }
+        .notif-item { padding: 9px 12px; gap: 7px; }
+        .notif-icon { width: 32px; height: 32px; font-size: 0.95rem; border-radius: 4px; }
+        .notif-text { font-size: 0.75rem; }
+        .notif-dot { width: 6px; height: 6px; }
+        .notif-empty { padding: 28px 14px; }
+        .notif-footer { padding: 8px; }
+        .notif-footer a { font-size: 0.78rem; }
+        .amb-panel { width: calc(100vw - 20px); max-width: 300px; left: 50%; right: auto; padding: 14px; border-radius: 6px; }
+        .amb-panel h4 { font-size: 13px; gap: 6px; }
+        .amb-panel h4 .live-dot { width: 7px; height: 7px; }
+        .amb-panel p { font-size: 9px; margin-bottom: 12px; }
+        .amb-preview { height: 55px; border-radius: 4px; margin-bottom: 12px; }
+        .amb-preview-label { font-size: 8px; bottom: 6px; left: 10px; }
+        .colors { gap: 6px; margin-bottom: 12px; }
+        .color { width:32px; height:32px; border-radius: 4px; }
+        .color.active::after { font-size: 12px; }
+        .intensity { gap: 5px; }
+        .intensity label { font-size: 9px; }
+        .intensity input[type=range] { height: 4px; }
+        .intensity input[type=range]::-webkit-slider-thumb { width: 15px; height: 15px; }
+        .modes { gap: 4px; margin-top: 10px; }
+        .mode { padding: 7px 5px; font-size: 9px; border-radius: 4px; gap: 4px; }
+        .mode svg { width: 10px; height: 10px; }
+        .amb-footer { font-size: 8px; margin-top: 10px; padding-top: 8px; }
+        .lang-menu { min-width: 160px; padding: 4px; border-radius: 4px; }
+        .lang-menu-title { font-size: 8px; letter-spacing: 1.2px; padding: 5px 7px 3px; }
+        .lang-option { padding: 7px 8px; font-size: 11px; gap: 7px; border-radius: 4px; }
+        .lang-option .flag { font-size: 15px; }
+        .lang-option .check { width: 11px; height: 11px; }
+        .profile-menu { min-width: 160px; padding: 4px; border-radius: 6px; }
+        .profile-menu .menu-item { padding: 7px 10px; font-size: 11px; gap: 7px; border-radius: 4px; }
+        .profile-menu .menu-divider { margin: 4px 0; }
+        .lang-btn { min-width: 70px; padding: 6px 9px; font-size: 10px; border-radius: 4px; }
+        .lang-btn .flag { font-size: 14px; }
+        .lang-btn .arrow { width: 10px; height: 10px; }
+        .amb-btn { padding: 6px 10px; font-size: 10px; border-radius: 4px; gap: 6px; }
+        .amb-btn svg { width: 14px; height: 14px; }
+        .amb-btn .amb-swatch { width: 11px; height: 11px; }
+        .amb-btn .amb-label { display: none; }
+        .icon-btn { width: 34px; height: 34px; border-radius: 4px; }
+        .icon-btn svg { width: 14px; height: 14px; }
+        .profile-btn { width: 34px; height: 34px; font-size: 12px; }
+        .mobile-search-bar{ top:52px; }
+    }
+    @media (max-width: 480px) {
+        .topbar { padding: 7px 8px; gap: 5px; }
+        .brand { font-size: 10px; gap: 4px; }
+        .brand-dot { width: 22px; height: 22px; border-radius: 4px; }
+        .brand-dot svg { width: 12px; height: 12px; }
+        .layout { padding: 8px; gap: 8px; }
+        .sidebar { width: 220px; padding: 7px; border-radius: 0; }
+        .sidebar-overlay { left: 220px; }
+        .side-title { font-size: 8px; letter-spacing: 0.8px; margin: 5px 3px 3px; }
+        .side-item { padding: 7px 8px; font-size: 10px; gap: 5px; border-radius: 4px; }
+        .side-item svg { width: 12px; height: 12px; }
+        .storage { padding: 7px; margin-top: 7px; }
+        .storage-head { font-size: 8px; }
+        .storage-bar { height: 3px; }
+        .storage small { font-size: 7px; }
+        .main { gap: 10px; }
+        .page-head h1 { font-size: 16px; }
+        .page-head p { font-size: 9px; }
+        .btn { padding: 6px 9px; font-size: 10px; border-radius: 4px; gap: 4px; }
+        .btn svg { width: 10px; height: 10px; }
+        .card { padding: 10px; border-radius: 4px; }
+        .stat-label { font-size: 9px; }
+        .stat-icon { width: 26px; height: 26px; border-radius: 4px; }
+        .stat-icon svg { width: 12px; height: 12px; }
+        .stat-value { font-size: 17px; margin-top: 7px; }
+        .stat-delta { font-size: 8px; padding: 1px 4px; margin-top: 4px; }
+        .stat-spark { height: 28px; margin-top: 8px; }
+        .panel { padding: 10px; border-radius: 4px; }
+        .panel-head h3 { font-size: 12px; }
+        .panel-head .sub { font-size: 9px; }
+        .tabs button { font-size: 9px; padding: 3px 6px; }
+        .chart { height: 180px; }
+        th, td { padding: 5px 4px; font-size: 9px; }
+        .doc-icon { width: 22px; height: 28px; font-size: 7px; }
+        .pill { font-size: 8px; padding: 1px 4px; }
+        .act-body p { font-size: 10px; }
+        .act-body small { font-size: 8px; }
+        .signer { padding: 5px; gap: 6px; }
+        .signer-avatar { width: 26px; height: 26px; font-size: 9px; }
+        .signer-info b { font-size: 10px; }
+        .signer-info small { font-size: 8px; }
+        .notif-dropdown { width: calc(100vw - 16px); right: -3px; }
+        .notif-item { padding: 7px 9px; }
+        .notif-icon { width: 28px; height: 28px; font-size: 0.85rem; }
+        .notif-text { font-size: 0.7rem; }
+        .amb-panel { width: calc(100vw - 16px); left: 50%; right: auto; padding: 10px; }
+        .amb-panel h4 { font-size: 11px; }
+        .amb-panel p { font-size: 8px; }
+        .amb-preview { height: 45px; }
+        .colors { gap: 4px; }
+        .color{ width:26px; height:26px; border-radius:4px; }
+        .mode { font-size: 8px; padding: 5px 3px; }
+        .lang-menu { min-width: 140px; }
+        .lang-option { padding: 5px 6px; font-size: 9px; }
+        .profile-menu { min-width: 140px; }
+        .profile-menu .menu-item { padding: 5px 8px; font-size: 9px; }
+        .lang-btn { padding: 5px 7px; }
+        .icon-btn { width: 30px; height: 30px; }
+        .icon-btn svg { width: 12px; height: 12px; }
+        .profile-btn { width: 30px; height: 30px; font-size: 10px; }
+        .mobile-search-bar{ top:46px; }
+    }
 
-        /* ===== ПОЛНАЯ АДАПТИВНОСТЬ ===== */
-
-        /* Маленькие десктопы (до 1200px) */
-        @media (max-width: 1200px) {
-            .topbar { padding: 12px 18px; gap: 12px; }
-            .search { min-width: 200px; }
-            .layout { padding: 18px; gap: 18px; }
-            .sidebar { padding: 14px; }
-            .panel { padding: 18px; }
-            .card { padding: 16px; }
-            .stat-value { font-size: 24px; }
-            .page-head h1 { font-size: 24px; }
-        }
-
-        /* Планшеты в ландшафте (до 1100px) - ПОКАЗЫВАЕМ БУРГЕР */
-        @media (max-width: 1100px) {
-            .burger-btn { display: flex; align-items: center; justify-content: center; }
-            .mobile-search-btn{ display:grid; place-items:center; }
-
-            .layout {
-                grid-template-columns: 1fr;
-                padding: 16px;
-                gap: 16px;
-            }
-
-            /* Sidebar становится off-canvas */
-            .sidebar {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 280px;
-                height: 100vh;
-                max-height: 100vh;
-                z-index: 1000;
-                border-radius: 0;
-                transform: translateX(-100%);
-                padding-top: 80px;
-                background: #0a0c12;
-            }
-            .sidebar.active {
-                transform: translateX(0);
-            }
-
-            /* На мобильных верхнее меню дублируется в сайдбаре */
-            .mobile-nav-group{ display:flex; }
-
-            /* На мобильных строка поиска тоже переезжает в сайдбар */
-            .mobile-search{ display:flex; }
-
-            .sidebar{
-                background: #0a0c12;
-            }
-            .sidebar .side-item{
-                color: #e7ecf3;
-            }
-            .sidebar .side-item:hover,
-            .sidebar .side-item.active{
-                color:#fff;
-            }
-            .sidebar .side-title{
-                color: rgba(180,188,204,0.95);
-            }
-            /* Пока мобильное меню открыто, полоса подсветки не должна просвечивать поверх сайдбара */
-            body.menu-open .ambient{
-                display:none;
-            }
-
-            .stats { grid-template-columns: repeat(2, 1fr); }
-            .row { grid-template-columns: 1fr; }
-            .search { display: none; }
-            .topbar { padding: 12px 16px; }
-            .nav button { padding: 7px 12px; font-size: 12px; }
-            .nav button svg { width: 14px; height: 14px; }
-            .brand { font-size: 14px; gap: 8px; }
-            .brand-dot { width: 30px; height: 30px; }
-            .brand-dot svg { width: 16px; height: 16px; }
-            .lang-btn { min-width: 80px; padding: 7px 10px; font-size: 11px; }
-            .lang-btn .flag { font-size: 15px; }
-            .amb-btn { padding: 7px 12px; font-size: 11px; }
-            .amb-btn .amb-swatch { width: 12px; height: 12px; }
-            .icon-btn { width: 36px; height: 36px; }
-            .icon-btn svg { width: 15px; height: 15px; }
-            .profile-btn { width: 36px; height: 36px; font-size: 13px; }
-            .side-item { padding: 10px 12px; font-size: 13px; }
-            .side-item svg { width: 15px; height: 15px; }
-            .side-badge { font-size: 9px; padding: 2px 6px; }
-            .notif-dropdown { width: 320px; }
-            .amb-panel {
-    position: fixed;
-    top: 64px;
-    left: 50%;
-    right: auto;
-    transform: translateX(-50%) translateY(-10px) scale(0.96);
-    width: 320px;
-    padding: 18px;
-}
-.amb-panel::before{ display:none; } /* стрелочка больше не нужна, панель не привязана к кнопке */
-.amb-panel.open{
-    transform: translateX(-50%) translateY(0) scale(1);
-}
-            .color{ width:34px; height:34px; }
-            .profile-menu { min-width: 180px; }
-            .profile-menu .menu-item { padding: 9px 12px; font-size: 13px; }
-        }
-
-        /* Большие телефоны (до 768px) */
-        @media (max-width: 768px) {
-            .topbar { padding: 10px 12px; gap: 8px; }
-            .brand { font-size: 12px; gap: 6px; }
-            .brand-dot { width: 26px; height: 26px; border-radius: 7px; }
-            .brand-dot svg { width: 14px; height: 14px; }
-            .brand small { font-size: 7px; letter-spacing: 1.5px; }
-            .nav { display: none; }
-            .layout { padding: 12px; gap: 12px; }
-            .sidebar { width: 260px; padding: 10px; border-radius: 0; }
-            .sidebar-overlay { left: 260px; }
-            .side-title { font-size: 9px; letter-spacing: 1.2px; margin: 8px 5px 5px; }
-            .side-item { padding: 9px 10px; font-size: 12px; gap: 7px; border-radius: 7px; }
-            .side-item svg { width: 14px; height: 14px; }
-            .side-badge { font-size: 8px; padding: 1px 5px; }
-            .storage { padding: 10px; margin-top: 10px; }
-            .storage-head { font-size: 9px; margin-bottom: 6px; }
-            .storage-bar { height: 4px; }
-            .storage small { font-size: 8px; margin-top: 5px; }
-            .main { gap: 14px; }
-            .page-head { gap: 12px; }
-            .page-head h1 { font-size: 20px; letter-spacing: -0.3px; }
-            .page-head p { font-size: 11px; margin-top: 3px; }
-            .actions { gap: 8px; }
-            .btn { padding: 8px 12px; font-size: 12px; border-radius: 8px; gap: 6px; }
-            .btn svg { width: 12px; height: 12px; }
-            .stats { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-            .card { padding: 12px; border-radius: 10px; }
-            .stat-label { font-size: 10px; }
-            .stat-icon { width: 30px; height: 30px; border-radius: 7px; }
-            .stat-icon svg { width: 14px; height: 14px; }
-            .stat-value { font-size: 20px; margin-top: 8px; }
-            .stat-delta { font-size: 9px; padding: 2px 5px; margin-top: 5px; border-radius: 5px; }
-            .stat-spark { height: 32px; margin-top: 10px; border-radius: 6px; }
-            .row { gap: 12px; }
-            .panel { padding: 14px; border-radius: 10px; }
-            .panel-head { margin-bottom: 14px; gap: 8px; }
-            .panel-head h3 { font-size: 13px; }
-            .panel-head .sub { font-size: 10px; }
-            .tabs { padding: 2px; border-radius: 7px; }
-            .tabs button { font-size: 10px; padding: 4px 8px; border-radius: 5px; }
-            .chart { height: 220px; }
-            table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-            th, td { padding: 7px 6px; font-size: 11px; white-space: nowrap; }
-            th { font-size: 9px; letter-spacing: 0.8px; }
-            .doc-cell { gap: 8px; }
-            .doc-icon { width: 26px; height: 32px; font-size: 8px; border-radius: 4px; }
-            .doc-meta small { font-size: 9px; }
-            .pill { font-size: 9px; padding: 2px 6px; gap: 4px; border-radius: 16px; }
-            .pill::before { width: 5px; height: 5px; }
-            .activity { gap: 10px; }
-            .act { gap: 8px; }
-            .act-dot { width: 8px; height: 8px; margin-top: 4px; }
-            .act-body p { font-size: 11px; }
-            .act-body small { font-size: 9px; }
-            .signers { gap: 7px; }
-            .signer { padding: 7px; border-radius: 7px; gap: 8px; }
-            .signer-avatar { width: 30px; height: 30px; font-size: 10px; }
-            .signer-info b { font-size: 11px; }
-            .signer-info small { font-size: 9px; }
-            .signer-status { font-size: 9px; padding: 2px 6px; border-radius: 8px; }
-            .notif-dropdown { width: calc(100vw - 20px); right: -10px; max-width: 300px; }
-            .notif-header { padding: 10px 14px; }
-            .notif-header strong { font-size: 0.85rem; }
-            .notif-list { max-height: 260px; }
-            .notif-item { padding: 9px 12px; gap: 7px; }
-            .notif-icon { width: 32px; height: 32px; font-size: 0.95rem; border-radius: 8px; }
-            .notif-text { font-size: 0.75rem; }
-            .notif-dot { width: 6px; height: 6px; }
-            .notif-empty { padding: 28px 14px; }
-            .notif-footer { padding: 8px; }
-            .notif-footer a { font-size: 0.78rem; }
-           .amb-panel { width: calc(100vw - 20px); max-width: 300px; left: 50%; right: auto; padding: 14px; border-radius: 14px; }
-            .amb-panel h4 { font-size: 13px; gap: 6px; }
-            .amb-panel h4 .live-dot { width: 7px; height: 7px; }
-            .amb-panel p { font-size: 9px; margin-bottom: 12px; }
-            .amb-preview { height: 55px; border-radius: 8px; margin-bottom: 12px; }
-            .amb-preview-label { font-size: 8px; bottom: 6px; left: 10px; }
-            .colors { gap: 6px; margin-bottom: 12px; }
-            .color { width:32px; height:32px; border-radius: 8px; }
-            .color.active::after { font-size: 12px; }
-            .intensity { gap: 5px; }
-            .intensity label { font-size: 9px; }
-            .intensity input[type=range] { height: 5px; }
-            .intensity input[type=range]::-webkit-slider-thumb { width: 15px; height: 15px; }
-            .modes { gap: 4px; margin-top: 10px; }
-            .mode { padding: 7px 5px; font-size: 9px; border-radius: 7px; gap: 4px; }
-            .mode svg { width: 10px; height: 10px; }
-            .amb-footer { font-size: 8px; margin-top: 10px; padding-top: 8px; }
-            .lang-menu { min-width: 160px; padding: 4px; border-radius: 10px; }
-            .lang-menu-title { font-size: 8px; letter-spacing: 1.2px; padding: 5px 7px 3px; }
-            .lang-option { padding: 7px 8px; font-size: 11px; gap: 7px; border-radius: 6px; }
-            .lang-option .flag { font-size: 15px; }
-            .lang-option .check { width: 11px; height: 11px; }
-            .profile-menu { min-width: 160px; padding: 5px; border-radius: 12px; }
-            .profile-menu .menu-item { padding: 7px 10px; font-size: 11px; gap: 7px; border-radius: 8px; }
-            .profile-menu .menu-divider { margin: 4px 0; }
-            .lang-btn { min-width: 70px; padding: 6px 9px; font-size: 10px; border-radius: 8px; }
-            .lang-btn .flag { font-size: 14px; }
-            .lang-btn .arrow { width: 10px; height: 10px; }
-            .amb-btn { padding: 6px 10px; font-size: 10px; border-radius: 8px; gap: 6px; }
-            .amb-btn svg { width: 14px; height: 14px; }
-            .amb-btn .amb-swatch { width: 11px; height: 11px; }
-            .amb-btn .amb-label { display: none; }
-            .icon-btn { width: 34px; height: 34px; border-radius: 8px; }
-            .icon-btn svg { width: 14px; height: 14px; }
-            .profile-btn { width: 34px; height: 34px; font-size: 12px; border-radius: 10px; }
-            .mobile-search-bar{ top:57px; }
-        }
-
-        /* Маленькие телефоны (до 480px) */
-        @media (max-width: 480px) {
-            .topbar { padding: 7px 8px; gap: 5px; }
-            .brand { font-size: 10px; gap: 4px; }
-            .brand-dot { width: 22px; height: 22px; border-radius: 5px; }
-            .brand-dot svg { width: 12px; height: 12px; }
-            .layout { padding: 8px; gap: 8px; }
-            .sidebar { width: 220px; padding: 7px; border-radius: 0; }
-            .sidebar-overlay { left: 220px; }
-            .side-title { font-size: 8px; letter-spacing: 0.8px; margin: 5px 3px 3px; }
-            .side-item { padding: 7px 8px; font-size: 10px; gap: 5px; border-radius: 5px; }
-            .side-item svg { width: 12px; height: 12px; }
-            .storage { padding: 7px; margin-top: 7px; }
-            .storage-head { font-size: 8px; }
-            .storage-bar { height: 3px; }
-            .storage small { font-size: 7px; }
-            .main { gap: 10px; }
-            .page-head h1 { font-size: 16px; }
-            .page-head p { font-size: 9px; }
-            .btn { padding: 6px 9px; font-size: 10px; border-radius: 6px; gap: 4px; }
-            .btn svg { width: 10px; height: 10px; }
-            .card { padding: 10px; border-radius: 8px; }
-            .stat-label { font-size: 9px; }
-            .stat-icon { width: 26px; height: 26px; border-radius: 6px; }
-            .stat-icon svg { width: 12px; height: 12px; }
-            .stat-value { font-size: 18px; margin-top: 7px; }
-            .stat-delta { font-size: 8px; padding: 1px 4px; margin-top: 4px; }
-            .stat-spark { height: 28px; margin-top: 8px; }
-            .panel { padding: 10px; border-radius: 8px; }
-            .panel-head h3 { font-size: 12px; }
-            .panel-head .sub { font-size: 9px; }
-            .tabs button { font-size: 9px; padding: 3px 6px; }
-            .chart { height: 180px; }
-            th, td { padding: 5px 4px; font-size: 9px; }
-            .doc-icon { width: 22px; height: 28px; font-size: 7px; }
-            .pill { font-size: 8px; padding: 1px 4px; }
-            .act-body p { font-size: 10px; }
-            .act-body small { font-size: 8px; }
-            .signer { padding: 5px; gap: 6px; }
-            .signer-avatar { width: 26px; height: 26px; font-size: 9px; }
-            .signer-info b { font-size: 10px; }
-            .signer-info small { font-size: 8px; }
-            .notif-dropdown { width: calc(100vw - 16px); right: -3px; }
-            .notif-item { padding: 7px 9px; }
-            .notif-icon { width: 28px; height: 28px; font-size: 0.85rem; }
-            .notif-text { font-size: 0.7rem; }
-         .amb-panel { width: calc(100vw - 16px); left: 50%; right: auto; padding: 10px; }
-            .amb-panel h4 { font-size: 11px; }
-            .amb-panel p { font-size: 8px; }
-            .amb-preview { height: 45px; }
-            .colors { gap: 4px; }
-            .color{ width:26px; height:26px; border-radius:7px; }
-            .mode { font-size: 8px; padding: 5px 3px; }
-            .lang-menu { min-width: 140px; }
-            .lang-option { padding: 5px 6px; font-size: 9px; }
-            .profile-menu { min-width: 140px; }
-            .profile-menu .menu-item { padding: 5px 8px; font-size: 9px; }
-            .lang-btn { padding: 5px 7px; }
-            .icon-btn { width: 30px; height: 30px; }
-            .icon-btn svg { width: 12px; height: 12px; }
-            .profile-btn { width: 30px; height: 30px; font-size: 10px; }
-            .mobile-search-bar{ top:50px; }
-        }
-    </style>
+    /* ===== ОДНА КНОПКА ПЕРЕКЛЮЧЕНИЯ ТЕМЫ ===== */
+    .theme-btn { position: relative; overflow: hidden; }
+    .theme-btn svg {
+        width: 15px; height: 15px;
+        position: absolute; top: 50%; left: 50%;
+        transition: opacity .3s ease, transform .4s cubic-bezier(.34, 1.56, .64, 1);
+    }
+    html[data-theme="dark"] .theme-btn .icon-sun { opacity: 1; transform: translate(-50%, -50%) rotate(0deg) scale(1); }
+    html[data-theme="dark"] .theme-btn .icon-moon { opacity: 0; transform: translate(-50%, -50%) rotate(120deg) scale(0.4); }
+    html[data-theme="light"] .theme-btn .icon-moon { opacity: 1; transform: translate(-50%, -50%) rotate(0deg) scale(1); }
+    html[data-theme="light"] .theme-btn .icon-sun { opacity: 0; transform: translate(-50%, -50%) rotate(-120deg) scale(0.4); }
+</style>
 </head>
 <body>
 
 <!-- TOP BAR -->
 <header class="topbar">
-    <!-- БУРГЕР-КНОПКА (для мобильных) -->
     <button type="button" class="burger-btn" id="burgerBtn" aria-label="Открыть меню" aria-expanded="false">
-        <span></span>
-        <span></span>
-        <span></span>
+        <span></span><span></span><span></span>
     </button>
 
     <div class="brand">
-
         <div>
             DocSign
             <small data-i18n="brand_sub">ЭДО</small>
         </div>
     </div>
 
-    <nav class="nav" id="nav">
+       <nav class="nav" id="nav">
         <a href="/dashboard" class="button-link" style="text-decoration: none; color: inherit; display: inline-flex; align-items: center;">
-            <button type="button" class="active" data-tab="dashboard">
+            <button type="button" class="{{ request()->is('dashboard') || request()->is('/') ? 'active' : '' }}" data-tab="dashboard">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
                 <span data-i18n="dashboard">Обзор</span>
             </button>
         </a>
-     <button type="button" data-tab="docs" onclick="window.location.href='{{ route('documents.index', ['tab' => 'all']) }}'">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-        <polyline points="14 2 14 8 20 8"/>
-    </svg>
-    <span data-i18n="documents">Документы</span>
-</button>
+        <button type="button" data-tab="docs" class="{{ request()->is('documents*') ? 'active' : '' }}" onclick="window.location.href='{{ route('documents.index', ['tab' => 'all']) }}'">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+            </svg>
+            <span data-i18n="documents">Документы</span>
+        </button>
         <a href="/signatures" class="button-link" style="text-decoration: none; color: inherit; display: inline-flex; align-items: center;">
-            <button type="button" data-tab="sign" style="pointer-events: none;">
+            <button type="button" data-tab="sign" class="{{ request()->is('signatures*') ? 'active' : '' }}" style="pointer-events: none;">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
                 <span data-i18n="signatures">Подписание</span>
             </button>
         </a>
-
         <a href="/users" data-tab="counter" style="text-decoration: none; display: inline-block;">
-            <button type="button" style="pointer-events: none;">
+            <button type="button" class="{{ request()->is('users*') ? 'active' : '' }}" style="pointer-events: none;">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
                     <circle cx="9" cy="7" r="4"/>
@@ -1450,17 +1242,11 @@
             <circle cx="11" cy="11" r="8"/>
             <line x1="21" y1="21" x2="16.65" y2="16.65"/>
         </svg>
-        <input
-                type="text"
-                name="query"
-                value="{{ request('query') }}"
-                data-i18n-placeholder="search_placeholder"
-                placeholder="Поиск..."
-        />
+        <input type="text" name="query" value="{{ request('query') }}"
+               data-i18n-placeholder="search_placeholder" placeholder="Поиск..." />
         <button type="submit" style="display: none;"></button>
     </form>
 
-    <!-- КНОПКА-ЛУПА ДЛЯ МОБИЛЬНЫХ (открывает выпадающую строку поиска под шапкой) -->
     <button type="button" class="icon-btn mobile-search-btn" id="mobileSearchBtn" data-i18n-title="search_placeholder" title="Поиск" aria-label="Поиск">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="11" cy="11" r="8"/>
@@ -1475,7 +1261,7 @@
     $notifRoute = Route::has('notifications.index') ? route('notifications.index') : '#';
     @endphp
 
-    {{-- ===== AMBIENT BUTTON В TOPBAR ===== --}}
+    {{-- ===== AMBIENT BUTTON ===== --}}
     <div class="lang-switcher" id="ambWrapper" style="position:relative;">
         <button type="button" class="amb-btn" id="ambBtn" data-i18n-title="color_title" title="Цвет подсветки">
             <div class="amb-swatch"></div>
@@ -1493,13 +1279,10 @@
                 </h4>
             </div>
             <p data-i18n="ambient_desc">Настройте подсветку как в премиальном авто</p>
-
             <div class="amb-preview" id="ambPreview">
                 <div class="amb-preview-label" id="ambPreviewLabel">RGB(79, 140, 255)</div>
             </div>
-
             <div class="colors" id="colors"></div>
-
             <div class="intensity">
                 <label>
                     <span data-i18n="intensity">Интенсивность</span>
@@ -1507,7 +1290,6 @@
                 </label>
                 <input type="range" id="intensity" min="20" max="100" value="80"/>
             </div>
-
             <div class="intensity" style="margin-top:12px">
                 <label>
                     <span data-i18n="spread">Распространение</span>
@@ -1515,7 +1297,6 @@
                 </label>
                 <input type="range" id="spread" min="20" max="100" value="60"/>
             </div>
-
             <div class="modes">
                 <div class="mode active" data-mode="solid">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="4"/></svg>
@@ -1530,7 +1311,6 @@
                     <span data-i18n="mode_breathe">Дыхание</span>
                 </div>
             </div>
-
             <div class="amb-footer">
                 <span data-i18n="auto_save">Автосохранение</span>
                 <span class="saved" id="savedIndicator">
@@ -1557,40 +1337,33 @@
             <div class="lang-option active" data-lang="ru">
                 <span class="flag">🇷🇺</span>
                 <span class="name">Русский</span>
-                <svg class="check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="20 6 9 17 4 12"/>
-                </svg>
+                <svg class="check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
             </div>
             <div class="lang-option" data-lang="tj">
                 <span class="flag">🇹🇯</span>
                 <span class="name">Тоҷикӣ</span>
-                <svg class="check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="20 6 9 17 4 12"/>
-                </svg>
+                <svg class="check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
             </div>
             <div class="lang-option" data-lang="en">
                 <span class="flag">🇬🇧</span>
                 <span class="name">English</span>
-                <svg class="check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="20 6 9 17 4 12"/>
-                </svg>
+                <svg class="check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
             </div>
         </div>
     </div>
 
+    <!-- THEME TOGGLE (одна кнопка) -->
     <div class="theme-switcher" aria-label="Тема интерфейса">
-        <button type="button" class="icon-btn theme-btn" id="darkThemeBtn" title="Тёмная тема" aria-label="Тёмная тема">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-        </button>
-        <button type="button" class="icon-btn theme-btn" id="lightThemeBtn" title="Светлая тема" aria-label="Светлая тема">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        <button type="button" class="icon-btn theme-btn" id="themeToggleBtn" title="Сменить тему" aria-label="Сменить тему">
+            <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+            <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
         </button>
     </div>
 
+    <!-- NOTIFICATIONS -->
     <div id="notifWrapper" class="position-relative d-inline-block" style="position:relative;">
         <button type="button" id="notifBtn" class="icon-btn position-relative {{ $unreadCount > 0 ? 'bell-shaking' : '' }}"
-                data-i18n-title="notifications"
-                title="Уведомления"
+                data-i18n-title="notifications" title="Уведомления"
                 style="background: none; border: none; padding: 8px; cursor: pointer; color: inherit;">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
                 <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
@@ -1601,11 +1374,11 @@
                   style="top: 4px; right: 4px; width: 10px; height: 10px; animation: notif-ping 1.5s infinite; opacity: 0.7;"></span>
             <span id="notifBadge" class="position-absolute rounded-pill notif-badge"
                   style="top: -5px; right: -5px; font-size: 10px; padding: 2px 6px;
-                     background: #dc3545; color: #fff; border: 2px solid #fff;
+                     background: #d63939; color: #fff; border: 2px solid #fff;
                      font-weight: bold; min-width: 18px; text-align: center;
-                     box-shadow: 0 2px 4px rgba(220,53,69,0.4);">
-            {{ $unreadCount }}
-        </span>
+                     box-shadow: 0 2px 4px rgba(214,57,57,0.4);">
+                {{ $unreadCount }}
+            </span>
             @endif
         </button>
 
@@ -1613,7 +1386,7 @@
             <div class="notif-header">
                 <strong data-i18n="notifications">Уведомления</strong>
                 <span id="headerBadge" class="badge rounded-pill {{ $unreadCount > 0 ? '' : 'd-none' }}"
-                      style="background: #dc3545; color: #fff;">{{ $unreadCount }}</span>
+                      style="background: #d63939; color: #fff;">{{ $unreadCount }}</span>
             </div>
             <div id="notifList" class="notif-list">
                 @forelse($notifications as $notification)
@@ -1627,13 +1400,13 @@
                 || $notification->type === 'comment';
                 $action = $isComment ? 'оставил комментарий к' : 'назначил вам документ';
                 $iconClass = $isComment ? 'bi-chat-left-text' : 'bi-pin-angle-fill';
-                $iconColor = $isComment ? '#22c55e' : '#f97316';
+                $iconColor = $isComment ? '#2fb344' : '#f76707';
                 $isUnread = !$notification->is_read;
                 $url = $data['url'] ?? (isset($data['document_id']) ? route('documents.show', $data['document_id']) : '#');
                 @endphp
                 <a href="{{ $url }}" class="notif-item {{ $isUnread ? 'unread' : '' }}"
                    data-id="{{ $notification->id }}" data-url="{{ $url }}" data-ts="{{ $notification->created_at->timestamp }}">
-                    <div class="notif-icon" style="background: {{ $isComment ? 'rgba(34,197,94,0.1)' : 'rgba(249,115,22,0.1)' }};">
+                    <div class="notif-icon" style="background: {{ $isComment ? 'rgba(47,179,68,0.1)' : 'rgba(247,103,7,0.1)' }};">
                         <i class="bi {{ $iconClass }}" style="color: {{ $iconColor }};"></i>
                     </div>
                     <div class="notif-body">
@@ -1663,27 +1436,22 @@
 
     <style>
         @keyframes notif-fresh-pulse {
-            0% { box-shadow: 0 0 0 0 rgba(79, 140, 255, 0.6); }
-            70% { box-shadow: 0 0 0 10px rgba(79, 140, 255, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(79, 140, 255, 0); }
+            0% { box-shadow: 0 0 0 0 rgba(var(--glow), 0.5); }
+            70% { box-shadow: 0 0 0 10px rgba(var(--glow), 0); }
+            100% { box-shadow: 0 0 0 0 rgba(var(--glow), 0); }
         }
         .notif-item.fresh {
             animation: notif-fresh-pulse 1.5s ease-out 2;
-            background: rgba(79, 140, 255, 0.08) !important;
-            border-left: 3px solid #4f8cff !important;
+            background: rgba(var(--glow), 0.08) !important;
+            border-left: 3px solid rgb(var(--glow)) !important;
         }
-        .notif-item.fresh:hover {
-            background: rgba(79, 140, 255, 0.15) !important;
-        }
+        .notif-item.fresh:hover { background: rgba(var(--glow), 0.14) !important; }
         @keyframes bell-ring {
             0%, 100% { transform: rotate(0); }
             10%, 30% { transform: rotate(-15deg); }
             20%, 40% { transform: rotate(15deg); }
         }
-        #notifBtn.ringing svg {
-            animation: bell-ring 0.8s ease-in-out;
-            transform-origin: top center;
-        }
+        #notifBtn.ringing svg { animation: bell-ring 0.8s ease-in-out; transform-origin: top center; }
     </style>
 
     <script>
@@ -1703,24 +1471,17 @@
                 e.stopPropagation();
                 dropdown.classList.toggle('active');
             });
-
             document.addEventListener('click', function(e) {
-                if (!wrapper.contains(e.target)) {
-                    dropdown.classList.remove('active');
-                }
+                if (!wrapper.contains(e.target)) dropdown.classList.remove('active');
             });
-
             list.addEventListener('click', function(e) {
                 const item = e.target.closest('.notif-item.unread');
                 if (!item) return;
-
                 const id = item.dataset.id;
                 const url = item.dataset.url;
-
                 item.classList.remove('unread');
                 const dot = item.querySelector('.notif-dot');
                 if (dot) dot.remove();
-
                 fetch(`/notifications/${id}/read`, {
                     method: 'POST',
                     headers: {
@@ -1729,7 +1490,6 @@
                         'X-Requested-With': 'XMLHttpRequest'
                     }
                 }).catch(() => {});
-
                 if (url && url !== '#') {
                     e.preventDefault();
                     setTimeout(() => { window.location.href = url; }, 150);
@@ -1742,13 +1502,10 @@
                         const newBadge = document.createElement('span');
                         newBadge.id = 'notifBadge';
                         newBadge.className = 'position-absolute rounded-pill notif-badge';
-                        newBadge.style.cssText = 'top:-5px;right:-5px;font-size:10px;padding:2px 6px;background:#dc3545;color:#fff;border:2px solid #fff;font-weight:bold;min-width:18px;text-align:center;box-shadow:0 2px 4px rgba(220,53,69,0.4);';
+                        newBadge.style.cssText = 'top:-5px;right:-5px;font-size:10px;padding:2px 6px;background:#d63939;color:#fff;border:2px solid #fff;font-weight:bold;min-width:18px;text-align:center;box-shadow:0 2px 4px rgba(214,57,57,0.4);';
                         newBadge.textContent = count;
                         btn.appendChild(newBadge);
-                    } else {
-                        badge.textContent = count;
-                    }
-
+                    } else { badge.textContent = count; }
                     if (!ping) {
                         const newPing = document.createElement('span');
                         newPing.id = 'notifPing';
@@ -1756,7 +1513,6 @@
                         newPing.style.cssText = 'top:4px;right:4px;width:10px;height:10px;animation:notif-ping 1.5s infinite;opacity:0.7;';
                         btn.appendChild(newPing);
                     }
-
                     headerBadge.textContent = count;
                     headerBadge.classList.remove('d-none');
                     btn.classList.add('bell-shaking');
@@ -1774,16 +1530,14 @@
                 const isComment = n.type === 'comment' || /коммент/i.test(n.message || '');
                 const action = isComment ? 'оставил комментарий к' : 'назначил вам документ';
                 const iconClass = isComment ? 'bi-chat-left-text' : 'bi-pin-angle-fill';
-                const iconColor = isComment ? '#22c55e' : '#f97316';
-                const bgColor = isComment ? 'rgba(34,197,94,0.1)' : 'rgba(249,115,22,0.1)';
-
+                const iconColor = isComment ? '#2fb344' : '#f76707';
+                const bgColor = isComment ? 'rgba(47,179,68,0.1)' : 'rgba(247,103,7,0.1)';
                 const item = document.createElement('a');
                 item.href = n.url || '#';
                 item.className = 'notif-item unread fresh';
                 item.dataset.id = n.id;
                 item.dataset.url = n.url || '#';
                 item.dataset.ts = n.createdAt;
-
                 item.innerHTML = `
                     <div class="notif-icon" style="background:${bgColor};">
                         <i class="bi ${iconClass}" style="color:${iconColor};"></i>
@@ -1798,12 +1552,9 @@
                     </div>
                     <span class="notif-dot"></span>
                 `;
-
                 const empty = list.querySelector('.notif-empty');
                 if (empty) empty.remove();
-
                 list.insertBefore(item, list.firstChild);
-
                 setTimeout(() => item.classList.remove('fresh'), 3000);
             }
 
@@ -1823,25 +1574,18 @@
             async function checkNotifications() {
                 try {
                     const res = await fetch('/notifications/check', {
-                        headers: {
-                            'Accept': 'application/json',
-                            'X-Requested-With': 'XMLHttpRequest'
-                        }
+                        headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
                     });
                     if (!res.ok) return;
-
                     const data = await res.json();
                     updateBadge(data.unreadCount);
-
                     const newOnes = (data.notifications || [])
                         .filter(n => n.createdAt > lastKnownTimestamp)
                         .sort((a, b) => a.createdAt - b.createdAt);
-
                     if (newOnes.length > 0) {
                         newOnes.forEach(n => renderNotification(n));
                         lastKnownTimestamp = Math.max(...newOnes.map(n => n.createdAt));
                         ringBell();
-
                         if (!dropdown.classList.contains('active')) {
                             dropdown.classList.add('active');
                             setTimeout(() => dropdown.classList.remove('active'), 5000);
@@ -1849,18 +1593,16 @@
                     }
                 } catch (e) {}
             }
-
             setInterval(checkNotifications, 15000);
             setTimeout(checkNotifications, 5000);
         })();
     </script>
 
+    <!-- PROFILE -->
     <div class="profile-dropdown" id="profileWrapper">
         <button type="button" class="profile-btn" id="profileBtn">
             @if(auth()->user()->avatar)
-            <img src="{{ auth()->user()->avatar_url }}"
-                 alt="{{ auth()->user()->name }}"
-                 class="profile-avatar">
+            <img src="{{ auth()->user()->avatar_url }}" alt="{{ auth()->user()->name }}" class="profile-avatar">
             @else
             <span class="profile-initials">
                 {{ Str::upper(Str::substr(auth()->user()->name, 0, 1)) }}{{ Str::upper(Str::substr(explode(' ', auth()->user()->name)[1] ?? '', 0, 1)) }}
@@ -1880,40 +1622,9 @@
     </div>
 
     <style>
-        .profile-btn {
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            overflow: hidden;
-            padding: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, rgba(var(--glow), 0.8), rgba(var(--glow), 0.4));
-            border: none;
-            cursor: pointer;
-            color: #fff;
-            font-weight: 700;
-            font-size: 14px;
-            font-family: 'Inter', sans-serif;
-        }
-
-        .profile-avatar {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-            border-radius: 50%;
-        }
-
-        .profile-initials {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            height: 100%;
-            line-height: 1;
-        }
+        .profile-btn { overflow: hidden; }
+        .profile-avatar { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 50%; }
+        .profile-initials { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; line-height: 1; }
     </style>
     <script>
         (function() {
@@ -1925,73 +1636,80 @@
                 menu.classList.toggle('active');
             });
             document.addEventListener('click', function(e) {
-                if (!wrapper.contains(e.target)) {
-                    menu.classList.remove('active');
-                }
+                if (!wrapper.contains(e.target)) menu.classList.remove('active');
             });
         })();
     </script>
 </header>
 
-<!-- ВЫПАДАЮЩАЯ СТРОКА ПОИСКА ДЛЯ МОБИЛЬНЫХ (открывается кнопкой-лупой) -->
+<!-- МОБИЛЬНЫЙ ПОИСК -->
 <div class="mobile-search-bar" id="mobileSearchBar">
     <form action="{{ route('search') }}" method="GET" class="mobile-search-bar-form">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="11" cy="11" r="8"/>
             <line x1="21" y1="21" x2="16.65" y2="16.65"/>
         </svg>
-        <input
-                type="text"
-                name="query"
-                value="{{ request('query') }}"
-                data-i18n-placeholder="search_placeholder"
-                placeholder="Поиск..."
-                id="mobileSearchInput"
-        />
+        <input type="text" name="query" value="{{ request('query') }}"
+               data-i18n-placeholder="search_placeholder" placeholder="Поиск..." id="mobileSearchInput" />
         <button type="submit" style="display: none;"></button>
     </form>
 </div>
 
-<!-- OVERLAY для мобильного меню -->
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-<!-- AMBIENT LIGHT STRIP -->
 <div class="ambient" id="ambient"></div>
 
-<!-- LAYOUT -->
 <div class="layout">
-    <aside class="sidebar" id="sidebar">
-        <!-- Поиск — виден только на мобильных (когда .search скрыт в топбаре) -->
+    @php
+        $isDocs = request()->is('documents*');
+        $sideActive = [
+            'dashboard'     => request()->is('dashboard') || request()->is('/'),
+            'documents'     => $isDocs,
+            'signatures'    => request()->is('signatures*'),
+            'users'         => request()->is('users*'),
+            'incoming'      => $isDocs && request('tab', 'incoming') == 'incoming',
+            'outgoing'      => $isDocs && request('tab') == 'outgoing',
+            'processing'    => $isDocs && request('tab') == 'processing',
+            'draft'         => $isDocs && request('tab') == 'draft',
+            'rejected'      => $isDocs && request('tab') == 'rejected',
+            'archive'       => $isDocs && request('tab') == 'archive',
+            'analysis'      => request()->is('analysis*'),
+            'notifications' => request()->is('notifications*'),
+            'logs'          => request()->is('logs*'),
+            'contracts'     => request()->is('contracts*'),
+            'departments'   => request()->is('departments*'),
+            'companies'     => request()->routeIs('companies.*'),
+            'profile'       => request()->is('profile*'),
+            'reports'       => request()->routeIs('admin.reports'),
+        ];
+    @endphp
+
+      <aside class="sidebar" id="sidebar">
+        <!-- Поиск — виден только на мобильных -->
         <form action="{{ route('search') }}" method="GET" class="mobile-search">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <circle cx="11" cy="11" r="8"/>
                 <line x1="21" y1="21" x2="16.65" y2="16.65"/>
             </svg>
-            <input
-                    type="text"
-                    name="query"
-                    value="{{ request('query') }}"
-                    data-i18n-placeholder="search_placeholder"
-                    placeholder="Поиск..."
-            />
+            <input type="text" name="query" value="{{ request('query') }}"
+                   data-i18n-placeholder="search_placeholder" placeholder="Поиск..." />
             <button type="submit" style="display: none;"></button>
         </form>
 
-        <!-- Дубликат верхнего меню — виден только на мобильных (когда .nav скрыт бургером) -->
+        <!-- Дубликат верхнего меню — виден только на мобильных -->
         <div class="mobile-nav-group">
-            <a href="/dashboard" class="side-item" style="text-decoration: none;">
+            <a href="/dashboard" class="side-item {{ $sideActive['dashboard'] ? 'active' : '' }}" style="text-decoration: none;">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
                 <span data-i18n="dashboard">Обзор</span>
             </a>
-            <a href="/documents" class="side-item" style="text-decoration: none;">
+            <a href="/documents" class="side-item {{ $sideActive['documents'] ? 'active' : '' }}" style="text-decoration: none;">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                 <span data-i18n="documents">Документы</span>
             </a>
-            <a href="/signatures" class="side-item" style="text-decoration: none;">
+            <a href="/signatures" class="side-item {{ $sideActive['signatures'] ? 'active' : '' }}" style="text-decoration: none;">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
                 <span data-i18n="signatures">Подписание</span>
             </a>
-            <a href="/users" class="side-item" style="text-decoration: none;">
+            <a href="/users" class="side-item {{ $sideActive['users'] ? 'active' : '' }}" style="text-decoration: none;">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                 <span data-i18n="counterparties">Команда</span>
             </a>
@@ -2000,148 +1718,112 @@
         <div class="side-title" data-i18n="workspace">Рабочее пространство</div>
 
         <a href="{{ route('documents.index', ['tab' => 'incoming']) }}"
-   class="side-item {{ request('tab','incoming')=='incoming' ? 'active' : '' }}"
-   style="text-decoration:none;color:inherit;">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-    <span data-i18n="incoming">Входящие</span>
-</a>
-
-<a href="{{ route('documents.index', ['tab' => 'outgoing']) }}"
-   class="side-item {{ request('tab')=='outgoing' ? 'active' : '' }}"
-   style="text-decoration:none;color:inherit;">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-    <span data-i18n="outgoing">Исходящие</span>
-</a>
-
-<a href="{{ route('documents.index', ['tab' => 'processing']) }}"
-   class="side-item {{ request('tab')=='processing' ? 'active' : '' }}"
-   style="text-decoration:none;color:inherit;display:block;">
-    <div class="side-item-inner">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/></svg>
-        <span data-i18n="on_signing">На подписании</span>
-    </div>
-</a>
-
-
-
-{{-- Если хочешь отдельную кнопку "Черновики" --}}
-{{-- Кнопка "Черновики" --}}
-<a href="{{ route('documents.index', ['tab' => 'draft']) }}"
-   class="side-item {{ request('tab')=='draft' ? 'active' : '' }}"
-   style="text-decoration:none;color:inherit;display:block;">
-    <div class="side-item-inner">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-            <path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-        </svg>
-        <span data-i18n="drafts">Черновики</span>
-    </div>
-</a>
-
-{{-- Кнопка "Отклонённые" --}}
-<a href="{{ route('documents.index', ['tab' => 'rejected']) }}"
-   class="side-item {{ request('tab')=='rejected' ? 'active' : '' }}"
-   style="text-decoration:none;color:inherit;display:block;">
-    <div class="side-item-inner">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"/>
-            <line x1="15" y1="9" x2="9" y2="15"/>
-            <line x1="9" y1="9" x2="15" y2="15"/>
-        </svg>
-        <span data-i18n="rejected">Отклонённые</span>
-    </div>
-</a>
-
-{{-- Кнопка "Архив" (для полного комплекта) --}}
-<a href="{{ route('documents.index', ['tab' => 'archive']) }}"
-   class="side-item {{ request('tab')=='archive' ? 'active' : '' }}"
-   style="text-decoration:none;color:inherit;display:block;">
-    <div class="side-item-inner">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="21 8 21 21 3 21 3 8"/>
-            <rect x="1" y="3" width="22" height="5"/>
-            <line x1="10" y1="12" x2="14" y2="12"/>
-        </svg>
-        <span data-i18n="archive">Архив</span>
-    </div>
-</a>
-        <div class="side-title" data-i18n="management">Управление</div>
-        <a href="/analysis"
-           class="side-item"
-           data-page="analysis"
-           style="text-decoration: none;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="side-icon">
-                <path d="M18 20V10M12 20V4M6 20v-6"/>
-            </svg>
-            <span data-i18n="analysis">Анализ</span>
+           class="side-item {{ $sideActive['incoming'] ? 'active' : '' }}"
+           style="text-decoration:none;color:inherit;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <span data-i18n="incoming">Входящие</span>
+        </a>
+        <a href="{{ route('documents.index', ['tab' => 'outgoing']) }}"
+           class="side-item {{ $sideActive['outgoing'] ? 'active' : '' }}"
+           style="text-decoration:none;color:inherit;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            <span data-i18n="outgoing">Исходящие</span>
+        </a>
+        <a href="{{ route('documents.index', ['tab' => 'processing']) }}"
+           class="side-item {{ $sideActive['processing'] ? 'active' : '' }}"
+           style="text-decoration:none;color:inherit;display:block;">
+            <div class="side-item-inner">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/></svg>
+                <span data-i18n="on_signing">На подписании</span>
+            </div>
+        </a>
+        <a href="{{ route('documents.index', ['tab' => 'draft']) }}"
+           class="side-item {{ $sideActive['draft'] ? 'active' : '' }}"
+           style="text-decoration:none;color:inherit;display:block;">
+            <div class="side-item-inner">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                    <path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                </svg>
+                <span data-i18n="drafts">Черновики</span>
+            </div>
+        </a>
+        <a href="{{ route('documents.index', ['tab' => 'rejected']) }}"
+           class="side-item {{ $sideActive['rejected'] ? 'active' : '' }}"
+           style="text-decoration:none;color:inherit;display:block;">
+            <div class="side-item-inner">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="15" y1="9" x2="9" y2="15"/>
+                    <line x1="9" y1="9" x2="15" y2="15"/>
+                </svg>
+                <span data-i18n="rejected">Отклонённые</span>
+            </div>
+        </a>
+        <a href="{{ route('documents.index', ['tab' => 'archive']) }}"
+           class="side-item {{ $sideActive['archive'] ? 'active' : '' }}"
+           style="text-decoration:none;color:inherit;display:block;">
+            <div class="side-item-inner">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="21 8 21 21 3 21 3 8"/>
+                    <rect x="1" y="3" width="22" height="5"/>
+                    <line x1="10" y1="12" x2="14" y2="12"/>
+                </svg>
+                <span data-i18n="archive">Архив</span>
+            </div>
         </a>
 
-        <a href="{{ route('notifications.index') }}"
-           class="side-item"
-           data-page="notifications"
-           style="text-decoration: none;">
+        <div class="side-title" data-i18n="management">Управление</div>
+        <a href="/analysis" class="side-item {{ $sideActive['analysis'] ? 'active' : '' }}" data-page="analysis" style="text-decoration: none;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="side-icon"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+            <span data-i18n="analysis">Анализ</span>
+        </a>
+        <a href="{{ route('notifications.index') }}" class="side-item {{ $sideActive['notifications'] ? 'active' : '' }}" data-page="notifications" style="text-decoration: none;">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="side-icon">
                 <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                <line x1="16" y1="2" x2="16" y2="6"/>
-                <line x1="8" y1="2" x2="8" y2="6"/>
-                <line x1="3" y1="10" x2="21" y2="10"/>
+                <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
             </svg>
             <span data-i18n="notifications">Уведомления</span>
             @if(isset($unreadCount) && $unreadCount > 0)
             <span class="side-badge">{{ $unreadCount }}</span>
             @endif
         </a>
-       {{-- История --}}
-<a href="/logs"
-   class="side-item"
-   style="text-decoration: none !important;">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="side-icon">
-        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-    </svg>
-    <span data-i18n="history">История</span>
-</a>
-
-
-<a href="/contracts/index"
-   class="side-item"
-   style="text-decoration: none !important;">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="side-icon">
-        <rect x="3" y="11" width="18" height="10" rx="2"/>
-        <circle cx="12" cy="5" r="2"/>
-        <path d="M12 7v4"/>
-        <line x1="8" y1="16" x2="8" y2="16"/>
-        <line x1="16" y1="16" x2="16" y2="16"/>
-    </svg>
-    <span data-i18n="ai-contracts">ИИ Договоры</span>
-</a>
-
-{{-- Отделы --}}
-<a href="/departments"
-   class="side-item"
-   style="text-decoration: none !important;">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="side-icon">
-        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-        <circle cx="9" cy="7" r="4"/>
-        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-    </svg>
-    <span data-i18n="departments">Отделы</span>
-</a>
-
-{{-- ✅ Мои компании (дерево) --}}
-<a href="{{ route('companies.index') }}"
-   class="side-item {{ request()->routeIs('companies.*') ? 'active' : '' }}"
-   style="text-decoration: none !important;">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="side-icon">
-        <path d="M3 21h18"/>
-        <path d="M5 21V7l8-4v18"/>
-        <path d="M19 21V11l-6-4"/>
-        <path d="M9 9v.01"/><path d="M9 12v.01"/><path d="M9 15v.01"/><path d="M9 18v.01"/>
-    </svg>
-    <span data-i18n="companies">Мои компании</span>
-</a>
+        <a href="/logs" class="side-item {{ $sideActive['logs'] ? 'active' : '' }}" style="text-decoration: none !important;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="side-icon">
+                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+            </svg>
+            <span data-i18n="history">История</span>
+        </a>
+        <a href="/contracts/index" class="side-item {{ $sideActive['contracts'] ? 'active' : '' }}" style="text-decoration: none !important;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="side-icon">
+                <rect x="3" y="11" width="18" height="10" rx="2"/>
+                <circle cx="12" cy="5" r="2"/>
+                <path d="M12 7v4"/>
+            </svg>
+            <span data-i18n="ai-contracts">ИИ Договоры</span>
+        </a>
+        <a href="/departments" class="side-item {{ $sideActive['departments'] ? 'active' : '' }}" style="text-decoration: none !important;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="side-icon">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+            <span data-i18n="departments">Отделы</span>
+        </a>
+        <a href="{{ route('companies.index') }}"
+           class="side-item {{ $sideActive['companies'] ? 'active' : '' }}"
+           style="text-decoration: none !important;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="side-icon">
+                <path d="M3 21h18"/>
+                <path d="M5 21V7l8-4v18"/>
+                <path d="M19 21V11l-6-4"/>
+                <path d="M9 9v.01"/><path d="M9 12v.01"/><path d="M9 15v.01"/><path d="M9 18v.01"/>
+            </svg>
+            <span data-i18n="companies">Мои компании</span>
+        </a>
         <a href="/profile" style="text-decoration: none; color: inherit; display: block;">
-            <div class="side-item">
+            <div class="side-item {{ $sideActive['profile'] ? 'active' : '' }}">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
                     <circle cx="12" cy="7" r="4"/>
@@ -2149,20 +1831,20 @@
                 <span data-i18n="profile">Профиль</span>
             </div>
         </a>
-@if(auth()->check() && auth()->user()->company_id && (auth()->user()->role === 'admin' || auth()->user()->level == 1))
-    <a href="{{ route('admin.reports') }}" style="text-decoration: none; color: inherit; display: block;">
-        <div class="side-item">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
-                <path d="M3 3v18h18"/>
-                <path d="M7 14l3-3 4 4 5-6"/>
-            </svg>
-            <span data-i18n="reports">Ҳисобот / Отчёт</span>
-        </div>
-    </a>
-@endif
+        @if(auth()->check() && auth()->user()->company_id && (auth()->user()->role === 'admin' || auth()->user()->level == 1))
+        <a href="{{ route('admin.reports') }}" style="text-decoration: none; color: inherit; display: block;">
+            <div class="side-item {{ $sideActive['reports'] ? 'active' : '' }}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
+                    <path d="M3 3v18h18"/>
+                    <path d="M7 14l3-3 4 4 5-6"/>
+                </svg>
+                <span data-i18n="reports">Ҳисобот / Отчёт</span>
+            </div>
+        </a>
+        @endif
         <form method="POST" action="{{ route('logout') }}" id="sidebar-logout-form" style="margin:0;">
             @csrf
-            <a href="#" class="side-item" onclick="event.preventDefault(); document.getElementById('sidebar-logout-form').submit();" style="text-decoration: none !important; color: #ff6b6b;">
+            <a href="#" class="side-item" onclick="event.preventDefault(); document.getElementById('sidebar-logout-form').submit();" style="text-decoration: none !important; color: #d63939;">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="side-icon">
                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
                     <polyline points="16 17 21 12 16 7"/>
@@ -2178,140 +1860,104 @@
 </div>
 
 <style>
+    /* ============================================================ */
+    /* ===== СВЕТЛАЯ ТЕМА В СТИЛЕ TABLER ===== */
+    /* ============================================================ */
     html[data-theme="light"] body,
-    html[data-theme="light"] #pjax-container {
-        color: #172033 !important;
-    }
-    html[data-theme="light"] body {
-        background: var(--bg-0) !important;
-    }
-    html[data-theme="light"] body,
-    html[data-theme="light"] :root {
-        --bg-dark: #eef2f7;
-        --bg-card: #ffffff;
-        --bg-panel: #ffffff;
-        --border-color: #cbd5e1;
-        --text-primary: #0f172a;
-        --text-secondary: #475569;
-        --text-muted: #64748b;
-    }
-    html[data-theme="light"] .topbar {
-        border-bottom-color: #cbd5e1 !important;
-        box-shadow: 0 2px 12px rgba(15, 23, 42, 0.08);
-    }
+    html[data-theme="light"] #pjax-container { color: #1e293b !important; }
+    html[data-theme="light"] body { background: var(--bg-0) !important; }
+    html[data-theme="light"] .topbar { background:#ffffff; border-bottom-color: var(--line) !important; box-shadow: none; }
     html[data-theme="light"] .sidebar,
-    html[data-theme="light"] .stat-card,
-    html[data-theme="light"] .panel {
-        border-color: #cbd5e1 !important;
-        box-shadow: 0 6px 20px rgba(15, 23, 42, 0.06);
+    html[data-theme="light"] .card,
+    html[data-theme="light"] .panel,
+    html[data-theme="light"] .signer {
+        background:#ffffff;
+        border-color: var(--line) !important;
+        box-shadow: var(--shadow-card);
     }
-    html[data-theme="light"] .stat-card:hover,
-    html[data-theme="light"] .panel:hover {
-        box-shadow: 0 10px 28px rgba(15, 23, 42, 0.12);
+    html[data-theme="light"] .search,
+    html[data-theme="light"] .icon-btn,
+    html[data-theme="light"] .btn,
+    html[data-theme="light"] .tabs,
+    html[data-theme="light"] .storage,
+    html[data-theme="light"] .mobile-search,
+    html[data-theme="light"] .mobile-search-bar-form,
+    html[data-theme="light"] .lang-btn,
+    html[data-theme="light"] .amb-btn {
+        background:#ffffff;
+        border-color: var(--line) !important;
     }
-    html[data-theme="light"] .side-item {
-        color: #475569 !important;
+    html[data-theme="light"] .icon-btn:hover,
+    html[data-theme="light"] .btn:hover,
+    html[data-theme="light"] .lang-btn:hover,
+    html[data-theme="light"] .amb-btn:hover { background: var(--bg-2); }
+    html[data-theme="light"] .lang-menu,
+    html[data-theme="light"] .amb-panel,
+    html[data-theme="light"] .profile-menu,
+    html[data-theme="light"] .notif-dropdown {
+        background:#ffffff;
+        border-color: var(--line);
+        box-shadow: 0 8px 24px rgba(15,23,42,0.12);
     }
+    html[data-theme="light"] .amb-panel::before { background:#ffffff; }
+    html[data-theme="light"] .mobile-search-bar { background:#ffffff; }
+    html[data-theme="light"] .nav button:hover,
+    html[data-theme="light"] .tabs button:hover,
     html[data-theme="light"] .side-item:hover,
-    html[data-theme="light"] .side-item.active {
-        color: #0f172a !important;
-        background: rgba(var(--glow), 0.12) !important;
+    html[data-theme="light"] .lang-option:hover,
+    html[data-theme="light"] .profile-menu .menu-item:hover { background: rgba(98,105,118,0.08); }
+    html[data-theme="light"] .nav button.active,
+    html[data-theme="light"] .tabs button.active,
+    html[data-theme="light"] .side-item.active,
+    html[data-theme="light"] .mode.active,
+    html[data-theme="light"] .lang-option.active {
+        background: rgba(var(--glow), 0.10);
+        color: rgb(var(--glow));
     }
     html[data-theme="light"] .page-head p,
     html[data-theme="light"] .breadcrumb-custom,
     html[data-theme="light"] .dashboard-subtitle,
     html[data-theme="light"] .panel-head .sub,
-    html[data-theme="light"] .stat-label {
-        color: #475569 !important;
-    }
+    html[data-theme="light"] .stat-label { color: #626b76 !important; }
     html[data-theme="light"] .dashboard-title {
         background: none !important;
-        -webkit-text-fill-color: #0f172a !important;
-        color: #0f172a !important;
+        -webkit-text-fill-color: #1e293b !important;
+        color: #1e293b !important;
+        font-weight: 600 !important;
     }
     html[data-theme="light"] .btn-primary-custom {
-        background: linear-gradient(135deg, #c084fc, #a855f7) !important;
-        color: #1e1b4b !important;
-        border: 1px solid #9333ea !important;
-        box-shadow: 0 5px 16px rgba(126, 34, 206, 0.25) !important;
+        background: rgb(var(--glow)) !important;
+        color: #ffffff !important;
+        border: 1px solid rgb(var(--glow)) !important;
+        box-shadow: none !important;
+        font-weight: 600;
     }
     html[data-theme="light"] .table-modern td,
-    html[data-theme="light"] .table-modern th {
-        border-bottom-color: #cbd5e1 !important;
-    }
-    html[data-theme="light"] body,
-    html[data-theme="light"] button,
-    html[data-theme="light"] input,
-    html[data-theme="light"] select,
-    html[data-theme="light"] textarea {
-        font-weight: 500;
-    }
-    html[data-theme="light"] h1,
-    html[data-theme="light"] h2,
-    html[data-theme="light"] h3,
-    html[data-theme="light"] h4,
-    html[data-theme="light"] strong,
-    html[data-theme="light"] b,
-    html[data-theme="light"] .stat-value,
-    html[data-theme="light"] .dashboard-title {
-        font-weight: 700 !important;
-    }
-    html[data-theme="light"] .sidebar,
-    html[data-theme="light"] .card,
-    html[data-theme="light"] .panel,
-    html[data-theme="light"] .stat-card,
-    html[data-theme="light"] .search,
-    html[data-theme="light"] .nav,
-    html[data-theme="light"] .btn,
-    html[data-theme="light"] .icon-btn,
-    html[data-theme="light"] .lang-btn,
-    html[data-theme="light"] .table-modern,
-    html[data-theme="light"] .table-modern td,
-    html[data-theme="light"] .table-modern th {
-        border-width: 1.5px !important;
-        border-color: #b8c4d3 !important;
-    }
-    html[data-theme="light"] .sidebar .side-item {
-        font-weight: 600 !important;
-        color: #334155 !important;
-    }
-    html[data-theme="light"] .sidebar .side-item svg {
-        color: #475569;
-        stroke-width: 2.2;
-    }
-    html[data-theme="light"] .sidebar .side-item:hover,
-    html[data-theme="light"] .sidebar .side-item.active {
-        font-weight: 700 !important;
-        color: #0f172a !important;
-    }
-    html[data-theme="light"] .sidebar .side-title {
-        color: #475569 !important;
-        font-weight: 700;
-    }
+    html[data-theme="light"] .table-modern th { border-bottom-color: var(--line) !important; }
     html[data-theme="light"] .table-modern thead th {
-        background: rgba(15, 23, 42, 0.04) !important;
-        color: #475569 !important;
+        background: rgba(98,105,118,0.06) !important;
+        color: #626b76 !important;
     }
+    html[data-theme="light"] .stat-value,
+    html[data-theme="light"] .panel-head h3,
+    html[data-theme="light"] .doc-meta b { color:#1e293b !important; font-weight:600; }
     html[data-theme="light"] .modal-box,
-    html[data-theme="light"] .toast {
-        background: #ffffff !important;
-        color: #172033 !important;
-    }
-    html[data-theme="light"] .pagination-wrapper .page-link {
-        background: #ffffff !important;
-        color: #475569 !important;
-    }
+    html[data-theme="light"] .toast { background:#ffffff !important; color:#1e293b !important; }
+    html[data-theme="light"] .pagination-wrapper .page-link { background:#ffffff !important; color:#626b76 !important; }
+    html[data-theme="light"] .notif-text,
+    html[data-theme="light"] .notif-header strong { color:#1e293b; }
+    html[data-theme="light"] .profile-menu .menu-item { color:#1e293b; }
+    html[data-theme="light"] .profile-menu .menu-item.logout { color:#d63939; }
+    html[data-theme="light"] .burger-btn span { background:#1e293b; }
+    html[data-theme="light"] .search kbd { background:rgba(98,105,118,0.10); color:#626b76; }
 </style>
 
 <script>
-    // ============================================================
-    // ===== БУРГЕР-МЕНЮ (МОБИЛЬНОЕ) =====
-    // ============================================================
+    // ===== БУРГЕР-МЕНЮ =====
     (function() {
         const burgerBtn = document.getElementById('burgerBtn');
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('sidebarOverlay');
-
         function openMenu() {
             burgerBtn.classList.add('active');
             burgerBtn.setAttribute('aria-expanded', 'true');
@@ -2320,7 +1966,6 @@
             document.body.classList.add('menu-open');
             document.body.style.overflow = 'hidden';
         }
-
         function closeMenu() {
             burgerBtn.classList.remove('active');
             burgerBtn.setAttribute('aria-expanded', 'false');
@@ -2329,118 +1974,68 @@
             document.body.classList.remove('menu-open');
             document.body.style.overflow = '';
         }
-
         burgerBtn.addEventListener('click', function(e) {
             e.stopPropagation();
-            if (sidebar.classList.contains('active')) {
-                closeMenu();
-            } else {
-                openMenu();
-            }
+            sidebar.classList.contains('active') ? closeMenu() : openMenu();
         });
-
         overlay.addEventListener('click', closeMenu);
-
-        // Закрытие по Escape
         document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && sidebar.classList.contains('active')) {
-                closeMenu();
-            }
+            if (e.key === 'Escape' && sidebar.classList.contains('active')) closeMenu();
         });
-
-        // Закрытие при клике на пункт меню (на мобильных),
-        // но НЕ мешаем полю поиска и его кнопке отправки
         sidebar.querySelectorAll('.side-item').forEach(item => {
             item.addEventListener('click', function() {
-                if (window.innerWidth <= 1100) {
-                    closeMenu();
-                }
+                if (window.innerWidth <= 1100) closeMenu();
             });
         });
-
-        // Мобильная форма поиска в сайдбаре — тоже должна закрывать меню при отправке
         const mobileSearchForm = sidebar.querySelector('.mobile-search');
         if (mobileSearchForm) {
             mobileSearchForm.addEventListener('submit', function() {
-                if (window.innerWidth <= 1100) {
-                    closeMenu();
-                }
+                if (window.innerWidth <= 1100) closeMenu();
             });
         }
-
-        // Закрытие при изменении размера окна
         window.addEventListener('resize', function() {
-            if (window.innerWidth > 1100) {
-                closeMenu();
-            }
+            if (window.innerWidth > 1100) closeMenu();
         });
     })();
 
-    // ============================================================
-    // ===== МОБИЛЬНАЯ ЛУПА В ШАПКЕ (выпадающая строка поиска) =====
-    // ============================================================
+    // ===== МОБИЛЬНАЯ ЛУПА =====
     (function() {
         const btn = document.getElementById('mobileSearchBtn');
         const bar = document.getElementById('mobileSearchBar');
         const input = document.getElementById('mobileSearchInput');
         if (!btn || !bar) return;
-
-        function openBar() {
-            bar.classList.add('active');
-            setTimeout(() => { if (input) input.focus(); }, 60);
-        }
-        function closeBar() {
-            bar.classList.remove('active');
-        }
-
         btn.addEventListener('click', function(e) {
             e.stopPropagation();
-            if (bar.classList.contains('active')) {
-                closeBar();
-            } else {
-                openBar();
-            }
+            bar.classList.toggle('active');
+            if (bar.classList.contains('active')) setTimeout(() => { if (input) input.focus(); }, 60);
         });
-
         document.addEventListener('click', function(e) {
-            if (bar.classList.contains('active') && !bar.contains(e.target) && e.target !== btn && !btn.contains(e.target)) {
-                closeBar();
-            }
+            if (bar.classList.contains('active') && !bar.contains(e.target) && !btn.contains(e.target)) bar.classList.remove('active');
         });
-
         document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && bar.classList.contains('active')) {
-                closeBar();
-            }
+            if (e.key === 'Escape' && bar.classList.contains('active')) bar.classList.remove('active');
         });
-
         window.addEventListener('resize', function() {
-            if (window.innerWidth > 1100) {
-                closeBar();
-            }
+            if (window.innerWidth > 1100) bar.classList.remove('active');
         });
     })();
 
-    // ============================================================
-    // ===== AMBIENT LIGHTING — ПОЛНАЯ СИСТЕМА С СОХРАНЕНИЕМ =====
-    // ============================================================
+    // ===== AMBIENT LIGHTING =====
     const AMBIENT_KEY = 'docsign_ambient';
-
     const COLORS = [
-      { nameKey:'color_electric', rgb:'79,140,255',  hex:'#4f8cff' },
-      { nameKey:'color_gold',     rgb:'234,179,8',   hex:'#eab308' },
-      { nameKey:'color_sunset',   rgb:'249,115,22',  hex:'#f97316' },
-      { nameKey:'color_cardinal', rgb:'239,68,68',   hex:'#ef4444' },
-      { nameKey:'color_fuchsia',  rgb:'236,72,153',  hex:'#ec4899' },
-      { nameKey:'color_rose',     rgb:'244,114,182', hex:'#f472b6' },
-      { nameKey:'color_neon',     rgb:'168,85,247',  hex:'#a855f7' },
-      { nameKey:'color_indigo',   rgb:'99,102,241',  hex:'#6366f1' },
-      { nameKey:'color_aqua',     rgb:'6,182,212',   hex:'#06b6d4' },
-      { nameKey:'color_mint',     rgb:'45,212,191',  hex:'#2dd4bf' },
-      { nameKey:'color_lime',     rgb:'34,197,94',   hex:'#22c55e' },
-      { nameKey:'color_ice',      rgb:'226,232,240', hex:'#e2e8f0' },
+        { nameKey:'color_electric', rgb:'79,140,255',  hex:'#4f8cff' },
+        { nameKey:'color_gold',     rgb:'234,179,8',   hex:'#eab308' },
+        { nameKey:'color_sunset',   rgb:'249,115,22',  hex:'#f97316' },
+        { nameKey:'color_cardinal', rgb:'239,68,68',   hex:'#ef4444' },
+        { nameKey:'color_fuchsia',  rgb:'236,72,153',  hex:'#ec4899' },
+        { nameKey:'color_rose',     rgb:'244,114,182', hex:'#f472b6' },
+        { nameKey:'color_neon',     rgb:'168,85,247',  hex:'#a855f7' },
+        { nameKey:'color_indigo',   rgb:'99,102,241',  hex:'#6366f1' },
+        { nameKey:'color_aqua',     rgb:'6,182,212',   hex:'#06b6d4' },
+        { nameKey:'color_mint',     rgb:'45,212,191',  hex:'#2dd4bf' },
+        { nameKey:'color_lime',     rgb:'34,197,94',   hex:'#22c55e' },
+        { nameKey:'color_ice',      rgb:'226,232,240', hex:'#e2e8f0' },
     ];
-
     function loadAmbient(){
         try {
             const s = JSON.parse(localStorage.getItem(AMBIENT_KEY));
@@ -2448,43 +2043,30 @@
         } catch(e) {}
         return { color:'79,140,255', intensity:80, spread:60, mode:'solid' };
     }
-
-    function saveAmbient(settings){
-        localStorage.setItem(AMBIENT_KEY, JSON.stringify(settings));
-    }
-
+    function saveAmbient(settings){ localStorage.setItem(AMBIENT_KEY, JSON.stringify(settings)); }
     function applyColor(rgb){
         document.documentElement.style.setProperty('--glow', rgb);
-
         const preview = document.getElementById('ambPreview');
         if (preview) {
-            preview.style.background = `linear-gradient(90deg, rgba(${rgb},0.1), rgba(${rgb},0.7), rgba(${rgb},0.1))`;
-            preview.style.boxShadow = `inset 0 0 30px rgba(${rgb},0.4), 0 0 20px rgba(${rgb},0.3)`;
+            preview.style.background = `linear-gradient(90deg, rgba(${rgb},0.1), rgba(${rgb},0.6), rgba(${rgb},0.1))`;
             preview.style.borderColor = `rgba(${rgb},0.4)`;
         }
         const label = document.getElementById('ambPreviewLabel');
         if (label) label.textContent = `RGB(${rgb})`;
     }
-
     function applyMode(mode){
         const ambient = document.getElementById('ambient');
         if (!ambient) return;
         ambient.style.animation = 'none';
         void ambient.offsetWidth;
-        if (mode === 'pulse') {
-            ambient.style.animation = 'pulseFast 1.5s ease-in-out infinite';
-        } else if (mode === 'breathe') {
-            ambient.style.animation = 'breatheGlow 4s ease-in-out infinite';
-        } else {
-            ambient.style.animation = 'pulseGlow 4s ease-in-out infinite';
-        }
+        if (mode === 'pulse') ambient.style.animation = 'pulseFast 1.5s ease-in-out infinite';
+        else if (mode === 'breathe') ambient.style.animation = 'breatheGlow 4s ease-in-out infinite';
+        else ambient.style.animation = 'pulseGlow 4s ease-in-out infinite';
     }
-
     function applyIntensity(val){
         const ambient = document.getElementById('ambient');
         if (ambient) ambient.style.opacity = val / 100;
     }
-
     function applySpread(val){
         const ambient = document.getElementById('ambient');
         if (!ambient) return;
@@ -2492,7 +2074,6 @@
         ambient.style.transform = `scaleY(${scale})`;
         ambient.style.filter = `blur(${Math.max(0,(val-60)/20)}px)`;
     }
-
     let saveTimer = null;
     function flashSaved(){
         const ind = document.getElementById('savedIndicator');
@@ -2501,18 +2082,15 @@
         clearTimeout(saveTimer);
         saveTimer = setTimeout(()=> ind.classList.remove('show'), 1500);
     }
-
     document.addEventListener('DOMContentLoaded', () => {
         const settings = loadAmbient();
-
         const colorsEl = document.getElementById('colors');
         if (colorsEl) {
             COLORS.forEach((c)=>{
                 const el = document.createElement('div');
                 el.className = 'color' + (c.rgb === settings.color ? ' active' : '');
-                el.style.background = `radial-gradient(circle at 30% 30%, rgba(${c.rgb},1), rgba(${c.rgb},0.5))`;
+                el.style.background = c.hex;
                 el.style.color = `rgb(${c.rgb})`;
-                el.style.boxShadow = `0 4px 14px rgba(${c.rgb},0.4), inset 0 0 10px rgba(255,255,255,0.15)`;
                 el.dataset.rgb = c.rgb;
                 el.dataset.nameKey = c.nameKey;
                 el.title = c.nameKey;
@@ -2528,26 +2106,19 @@
                 colorsEl.appendChild(el);
             });
         }
-
         const intInput = document.getElementById('intensity');
         const intVal = document.getElementById('intVal');
         if (intInput) intInput.value = settings.intensity;
         if (intVal) intVal.textContent = settings.intensity + '%';
-
         const spreadInput = document.getElementById('spread');
         const spreadVal = document.getElementById('spreadVal');
         if (spreadInput) spreadInput.value = settings.spread;
         if (spreadVal) spreadVal.textContent = settings.spread + '%';
-
-        document.querySelectorAll('.mode').forEach(m=>{
-            m.classList.toggle('active', m.dataset.mode === settings.mode);
-        });
-
+        document.querySelectorAll('.mode').forEach(m=> m.classList.toggle('active', m.dataset.mode === settings.mode));
         applyColor(settings.color);
         applyIntensity(settings.intensity);
         applySpread(settings.spread);
         applyMode(settings.mode);
-
         const ambBtn = document.getElementById('ambBtn');
         const ambPanel = document.getElementById('ambPanel');
         const ambWrapper = document.getElementById('ambWrapper');
@@ -2564,299 +2135,135 @@
                 }
             });
         }
-
-        if (intInput) {
-            intInput.addEventListener('input', (e)=>{
-                const v = parseInt(e.target.value);
-                if (intVal) intVal.textContent = v + '%';
-                applyIntensity(v);
-                const cur = loadAmbient();
-                cur.intensity = v;
-                saveAmbient(cur);
-                flashSaved();
-            });
-        }
-
-        if (spreadInput) {
-            spreadInput.addEventListener('input', (e)=>{
-                const v = parseInt(e.target.value);
-                if (spreadVal) spreadVal.textContent = v + '%';
-                applySpread(v);
-                const cur = loadAmbient();
-                cur.spread = v;
-                saveAmbient(cur);
-                flashSaved();
-            });
-        }
-
+        if (intInput) intInput.addEventListener('input', (e)=>{
+            const v = parseInt(e.target.value);
+            if (intVal) intVal.textContent = v + '%';
+            applyIntensity(v);
+            const cur = loadAmbient(); cur.intensity = v; saveAmbient(cur); flashSaved();
+        });
+        if (spreadInput) spreadInput.addEventListener('input', (e)=>{
+            const v = parseInt(e.target.value);
+            if (spreadVal) spreadVal.textContent = v + '%';
+            applySpread(v);
+            const cur = loadAmbient(); cur.spread = v; saveAmbient(cur); flashSaved();
+        });
         document.querySelectorAll('.mode').forEach(m=>{
             m.addEventListener('click', ()=>{
                 document.querySelectorAll('.mode').forEach(x=>x.classList.remove('active'));
                 m.classList.add('active');
-                const cur = loadAmbient();
-                cur.mode = m.dataset.mode;
-                saveAmbient(cur);
-                applyMode(cur.mode);
-                flashSaved();
+                const cur = loadAmbient(); cur.mode = m.dataset.mode; saveAmbient(cur); applyMode(cur.mode); flashSaved();
             });
         });
     });
 
-    // ============================================================
-    // ===== ПЕРЕВОДЫ / TRANSLATIONS / ТАРҶУМАҲО =====
-    // ============================================================
-
-   const TRANSLATIONS = {
-    ru: {
-        brand_sub: 'ЭДО',
-        dashboard: 'Обзор',
-        documents: 'Документы',
-        signatures: 'Подписание',
-        counterparties: 'Команда ',
-        reports: 'Отчёты',
-        search_placeholder: 'Поиск...',
-        choose_language: 'Выберите язык',
-        notifications: 'Уведомления',
-        all_notifications: 'Все уведомления →',
-        no_notifications: 'Нет уведомлений',
-        notif_action_comment: 'оставил комментарий к',
-        notif_action_assign: 'назначил вам документ',
-        system: 'Система',
-        document: 'Документ',
-        profile: 'Профиль',
-        logout: 'Выйти',
-        workspace: 'Рабочее пространство',
-        control_panel: 'Панель управления',
-        incoming: 'Входящие',
-        outgoing: 'Исходящие',
-        on_signing: 'На подписании',
-        archive: 'Архив',
-        management: 'Управление',
-        analysis: 'Анализ',
-        history: 'История',
-        exit: 'Выход',
-        ambient_title: 'Ambient Lighting',
-        ambient_desc: 'Настройте подсветку как в премиальном авто',
-        intensity: 'Интенсивность',
-        spread: 'Распространение',
-        mode_solid: 'Статичный',
-        mode_pulse: 'Пульс',
-        mode_breathe: 'Дыхание',
-        color_title: 'Цвет',
-        color_electric: 'Электрик',
-        color_neon: 'Неон',
-        color_cardinal: 'Кардинал',
-        color_sunset: 'Закат',
-        color_lime: 'Лайм',
-        color_aqua: 'Аква',
-        color_fuchsia: 'Фуксия',
-        color_gold: 'Золото',
-        color_ice: 'Лёд',
-        color_mint: 'Мята',
-        color_indigo: 'Индиго',
-        color_rose: 'Роза',
-        auto_save: 'Автосохранение',
-        saved: 'Сохранено',
-        status_signed: 'Подписан',
-        status_pending: 'Ожидает',
-        status_rejected: 'Отклонён',
-        status_draft: 'Черновик',
-         strel: 'Стрелки',
-         history: 'История',
-departments: 'Отделы',
-companies: 'Мои компании',
-   archive: 'Архив',
-        drafts: 'Черновики',
-        rejected: 'Отклонённые',
-    },
-    tj: {
-        brand_sub: 'Ҳуҷҷатгардонӣ',
-        dashboard: 'Панел',
-        documents: 'Ҳуҷҷатҳо',
-        signatures: 'Имзоҳо',
-        counterparties: 'Даста',
-        reports: 'Ҳисоботҳо',
-        search_placeholder: 'Ҷустуҷӯи...',
-        choose_language: 'Забонро интихоб кунед',
-        notifications: 'Огоҳиҳо',
-        all_notifications: 'Ҳамаи огоҳиҳо →',
-        no_notifications: 'Огоҳиҳо нест',
-        notif_action_comment: 'шарҳ гузошт ба',
-        notif_action_assign: 'ба шумо ҳуҷҷат таъин кард',
-        system: 'Система',
-        document: 'Ҳуҷҷат',
-        profile: 'Профил',
-        logout: 'Баромад',
-        workspace: 'Фазои корӣ',
-        control_panel: 'Панели идоракунӣ',
-        incoming: 'Воридшаванда',
-        outgoing: 'Содиршаванда',
-        on_signing: 'Дар раванди имзо',
-        management: 'Идоракунӣ',
-        analysis: 'Таҳлил',
-        history: 'Таърих',
-        exit: 'Баромад',
-        ambient_title: 'Равшании муҳит',
-        ambient_desc: 'Равшаниро мисли мошини премиум танзим кунед',
-        intensity: 'Шиддат',
-        spread: 'Паҳншавӣ',
-        mode_solid: 'Собит',
-        mode_pulse: 'Пулс',
-        mode_breathe: 'Нафас',
-        color_title: 'Ранг',
-        color_electric: 'Электрик',
-        color_neon: 'Неон',
-        color_cardinal: 'Кардинал',
-        color_sunset: 'Ғуруб',
-        color_lime: 'Лайм',
-        color_aqua: 'Аква',
-        color_fuchsia: 'Фуксия',
-        color_gold: 'Тилло',
-        color_ice: 'Ях',
-        color_mint: 'Наъно',
-        color_indigo: 'Индиго',
-        color_rose: 'Гулӣ',
-        auto_save: 'Нигоҳдории худкор',
-        saved: 'Нигоҳ дошта шуд',
-        status_signed: 'Имзошуда',
-        status_pending: 'Дар интизорӣ',
-        status_rejected: 'Радшуда',
-        status_draft: 'Лоиҳа',
-          strel: 'Тирҳо',
-          history: 'Таърих',
-departments: 'Шӯъбаҳо',
-companies: 'Ширкатҳои ман',
-  archive: 'Бойгонӣ',
-        drafts: 'Пешнависҳо',
-        rejected: 'Радшудаҳо',
-    },
-    en: {
-        brand_sub: 'EDMS',
-        dashboard: 'Dashboard',
-        documents: 'Documents',
-        signatures: 'Signatures',
-        counterparties: 'Team',
-        reports: 'Reports',
-        search_placeholder: 'Search...',
-        choose_language: 'Choose language',
-        notifications: 'Notifications',
-        all_notifications: 'All notifications →',
-        no_notifications: 'No notifications',
-        notif_action_comment: 'left a comment on',
-        notif_action_assign: 'assigned you a document',
-        system: 'System',
-        document: 'Document',
-        profile: 'Profile',
-        logout: 'Logout',
-        workspace: 'Workspace',
-        control_panel: 'Control Panel',
-        incoming: 'Incoming',
-        outgoing: 'Outgoing',
-        on_signing: 'Awaiting Signature',
-        archive: 'Archive',
-        management: 'Management',
-        analysis: 'Analysis',
-        history: 'History',
-        exit: 'Exit',
-        ambient_title: 'Ambient Lighting',
-        ambient_desc: 'Set up lighting like in a premium car',
-        intensity: 'Intensity',
-        spread: 'Spread',
-        mode_solid: 'Static',
-        mode_pulse: 'Pulse',
-        mode_breathe: 'Breathe',
-        color_title: 'Color',
-        color_electric: 'Electric',
-        color_neon: 'Neon',
-        color_cardinal: 'Cardinal',
-        color_sunset: 'Sunset',
-        color_lime: 'Lime',
-        color_aqua: 'Aqua',
-        color_fuchsia: 'Fuchsia',
-        color_gold: 'Gold',
-        color_ice: 'Ice',
-        color_mint: 'Mint',
-        color_indigo: 'Indigo',
-        color_rose: 'Rose',
-        auto_save: 'Auto-save',
-        saved: 'Saved',
-        status_signed: 'Signed',
-        status_pending: 'Pending',
-        status_rejected: 'Rejected',
-        status_draft: 'Draft',
-         strel: 'Arrows',
-         history: 'History',
-departments: 'Departments',
-companies: 'My Companies',
-     archive: 'Archive',
-        drafts: 'Drafts',
-        rejected: 'Rejected',
-    }
-};
-
+    // ===== ПЕРЕВОДЫ =====
+    const TRANSLATIONS = {
+        ru: {
+            brand_sub: 'ЭДО', dashboard: 'Обзор', documents: 'Документы', signatures: 'Подписание',
+            counterparties: 'Команда', reports: 'Отчёты', search_placeholder: 'Поиск...',
+            choose_language: 'Выберите язык', notifications: 'Уведомления',
+            all_notifications: 'Все уведомления →', no_notifications: 'Нет уведомлений',
+            notif_action_comment: 'оставил комментарий к', notif_action_assign: 'назначил вам документ',
+            system: 'Система', document: 'Документ', profile: 'Профиль', logout: 'Выйти',
+            workspace: 'Рабочее пространство', control_panel: 'Панель управления',
+            incoming: 'Входящие', outgoing: 'Исходящие', on_signing: 'На подписании',
+            archive: 'Архив', management: 'Управление', analysis: 'Анализ', history: 'История', exit: 'Выход',
+            ambient_title: 'Ambient Lighting', ambient_desc: 'Настройте подсветку как в премиальном авто',
+            intensity: 'Интенсивность', spread: 'Распространение',
+            mode_solid: 'Статичный', mode_pulse: 'Пульс', mode_breathe: 'Дыхание',
+            color_title: 'Цвет', color_electric: 'Электрик', color_neon: 'Неон', color_cardinal: 'Кардинал',
+            color_sunset: 'Закат', color_lime: 'Лайм', color_aqua: 'Аква', color_fuchsia: 'Фуксия',
+            color_gold: 'Золото', color_ice: 'Лёд', color_mint: 'Мята', color_indigo: 'Индиго', color_rose: 'Роза',
+            auto_save: 'Автосохранение', saved: 'Сохранено',
+            status_signed: 'Подписан', status_pending: 'Ожидает', status_rejected: 'Отклонён', status_draft: 'Черновик',
+            departments: 'Отделы', companies: 'Мои компании', drafts: 'Черновики', rejected: 'Отклонённые',
+        },
+        tj: {
+            brand_sub: 'Ҳуҷҷатгардонӣ', dashboard: 'Панел', documents: 'Ҳуҷҷатҳо', signatures: 'Имзоҳо',
+            counterparties: 'Даста', reports: 'Ҳисоботҳо', search_placeholder: 'Ҷустуҷӯ...',
+            choose_language: 'Забонро интихоб кунед', notifications: 'Огоҳиҳо',
+            all_notifications: 'Ҳамаи огоҳиҳо →', no_notifications: 'Огоҳиҳо нест',
+            notif_action_comment: 'шарҳ гузошт ба', notif_action_assign: 'ба шумо ҳуҷҷат таъин кард',
+            system: 'Система', document: 'Ҳуҷҷат', profile: 'Профил', logout: 'Баромад',
+            workspace: 'Фазои корӣ', control_panel: 'Панели идоракунӣ',
+            incoming: 'Воридшаванда', outgoing: 'Содиршаванда', on_signing: 'Дар раванди имзо',
+            archive: 'Бойгонӣ', management: 'Идоракунӣ', analysis: 'Таҳлил', history: 'Таърих', exit: 'Баромад',
+            ambient_title: 'Равшании муҳит', ambient_desc: 'Равшаниро мисли мошини премиум танзим кунед',
+            intensity: 'Шиддат', spread: 'Паҳншавӣ',
+            mode_solid: 'Собит', mode_pulse: 'Пулс', mode_breathe: 'Нафас',
+            color_title: 'Ранг', color_electric: 'Электрик', color_neon: 'Неон', color_cardinal: 'Кардинал',
+            color_sunset: 'Ғуруб', color_lime: 'Лайм', color_aqua: 'Аква', color_fuchsia: 'Фуксия',
+            color_gold: 'Тилло', color_ice: 'Ях', color_mint: 'Наъно', color_indigo: 'Индиго', color_rose: 'Гулӣ',
+            auto_save: 'Нигоҳдории худкор', saved: 'Нигоҳ дошта шуд',
+            status_signed: 'Имзошуда', status_pending: 'Дар интизорӣ', status_rejected: 'Радшуда', status_draft: 'Лоиҳа',
+            departments: 'Шӯъбаҳо', companies: 'Ширкатҳои ман', drafts: 'Пешнависҳо', rejected: 'Радшудаҳо',
+        },
+        en: {
+            brand_sub: 'EDMS', dashboard: 'Dashboard', documents: 'Documents', signatures: 'Signatures',
+            counterparties: 'Team', reports: 'Reports', search_placeholder: 'Search...',
+            choose_language: 'Choose language', notifications: 'Notifications',
+            all_notifications: 'All notifications →', no_notifications: 'No notifications',
+            notif_action_comment: 'left a comment on', notif_action_assign: 'assigned you a document',
+            system: 'System', document: 'Document', profile: 'Profile', logout: 'Logout',
+            workspace: 'Workspace', control_panel: 'Control Panel',
+            incoming: 'Incoming', outgoing: 'Outgoing', on_signing: 'Awaiting Signature',
+            archive: 'Archive', management: 'Management', analysis: 'Analysis', history: 'History', exit: 'Exit',
+            ambient_title: 'Ambient Lighting', ambient_desc: 'Set up lighting like in a premium car',
+            intensity: 'Intensity', spread: 'Spread',
+            mode_solid: 'Static', mode_pulse: 'Pulse', mode_breathe: 'Breathe',
+            color_title: 'Color', color_electric: 'Electric', color_neon: 'Neon', color_cardinal: 'Cardinal',
+            color_sunset: 'Sunset', color_lime: 'Lime', color_aqua: 'Aqua', color_fuchsia: 'Fuchsia',
+            color_gold: 'Gold', color_ice: 'Ice', color_mint: 'Mint', color_indigo: 'Indigo', color_rose: 'Rose',
+            auto_save: 'Auto-save', saved: 'Saved',
+            status_signed: 'Signed', status_pending: 'Pending', status_rejected: 'Rejected', status_draft: 'Draft',
+            departments: 'Departments', companies: 'My Companies', drafts: 'Drafts', rejected: 'Rejected',
+        }
+    };
     const LANG_META = {
         tj: { flag: '🇹🇯', name: 'Тоҷикӣ', html: 'tj' },
-          ru: { flag: '🇷🇺', name: 'Русский', html: 'ru' },
-        en: { flag: '🇬🇧', name: 'English', html: 'en' }
+        ru: { flag: '🇷🇺', name: 'Русский', html: 'ru' },
+        en: { flag: '🇬', name: 'English', html: 'en' }
     };
-
     let currentLang = localStorage.getItem('docsign_lang') || 'ru';
-
     function applyLanguage(lang) {
         if (!TRANSLATIONS[lang]) lang = 'ru';
         currentLang = lang;
         localStorage.setItem('docsign_lang', lang);
-
         const dict = TRANSLATIONS[lang];
         const meta = LANG_META[lang];
-
         document.documentElement.lang = meta.html;
-
         const flagEl = document.getElementById('langFlag');
         const nameEl = document.getElementById('langName');
         if (flagEl) flagEl.textContent = meta.flag;
         if (nameEl) nameEl.textContent = meta.name;
-
-        document.querySelectorAll('.lang-option').forEach(opt => {
-            opt.classList.toggle('active', opt.dataset.lang === lang);
-        });
-
+        document.querySelectorAll('.lang-option').forEach(opt => opt.classList.toggle('active', opt.dataset.lang === lang));
         document.querySelectorAll('[data-i18n]').forEach(el => {
             const key = el.getAttribute('data-i18n');
             if (dict[key] !== undefined) el.textContent = dict[key];
         });
-
         document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
             const key = el.getAttribute('data-i18n-placeholder');
             if (dict[key] !== undefined) el.setAttribute('placeholder', dict[key]);
         });
-
         document.querySelectorAll('[data-i18n-title]').forEach(el => {
             const key = el.getAttribute('data-i18n-title');
             if (dict[key] !== undefined) el.setAttribute('title', dict[key]);
         });
-
         document.querySelectorAll('.notif-action').forEach(el => {
             const action = el.dataset.action;
             if (action === 'comment' && dict.notif_action_comment) el.textContent = dict.notif_action_comment;
             else if (action === 'assign' && dict.notif_action_assign) el.textContent = dict.notif_action_assign;
         });
-
         document.querySelectorAll('.color').forEach(el => {
             const key = el.dataset.nameKey;
             if (key && dict[key]) el.title = dict[key];
         });
-
-        window.dispatchEvent(new CustomEvent('docsign:lang-changed', {
-            detail: { lang, dict }
-        }));
+        window.dispatchEvent(new CustomEvent('docsign:lang-changed', { detail: { lang, dict } }));
     }
-
     document.addEventListener('DOMContentLoaded', () => {
         const langBtn = document.getElementById('langBtn');
         const langMenu = document.getElementById('langMenu');
         const langSwitcher = document.getElementById('langSwitcher');
-
         if (langBtn) {
             langBtn.addEventListener('click', function(e) {
                 e.stopPropagation();
@@ -2864,7 +2271,6 @@ companies: 'My Companies',
                 langBtn.classList.toggle('open', isOpen);
             });
         }
-
         document.querySelectorAll('.lang-option').forEach(opt => {
             opt.addEventListener('click', function(e) {
                 e.stopPropagation();
@@ -2873,95 +2279,62 @@ companies: 'My Companies',
                 langBtn.classList.remove('open');
             });
         });
-
         document.addEventListener('click', function(e) {
             if (langSwitcher && !langSwitcher.contains(e.target)) {
                 langMenu.classList.remove('open');
                 langBtn.classList.remove('open');
             }
         });
-
         applyLanguage(currentLang);
-
         document.querySelectorAll('#nav button').forEach(b=>{
-          b.addEventListener('click',()=>{
-            document.querySelectorAll('#nav button').forEach(x=>x.classList.remove('active'));
-            b.classList.add('active');
-          });
+            b.addEventListener('click',()=>{
+                document.querySelectorAll('#nav button').forEach(x=>x.classList.remove('active'));
+                b.classList.add('active');
+            });
         });
         document.querySelectorAll('.tabs button').forEach(b=>{
-          b.addEventListener('click',()=>{
-            b.parentElement.querySelectorAll('button').forEach(x=>x.classList.remove('active'));
-            b.classList.add('active');
-          });
+            b.addEventListener('click',()=>{
+                b.parentElement.querySelectorAll('button').forEach(x=>x.classList.remove('active'));
+                b.classList.add('active');
+            });
         });
         document.querySelectorAll('.side-item').forEach(b=>{
-          b.addEventListener('click',()=>{
-            document.querySelectorAll('.side-item').forEach(x=>x.classList.remove('active'));
-            b.classList.add('active');
-          });
+            b.addEventListener('click',()=>{
+                document.querySelectorAll('.side-item').forEach(x=>x.classList.remove('active'));
+                b.classList.add('active');
+            });
         });
     });
 </script>
 
 @if(auth()->check())
 <script>
-    setInterval(function() {
-        const currentUrl = window.location.href;
-
-        // 1. Стоп на страницах создания и редактирования (чтобы не мешать заполнению форм)
-        if (currentUrl.includes('/create') || currentUrl.includes('/edit')) {
-            return;
-        }
-
-        // 2. Бесшумная проверка ТОЛЬКО колокольчика уведомлений
-        fetch(window.location.href)
-            .then(response => {
-                if (!response.ok) throw new Error('Сеть не отвечает');
-                return response.text();
-            })
-            .then(html => {
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(html, 'text/html');
-
-              const newBell = doc.getElementById('notifBtn');
-const oldBell = document.getElementById('notifBtn');
-
-                // Если нашли колокольчик на текущей странице и в скачанном ответе
-                if (newBell && oldBell) {
-                    // Проверяем, изменилось ли количество уведомлений
-                    if (oldBell.innerHTML.trim() !== newBell.innerHTML.trim()) {
-                        // Точечно меняем только колокольчик и цифру (включаются новые анимации!)
-                        oldBell.innerHTML = newBell.innerHTML;
-                        console.log('Колокольчик уведомлений обновлен! Пришли новые данные 🔔');
-                    }
-                }
-            })
-            .catch(error => console.error('Ошибка проверки уведомлений:', error));
-
-    }, 5000); // Строго каждые 5 секунд
-    
-</script>
-
-<script>
+    // ===== ТЕМА: ОДНА КНОПКА =====
     (function () {
         const root = document.documentElement;
-        const darkButton = document.getElementById('darkThemeBtn');
-        const lightButton = document.getElementById('lightThemeBtn');
-
+        const toggleBtn = document.getElementById('themeToggleBtn');
+        if (!toggleBtn) return;
         function applyTheme(theme) {
             root.dataset.theme = theme;
             localStorage.setItem('docsign_theme', theme);
-            darkButton.classList.toggle('active', theme === 'dark');
-            lightButton.classList.toggle('active', theme === 'light');
+            const hint = (theme === 'dark') ? 'Светлая тема' : 'Тёмная тема';
+            toggleBtn.title = hint;
+            toggleBtn.setAttribute('aria-label', hint);
         }
-
         applyTheme(root.dataset.theme || 'dark');
-        darkButton.addEventListener('click', function () { applyTheme('dark'); });
-        lightButton.addEventListener('click', function () { applyTheme('light'); });
+        toggleBtn.addEventListener('click', function () {
+            applyTheme(root.dataset.theme === 'dark' ? 'light' : 'dark');
+        });
     })();
 </script>
-
 @endif
+
+
+
+
+
+
+
+
 </body>
 </html>

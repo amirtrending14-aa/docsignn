@@ -4,15 +4,18 @@ namespace App\Observers;
 
 use App\Models\Document;
 use App\Models\DocumentLog;
+use App\Services\DocumentIndexer;
 use Illuminate\Support\Facades\Auth;
 
 class DocumentObserver
 {
+    public function __construct(private DocumentIndexer $indexer) {}
+
     public function created(Document $document): void
     {
         $actor = Auth::id() ?? $document->created_by;
 
-        // Лог для создателя (исходящее событие)
+        // === ЛОГИ КАК БЫЛО ===
         DocumentLog::create([
             'document_id' => $document->id,
             'user_id'     => $document->created_by,
@@ -22,7 +25,6 @@ class DocumentObserver
             'updated_at'  => $document->created_at,
         ]);
 
-        // Лог для получателя (входящее событие) — если получатель другой
         if ($document->receiver_id && $document->receiver_id !== $document->created_by) {
             DocumentLog::create([
                 'document_id' => $document->id,
@@ -33,52 +35,75 @@ class DocumentObserver
                 'updated_at'  => $document->created_at,
             ]);
         }
+
+        // === НОВОЕ: АВТО-ИНДЕКСАЦИЯ ===
+        // try/catch, чтобы ошибка индексации НЕ роняла создание документа
+        try {
+            $this->indexer->index($document);
+        } catch (\Throwable $e) {
+            report($e);
+        }
     }
 
     public function updated(Document $document): void
     {
-        // Реагируем ТОЛЬКО на смену статуса
-        if (!$document->isDirty('status')) return;
+        // === ЛОГИ КАК БЫЛО ===
+        if ($document->isDirty('status')) {
+            $oldStatus = $document->getOriginal('status');
+            $newStatus = $document->status;
 
-        $oldStatus = $document->getOriginal('status');
-        $newStatus = $document->status;
+            if ($oldStatus !== $newStatus) {
+                $action = match ($newStatus) {
+                    Document::STATUS_COMPLETED => 'SIGNED',
+                    Document::STATUS_REJECTED  => 'REJECTED',
+                    default                    => 'UPDATED',
+                };
 
-        if ($oldStatus === $newStatus) return;
+                $description = match ($action) {
+                    'SIGNED'   => 'Документ подписан',
+                    'REJECTED' => 'Документ отклонён',
+                    default    => "Статус изменён с {$oldStatus} на {$newStatus}",
+                };
 
-        $action = match ($newStatus) {
-            Document::STATUS_COMPLETED => 'SIGNED',
-            Document::STATUS_REJECTED  => 'REJECTED',
-            default                    => 'UPDATED',
-        };
+                DocumentLog::create([
+                    'document_id' => $document->id,
+                    'user_id'     => $document->created_by,
+                    'action'      => $action,
+                    'description' => $description,
+                ]);
 
-        $description = match ($action) {
-            'SIGNED'   => 'Документ подписан',
-            'REJECTED' => 'Документ отклонён',
-            default    => "Статус изменён с {$oldStatus} на {$newStatus}",
-        };
+                if ($document->receiver_id && $document->receiver_id !== $document->created_by) {
+                    DocumentLog::create([
+                        'document_id' => $document->id,
+                        'user_id'     => $document->receiver_id,
+                        'action'      => $action,
+                        'description' => $description,
+                    ]);
+                }
+            }
+        }
 
-        // Лог для создателя
-        DocumentLog::create([
-            'document_id' => $document->id,
-            'user_id'     => $document->created_by,
-            'action'      => $action,
-            'description' => $description,
-        ]);
-
-        // Лог для получателя
-        if ($document->receiver_id && $document->receiver_id !== $document->created_by) {
-            DocumentLog::create([
-                'document_id' => $document->id,
-                'user_id'     => $document->receiver_id,
-                'action'      => $action,
-                'description' => $description,
-            ]);
+        // === НОВОЕ: ПЕРЕИНДЕКСАЦИЯ ===
+        // Индексируем заново, если:
+        // - сменился файл (file_path)
+        // - сменился статус (например, SIGNED — появился подписанный файл)
+        // - индекса ещё нет (документ создан до внедрения архивиста)
+        try {
+            if ($document->wasChanged('file_path')
+                || $document->wasChanged('status')
+                || !$document->index) {
+                $this->indexer->index($document);
+            }
+        } catch (\Throwable $e) {
+            report($e);
         }
     }
 
     public function deleted(Document $document): void
     {
-        $actor = Auth::id() ?? $document->created_by;
+        if ($document->isForceDeleting()) {
+            return;
+        }
 
         DocumentLog::create([
             'document_id' => $document->id,
@@ -87,7 +112,6 @@ class DocumentObserver
             'description' => 'Документ удалён: ' . ($document->title ?? 'без названия'),
         ]);
 
-        // Лог для получателя
         if ($document->receiver_id && $document->receiver_id !== $document->created_by) {
             DocumentLog::create([
                 'document_id' => $document->id,
@@ -96,5 +120,8 @@ class DocumentObserver
                 'description' => 'Документ удалён отправителем',
             ]);
         }
+
+        // Каскад сам удалит записи из document_indexes и document_chunks
+        // (в миграции стоит cascadeOnDelete)
     }
 }

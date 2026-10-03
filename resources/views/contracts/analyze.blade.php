@@ -736,7 +736,7 @@
         <button type="submit" class="submit-btn" id="anBtn">
             <span class="spinner"></span>
             <i class="bi bi-search" id="submitIcon"></i>
-            <span id="submitText" data-i18n="submit_btn">🔍 Таҳлил кардан</span>
+            <span id="submitText" data-i18n="submit_btn"> Таҳлил кардан</span>
         </button>
 
         <div class="empty-hint" id="emptyHint">
@@ -776,9 +776,9 @@ document.addEventListener('DOMContentLoaded', function () {
             drop_title: 'Файлро интихоб кунед ё ҷойгир кунед',
             drop_sub1: 'Клик кунед барои ',
             drop_sub2: 'интихоб',
-            submit_btn: '🔍 Таҳлил кардан',
-            analyzing: '⏳ ИИ ҳуҷҷатро мехонад...',
-            result_title: '🤖 Натиҷаи таҳлил',
+            submit_btn: ' Таҳлил кардан',
+            analyzing: ' ИИ ҳуҷҷатро мехонад...',
+            result_title: ' Натиҷаи таҳлил',
             result_error: '❌ Хатои таҳлил',
            unknown_error: 'Хатои номаълум',
             file_selected: 'Интихоб шуд'
@@ -792,9 +792,9 @@ document.addEventListener('DOMContentLoaded', function () {
             drop_title: 'Выберите файл или перетащите',
             drop_sub1: 'Кликните для ',
             drop_sub2: 'выбора',
-            submit_btn: '🔍 Анализировать',
-            analyzing: '⏳ ИИ читает документ...',
-            result_title: '🤖 Результат анализа',
+            submit_btn: ' Анализировать',
+            analyzing: ' ИИ читает документ...',
+            result_title: ' Результат анализа',
             result_error: '❌ Ошибка анализа',
           unknown_error: 'Неизвестная ошибка',
             file_selected: 'Выбран'
@@ -808,9 +808,9 @@ document.addEventListener('DOMContentLoaded', function () {
             drop_title: 'Choose a file or drop it here',
             drop_sub1: 'Click to ',
             drop_sub2: 'browse',
-            submit_btn: '🔍 Analyze',
-            analyzing: '⏳ AI is reading the document...',
-            result_title: '🤖 Analysis result',
+            submit_btn: ' Analyze',
+            analyzing: ' AI is reading the document...',
+            result_title: ' Analysis result',
             result_error: '❌ Analysis error',
            unknown_error: 'Unknown error',
             file_selected: 'Selected'

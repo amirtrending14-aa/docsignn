@@ -9,7 +9,7 @@ class DocumentSignature extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'document_id', 'user_id', 'signature', 'signed_at', 'expires_at',  'verification_code', //
+        'document_id', 'user_id', 'signature', 'signed_at', 'expires_at',  'verification_token',
     ];
 
     protected $casts = [

@@ -11,6 +11,11 @@ class DashboardController extends Controller
 {
     public function index()
     {
+            $onlineUsers = User::where('id', '!=', auth()->id())
+    ->where('last_seen_at', '>=', now()->subMinutes(5))  // ✅ ПРАВИЛЬНАЯ колонка
+    ->orderBy('last_seen_at', 'desc')
+    ->limit(8)
+    ->get();
         $user = auth()->user();
 
        $userDocs = function($q) use ($user) {
@@ -133,7 +138,8 @@ class DashboardController extends Controller
             'activities',
             'sparklineData',
             'chartData',
-            'pendingDocuments'
+            'pendingDocuments',
+            'onlineUsers'
         ));
     }
 

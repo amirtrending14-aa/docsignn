@@ -7,6 +7,7 @@ use App\Models\Company;
 use App\Models\User;
 use App\Models\Document;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class CompanyController extends Controller
 {
@@ -30,7 +31,7 @@ class CompanyController extends Controller
     {
         $data = $request->validate([
             'name'    => 'required|string|max:255|unique:companies,name',
-            'email'   => 'nullable|email|max:255',
+            'email'   => 'required|email|max:255|unique:companies,email',
             'phone'   => 'nullable|string|max:50',
             'address' => 'nullable|string|max:500',
         ]);
@@ -71,8 +72,8 @@ class CompanyController extends Controller
     public function update(Request $request, Company $company)
     {
         $data = $request->validate([
-            'name'    => 'required|string|max:255',
-            'email'   => 'nullable|email|max:255',
+            'name'    => ['required', 'string', 'max:255', Rule::unique('companies', 'name')->ignore($company->id)],
+            'email'   => ['required', 'email', 'max:255', Rule::unique('companies', 'email')->ignore($company->id)],
             'phone'   => 'nullable|string|max:50',
             'address' => 'nullable|string|max:500',
         ]);
@@ -85,12 +86,16 @@ class CompanyController extends Controller
 
     public function destroy(Company $company)
     {
-        if ($company->users()->count() > 0) {
-            return back()->with('error', '❌ Нельзя удалить компанию, в которой есть пользователи');
+        if ($company->users()->withTrashed()->exists()) {
+            return back()->with('error', 'Нельзя удалить компанию, пока в ней есть пользователи, включая удалённые аккаунты.');
+        }
+
+        if ($company->children()->exists()) {
+            return back()->with('error', 'Сначала перенесите или удалите дочерние компании.');
         }
 
         $company->delete();
 
-        return back()->with('success', '✅ Компания удалена');
+        return back()->with('success', 'Компания удалена.');
     }
 }

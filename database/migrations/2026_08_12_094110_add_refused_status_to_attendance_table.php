@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -11,11 +12,19 @@ return new class extends Migration
      */
     public function up()
 {
-    DB::statement("ALTER TABLE attendances MODIFY COLUMN status ENUM('on_time','late','absent','excused','refused')");
-}
+        if (DB::connection()->getDriverName() !== 'mysql') {
+            return;
+        }
 
-public function down()
-{
+        DB::statement("ALTER TABLE attendances MODIFY COLUMN status ENUM('on_time','late','absent','excused','refused')");
+    }
+
+    public function down()
+    {
+        if (DB::connection()->getDriverName() !== 'mysql') {
+            return;
+        }
+
     DB::statement("ALTER TABLE attendances MODIFY COLUMN status ENUM('on_time','late','absent','excused')");
 }
 };

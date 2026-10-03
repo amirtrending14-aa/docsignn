@@ -8,24 +8,49 @@
         <div class="dashboard-header">
             <div class="row align-items-end">
                 <div class="col-md-8">
-                    <div class="breadcrumb-custom mb-3">
-                        <span class="breadcrumb-item" data-i18n="breadcrumb_home">Главная</span>
-                        <span class="breadcrumb-separator">/</span>
-                        <span class="breadcrumb-item active" data-i18n="control_panel">Панель управления</span>
-                    </div>
+                    
                     @auth
                     <h1 class="dashboard-title mb-2">
-                        <span data-i18n="welcomeBack">Доброе утро</span>, {{ explode(' ', auth()->user()->name)[0] }} !
+                        <span data-i18n="greeting">Доброе утро</span>, {{ explode(' ', auth()->user()->name)[0] }} !
                     </h1>
                     @endauth
-                    <style>
-                        
-                        </style>
                     <p class="dashboard-subtitle mb-0">
                         <span data-i18n="dashSubtitle">
                             У вас {{ $stats['pending'] ?? 0 }} документов ожидают подписания и {{ $stats['incoming'] ?? 0 }} новых входящих.
                         </span>
                     </p>
+
+                    <!-- 🟢 ОНЛАЙН КОЛЛЕГИ — компактный чип -->
+                    @if(isset($onlineUsers) && $onlineUsers->count() > 0)
+                    <div class="online-chip">
+                        <span class="online-chip-pulse"></span>
+                        <div class="online-chip-avatars">
+                            @foreach($onlineUsers->take(4) as $onlineUser)
+                            <a href="{{ route('users.show', $onlineUser->id) }}"
+                               class="online-chip-avatar"
+                               data-tooltip="{{ $onlineUser->name }}"
+                               title="{{ $onlineUser->name }}">
+                                @if($onlineUser->avatar)
+                                    <img src="{{ $onlineUser->avatar_url }}" alt="{{ $onlineUser->name }}">
+                                @else
+                                    <span class="chip-avatar-letter" style="background: {{ $onlineUser->avatar_color }};">
+                                        {{ strtoupper(substr($onlineUser->name, 0, 1)) }}
+                                    </span>
+                                @endif
+                            </a>
+                            @endforeach
+                            @if($onlineUsers->count() > 4)
+                            <a href="{{ route('users.index') }}" class="online-chip-more" title="+{{ $onlineUsers->count() - 4 }}">
+                                +{{ $onlineUsers->count() - 4 }}
+                            </a>
+                            @endif
+                        </div>
+                        <span class="online-chip-text">
+                            <b>{{ $onlineUsers->count() }}</b>
+                            <span data-i18n="onlineNowShort">в сети</span>
+                        </span>
+                    </div>
+                    @endif
                 </div>
                 <div class="col-md-4 text-md-end mt-3 mt-md-0">
                     <div class="header-actions">
@@ -41,7 +66,6 @@
 
         <!-- Stats Grid -->
         <div class="stats-grid">
-            <!-- Total Documents -->
             <div class="stat-card">
                 <div class="stat-header">
                     <span class="stat-label" data-i18n="totalDocs">Всего документов</span>
@@ -52,18 +76,15 @@
                         </svg>
                     </div>
                 </div>
-                <div class="stat-value">
-                    {{ number_format($stats['total'] ?? 0, 0, '.', ' ') }}
-                </div>
+                <div class="stat-value">{{ number_format($stats['total'] ?? 0, 0, '.', ' ') }}</div>
                 <span class="stat-delta {{ $docsGrowth >= 0 ? 'delta-up' : 'delta-down' }}">
-            {{ $docsGrowth >= 0 ? '▲' : '▼' }} {{ abs($docsGrowth) }}%
-        </span>
+                    {{ $docsGrowth >= 0 ? '▲' : '▼' }} {{ abs($docsGrowth) }}%
+                </span>
                 <div class="stat-spark">
                     <x-sparkline :data="$sparklineData['total']" id="total" />
                 </div>
             </div>
 
-            <!-- Pending Documents -->
             <div class="stat-card">
                 <div class="stat-header">
                     <span class="stat-label" data-i18n="pending">На подписании</span>
@@ -81,7 +102,6 @@
                 </div>
             </div>
 
-            <!-- Signed Documents -->
             <div class="stat-card">
                 <div class="stat-header">
                     <span class="stat-label" data-i18n="signedMonth">Подписано за месяц</span>
@@ -98,7 +118,6 @@
                 </div>
             </div>
 
-            <!-- Counterparties -->
             <div class="stat-card">
                 <div class="stat-header">
                     <span class="stat-label" data-i18n="counterparties">Контакты</span>
@@ -133,7 +152,6 @@
                     <thead>
                     <tr>
                         <th data-i18n="thDoc">Документ</th>
-                        <!-- ИЗМЕНЕНИЕ: Заголовок теперь "Получатель" вместо "Команда" -->
                         <th data-i18n="thRecipient">Получатель</th>
                         <th data-i18n="thType">Тип</th>
                         <th data-i18n="thStatus">Статус</th>
@@ -156,9 +174,6 @@
                             </div>
                         </td>
                         
-                        <!-- ИЗМЕНЕНИЕ: Вывод имени пользователя вместо "Внутренний" -->
-                        <!-- Предполагается, что у модели Document есть связь user() или recipient() -->
-                        <!-- Если связь называется иначе, замени 'user' на нужное имя связи -->
                         <td class="counterparty-cell">
                             <div style="display: flex; align-items: center; gap: 8px;">
                                 <div style="width: 24px; height: 24px; border-radius: 50%; background: rgba(var(--glow), 0.2); display: flex; align-items: center; justify-content: center; font-size: 10px; color: rgb(var(--glow)); font-weight: bold;">
@@ -170,25 +185,45 @@
 
                         <td class="type-cell">{{ $doc->type ?? 'Документ' }}</td>
                         <td>
-                                <span class="pill pill-{{ $doc->status }}" data-status="{{ $doc->status }}">
-                                    @switch($doc->status)
-                                        @case('pending')
-                                            <span data-i18n="status_pending">На подписании</span>
-                                            @break
-                                        @case('approved')
-                                        @case('signed')
-                                            <span data-i18n="status_signed">Подписан</span>
-                                            @break
-                                        @case('rejected')
-                                            <span data-i18n="status_rejected">Отклонён</span>
-                                            @break
-                                        @case('draft')
-                                            <span data-i18n="status_draft">Черновик</span>
-                                            @break
-                                        @default
-                                            {{ ucfirst($doc->status) }}
-                                    @endswitch
-                                </span>
+                            <span class="pill pill-{{ $doc->status }}" data-status="{{ $doc->status }}">
+                                @switch($doc->status)
+                                    @case('pending')
+                                        <span data-i18n="status_pending">На подписании</span>
+                                        @break
+                                    @case('approved')
+                                        <span data-i18n="status_approved">Одобрен</span>
+                                        @break
+                                    @case('signed')
+                                        <span data-i18n="status_signed">Подписан</span>
+                                        @break
+                                    @case('completed')
+                                        <span data-i18n="status_completed">Завершён</span>
+                                        @break
+                                    @case('active')
+                                        <span data-i18n="status_active">Активен</span>
+                                        @break
+                                    @case('rejected')
+                                        <span data-i18n="status_rejected">Отклонён</span>
+                                        @break
+                                    @case('cancelled')
+                                        <span data-i18n="status_cancelled">Отменён</span>
+                                        @break
+                                    @case('draft')
+                                        <span data-i18n="status_draft">Черновик</span>
+                                        @break
+                                    @case('archived')
+                                        <span data-i18n="status_archived">В архиве</span>
+                                        @break
+                                    @case('expired')
+                                        <span data-i18n="status_expired">Истёк</span>
+                                        @break
+                                    @case('review')
+                                        <span data-i18n="status_review">На рассмотрении</span>
+                                        @break
+                                    @default
+                                        {{ ucfirst($doc->status) }}
+                                @endswitch
+                            </span>
                         </td>
                         <td class="date-cell">{{ $doc->created_at->format('d M Y') }}</td>
                         <td>
@@ -204,9 +239,7 @@
                             </div>
                         </td>
                         
-                        {{-- Стили кнопок оставлены внутри цикла как в оригинале, но лучше вынести их в секцию style --}}
                         <style>
-                            /* === КНОПКИ ДЕЙСТВИЙ В ТАБЛИЦЕ === */
                             .action-buttons {
                                 display: flex !important;
                                 align-items: center !important;
@@ -376,7 +409,6 @@
         </div>
     </div>
 
-    <!-- Toast Notification -->
     <div class="toast-container" id="toastContainer"></div>
 
     <style>
@@ -408,7 +440,161 @@
         .btn-glow { position: relative; overflow: hidden; }
         .btn-glow::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent); transition: left 0.5s; }
         .btn-glow:hover::before { left: 100%; }
-        
+
+        /* === 🟢 ОНЛАЙН-ЧИП (компактная таблетка) === */
+        .online-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 1rem;
+            padding: 5px 16px 5px 7px;
+            background: rgba(16, 185, 129, 0.07);
+            border: 1px solid rgba(16, 185, 129, 0.22);
+            border-radius: 999px;
+            width: fit-content;
+            max-width: 100%;
+            transition: all 0.25s ease;
+            backdrop-filter: blur(8px);
+        }
+
+        .online-chip:hover {
+            border-color: rgba(16, 185, 129, 0.45);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.15);
+            transform: translateY(-1px);
+        }
+
+        .online-chip-pulse {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #10b981;
+            margin-left: 5px;
+            flex-shrink: 0;
+            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6);
+            animation: chipPulse 2s infinite;
+        }
+
+        @keyframes chipPulse {
+            0%   { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6); }
+            70%  { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        .online-chip-avatars {
+            display: flex;
+            align-items: center;
+        }
+
+        .online-chip-avatar {
+            position: relative;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 2px solid var(--bg-dark);
+            margin-left: -9px;
+            flex-shrink: 0;
+            text-decoration: none;
+            transition: transform 0.2s ease;
+        }
+
+        .online-chip-avatar:first-child { margin-left: 0; }
+
+        .online-chip-avatar:hover {
+            transform: translateY(-3px) scale(1.08);
+            z-index: 6;
+        }
+
+        .online-chip-avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .chip-avatar-letter {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            color: #fff;
+            font-size: 12px;
+            font-weight: 800;
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+        }
+
+        .online-chip-more {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            margin-left: -9px;
+            flex-shrink: 0;
+            background: rgba(255, 255, 255, 0.08);
+            border: 2px solid var(--bg-dark);
+            color: var(--text-secondary);
+            font-size: 10px;
+            font-weight: 800;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .online-chip-more:hover {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            transform: translateY(-3px);
+            z-index: 6;
+        }
+
+        .online-chip-text {
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+            white-space: nowrap;
+            padding-right: 2px;
+        }
+
+        .online-chip-text b {
+            color: #10b981;
+            font-weight: 800;
+        }
+
+        /* Тултип с именем */
+        .online-chip-avatar::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%) translateY(4px);
+            background: rgba(15, 18, 28, 0.97);
+            color: #fff;
+            padding: 4px 9px;
+            border-radius: 7px;
+            font-size: 11px;
+            font-weight: 600;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.2s ease;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+            z-index: 60;
+        }
+
+        .online-chip-avatar:hover::after {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        @media (max-width: 767px) {
+            .online-chip-avatar::after { display: none; }
+        }
+
+        /* === ОСТАЛЬНЫЕ СТИЛИ === */
         .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(0.75rem, 1.5vw, 1.5rem); margin-bottom: clamp(1rem, 2vw, 2rem); }
         .stat-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: clamp(12px, 1.5vw, 16px); padding: clamp(1rem, 2vw, 1.5rem); transition: all 0.3s ease; position: relative; overflow: hidden; }
         .stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, rgb(var(--glow)), transparent); opacity: 0; transition: opacity 0.3s ease; }
@@ -447,9 +633,11 @@
         
         .pill { display: inline-block; padding: clamp(0.25rem, 0.5vw, 0.375rem) clamp(0.5rem, 1vw, 0.875rem); border-radius: 20px; font-size: clamp(0.65rem, 1.2vw, 0.75rem); font-weight: 600; white-space: nowrap; }
         .pill-pending { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
-        .pill-approved, .pill-signed { background: rgba(16, 185, 129, 0.15); color: var(--success); }
-        .pill-rejected { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
-        .pill-draft { background: rgba(148, 163, 184, 0.15); color: var(--text-muted); }
+        .pill-approved, .pill-signed, .pill-completed, .pill-active { background: rgba(16, 185, 129, 0.15); color: var(--success); }
+        .pill-rejected, .pill-cancelled { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+        .pill-draft, .pill-archived { background: rgba(148, 163, 184, 0.15); color: var(--text-muted); }
+        .pill-expired { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+        .pill-review { background: rgba(59, 130, 246, 0.15); color: var(--info); }
         .date-cell { color: var(--text-muted); font-size: clamp(0.75rem, 1.3vw, 0.875rem); white-space: nowrap; }
 
         .action-buttons { display: flex; gap: 0.5rem; justify-content: flex-end; }
@@ -624,6 +812,22 @@
             border: 1px solid rgba(var(--glow), 0.65) !important;
             font-weight: 800;
         }
+        /* 🟢 Чип в светлой теме */
+        html[data-theme="light"] .online-chip {
+            background: rgba(16, 185, 129, 0.08);
+            border-color: rgba(16, 185, 129, 0.35);
+        }
+        html[data-theme="light"] .online-chip-avatar,
+        html[data-theme="light"] .online-chip-more {
+            border-color: #ffffff;
+        }
+        html[data-theme="light"] .online-chip-more {
+            background: rgba(15, 23, 42, 0.06);
+            color: #475569;
+        }
+        html[data-theme="light"] .online-chip-text {
+            color: #475569;
+        }
     </style>
 
     <script>
@@ -632,7 +836,10 @@
                 ru: {
                     breadcrumb_home: "Главная",
                     control_panel: "Панель управления",
-                    welcomeBack: "Доброе утро",
+                    greeting_morning: "Доброе утро",
+                    greeting_afternoon: "Добрый день",
+                    greeting_evening: "Добрый вечер",
+                    greeting_night: "Доброй ночи",
                     dashSubtitle: "У вас {pending} документов ожидают подписания и {incoming} новых входящих.",
                     new_users: "{count} новых",
                     createDocument: "Новый документ",
@@ -643,15 +850,22 @@
                     recentDocuments: "Последние документы",
                     allOperations: "Все операции в системе электронного документооборота",
                     thDoc: "Документ",
-                    thRecipient: "Получатель", // НОВЫЙ ПЕРЕВОД
+                    thRecipient: "Получатель",
                     thType: "Тип",
                     thStatus: "Статус",
                     thDate: "Дата",
                     thActions: "Действия",
                     status_pending: "На подписании",
+                    status_approved: "Одобрен",
                     status_signed: "Подписан",
+                    status_completed: "Завершён",
+                    status_active: "Активен",
                     status_rejected: "Отклонён",
+                    status_cancelled: "Отменён",
                     status_draft: "Черновик",
+                    status_archived: "В архиве",
+                    status_expired: "Истёк",
+                    status_review: "На рассмотрении",
                     tooltip_view: "Просмотр",
                     no_documents: "Документы не найдены",
                     create_first_doc: "Создайте первый документ, чтобы начать работу",
@@ -663,12 +877,16 @@
                     toast_success: "Успешно",
                     toast_error: "Ошибка",
                     internal: "Внутренний",
-                    not_assigned: "Не назначен"
+                    not_assigned: "Не назначен",
+                    onlineNowShort: "в сети"
                 },
                 tj: {
                     breadcrumb_home: "Асосӣ",
                     control_panel: "Панели идоракунӣ",
-                    welcomeBack: "Субҳ ба хайр",
+                    greeting_morning: "Субҳ ба хайр",
+                    greeting_afternoon: "Рӯзи хуш",
+                    greeting_evening: "Бегоҳи хайр",
+                    greeting_night: "Шаби хуш",
                     dashSubtitle: "Шумо {pending} ҳуҷҷат дар интизори имзо ва {incoming} воридоти нав доред.",
                     new_users: "{count} нав",
                     createDocument: "Ҳуҷҷати нав",
@@ -679,15 +897,22 @@
                     recentDocuments: "Ҳуҷҷатҳои охирин",
                     allOperations: "Ҳамаи амалиётҳо дар системаи ҳуҷҷатгардонӣ",
                     thDoc: "Ҳуҷҷат",
-                    thRecipient: "Гиранда", // НОВЫЙ ПЕРЕВОД
+                    thRecipient: "Гиранда",
                     thType: "Намуд",
                     thStatus: "Статус",
                     thDate: "Сана",
                     thActions: "Амалҳо",
                     status_pending: "Дар интизори имзо",
+                    status_approved: "Тасдиқ шуд",
                     status_signed: "Имзо шуд",
+                    status_completed: "Анҷом ёфт",
+                    status_active: "Фаъол",
                     status_rejected: "Рад шуд",
+                    status_cancelled: "Бекор шуд",
                     status_draft: "Пешнавис",
+                    status_archived: "Дар бойгонӣ",
+                    status_expired: "Мӯҳлаташ гузашт",
+                    status_review: "Дар баррасӣ",
                     tooltip_view: "Дидан",
                     no_documents: "Ҳуҷҷатҳо ёфт нашуданд",
                     create_first_doc: "Барои оғози кор аввалин ҳуҷҷатро эҷод кунед",
@@ -699,12 +924,16 @@
                     toast_success: "Бомуваффақият",
                     toast_error: "Хато",
                     internal: "Дохилӣ",
-                    not_assigned: "Таъин нашудааст"
+                    not_assigned: "Таъин нашудааст",
+                    onlineNowShort: "дар шабака"
                 },
                 en: {
                     breadcrumb_home: "Home",
                     control_panel: "Control Panel",
-                    welcomeBack: "Good morning",
+                    greeting_morning: "Good morning",
+                    greeting_afternoon: "Good afternoon",
+                    greeting_evening: "Good evening",
+                    greeting_night: "Good night",
                     dashSubtitle: "You have {pending} documents awaiting signature and {incoming} new incoming.",
                     new_users: "{count} new",
                     createDocument: "New Document",
@@ -715,15 +944,22 @@
                     recentDocuments: "Recent Documents",
                     allOperations: "All operations in the electronic document management system",
                     thDoc: "Document",
-                    thRecipient: "Recipient", // NEW TRANSLATION
+                    thRecipient: "Recipient",
                     thType: "Type",
                     thStatus: "Status",
                     thDate: "Date",
                     thActions: "Actions",
                     status_pending: "Pending",
+                    status_approved: "Approved",
                     status_signed: "Signed",
+                    status_completed: "Completed",
+                    status_active: "Active",
                     status_rejected: "Rejected",
+                    status_cancelled: "Cancelled",
                     status_draft: "Draft",
+                    status_archived: "Archived",
+                    status_expired: "Expired",
+                    status_review: "Under Review",
                     tooltip_view: "View",
                     no_documents: "No documents found",
                     create_first_doc: "Create the first document to get started",
@@ -735,7 +971,8 @@
                     toast_success: "Success",
                     toast_error: "Error",
                     internal: "Internal",
-                    not_assigned: "Not assigned"
+                    not_assigned: "Not assigned",
+                    onlineNowShort: "online"
                 }
             };
 
@@ -743,9 +980,23 @@
                 return localStorage.getItem('docsign_lang') || localStorage.getItem('app-lang') || 'ru';
             }
 
+            function getGreetingKey() {
+                const hour = new Date().getHours();
+                if (hour >= 5 && hour < 12) return 'greeting_morning';
+                else if (hour >= 12 && hour < 18) return 'greeting_afternoon';
+                else if (hour >= 18 && hour < 23) return 'greeting_evening';
+                else return 'greeting_night';
+            }
+
             function applyTranslations() {
                 const lang = getCurrentLang();
                 const t = translations[lang] || translations['ru'];
+
+                const greetingKey = getGreetingKey();
+                const greetingEl = document.querySelector('[data-i18n="greeting"]');
+                if (greetingEl && t[greetingKey]) {
+                    greetingEl.textContent = t[greetingKey];
+                }
 
                 const subtitleEl = document.querySelector('[data-i18n="dashSubtitle"]');
                 if (subtitleEl && t.dashSubtitle) {
@@ -762,7 +1013,7 @@
 
                 document.querySelectorAll('[data-i18n]').forEach(el => {
                     const key = el.getAttribute('data-i18n');
-                    if (t[key] && key !== 'dashSubtitle' && key !== 'new_users') {
+                    if (t[key] && key !== 'dashSubtitle' && key !== 'new_users' && key !== 'greeting') {
                         if (el.children.length > 0) {
                             el.childNodes.forEach(node => {
                                 if (node.nodeType === Node.TEXT_NODE && node.textContent.trim() !== "") {
@@ -785,6 +1036,7 @@
             }
 
             applyTranslations();
+            setInterval(applyTranslations, 60000);
 
             window.addEventListener('docsign:lang-changed', function(e) {
                 if (e.detail && e.detail.lang) {

@@ -27,9 +27,9 @@ class AnalysisController extends Controller
         $prevStartDate = $startDate->copy()->subMonth()->startOfMonth();
         $prevEndDate   = $prevStartDate->copy()->endOfMonth();
 
-        // === Считаем по ЛОГАМ ===
-        $statusData     = $this->getStatusData($userId, $startDate, $endDate);
-        $prevStatusData = $this->getStatusData($userId, $prevStartDate, $prevEndDate);
+        // Keep each document in its creation month, including soft-deleted records.
+        $statusData     = $this->getStatusData($startDate, $endDate);
+        $prevStatusData = $this->getStatusData($prevStartDate, $prevEndDate);
 
         $trends = [];
         foreach ($statusData as $key => $value) {
@@ -40,11 +40,11 @@ class AnalysisController extends Controller
             ];
         }
 
-        // === Дневная активность (по логам CREATED/RECEIVED) ===
+        // === Дневная активность по созданию и отправке документов ===
         $rawDocs = DocumentLog::where('user_id', $userId)
             ->whereBetween('created_at', [$startDate, $endDate])
-            ->whereIn('action', ['CREATED', 'RECEIVED'])
-            ->selectRaw('DATE(created_at) as date, COUNT(*) as count')
+            ->whereIn('action', ['CREATED', 'RECEIVED', 'создание', 'отправка'])
+            ->selectRaw('DATE(created_at) as date, COUNT(DISTINCT document_id) as count')
             ->groupBy('date')
             ->pluck('count', 'date');
 
@@ -93,40 +93,51 @@ class AnalysisController extends Controller
         ));
     }
 
-    /**
-     * Считает события по логам
-     */
-    private function getStatusData(int $userId, Carbon $startDate, Carbon $endDate): array
+    private function getStatusData(Carbon $startDate, Carbon $endDate): array
     {
-        $logs = DocumentLog::where('user_id', $userId)
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->get();
+        $monthlyDocuments = Document::withTrashed()
+            ->visibleToAuth()
+            ->whereBetween('created_at', [$startDate, $endDate]);
+        $statusCounts = (clone $monthlyDocuments)
+            ->selectRaw('status, COUNT(*) as total')
+            ->groupBy('status')
+            ->pluck('total', 'status');
+
+        $activeSigned = (clone $monthlyDocuments)
+            ->where('status', Document::STATUS_ACTIVE)
+            ->whereHas('signatures', fn ($query) => $query
+                ->whereNotNull('signature')
+                ->where('signature', '!=', ''))
+            ->count();
+        $processingSigned = (clone $monthlyDocuments)
+            ->where('status', Document::STATUS_PROCESSING)
+            ->whereHas('signatures', fn ($query) => $query
+                ->whereNotNull('signature')
+                ->where('signature', '!=', ''))
+            ->count();
+        $activeCount = (int) $statusCounts->get(Document::STATUS_ACTIVE, 0);
+        $processingCount = (int) $statusCounts->get(Document::STATUS_PROCESSING, 0);
+        $processing = max(0, $activeCount - $activeSigned) + $processingSigned;
+        $generating = max(0, $processingCount - $processingSigned);
+        $archive = (int) $statusCounts->get(Document::STATUS_COMPLETED, 0)
+            + (int) $statusCounts->get(Document::STATUS_APPROVED, 0)
+            + $activeSigned;
+        $failed = (int) $statusCounts->get(Document::STATUS_FAILED, 0);
+        $total = (int) $statusCounts->sum();
+        $other = max(0, $total - $processing - $generating
+            - (int) $statusCounts->get(Document::STATUS_DRAFT, 0)
+            - (int) $statusCounts->get(Document::STATUS_REJECTED, 0)
+            - $archive - $failed);
 
         return [
-            // Входящие = сколько получил (RECEIVED)
-            'incoming'   => $logs->where('action', 'RECEIVED')->count(),
-
-            // Исходящие = сколько создал (CREATED)
-            'outgoing'   => $logs->where('action', 'CREATED')->count(),
-
-            // На подписании = документы в активном статусе (по живым документам)
-            'processing' => Document::where(function ($q) use ($userId) {
-                                $q->where('created_by', $userId)
-                                  ->orWhere('receiver_id', $userId);
-                            })
-                            ->whereIn('status', [Document::STATUS_ACTIVE, Document::STATUS_PROCESSING])
-                            ->count(),
-
-            // Черновики = текущее состояние (живые документы)
-            'draft'      => Document::where('created_by', $userId)
-                            ->where('status', Document::STATUS_DRAFT)
-                            ->count(),
-
-            // Отклонённые = события REJECTED
-            'rejected'   => $logs->where('action', 'REJECTED')->count(),
-
-            // Архив (подписанные) = события SIGNED
-            'archive'    => $logs->where('action', 'SIGNED')->count(),
+            'total' => $total,
+            'processing' => $processing,
+            'generating' => $generating,
+            'draft' => (int) $statusCounts->get(Document::STATUS_DRAFT, 0),
+            'rejected' => (int) $statusCounts->get(Document::STATUS_REJECTED, 0),
+            'archive' => $archive,
+            'failed' => $failed,
+            'other' => $other,
         ];
     }
 }

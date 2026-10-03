@@ -1,87 +1,109 @@
 @extends('layouts.admin')
 
 @section('content')
+
 <style>
-    /* === СТРАНИЦА СПИСКА ОТКЛОНЁННЫХ ДОКУМЕНТОВ === */
+    /* ============================================================ */
+    /* ===== REJECTED DOCS PAGE (Tabler Style) ===== */
+    /* ============================================================ */
     .rejected-docs-page {
-        color: #e7ecf3;
-        padding: 24px 20px;
+        color: var(--text);
+        padding: 28px 24px;
         min-height: calc(100vh - 64px);
+        font-family: var(--font-sans);
     }
 
-    /* Заголовок страницы */
+    /* HEADER */
     .rejected-page-header {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        margin-bottom: 28px;
-        padding-bottom: 16px;
-        border-bottom: 1px solid rgba(255,255,255,0.08);
+        margin-bottom: 32px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid var(--line);
     }
     .rejected-page-header h1 {
         margin: 0;
-        font-size: 24px;
+        font-size: 22px;
         font-weight: 700;
         letter-spacing: -0.3px;
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 14px;
+        color: var(--text);
     }
     .rejected-page-header h1 .accent-bar {
         width: 4px;
-        height: 24px;
-        background: linear-gradient(180deg, #ef4444, #f87171);
+        height: 22px;
+        background: #ef4444;
         border-radius: 2px;
-        box-shadow: 0 0 10px rgba(239, 68, 68, 0.6);
+        box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+    }
+    .rejected-page-header .count-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 30px;
+        height: 26px;
+        padding: 0 10px;
+        background: rgba(239, 68, 68, 0.10);
+        color: #ef4444;
+        border: 1px solid rgba(239, 68, 68, 0.25);
+        border-radius: var(--radius);
+        font-size: 12px;
+        font-weight: 700;
+        font-family: var(--font-mono);
     }
 
-    /* СЕТКА КАРТОЧЕК - 3 в ряд */
+    /* GRID */
     .rejected-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
-        gap: 16px;
-        margin-bottom: 24px;
+        gap: 20px;
+        margin-bottom: 28px;
     }
 
-    /* Компактная карточка */
+    /* CARD */
     .rejected-card {
-        background: linear-gradient(180deg, rgba(22, 26, 38, 0.95), rgba(16, 19, 28, 0.95));
-        border: 1px solid rgba(239, 68, 68, 0.25);
-        border-radius: 12px;
-        padding: 16px;
+        background: var(--bg-1);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 22px;
         position: relative;
         overflow: hidden;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        transition: all 0.3s ease;
         display: flex;
         flex-direction: column;
+        box-shadow: var(--shadow-card);
     }
     .rejected-card::before {
         content: "";
         position: absolute;
         top: 0;
         left: 0;
-        width: 3px;
+        width: 4px;
         height: 100%;
-        background: linear-gradient(180deg, #ef4444, #f87171);
-        box-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
+        background: #ef4444;
+        border-radius: var(--radius) 0 0 var(--radius);
     }
     .rejected-card:hover {
-        border-color: rgba(239, 68, 68, 0.5);
-        box-shadow: 0 8px 24px rgba(0,0,0,0.4), 0 0 20px rgba(239, 68, 68, 0.15);
-        transform: translateY(-3px);
+        border-color: rgba(239, 68, 68, 0.4);
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+        transform: translateY(-2px);
     }
 
+    /* CARD HEADER */
     .rejected-card-header {
         display: flex;
         align-items: flex-start;
         justify-content: space-between;
-        gap: 10px;
-        margin-bottom: 12px;
+        gap: 12px;
+        margin-bottom: 14px;
     }
     .rejected-card-title {
-        font-weight: 600;
-        font-size: 13px;
-        color: #fff;
+        font-weight: 700;
+        font-size: 14px;
+        color: var(--text);
         line-height: 1.4;
         flex: 1;
         overflow: hidden;
@@ -89,180 +111,281 @@
         display: -webkit-box;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
+        letter-spacing: -0.2px;
     }
     .rejected-card-number {
-        font-family: 'JetBrains Mono', monospace;
+        font-family: var(--font-mono);
         font-size: 10px;
-        color: #f87171;
-        background: rgba(239, 68, 68, 0.1);
-        padding: 3px 8px;
-        border-radius: 5px;
-        border: 1px solid rgba(239, 68, 68, 0.3);
+        font-weight: 700;
+        color: #ef4444;
+        background: rgba(239, 68, 68, 0.08);
+        padding: 4px 10px;
+        border-radius: var(--radius);
+        border: 1px solid rgba(239, 68, 68, 0.25);
         white-space: nowrap;
         flex-shrink: 0;
+        letter-spacing: 0.3px;
     }
 
+    /* CARD META */
     .rejected-card-meta {
         display: flex;
         flex-wrap: wrap;
-        gap: 10px;
-        margin-bottom: 12px;
-        font-size: 10px;
-        color: #8892a6;
+        gap: 8px;
+        margin-bottom: 14px;
+        font-size: 11px;
+        color: var(--muted);
     }
     .rejected-card-meta-item {
         display: inline-flex;
         align-items: center;
-        gap: 4px;
+        gap: 5px;
+        padding: 4px 9px;
+        background: var(--bg-2);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        font-weight: 600;
     }
     .rejected-card-meta-item i {
         color: #ef4444;
         font-size: 11px;
+        flex-shrink: 0;
     }
 
+    /* CARD CONTENT */
     .rejected-card-content {
-        font-size: 11px;
-        color: #c5cdd9;
-        margin-bottom: 12px;
+        font-size: 12px;
+        color: var(--text);
+        margin-bottom: 14px;
         line-height: 1.5;
-        padding: 8px;
-        background: rgba(255,255,255,0.02);
-        border-radius: 6px;
-        border-left: 2px solid rgba(239, 68, 68, 0.4);
+        padding: 10px 12px;
+        background: var(--bg-2);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        border-left: 3px solid #ef4444;
         overflow: hidden;
         text-overflow: ellipsis;
         display: -webkit-box;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
+        box-shadow: inset 0 1px 2px rgba(15,23,42,0.03);
     }
 
-    /* Блок с причиной отклонения - ЖЁЛТЫЙ (как ты просил) */
+    /* REJECTION REASON BLOCK */
     .rejection-reason-block {
-        background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(251, 191, 36, 0.05));
-        border: 1px solid rgba(245, 158, 11, 0.3);
-        border-radius: 8px;
-        padding: 10px;
+        background: rgba(245, 158, 11, 0.08);
+        border: 1px solid rgba(245, 158, 11, 0.25);
+        border-radius: var(--radius);
+        padding: 14px;
         margin-top: auto;
-        margin-bottom: 12px;
+        margin-bottom: 14px;
     }
     .rejection-reason-label {
         display: flex;
         align-items: center;
-        gap: 6px;
-        font-size: 9px;
+        gap: 7px;
+        font-size: 10px;
         font-weight: 700;
-        color: #fbbf24;
+        color: #b45309;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
-        margin-bottom: 6px;
+        letter-spacing: 0.8px;
+        margin-bottom: 8px;
+        font-family: var(--font-sans);
     }
-    .rejection-reason-label i { 
+    html[data-theme="dark"] .rejection-reason-label {
+        color: #fbbf24;
+    }
+    .rejection-reason-label i {
         font-size: 12px;
         color: #f59e0b;
+        flex-shrink: 0;
     }
     
     .rejection-reason-text {
-        font-size: 11px;
-        color: #fcd34d;
+        font-size: 12px;
+        color: #92400e;
         line-height: 1.5;
         font-style: italic;
-        padding: 6px 8px;
-        background: rgba(0,0,0,0.3);
-        border-radius: 5px;
-        border-left: 2px solid #f59e0b;
+        padding: 10px 12px;
+        background: rgba(255, 251, 235, 0.6);
+        border-radius: var(--radius);
+        border-left: 3px solid #f59e0b;
         white-space: pre-line;
+        font-weight: 500;
+    }
+    html[data-theme="dark"] .rejection-reason-text {
+        color: #fcd34d;
+        background: rgba(245, 158, 11, 0.12);
     }
     .rejection-reason-empty {
-        font-size: 10px;
-        color: #8892a6;
+        font-size: 11px;
+        color: var(--muted);
         font-style: italic;
+        padding: 8px 12px;
+        background: var(--bg-2);
+        border-radius: var(--radius);
+    }
+    .rejected-by-info {
+        margin-top: 8px;
+        font-size: 10px;
+        color: var(--muted);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-weight: 600;
+    }
+    .rejected-by-info i {
+        color: #f59e0b;
+        font-size: 11px;
+        flex-shrink: 0;
+    }
+    .rejected-by-info strong {
+        color: var(--text);
+        font-weight: 700;
     }
 
+    /* CARD FOOTER */
     .rejected-card-footer {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 8px;
-        padding-top: 12px;
-        border-top: 1px solid rgba(255,255,255,0.06);
+        gap: 12px;
+        padding-top: 14px;
+        border-top: 1px solid var(--line);
     }
 
-    /* 🚩 БЕЙДЖ "ОТКЛОНЁН" - КРАСНЫЙ */
+    /* REJECTED BADGE */
     .rejected-badge {
         display: inline-flex;
         align-items: center;
-        gap: 5px;
-        padding: 4px 10px;
-        border-radius: 12px;
-        font-size: 9px;
+        gap: 6px;
+        padding: 5px 12px;
+        border-radius: var(--radius);
+        font-size: 10px;
         font-weight: 700;
-        letter-spacing: 0.3px;
+        letter-spacing: 0.5px;
         text-transform: uppercase;
-        background: rgba(239, 68, 68, 0.15);
-        border: 1px solid rgba(239, 68, 68, 0.4);
+        background: rgba(239, 68, 68, 0.10);
+        border: 1px solid rgba(239, 68, 68, 0.25);
+        color: #dc2626;
+        font-family: var(--font-sans);
+    }
+    html[data-theme="dark"] .rejected-badge {
         color: #f87171;
     }
     .rejected-badge::before {
         content: "";
-        width: 5px;
-        height: 5px;
+        width: 6px;
+        height: 6px;
         border-radius: 50%;
         background: #ef4444;
-        box-shadow: 0 0 8px rgba(239, 68, 68, 1);
-        animation: pulse 2s infinite;
+        box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
+        animation: badgePulse 2s ease-in-out infinite;
+        flex-shrink: 0;
     }
-    @keyframes pulse {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.6; }
+    @keyframes badgePulse {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.6; transform: scale(1.1); }
     }
 
+    /* ACTION BUTTONS */
+    .action-btn-group {
+        display: flex;
+        gap: 6px;
+    }
     .action-btn {
-        width: 28px;
-        height: 28px;
-        border-radius: 6px;
-        background: rgba(255,255,255,0.04);
-        border: 1px solid rgba(255,255,255,0.1);
+        width: 34px;
+        height: 34px;
+        border-radius: var(--radius);
+        background: var(--bg-1);
+        border: 1px solid var(--line);
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        color: #8892a6;
+        color: var(--muted);
         text-decoration: none;
         transition: all 0.2s ease;
     }
     .action-btn:hover {
-        color: #f87171;
-        border-color: rgba(239, 68, 68, 0.5);
-        background: rgba(239, 68, 68, 0.1);
-        box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
-        transform: scale(1.05);
+        color: #ef4444;
+        border-color: rgba(239, 68, 68, 0.4);
+        background: rgba(239, 68, 68, 0.06);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 10px rgba(239, 68, 68, 0.12);
     }
-    .action-btn i { font-size: 12px; }
+    .action-btn i { font-size: 14px; }
 
-    .empty-state { padding: 60px 20px; text-align: center; }
+    /* EMPTY STATE */
+    .empty-state {
+        padding: 70px 20px;
+        text-align: center;
+    }
     .empty-icon {
-        width: 64px;
-        height: 64px;
+        width: 72px;
+        height: 72px;
         border-radius: 50%;
-        background: rgba(239, 68, 68, 0.1);
-        border: 1px solid rgba(239, 68, 68, 0.3);
+        background: rgba(239, 68, 68, 0.08);
+        border: 1px solid rgba(239, 68, 68, 0.2);
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        margin-bottom: 16px;
-        color: #f87171;
-        font-size: 24px;
+        margin-bottom: 20px;
+        color: #ef4444;
+        font-size: 28px;
     }
-    .empty-title { font-size: 14px; font-weight: 600; color: #fff; margin-bottom: 6px; }
-    .empty-sub { font-size: 11px; color: #8892a6; margin-bottom: 20px; }
+    .empty-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--text);
+        margin-bottom: 8px;
+        letter-spacing: -0.2px;
+    }
+    .empty-sub {
+        font-size: 13px;
+        color: var(--muted);
+        margin-bottom: 24px;
+        font-weight: 500;
+    }
+    .empty-back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 22px;
+        background: var(--bg-1);
+        color: var(--text);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        font-size: 12px;
+        font-weight: 700;
+        text-decoration: none;
+        transition: all 0.25s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        box-shadow: var(--shadow-card);
+        font-family: var(--font-sans);
+    }
+    .empty-back-btn:hover {
+        border-color: rgba(var(--glow), 0.4);
+        color: rgb(var(--glow));
+        transform: translateX(-2px);
+        box-shadow: 0 4px 12px rgba(var(--glow), 0.15);
+    }
+    .empty-back-btn i { font-size: 14px; }
 
-    .pagination-wrap { margin-top: 24px; display: flex; justify-content: center; }
+    /* PAGINATION */
+    .pagination-wrap {
+        margin-top: 32px;
+        display: flex;
+        justify-content: center;
+    }
     .pagination-wrap nav {
         display: flex;
         gap: 4px;
-        background: rgba(255,255,255,0.03);
-        border: 1px solid rgba(255,255,255,0.1);
-        padding: 4px;
-        border-radius: 10px;
+        background: var(--bg-1);
+        border: 1px solid var(--line);
+        padding: 5px;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-card);
     }
     .pagination-wrap .pagination {
         display: flex;
@@ -277,136 +400,88 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        min-width: 32px;
-        height: 32px;
-        padding: 0 10px;
-        border-radius: 6px;
-        font-size: 12px;
-        font-weight: 600;
-        color: #8892a6;
+        min-width: 34px;
+        height: 34px;
+        padding: 0 12px;
+        border-radius: var(--radius);
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--muted);
         text-decoration: none;
         transition: all 0.2s ease;
-        border: none;
+        border: 1px solid transparent;
         background: transparent;
+        font-family: var(--font-sans);
     }
     .pagination-wrap .pagination li a:hover {
-        color: #fff;
-        background: rgba(255,255,255,0.05);
+        color: #ef4444;
+        background: rgba(239, 68, 68, 0.06);
+        border-color: rgba(239, 68, 68, 0.25);
     }
     .pagination-wrap .pagination li.active span,
     .pagination-wrap .pagination li span[aria-current="page"] {
-        color: #0a0d14;
-        background: linear-gradient(180deg, #f87171, #ef4444);
-        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+        color: #fff;
+        background: #ef4444;
+        border-color: #ef4444;
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+    }
+    .pagination-wrap .pagination li.disabled span {
+        color: var(--border);
+        cursor: not-allowed;
     }
 
-    /* === АДАПТИВНОСТЬ === */
+    /* ============ RESPONSIVE ============ */
     @media (max-width: 1024px) {
         .rejected-grid { grid-template-columns: repeat(2, 1fr); }
     }
     @media (max-width: 768px) {
-        .rejected-docs-page { padding: 18px 14px; }
-        .rejected-page-header h1 { font-size: 20px; }
-        .rejected-grid { grid-template-columns: 1fr; gap: 14px; }
-        .rejected-card { padding: 14px; }
-        .rejected-card-title { font-size: 12px; }
-        .rejected-card-meta { font-size: 9px; gap: 8px; }
-        .rejection-reason-text { font-size: 10px; }
-        .rejected-card-footer { flex-direction: column; align-items: stretch; }
-        .action-btn { width: 100%; height: 32px; }
+        .rejected-docs-page { padding: 20px 16px; }
+        .rejected-page-header h1 { font-size: 19px; }
+        .rejected-grid { grid-template-columns: 1fr; gap: 16px; }
+        .rejected-card { padding: 18px; }
+        .rejected-card-title { font-size: 13px; }
+        .rejected-card-meta { font-size: 10px; gap: 6px; }
+        .rejection-reason-text { font-size: 11px; }
+        .rejected-card-footer { flex-direction: column; align-items: stretch; gap: 10px; }
+        .action-btn-group { justify-content: flex-end; }
+        .action-btn { width: 38px; height: 36px; }
     }
     @media (max-width: 480px) {
-        .rejected-docs-page { padding: 14px 10px; }
-        .rejected-page-header { margin-bottom: 20px; padding-bottom: 12px; }
-        .rejected-page-header h1 { font-size: 18px; }
-        .rejected-grid { gap: 12px; }
-        .rejected-card { padding: 12px; border-radius: 10px; }
-        .rejected-card-title { font-size: 11px; }
-        .rejected-card-number { font-size: 9px; padding: 2px 6px; }
-        .rejected-card-meta { font-size: 9px; gap: 6px; }
-        .rejected-card-content { font-size: 10px; padding: 6px; }
-        .rejection-reason-block { padding: 8px; }
-        .rejection-reason-label { font-size: 8px; }
-        .rejection-reason-text { font-size: 10px; padding: 5px 6px; }
-        .rejected-badge { padding: 3px 8px; font-size: 8px; }
-        .action-btn { height: 30px; }
-    }
-</style>
-
-<style>
-    html[data-theme="light"] .rejected-docs-page {
-        color: #0f172a !important;
-    }
-    html[data-theme="light"] .rejected-page-header {
-        border-bottom: 2px solid #cbd5e1;
-    }
-    html[data-theme="light"] .rejected-page-header h1,
-    html[data-theme="light"] .rejected-card-title,
-    html[data-theme="light"] .empty-title {
-        color: #0f172a !important;
-    }
-    html[data-theme="light"] .rejected-card {
-        background: #ffffff;
-        border: 1.5px solid #f87171;
-        box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
-    }
-    html[data-theme="light"] .rejected-card:hover {
-        border-color: #ef4444;
-        box-shadow: 0 12px 28px rgba(15, 23, 42, 0.14);
-    }
-    html[data-theme="light"] .rejected-card-meta,
-    html[data-theme="light"] .rejection-reason-empty,
-    html[data-theme="light"] .empty-sub {
-        color: #475569;
-    }
-    html[data-theme="light"] .rejected-card-content {
-        color: #334155;
-        background: #f8fafc;
-        border: 1px solid #cbd5e1;
-        border-left: 3px solid #ef4444;
-    }
-    html[data-theme="light"] .rejection-reason-block {
-        background: #fffbeb;
-        border: 1.5px solid #f59e0b;
-    }
-    html[data-theme="light"] .rejection-reason-label {
-        color: #b45309;
-    }
-    html[data-theme="light"] .rejection-reason-text {
-        color: #92400e;
-        background: #fef3c7;
-        border-left: 3px solid #f59e0b;
-    }
-    html[data-theme="light"] .rejected-card-footer {
-        border-top: 1px solid #cbd5e1;
-    }
-    html[data-theme="light"] .action-btn {
-        color: #475569;
-        background: #f8fafc;
-        border-color: #cbd5e1;
-    }
-    html[data-theme="light"] .pagination-wrap nav {
-        background: #ffffff;
-        border-color: #cbd5e1;
-    }
-    html[data-theme="light"] .pagination-wrap .pagination li a,
-    html[data-theme="light"] .pagination-wrap .pagination li span {
-        color: #475569;
+        .rejected-docs-page { padding: 16px 12px; }
+        .rejected-page-header { margin-bottom: 24px; padding-bottom: 16px; }
+        .rejected-page-header h1 { font-size: 17px; gap: 10px; }
+        .rejected-page-header .count-badge { min-width: 28px; height: 24px; font-size: 11px; padding: 0 8px; }
+        .rejected-grid { gap: 14px; }
+        .rejected-card { padding: 16px; }
+        .rejected-card-title { font-size: 12px; }
+        .rejected-card-number { font-size: 9px; padding: 3px 8px; }
+        .rejected-card-meta { font-size: 9px; gap: 5px; }
+        .rejected-card-meta-item { padding: 3px 7px; }
+        .rejected-card-content { font-size: 11px; padding: 8px 10px; }
+        .rejection-reason-block { padding: 12px; }
+        .rejection-reason-label { font-size: 9px; }
+        .rejection-reason-text { font-size: 10px; padding: 8px 10px; }
+        .rejected-badge { padding: 4px 10px; font-size: 9px; }
+        .action-btn { width: 34px; height: 32px; }
+        .empty-icon { width: 60px; height: 60px; font-size: 24px; }
+        .empty-title { font-size: 14px; }
+        .empty-sub { font-size: 12px; }
     }
 </style>
 
 <div class="rejected-docs-page">
     <div class="max-w-7xl mx-auto">
         
-        {{-- Заголовок страницы --}}
+        {{-- HEADER --}}
         <div class="rejected-page-header">
             <h1>
                 <span class="accent-bar"></span>
                 <span data-i18n="rejected_docs">Отклонённые документы</span>
+                <span class="count-badge">{{ $documents->total() }}</span>
             </h1>
         </div>
 
-        {{-- СЕТКА карточек --}}
+        {{-- GRID --}}
         <div class="rejected-grid">
             @forelse($documents as $index => $doc)
             @php
@@ -487,7 +562,7 @@
                 </div>
                 @endif
 
-                {{-- Блок с причиной отклонения - ЖЁЛТЫЙ --}}
+                {{-- REJECTION REASON --}}
                 <div class="rejection-reason-block">
                     <div class="rejection-reason-label">
                         <i class="bi bi-exclamation-triangle-fill"></i>
@@ -499,10 +574,10 @@
                             {{ Str::limit($rejectionReason, 100) }}
                         </div>
                         @if($rejectedBy)
-                            <div style="margin-top: 6px; font-size: 9px; color: #8892a6; display:flex; align-items:center; gap:4px;">
-                                <i class="bi bi-person-fill" style="color:#f59e0b; font-size: 9px;"></i>
+                            <div class="rejected-by-info">
+                                <i class="bi bi-person-fill"></i>
                                 <span data-i18n="rejected_by">Отклонил:</span> 
-                                <strong style="color:#e7ecf3;">{{ Str::limit($rejectedBy->name ?? 'Unknown', 15) }}</strong>
+                                <strong>{{ Str::limit($rejectedBy->name ?? 'Unknown', 15) }}</strong>
                             </div>
                         @endif
                     @else
@@ -513,11 +588,10 @@
                 </div>
 
                 <div class="rejected-card-footer">
-                    <!-- 🚩 КРАСНЫЙ БЕЙДЖ -->
                     <span class="rejected-badge" data-i18n="status_rejected">
                         Отклонён
                     </span>
-                    <div style="display: flex; gap: 6px;">
+                    <div class="action-btn-group">
                         <a href="{{ route('documents.show', $doc->id) }}" 
                            class="action-btn" 
                            data-i18n-title="doc_view" 
@@ -548,14 +622,14 @@
             <div class="empty-sub" data-i18n="all_docs_approved">
                 Все документы одобрены или в работе
             </div>
-            <a href="{{ route('documents.index') }}" class="action-btn" style="width:auto; padding: 0 16px; height: 32px; gap: 6px; font-size: 11px; font-weight: 600;">
+            <a href="{{ route('documents.index') }}" class="empty-back-btn">
                 <i class="bi bi-arrow-left"></i>
                 <span data-i18n="back_to_all">Назад</span>
             </a>
         </div>
         @endforelse
 
-        {{-- Пагинация --}}
+        {{-- PAGINATION --}}
         @if($documents->hasPages())
         <div class="pagination-wrap">
             {{ $documents->links() }}
@@ -631,4 +705,5 @@
         });
     });
 </script>
+
 @endsection

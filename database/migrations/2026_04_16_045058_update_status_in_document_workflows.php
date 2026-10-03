@@ -36,6 +36,10 @@ use Illuminate\Support\Facades\DB;
 return new class extends Migration {
     public function up(): void
     {
+        if (DB::connection()->getDriverName() !== 'mysql') {
+            return;
+        }
+
         DB::statement("
             ALTER TABLE document_workflows
             MODIFY status ENUM('pending','approved','rejected','waiting')
@@ -45,6 +49,10 @@ return new class extends Migration {
 
     public function down(): void
     {
+        if (DB::connection()->getDriverName() !== 'mysql') {
+            return;
+        }
+
         DB::statement("
             UPDATE document_workflows
             SET status = 'pending'

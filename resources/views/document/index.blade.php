@@ -16,6 +16,14 @@ body {
     /* === Кастомные стили для страницы документов в стиле админки === */
     .doc-page-custom { color: var(--text); }
 
+    /* ============================================================ */
+    /* ===== ВЕСЬ ТЕКСТ СТРАНИЦЫ — ТОЛЬКО INTER ===== */
+    /* ============================================================ */
+    .doc-page-custom,
+    .doc-page-custom * {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+    }
+
     .doc-page-custom .page-head-custom {
         display: flex;
         align-items: center;
@@ -124,8 +132,9 @@ body {
     }
 
     .doc-id {
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 11px;
+        font-family: 'Inter', sans-serif;
+        font-size: 12px;
+        font-weight: 600;
         color: var(--muted);
     }
 
@@ -140,8 +149,9 @@ body {
     }
 
     .doc-number {
-        font-family: 'JetBrains Mono', monospace;
+        font-family: 'Inter', sans-serif;
         font-size: 10px;
+        font-weight: 700;
         color: rgba(var(--glow), 1);
         background: rgba(var(--glow), 0.1);
         padding: 2px 7px;
@@ -153,36 +163,40 @@ body {
     .doc-author { font-size: 11px; color: var(--muted); margin-top: 3px; }
     .doc-desc { font-size: 11.5px; color: var(--muted); margin-top: 4px; opacity: 0.75; }
     .doc-date {
-        font-family: 'JetBrains Mono', monospace;
+        font-family: 'Inter', sans-serif;
         font-size: 12px;
+        font-weight: 500;
         color: var(--muted);
     }
 
+    /* ============================================================ */
+    /* ===== СТАТУСЫ: ЯРКИЕ И КОНТРАСТНЫЕ (базовая = тёмная тема) ===== */
+    /* ============================================================ */
     .status-pill {
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        padding: 4px 12px;
+        padding: 5px 12px;
         border-radius: 20px;
         font-size: 11px;
-        font-weight: 600;
+        font-weight: 700;
         letter-spacing: 0.3px;
         text-transform: uppercase;
         border: 1px solid;
     }
     .status-pill::before {
         content: "";
-        width: 6px;
-        height: 6px;
+        width: 7px;
+        height: 7px;
         border-radius: 50%;
         background: currentColor;
         box-shadow: 0 0 8px currentColor;
     }
 
-    .status-draft { color: #8892a6; background: rgba(136,146,166,0.08); border-color: rgba(136,146,166,0.2); }
-    .status-active, .status-processing { color: #ffb547; background: rgba(255,181,71,0.08); border-color: rgba(255,181,71,0.25); }
-    .status-approved, .status-completed { color: #4cd982; background: rgba(76,217,130,0.08); border-color: rgba(76,217,130,0.25); }
-    .status-rejected { color: #ff7a7a; background: rgba(255,122,122,0.08); border-color: rgba(255,122,122,0.25); }
+    .status-draft { color: #aeb8c8; background: rgba(148,163,184,0.14); border-color: rgba(148,163,184,0.4); }
+    .status-active, .status-processing { color: #ffc069; background: rgba(255,181,71,0.16); border-color: rgba(255,181,71,0.5); }
+    .status-approved, .status-completed { color: #63e6a4; background: rgba(76,217,130,0.16); border-color: rgba(76,217,130,0.5); }
+    .status-rejected { color: #ff9191; background: rgba(255,122,122,0.16); border-color: rgba(255,122,122,0.5); }
 
     .action-btn {
         width: 32px;
@@ -339,8 +353,9 @@ body {
         flex: 1;
     }
     .doc-card-number {
-        font-family: 'JetBrains Mono', monospace;
+        font-family: 'Inter', sans-serif;
         font-size: 10px;
+        font-weight: 700;
         color: rgba(var(--glow), 1);
         background: rgba(var(--glow), 0.1);
         padding: 2px 7px;
@@ -410,7 +425,7 @@ body {
         .doc-author { font-size: 10px; }
         .doc-desc { font-size: 10.5px; }
         .doc-date { font-size: 11px; }
-        .status-pill { padding: 3px 10px; font-size: 10px; }
+        .status-pill { padding: 4px 10px; font-size: 10px; }
         .action-btn { width: 30px; height: 30px; }
         .action-btn svg { width: 14px; height: 14px; }
     }
@@ -439,8 +454,8 @@ body {
         .doc-card-desc { font-size: 11px; margin-bottom: 10px; }
         .doc-card-footer { padding-top: 9px; gap: 8px; }
 
-        .status-pill { padding: 3px 9px; font-size: 10px; gap: 5px; }
-        .status-pill::before { width: 5px; height: 5px; }
+        .status-pill { padding: 4px 9px; font-size: 10px; gap: 5px; }
+        .status-pill::before { width: 6px; height: 6px; }
         .action-btn { width: 30px; height: 30px; border-radius: 7px; }
         .action-btn svg { width: 14px; height: 14px; }
 
@@ -520,7 +535,7 @@ body {
         .doc-card-desc { font-size: 10px; margin-bottom: 8px; }
         .doc-card-footer { padding-top: 7px; gap: 6px; }
 
-        .status-pill { padding: 2px 7px; font-size: 9px; gap: 4px; border-radius: 14px; }
+        .status-pill { padding: 3px 7px; font-size: 9px; gap: 4px; border-radius: 14px; }
         .status-pill::before { width: 4px; height: 4px; }
         .action-btn { width: 27px; height: 27px; border-radius: 6px; }
         .action-btn svg { width: 12px; height: 12px; }
@@ -633,6 +648,44 @@ body {
     html[data-theme="light"] .empty-btn,
     html[data-theme="light"] .pagination-wrap nav {
         border-color: #b8c4d3 !important;
+    }
+
+    /* ============================================================ */
+    /* ===== СТАТУСЫ В СВЕТЛОЙ ТЕМЕ: НАСЫЩЕННЫЕ, ВИДИМЫЕ НА БЕЛОМ ===== */
+    /* ============================================================ */
+    html[data-theme="light"] .status-draft {
+        color: #475569 !important;
+        background: rgba(71, 85, 105, 0.12) !important;
+        border-color: rgba(71, 85, 105, 0.4) !important;
+    }
+    html[data-theme="light"] .status-active,
+    html[data-theme="light"] .status-processing {
+        color: #b45309 !important;
+        background: rgba(245, 158, 11, 0.16) !important;
+        border-color: rgba(217, 119, 6, 0.5) !important;
+    }
+    html[data-theme="light"] .status-approved,
+    html[data-theme="light"] .status-completed {
+        color: #15803d !important;
+        background: rgba(34, 197, 94, 0.16) !important;
+        border-color: rgba(22, 163, 74, 0.5) !important;
+    }
+    html[data-theme="light"] .status-rejected {
+        color: #b91c1c !important;
+        background: rgba(239, 68, 68, 0.14) !important;
+        border-color: rgba(220, 38, 38, 0.5) !important;
+    }
+    /* Точки-индикаторы в светлой теме — без glow, но яркие */
+    html[data-theme="light"] .status-pill::before {
+        box-shadow: none;
+    }
+    /* Номер документа в светлой теме — контрастнее */
+    html[data-theme="light"] .doc-number,
+    html[data-theme="light"] .doc-card-number {
+        color: rgb(var(--glow)) !important;
+        filter: brightness(0.8);
+        background: rgba(var(--glow), 0.12) !important;
+        border-color: rgba(var(--glow), 0.4) !important;
     }
 </style>
 
@@ -887,8 +940,7 @@ body {
                 status_processing: 'В процессе',
                 status_completed: 'Завершено',
                 status_rejected: 'Отклонён',
-                 doc_deadline: 'Срок',
-        doc_created: 'Создан',
+                doc_created: 'Создан',
             },
             tj: {
                 documents: 'ҲУҶҶАТҲО',
@@ -908,13 +960,9 @@ body {
                 status_processing: 'Дар раванд',
                 status_completed: 'Анҷом ёфт',
                 status_rejected: 'Рад шуд',
-                   doc_deadline: 'Мӯҳлат',
-        doc_created: 'Эҷод шуд',
-
+                doc_created: 'Эҷод шуд',
             },
             en: {
-                   doc_deadline: 'Date',
-        doc_created: 'Created',
                 documents: 'DOCUMENTS',
                 newDocument: 'New Document',
                 doc_id: 'ID',
@@ -931,7 +979,8 @@ body {
                 status_draft: 'Draft',
                 status_processing: 'Processing',
                 status_completed: 'Completed',
-                status_rejected: 'Rejected'
+                status_rejected: 'Rejected',
+                doc_created: 'Created',
             }
         };
 
@@ -974,7 +1023,6 @@ body {
 
         // ============================================================
         // 2. Слушаем событие смены языка от layouts/admin.blade.php
-        //    (когда юзер кликает на 🇷🇺/🇹🇯/🇬🇧 в админке)
         // ============================================================
         window.addEventListener('docsign:lang-changed', (e) => {
             const lang = e.detail?.lang || 'ru';

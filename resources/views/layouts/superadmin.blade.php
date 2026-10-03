@@ -1043,9 +1043,322 @@
         ::-webkit-scrollbar-thumb:hover {
             background: linear-gradient(180deg, var(--neon-red), var(--neon-pink));
         }
+
+        /* Светлая тема панели управления */
+        .admin-light {
+            background: #f4f6fa;
+            color: #172033;
+        }
+
+        .admin-light .bg-aurora {
+            display: none;
+        }
+
+        .admin-light .sidebar {
+            background: #fff;
+            border-right: 1px solid #e2e8f0;
+            box-shadow: 4px 0 20px rgba(15, 23, 42, 0.04);
+        }
+
+        .admin-light .sidebar::before {
+            display: none;
+        }
+
+        .admin-light .sidebar-header {
+            border-bottom-color: #e8edf4;
+        }
+
+        .admin-light .main-content {
+            color: #172033;
+        }
+
+        .admin-light .top-bar,
+        .admin-light .card,
+        .admin-light [class*="bg-zinc-900"],
+        .admin-light [class*="bg-white/5"],
+        .admin-light [class*="bg-white/10"] {
+            background: #fff !important;
+            color: #172033;
+            border-color: #e2e8f0;
+            box-shadow: 0 2px 10px rgba(15, 23, 42, 0.035);
+            backdrop-filter: none;
+        }
+
+        .admin-light .top-bar::before,
+        .admin-light .card::before,
+        .admin-light .card::after {
+            display: none;
+        }
+
+        .admin-light [class*="border-white/"] {
+            border-color: #e2e8f0 !important;
+        }
+
+        .admin-light .text-white:not(.btn-primary):not(.logo-badge):not(.badge-super),
+        .admin-light .text-zinc-100,
+        .admin-light .text-zinc-200,
+        .admin-light .text-zinc-300,
+        .admin-light .text-zinc-400 {
+            color: #334155 !important;
+        }
+
+        .admin-light .text-zinc-500,
+        .admin-light .text-zinc-600 {
+            color: #64748b !important;
+        }
+
+        .admin-light .btn-ghost {
+            color: #334155;
+            background: #fff;
+            border-color: #dbe2ea;
+            box-shadow: none;
+        }
+
+        .admin-light .btn-ghost:hover {
+            color: #1d4ed8;
+            background: #eff6ff;
+            border-color: #bfdbfe;
+            box-shadow: none;
+        }
+
+        .admin-light .nav-item {
+            color: #475569;
+        }
+
+        .admin-light .nav-item:hover {
+            color: #1d4ed8;
+            background: #f1f5f9;
+        }
+
+        .admin-light .nav-item.active {
+            color: #1d4ed8;
+            background: #eff6ff;
+            border-color: #bfdbfe;
+            box-shadow: none;
+        }
+
+        .admin-light table th {
+            color: #64748b;
+            background: #f8fafc;
+            border-bottom-color: #e2e8f0;
+        }
+
+        .admin-light table td {
+            color: #475569;
+            border-bottom-color: #edf1f5;
+        }
+
+        .admin-light table tr:hover td {
+            color: #172033;
+            background: #f8fafc;
+        }
+
+        .admin-light ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+
+        .admin-light ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+        }
+
+        .admin-light .admin-input {
+            width: 100%;
+            border: 1px solid #d7dee8;
+            border-radius: 9px;
+            background: #fff;
+            padding: 0.7rem 0.85rem;
+            color: #172033;
+            font-size: 0.875rem;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .admin-light .admin-input:focus {
+            border-color: #60a5fa;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+        }
+
+        .admin-light .admin-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #334155;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .admin-light .admin-error {
+            margin-top: 0.35rem;
+            color: #dc2626;
+            font-size: 0.75rem;
+        }
+
+        .admin-light .btn-danger {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #fecaca;
+            border-radius: 8px;
+            background: #fff;
+            padding: 0.5rem 0.75rem;
+            color: #b91c1c;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: background 0.2s, border-color 0.2s;
+        }
+
+        .admin-light .btn-danger:hover {
+            border-color: #fca5a5;
+            background: #fef2f2;
+        }
+
+        .admin-light .badge-document {
+            display: inline-flex;
+            border: 1px solid #dbeafe;
+            border-radius: 999px;
+            background: #eff6ff;
+            padding: 0.25rem 0.65rem;
+            color: #1d4ed8;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+
+        .admin-light .btn-primary,
+        .admin-light .btn-primary .text-white,
+        .admin-light .logo-badge {
+            color: #fff !important;
+        }
+
+        .admin-light input,
+        .admin-light select,
+        .admin-light textarea {
+            border-color: #d7dee8 !important;
+            background-color: #fff !important;
+            color: #172033 !important;
+            color-scheme: light;
+        }
+
+        .admin-light input::placeholder,
+        .admin-light textarea::placeholder {
+            color: #94a3b8 !important;
+            opacity: 1;
+        }
+
+        .admin-light select option,
+        .admin-light select optgroup {
+            background: #fff !important;
+            color: #172033 !important;
+        }
+
+        .admin-light input:focus,
+        .admin-light select:focus,
+        .admin-light textarea:focus {
+            border-color: #60a5fa !important;
+            background-color: #fff !important;
+            color: #172033 !important;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12) !important;
+        }
+
+        .admin-light input[type="checkbox"],
+        .admin-light input[type="radio"] {
+            width: 1rem;
+            height: 1rem;
+            accent-color: #2563eb;
+        }
+
+        .admin-light [class*="bg-zinc-900"],
+        .admin-light [class*="bg-zinc-800"],
+        .admin-light [class*="bg-zinc-700"],
+        .admin-light [class*="bg-gray-900"],
+        .admin-light [class*="bg-gray-800"],
+        .admin-light [class~="bg-black"] {
+            border-color: #e2e8f0 !important;
+            background-color: #fff !important;
+            color: #334155 !important;
+        }
+
+        .admin-light [class~="text-white"],
+        .admin-light [class*="text-zinc-"],
+        .admin-light [class*="text-gray-"] {
+            color: #334155 !important;
+        }
+
+        .admin-light [class*="text-red-"],
+        .admin-light [class*="text-rose-"] {
+            color: #b91c1c !important;
+        }
+
+        .admin-light [class*="text-blue-"],
+        .admin-light [class*="text-cyan-"] {
+            color: #1d4ed8 !important;
+        }
+
+        .admin-light [class*="text-green-"],
+        .admin-light [class*="text-emerald-"] {
+            color: #15803d !important;
+        }
+
+        .admin-light [class*="text-purple-"],
+        .admin-light [class*="text-violet-"],
+        .admin-light [class*="text-pink-"] {
+            color: #6d28d9 !important;
+        }
+
+        .admin-light [class*="text-yellow-"],
+        .admin-light [class*="text-amber-"],
+        .admin-light [class*="text-orange-"] {
+            color: #a16207 !important;
+        }
+
+        .admin-light .badge-online {
+            border-color: #bbf7d0;
+            background: #f0fdf4;
+            color: #15803d;
+            box-shadow: none;
+        }
+
+        .admin-light .badge-offline {
+            border-color: #e2e8f0;
+            background: #f8fafc;
+            color: #475569;
+        }
+
+        .admin-light .badge-admin {
+            border-color: #fde68a;
+            background: #fffbeb;
+            color: #a16207;
+            box-shadow: none;
+        }
+
+        .admin-light .badge-super {
+            border-color: #fecdd3;
+            background: #fff1f2;
+            color: #b91c1c;
+            box-shadow: none;
+        }
+
+        .admin-light [class*="bg-gradient-to-"] [class~="text-white"],
+        .admin-light [class*="bg-red-"][class~="text-white"],
+        .admin-light [class*="bg-blue-"][class~="text-white"],
+        .admin-light [class*="bg-green-"][class~="text-white"],
+        .admin-light [class*="bg-purple-"][class~="text-white"],
+        .admin-light [class*="bg-indigo-"][class~="text-white"],
+        .admin-light [class*="bg-pink-"][class~="text-white"],
+        .admin-light [class*="bg-orange-"][class~="text-white"],
+        .admin-light [class*="bg-emerald-"][class~="text-white"],
+        .admin-light [class*="bg-violet-"][class~="text-white"],
+        .admin-light [class*="bg-rose-"][class~="text-white"] {
+            color: #fff !important;
+        }
+
+        .admin-light .btn-primary,
+        .admin-light .btn-primary [class~="text-white"],
+        .admin-light .logo-badge {
+            color: #fff !important;
+        }
     </style>
 </head>
-<body>
+<body class="admin-light">
 
 {{-- Анимированный фон --}}
 <div class="bg-aurora"></div>
@@ -1095,8 +1408,14 @@
             Компании
         </a>
 
+        <a href="{{ route('superadmin.documents.index') }}"
+           class="nav-item {{ request()->routeIs('superadmin.documents.*') ? 'active' : '' }}">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            Документы
+        </a>
+
         <a href="{{ route('superadmin.activity') }}"
-           class="nav-item {{ request()->routeIs('superadmin.activity.*') ? 'active' : '' }}">
+           class="nav-item {{ request()->routeIs('superadmin.activity', 'superadmin.activity.*') ? 'active' : '' }}">
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
             Активность
         </a>

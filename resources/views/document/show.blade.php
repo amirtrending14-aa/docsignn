@@ -1394,6 +1394,474 @@
     }
 </style>
 
+<style>
+    .doc-show-page {
+        color: var(--text);
+        padding: 24px 20px 36px;
+    }
+
+    .doc-card,
+    .sidebar-card,
+    .file-card {
+        background: var(--bg-1);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        box-shadow: var(--shadow-card);
+    }
+
+    .doc-card::before,
+    .sidebar-card::before {
+        display: none;
+    }
+
+    .page-header {
+        border-bottom-color: var(--line);
+    }
+
+    .back-label {
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 0;
+        text-transform: none;
+        color: var(--muted);
+    }
+
+    .doc-title {
+        color: var(--text);
+        font-size: 24px;
+        line-height: 1.35;
+        letter-spacing: -0.5px;
+    }
+
+    .doc-content {
+        color: var(--text);
+        font-size: 14px;
+        line-height: 1.75;
+        border-top-color: var(--line);
+    }
+
+    .badge,
+    .signature-badge,
+    .status-badge {
+        font-size: 10px;
+        letter-spacing: 0.3px;
+    }
+
+    .file-card:hover {
+        border-color: rgba(var(--glow), 0.45);
+        box-shadow: var(--shadow-soft);
+    }
+
+    .file-name {
+        color: var(--text);
+        font-size: 13px;
+        letter-spacing: 0;
+        text-transform: none;
+    }
+
+    .file-meta span,
+    .sidebar-label {
+        color: var(--muted);
+        font-size: 11px;
+        letter-spacing: 0.2px;
+    }
+
+    .file-btn {
+        font-size: 11px;
+        letter-spacing: 0.2px;
+    }
+
+    .sidebar-title {
+        color: var(--text);
+        font-size: 13px;
+        letter-spacing: 0;
+        text-transform: none;
+        border-bottom-color: var(--line);
+    }
+
+    .sidebar-row + .sidebar-row,
+    .participants-section {
+        border-color: var(--line);
+    }
+
+    .sidebar-value {
+        color: var(--text);
+        font-size: 12px;
+    }
+
+    .participants-title {
+        color: var(--muted);
+        font-size: 11px;
+        letter-spacing: 0.3px;
+    }
+
+    .participant-item {
+        align-items: center;
+        padding: 12px;
+        gap: 12px;
+        background: var(--bg-2);
+        border-color: var(--line);
+        border-radius: 8px;
+    }
+
+    .participant-item:hover {
+        background: var(--bg-3);
+        border-color: rgba(var(--glow), 0.35);
+    }
+
+    .participant-avatar {
+        width: 44px;
+        height: 44px;
+        overflow: hidden;
+        border-radius: 50%;
+        font-size: 16px;
+    }
+
+    .participant-avatar-owner {
+        background: linear-gradient(135deg, rgba(32, 107, 196, 0.24), rgba(32, 107, 196, 0.1));
+        border-color: rgba(32, 107, 196, 0.35);
+        color: #60a5fa;
+    }
+
+    .participant-avatar-receiver {
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.22), rgba(16, 185, 129, 0.08));
+        border-color: rgba(16, 185, 129, 0.35);
+        color: #34d399;
+    }
+
+    .participant-avatar img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .participant-role {
+        margin-bottom: 4px;
+        font-size: 10px;
+        letter-spacing: 0.3px;
+    }
+
+    .participant-role-owner {
+        color: #60a5fa;
+    }
+
+    .participant-role-receiver {
+        color: #34d399;
+    }
+
+    .participant-name {
+        color: var(--text);
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .participant-email {
+        display: block;
+        margin-top: 3px;
+        color: #8fbaff;
+        font-size: 11px;
+        line-height: 1.45;
+        text-decoration: none;
+        overflow-wrap: anywhere;
+        transition: color 0.2s ease;
+    }
+
+    .participant-email:hover {
+        color: #bfdbfe;
+        text-decoration: underline;
+    }
+
+    .section-title {
+        color: var(--text);
+        font-size: 12px;
+        letter-spacing: 0.2px;
+        text-transform: none;
+    }
+
+    .comment-author,
+    .comment-text {
+        font-size: 13px;
+        letter-spacing: 0;
+        text-transform: none;
+    }
+
+    .comment-text {
+        color: var(--text);
+    }
+
+    .comment-time {
+        font-size: 10px;
+    }
+
+    .doc-show-page .doc-badges .badge {
+        display: inline-flex;
+        align-items: center;
+        min-height: 28px;
+        padding: 5px 10px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        line-height: 1.25;
+        letter-spacing: 0;
+        text-transform: none;
+    }
+
+    .doc-show-page .doc-badges .badge-type {
+        background: rgba(var(--glow), 0.14);
+        border-color: rgba(var(--glow), 0.35);
+        color: #93c5fd !important;
+    }
+
+    .doc-show-page .doc-badges .badge-id {
+        background: var(--bg-2);
+        border-color: var(--line);
+        color: var(--text) !important;
+    }
+
+    .doc-show-page .doc-badges .badge-number {
+        background: rgba(34, 197, 94, 0.12);
+        border-color: rgba(34, 197, 94, 0.3);
+        color: #86efac !important;
+    }
+
+    html[data-theme="light"] .doc-show-page .doc-badges .badge-type {
+        background: #eff6ff;
+        border-color: #bfdbfe;
+        color: #1d4ed8 !important;
+    }
+
+    html[data-theme="light"] .doc-show-page .doc-badges .badge-id {
+        background: #f1f5f9;
+        border-color: #cbd5e1;
+        color: #1e293b !important;
+    }
+
+    html[data-theme="light"] .doc-show-page .doc-badges .badge-number {
+        background: #ecfdf5;
+        border-color: #a7f3d0;
+        color: #047857 !important;
+    }
+
+    .doc-show-page .comments-section,
+    .doc-show-page .comments-section .section-title,
+    .doc-show-page .comments-section .comment-author,
+    .doc-show-page .comments-section .comment-text,
+    .doc-show-page .comments-section .comments-empty p {
+        color: var(--text) !important;
+    }
+
+    .doc-show-page .comments-section .comment-input {
+        min-height: 76px;
+        padding: 14px 48px 14px 16px;
+        background: var(--bg-1);
+        border: 1px solid var(--line);
+        color: var(--text) !important;
+        font: 400 14px/1.6 var(--font-sans);
+    }
+
+    .doc-show-page .comments-section .comment-input::placeholder {
+        color: var(--muted) !important;
+        opacity: 1;
+    }
+
+    .doc-show-page .comments-section .comment-input:focus {
+        background: var(--bg-1);
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(var(--glow), 0.14);
+    }
+
+    .doc-show-page .comments-section .comment-submit {
+        right: 10px;
+        bottom: 10px;
+        display: grid;
+        width: 34px;
+        height: 34px;
+        place-items: center;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: var(--bg-2);
+        color: var(--accent);
+    }
+
+    .doc-show-page .comments-section .comment-submit:hover {
+        background: var(--bg-3);
+        color: var(--accent);
+    }
+
+    .doc-show-page .comments-section .comment-item {
+        padding: 16px;
+        background: var(--bg-1);
+        border: 1px solid var(--line);
+        border-left: 3px solid var(--accent);
+        border-radius: 8px;
+    }
+
+    .doc-show-page .comments-section .comment-header {
+        border-bottom-color: var(--line);
+    }
+
+    .doc-show-page .comments-section .comment-author {
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .doc-show-page .comments-section .comment-time {
+        background: var(--bg-2);
+        color: var(--muted) !important;
+        font-size: 11px;
+    }
+
+    .doc-show-page .comments-section .comment-text {
+        color: var(--text) !important;
+        font-size: 14px;
+        line-height: 1.65;
+        white-space: pre-wrap;
+    }
+
+    .doc-show-page .comments-section .comment-delete {
+        border-top: 1px solid var(--line);
+    }
+
+    .doc-show-page .comments-section .comment-delete-btn {
+        padding: 6px 10px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        color: var(--muted);
+        font-size: 11px;
+        letter-spacing: 0;
+    }
+
+    .doc-show-page .comments-section .comment-delete-btn:hover {
+        border-color: rgba(239, 68, 68, 0.35);
+        background: rgba(239, 68, 68, 0.08);
+        color: #dc2626;
+    }
+
+    .doc-show-page .comments-section .comments-empty {
+        padding: 28px 20px;
+        background: var(--bg-2);
+        border-color: var(--line);
+    }
+
+    .doc-show-page .comments-section .comments-empty i {
+        color: var(--muted);
+        font-size: 22px;
+        opacity: 0.8;
+    }
+
+    .doc-show-page .comments-section .comments-empty p {
+        color: var(--muted) !important;
+        font-size: 12px;
+        letter-spacing: 0.2px;
+    }
+
+    .doc-show-page .modal-reject .reject-textarea {
+        background: var(--bg-2) !important;
+        color: var(--text) !important;
+        -webkit-text-fill-color: var(--text);
+        caret-color: var(--text);
+    }
+
+    .doc-show-page .modal-reject .reject-textarea::placeholder {
+        color: var(--muted) !important;
+        -webkit-text-fill-color: var(--muted);
+        opacity: 1;
+    }
+
+    .doc-show-page .modal-reject .reject-textarea:focus {
+        background: var(--bg-1) !important;
+        color: var(--text) !important;
+        -webkit-text-fill-color: var(--text);
+    }
+
+    html[data-theme="light"] .doc-show-page .comments-section .comment-input {
+        background: var(--bg-1) !important;
+        border-color: var(--line) !important;
+    }
+
+    html[data-theme="light"] .doc-show-page .comments-section .comment-item {
+        background: var(--bg-1) !important;
+        border-color: var(--line) !important;
+        border-left-color: var(--accent) !important;
+    }
+
+    html[data-theme="light"] .doc-show-page .comments-section .comment-header,
+    html[data-theme="light"] .doc-show-page .comments-section .comment-delete {
+        border-color: var(--line) !important;
+    }
+
+    html[data-theme="light"] .doc-show-page .comments-section .comment-time,
+    html[data-theme="light"] .doc-show-page .comments-section .comments-empty {
+        background: var(--bg-2) !important;
+        border-color: var(--line) !important;
+    }
+
+    html[data-theme="light"] .doc-show-page .doc-card,
+    html[data-theme="light"] .doc-show-page .sidebar-card,
+    html[data-theme="light"] .doc-show-page .file-card {
+        background: var(--bg-1) !important;
+        border-color: var(--line) !important;
+        box-shadow: var(--shadow-card);
+    }
+
+    html[data-theme="light"] .doc-show-page .doc-title,
+    html[data-theme="light"] .doc-show-page .doc-content,
+    html[data-theme="light"] .doc-show-page .sidebar-title,
+    html[data-theme="light"] .doc-show-page .sidebar-value,
+    html[data-theme="light"] .doc-show-page .participant-name,
+    html[data-theme="light"] .doc-show-page .comment-text {
+        color: var(--text);
+    }
+
+    html[data-theme="light"] .doc-show-page .participant-item {
+        background: var(--bg-2);
+        border-color: var(--line);
+    }
+
+    html[data-theme="light"] .doc-show-page .participant-email {
+        color: #1d4ed8 !important;
+    }
+
+    html[data-theme="light"] .doc-show-page .participant-email:hover {
+        color: #1e40af !important;
+    }
+
+    @media (max-width: 768px) {
+        .doc-show-page {
+            padding: 18px 14px 28px;
+        }
+
+        .doc-title {
+            font-size: 21px;
+        }
+
+        .participant-avatar {
+            width: 40px;
+            height: 40px;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .doc-show-page {
+            padding: 14px 10px 24px;
+        }
+
+        .doc-title {
+            font-size: 19px;
+        }
+
+        .participant-item {
+            padding: 10px;
+        }
+
+        .participant-name {
+            white-space: normal;
+        }
+    }
+</style>
+
 @if(session('error') || $errors->any())
 <div class="error-toast" x-data="{ show: true }"
      x-init="setTimeout(() => show = false, 4000)"
@@ -1835,7 +2303,7 @@
                             </div>
                             <p class="comment-text">{{ $comment->comment }}</p>
 
-                            @if(auth()->id() === $document->user_id)
+                            @if((int) auth()->id() === (int) $comment->user_id || (int) auth()->id() === (int) $document->created_by)
                             <div class="comment-delete">
                                 <form action="{{ route('comments.destroy', $comment->id) }}" method="POST" style="margin:0;">
                                     @csrf
@@ -1933,20 +2401,34 @@
                         {{-- Владелец (отправитель) --}}
                         <div class="participant-item">
                             <div class="participant-avatar participant-avatar-owner">
+                                @if($document->user?->avatar_url)
+                                <img src="{{ $document->user->avatar_url }}" alt="{{ $document->user->name }}">
+                                @else
                                 <i class="bi bi-person-fill"></i>
+                                @endif
                             </div>
                             <div class="participant-info">
                                 <div class="participant-role participant-role-owner" data-i18n="owner">Владелец</div>
                                 <div class="participant-name">
                                     {{ $document->user?->name ?? '—' }}
                                 </div>
+                                @if($document->user?->email)
+                                <a class="participant-email" href="mailto:{{ $document->user->email }}">
+                                    <i class="bi bi-envelope"></i>
+                                    {{ $document->user->email }}
+                                </a>
+                                @endif
                             </div>
                         </div>
 
                         {{-- Получатель --}}
                         <div class="participant-item">
                             <div class="participant-avatar participant-avatar-receiver">
+                                @if($document->receiver?->avatar_url)
+                                <img src="{{ $document->receiver->avatar_url }}" alt="{{ $document->receiver->name }}">
+                                @else
                                 <i class="bi bi-person-check-fill"></i>
+                                @endif
                             </div>
                             <div class="participant-info">
                                 <div class="participant-role participant-role-receiver" data-i18n="receiver">Получатель</div>
@@ -1957,6 +2439,12 @@
                                     <span class="participant-name-empty" data-i18n="notAssigned">Не назначен</span>
                                     @endif
                                 </div>
+                                @if($document->receiver?->email)
+                                <a class="participant-email" href="mailto:{{ $document->receiver->email }}">
+                                    <i class="bi bi-envelope"></i>
+                                    {{ $document->receiver->email }}
+                                </a>
+                                @endif
                             </div>
                         </div>
                     </div>

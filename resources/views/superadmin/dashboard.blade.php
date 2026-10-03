@@ -5,6 +5,18 @@
 @section('page-subtitle', 'Обзор системы в реальном времени')
 
 @section('content')
+<div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+    <div>
+        <h2 class="text-base font-bold text-slate-900">Быстрые действия</h2>
+        <p class="mt-1 text-sm text-slate-500">Управляйте основными данными системы из одного места.</p>
+    </div>
+    <div class="flex flex-wrap gap-2">
+        <a href="{{ route('superadmin.users.create') }}" class="btn-ghost">Добавить пользователя</a>
+        <a href="{{ route('superadmin.companies.create') }}" class="btn-ghost">Добавить компанию</a>
+        <a href="{{ route('superadmin.documents.create') }}" class="btn-primary">Добавить документ</a>
+    </div>
+</div>
+
 {{-- Статистика --}}
 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
     @php

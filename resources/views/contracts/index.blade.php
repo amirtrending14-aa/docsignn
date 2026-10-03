@@ -6,7 +6,7 @@
 
     .doc-create-page { 
         color: var(--text, #e7ecf3); 
-        max-width: 900px; 
+        max-width: 1100px; /* Немного расширил для 3 колонок */
         margin: 0 auto; 
         padding: 40px 20px;
     }
@@ -27,9 +27,9 @@
         transform: translateX(-50%);
         width: 120px;
         height: 3px;
-        background: linear-gradient(90deg, transparent, rgba(var(--glow), 1), transparent);
+        background: linear-gradient(90deg, transparent, rgba(var(--glow, 139,92,246), 1), transparent);
         border-radius: 2px;
-        box-shadow: 0 0 12px rgba(var(--glow), 0.6);
+        box-shadow: 0 0 12px rgba(var(--glow, 139,92,246), 0.6);
     }
 
     .hero-title {
@@ -46,9 +46,9 @@
     .hero-title .accent-bar {
         width: 4px;
         height: 26px;
-        background: rgba(var(--glow), 1);
+        background: rgba(var(--glow, 139,92,246), 1);
         border-radius: 2px;
-        box-shadow: 0 0 10px rgba(var(--glow), 0.6);
+        box-shadow: 0 0 10px rgba(var(--glow, 139,92,246), 0.6);
     }
 
     .hero-subtitle {
@@ -63,7 +63,7 @@
     /* === КНОПКИ === */
     .big-buttons-section {
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: repeat(3, 1fr); /* 3 колонки на десктопе */
         gap: 16px;
         margin-bottom: 0;
     }
@@ -75,7 +75,7 @@
         border-radius: 14px;
         text-decoration: none;
         background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
-        border: 1px solid var(--line);
+        border: 1px solid var(--line, rgba(255,255,255,0.08));
         transition: all 0.25s ease;
         overflow: hidden;
     }
@@ -86,7 +86,7 @@
         inset: -1px;
         border-radius: 14px;
         padding: 1px;
-        background: linear-gradient(135deg, rgba(var(--glow), 0.3), transparent 40%, transparent 60%, rgba(var(--glow), 0.15));
+        background: linear-gradient(135deg, rgba(var(--glow, 139,92,246), 0.3), transparent 40%, transparent 60%, rgba(var(--glow, 139,92,246), 0.15));
         -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
         -webkit-mask-composite: xor;
         mask-composite: exclude;
@@ -99,8 +99,8 @@
 
     .big-btn:hover {
         transform: translateY(-2px);
-        border-color: rgba(var(--glow), 0.25);
-        box-shadow: 0 8px 24px rgba(0,0,0,0.4), 0 0 20px rgba(var(--glow), 0.15);
+        border-color: rgba(var(--glow, 139,92,246), 0.25);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.4), 0 0 20px rgba(var(--glow, 139,92,246), 0.15);
     }
 
     .big-btn.btn-rag {
@@ -133,6 +133,22 @@
         color: #4dd0e1;
     }
 
+    /* === НОВАЯ КНОПКА: АРХИВИСТ === */
+    .big-btn.btn-archivist {
+        background: linear-gradient(180deg, rgba(139,92,246,0.06), rgba(139,92,246,0.02));
+    }
+    .big-btn.btn-archivist::before {
+        background: linear-gradient(135deg, rgba(139,92,246,0.4), transparent 40%, transparent 60%, rgba(139,92,246,0.2));
+    }
+    .big-btn.btn-archivist:hover {
+        box-shadow: 0 8px 24px rgba(0,0,0,0.4), 0 0 24px rgba(139,92,246,0.2);
+    }
+    .big-btn.btn-archivist .big-btn-icon {
+        background: rgba(139,92,246,0.1);
+        border: 1px solid rgba(139,92,246,0.25);
+        color: #a78bfa;
+    }
+
     .big-btn-content {
         display: flex;
         align-items: flex-start;
@@ -148,8 +164,8 @@
         justify-content: center;
         font-size: 22px;
         flex-shrink: 0;
-        background: rgba(var(--glow), 0.08);
-        border: 1px solid rgba(var(--glow), 0.2);
+        background: rgba(var(--glow, 139,92,246), 0.08);
+        border: 1px solid rgba(var(--glow, 139,92,246), 0.2);
         transition: all 0.25s ease;
     }
 
@@ -166,7 +182,7 @@
         display: block;
         font-size: 16px;
         font-weight: 700;
-        color: var(--text);
+        color: var(--text, #e7ecf3);
         margin-bottom: 6px;
         letter-spacing: -0.2px;
     }
@@ -174,7 +190,7 @@
     .big-btn-desc {
         display: block;
         font-size: 12.5px;
-        color: var(--muted);
+        color: var(--muted, #8892a6);
         line-height: 1.5;
         opacity: 0.85;
     }
@@ -187,35 +203,35 @@
         height: 28px;
         border-radius: 7px;
         background: rgba(255,255,255,0.03);
-        border: 1px solid var(--line);
+        border: 1px solid var(--line, rgba(255,255,255,0.08));
         display: flex;
         align-items: center;
         justify-content: center;
-        color: var(--muted);
+        color: var(--muted, #8892a6);
         font-size: 12px;
         transition: all 0.25s ease;
     }
 
     .big-btn:hover .big-btn-arrow {
-        color: var(--text);
+        color: var(--text, #e7ecf3);
         transform: translateX(4px);
-        border-color: rgba(var(--glow), 0.3);
+        border-color: rgba(var(--glow, 139,92,246), 0.3);
     }
 
     /* === АДАПТИВНОСТЬ === */
+    @media (max-width: 900px) {
+        .big-buttons-section {
+            grid-template-columns: 1fr; /* 1 колонка на планшетах и мобильных */
+            gap: 14px;
+        }
+    }
+
     @media (max-width: 768px) {
         .doc-create-page { padding: 30px 16px; }
-        
         .hero-section { padding: 24px 0 30px; }
         .hero-title { font-size: 22px; }
         .hero-title .accent-bar { width: 4px; height: 22px; }
         .hero-subtitle { font-size: 13px; }
-
-        .big-buttons-section {
-            grid-template-columns: 1fr;
-            gap: 14px;
-        }
-
         .big-btn { padding: 24px 20px; }
         .big-btn-icon { width: 44px; height: 44px; font-size: 20px; }
         .big-btn-title { font-size: 15px; }
@@ -224,12 +240,10 @@
 
     @media (max-width: 480px) {
         .doc-create-page { padding: 24px 14px; }
-        
         .hero-section { padding: 20px 0 24px; }
         .hero-title { font-size: 20px; }
         .hero-title .accent-bar { height: 20px; }
         .hero-subtitle { font-size: 12.5px; }
-
         .big-btn { padding: 22px 18px; border-radius: 12px; }
         .big-btn-content { gap: 14px; }
         .big-btn-icon { width: 42px; height: 42px; font-size: 19px; border-radius: 10px; }
@@ -258,8 +272,8 @@
         box-shadow: 0 8px 22px rgba(15, 23, 42, 0.07);
     }
     html[data-theme="light"] .big-btn:hover {
-        border-color: rgba(var(--glow), 0.55) !important;
-        box-shadow: 0 12px 28px rgba(15, 23, 42, 0.13), 0 0 20px rgba(var(--glow), 0.12);
+        border-color: rgba(139,92,246, 0.55) !important;
+        box-shadow: 0 12px 28px rgba(15, 23, 42, 0.13), 0 0 20px rgba(139,92,246, 0.12);
     }
     html[data-theme="light"] .big-btn.btn-rag {
         background: linear-gradient(135deg, #ffffff, #fffbeb) !important;
@@ -268,6 +282,10 @@
     html[data-theme="light"] .big-btn.btn-analyze {
         background: linear-gradient(135deg, #ffffff, #ecfeff) !important;
         border-color: #67e8f9 !important;
+    }
+    html[data-theme="light"] .big-btn.btn-archivist {
+        background: linear-gradient(135deg, #ffffff, #f5f3ff) !important;
+        border-color: #a78bfa !important;
     }
     html[data-theme="light"] .big-btn-arrow {
         background: #f8fafc;
@@ -278,6 +296,9 @@
     }
     html[data-theme="light"] .big-btn.btn-analyze .big-btn-title {
         color: #164e63 !important;
+    }
+    html[data-theme="light"] .big-btn.btn-archivist .big-btn-title {
+        color: #5b21b6 !important;
     }
 </style>
 
@@ -293,7 +314,7 @@
         </p>
     </div>
 
-    <!-- ДВЕ БОЛЬШИЕ КНОПКИ -->
+    <!-- ТРИ БОЛЬШИЕ КНОПКИ -->
     <div class="big-buttons-section">
 
         <!-- Кнопка 1: RAG + ИИ -->
@@ -335,6 +356,27 @@
                 </div>
             </div>
         </a>
+
+        <!-- Кнопка 3: ИИ-Архивист (НОВАЯ) -->
+        <a href="{{ route('archivist.page') }}" class="big-btn btn-archivist">
+            <span class="big-btn-arrow">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/>
+                </svg>
+            </span>
+            <div class="big-btn-content">
+                <span class="big-btn-icon">
+                    <i class="bi bi-archive-fill"></i>
+                </span>
+                <div class="big-btn-text">
+                    <span class="big-btn-title" data-i18n="btn_archivist_title">ИИ-Архивист</span>
+                    <span class="big-btn-desc" data-i18n="btn_archivist_desc">
+                        Поиск документов по дате, типу, сроку и содержимому
+                    </span>
+                </div>
+            </div>
+        </a>
+
     </div>
 </div>
 
@@ -347,7 +389,9 @@ document.addEventListener('DOMContentLoaded', function () {
             btn_rag_title: 'Сохтани ҳуҷҷат',
             btn_rag_desc: 'Анкетаро пур кунед — ИИ ҳуҷҷати шуморо менависад (ариза, дархост, шартнома...)',
             btn_analyze_title: 'Таҳлили ҳуҷҷат',
-            btn_analyze_desc: 'Файли Word/PDF-ро бор кунед — ИИ хонда мазмуни асосиро нақл мекунад'
+            btn_analyze_desc: 'Файли Word/PDF-ро бор кунед — ИИ хонда мазмуни асосиро нақл мекунад',
+            btn_archivist_title: 'Архивчи ИИ',
+            btn_archivist_desc: 'Ҷустуҷӯи ҳуҷҷатҳо аз рӯи сана, намуд, мӯҳлат ва мазмун'
         },
         ru: {
             hero_title: 'Создание документов с ИИ',
@@ -355,7 +399,9 @@ document.addEventListener('DOMContentLoaded', function () {
             btn_rag_title: 'Создать документ',
             btn_rag_desc: 'Заполните анкету — ИИ напишет ваш документ (заявление, запрос, договор...)',
             btn_analyze_title: 'Анализ документа',
-            btn_analyze_desc: 'Загрузите файл Word/PDF — ИИ прочитает и расскажет основное содержание'
+            btn_analyze_desc: 'Загрузите файл Word/PDF — ИИ прочитает и расскажет основное содержание',
+            btn_archivist_title: 'ИИ-Архивист',
+            btn_archivist_desc: 'Поиск документов по дате, типу, сроку и содержимому'
         },
         en: {
             hero_title: 'Create Documents with AI',
@@ -363,7 +409,9 @@ document.addEventListener('DOMContentLoaded', function () {
             btn_rag_title: 'Create Document',
             btn_rag_desc: 'Fill out the form — AI will write your document (application, request, contract...)',
             btn_analyze_title: 'Document Analysis',
-            btn_analyze_desc: 'Upload Word/PDF file — AI will read and summarize the main content'
+            btn_analyze_desc: 'Upload Word/PDF file — AI will read and summarize the main content',
+            btn_archivist_title: 'AI Archivist',
+            btn_archivist_desc: 'Search documents by date, type, deadline, and content'
         }
     };
 
