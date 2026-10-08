@@ -19,10 +19,10 @@
             </div>
 
             <div class="mb-6">
-                <label class="block text-sm font-semibold text-zinc-300 mb-2">Email</label>
+                <label class="block text-sm font-semibold text-zinc-300 mb-2">Email *</label>
                 <input type="email" name="email"
                        class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-white placeholder-zinc-500 focus:outline-none focus:border-red-500/50"
-                       value="{{ old('email') }}" placeholder="info@company.com">
+                       value="{{ old('email') }}" placeholder="info@company.com" required>
                 @error('email')<div class="text-red-400 text-xs mt-1">{{ $message }}</div>@enderror
             </div>
 

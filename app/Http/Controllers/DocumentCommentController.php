@@ -79,6 +79,8 @@ class DocumentCommentController extends Controller
     public function destroy($id)
     {
         $comment = DocumentComment::findOrFail($id);
+        $this->authorize('delete', $comment);
+
         $documentId = $comment->document_id;
         $commentPreview = Str::limit($comment->comment, 40);
 

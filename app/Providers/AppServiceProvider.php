@@ -3,14 +3,21 @@
 namespace App\Providers;
 
 use App\Models\Document;
+use App\Models\DocumentComment;
 use App\Models\Notification;
 use App\Observers\DocumentObserver;
+use App\Policies\CommentPolicy;
 use Carbon\Carbon;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Gate;
+use App\Models\User;
+use App\Observers\UserObserver;
+use App\Models\Company;
+use App\Observers\CompanyObserver;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -25,9 +32,17 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      */
-    public function boot()
+    public function boot(): void
     {
+        Company::observe(CompanyObserver::class);
         Carbon::setLocale('ru');
+ User::observe(UserObserver::class);
+        // 🚀 АВТОМАТИЧЕСКАЯ ИНДЕКСАЦИЯ ДОКУМЕНТОВ (ИИ-АРХИВИСТ)
+        // Эта строка говорит Laravel: "Следи за моделью Document. 
+        // Когда она создается (created), обновляется (updated) или удаляется (deleted), 
+        // автоматически запускай методы из DocumentObserver"
+        Document::observe(DocumentObserver::class);
+        Gate::policy(DocumentComment::class, CommentPolicy::class);
 
         // 🔒 БЕЗОПАСНОСТЬ: View composer только для авторизованных пользователей
         View::composer('*', function ($view) {
@@ -59,4 +74,5 @@ class AppServiceProvider extends ServiceProvider
             $view->with($notificationData);
         });
     }
+    
 }

@@ -33,7 +33,7 @@ class SuperAdminSeeder extends Seeder
         $this->command->info('║   ✅ СУПЕР-АДМИН СОЗДАН УСПЕШНО!              ║');
         $this->command->info('╠════════════════════════════════════════════════╣');
         $this->command->info('║ 📧 Email:    amirtrending14@gmail.com         ║');
-        $this->command->info('║ 🔑 Пароль:   1404trend                        ║');
+        $this->command->info('║ 🔑 Пароль:   1404                       ║');
         $this->command->info('║ 🆔 Уровень:  100 (максимальный)               ║');
         $this->command->info('╚════════════════════════════════════════════════╝');
         $this->command->info('');

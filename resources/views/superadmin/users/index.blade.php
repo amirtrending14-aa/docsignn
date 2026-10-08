@@ -18,6 +18,7 @@
                     class="w-full bg-zinc-800 border border-white/20 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-red-500/50 focus:ring-2 focus:ring-red-500/20 appearance-none cursor-pointer [&>option]:bg-zinc-900 [&>option]:text-white"
                     style="color-scheme: dark;">
                 <option value="" class="bg-zinc-900 text-white">Все компании</option>
+                <option value="none" {{ request('company_id') === 'none' ? 'selected' : '' }} class="bg-zinc-900 text-white">Без компании</option>
                 @foreach($companies as $company)
                 <option value="{{ $company->id }}" {{ request('company_id') == $company->id ? 'selected' : '' }} class="bg-zinc-900 text-white">
                 {{ $company->name }}

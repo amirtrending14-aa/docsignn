@@ -50,7 +50,7 @@ class GenerateDocumentJob implements ShouldQueue
 
             if (!$result['success']) {
                 $this->document->update([
-                    'status' => 'failed',
+                    'status' => Document::STATUS_FAILED,
                     'content' => 'Ошибка генерации: ' . $result['error']
                 ]);
                 return;
@@ -101,7 +101,7 @@ class GenerateDocumentJob implements ShouldQueue
             ]);
 
             $this->document->update([
-                'status' => 'failed',
+                'status' => Document::STATUS_FAILED,
                 'content' => 'Ошибка: ' . $e->getMessage()
             ]);
         }

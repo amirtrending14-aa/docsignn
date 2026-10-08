@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
+use App\Models\TelegramConversation;
 
 class Company extends Model
 {
@@ -104,5 +105,68 @@ class Company extends Model
         });
     }
    
+
+// === ГРУППОВОЙ ЧАТ КОМПАНИИ ===
+
+/**
+ * Связь: у компании может быть один групповой чат
+ */
+public function groupChat()
+{
+    return $this->hasOne(TelegramConversation::class, 'company_id')
+                ->where('type', 'group');
+}
+
+/**
+ * 🎯 Получить существующую группу компании ИЛИ создать новую
+ * Используется при добавлении пользователя
+ */
+public function getOrCreateGroupChat(): TelegramConversation
+{
+    // ✅ Ищем напрямую в БД (минуя кэш отношения — это причина бага)
+    $existing = TelegramConversation::where('company_id', $this->id)->first();
+
+    if ($existing) {
+        // Если название компании изменилось — синхронизируем
+        if ($existing->name !== $this->name) {
+            $existing->update(['name' => $this->name]);
+        }
+        // Подгружаем пользователей если не подгружены
+        if (!$existing->relationLoaded('users')) {
+            $existing->load('users');
+        }
+        return $existing;
+    }
+
+    // Создаём новую группу
+    return TelegramConversation::create([
+        'type'       => 'group',
+        'name'       => $this->name,
+        'company_id' => $this->id,
+    ]);
+}
+
+/**
+ * 🔗 Добавить пользователя в групповой чат компании
+ */
+public function addUserToGroupChat($userId): void
+{
+    $chat = $this->getOrCreateGroupChat();
+    
+    // Добавляем если ещё нет (ignore если уже есть)
+    if (!$chat->users()->where('users.id', $userId)->exists()) {
+        $chat->users()->attach($userId, ['last_read_at' => now()]);
+    }
+}
+
+/**
+ * 🔓 Удалить пользователя из группового чата компании
+ */
+public function removeUserFromGroupChat($userId): void
+{
+    if ($this->groupChat) {
+        $this->groupChat->users()->detach($userId);
+    }
+}
 
 }

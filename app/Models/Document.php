@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;    // ← ДОБАВЬ ЭТУ СТРОКУ
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -19,6 +20,8 @@ const STATUS_ACTIVE     = 'active';
 const STATUS_PROCESSING = 'processing';
 const STATUS_COMPLETED  = 'completed';
 const STATUS_REJECTED   = 'rejected';
+const STATUS_APPROVED   = 'approved';
+const STATUS_FAILED     = 'failed';
 
     protected $fillable =[
         'number',
@@ -158,4 +161,13 @@ const STATUS_REJECTED   = 'rejected';
         ->withPivot('status', 'created_at', 'updated_at')
             ->withTimestamps();
     }
+    public function index(): HasOne
+{
+    return $this->hasOne(DocumentIndex::class);
+}
+
+public function chunks(): HasMany
+{
+    return $this->hasMany(DocumentChunk::class);
+}
 }

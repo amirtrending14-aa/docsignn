@@ -532,7 +532,7 @@ public function index(Request $request)
                 ->with('tabTitle', 'Отклонённые документы');
 
         case 'archive':
-            $query->whereIn('status', ['completed', 'approved'])
+            $query->whereIn('status', [Document::STATUS_COMPLETED, Document::STATUS_APPROVED])
                   ->where(function ($q) use ($user) {
                       $q->where('created_by', $user->id)
                         ->orWhere('receiver_id', $user->id);
@@ -1094,35 +1094,6 @@ public function update(Request $request, Document $document)
     $data = $request->only(['number', 'type', 'title', 'content', 'status', 'deadline']);
 
     // ═══════════════════════════════════════════════════════════
-    // ✅ ЛОГИКА ФАЙЛА (как в store)
-    // ═══════════════════════════════════════════════════════════
-    if ($request->hasFile('file_path')) {
-        // Загружен новый файл — удаляем старый
-        if ($document->file_path && Storage::disk('public')->exists($document->file_path)) {
-            Storage::disk('public')->delete($document->file_path);
-        }
-        $data['file_path'] = $request->file('file_path')->store('documents', 'public');
-    } elseif (!empty($request->input('temp_file_path'))) {
-        // AJAX-загруженный файл
-        $tempPath = $request->input('temp_file_path');
-        if (Storage::disk('public')->exists($tempPath)) {
-            if ($document->file_path && Storage::disk('public')->exists($document->file_path)) {
-                Storage::disk('public')->delete($document->file_path);
-            }
-            $data['file_path'] = $tempPath;
-        } else {
-            return back()->withErrors(['file_path' => 'Файл не найден на сервере. Загрузите его снова.']);
-        }
-    } elseif ($request->input('remove_existing_file') === '1') {
-        // Пользователь нажал "Удалить файл"
-        if ($document->file_path && Storage::disk('public')->exists($document->file_path)) {
-            Storage::disk('public')->delete($document->file_path);
-        }
-        $data['file_path'] = null;
-    }
-    // Иначе — оставляем старый файл как есть
-
-    // ═══════════════════════════════════════════════════════════
     // ЕСЛИ СТАТУС МЕНЯЕТСЯ С DRAFT НА ACTIVE — ОТПРАВКА ВСЕМ
     // ═══════════════════════════════════════════════════════════
     $receivers = [];
@@ -1130,7 +1101,7 @@ public function update(Request $request, Document $document)
 
     if ($isActivating) {
         if (empty($request->receiver_mode)) {
-            return back()->withErrors(['receiver_mode' => 'Выберите способ отправки для активного документа']);
+            return back()->withErrors(['receiver_mode' => 'Выберите способ отправки для активного документа'])->withInput();
         }
 
         if ($request->receiver_mode === 'all_team') {
@@ -1140,12 +1111,12 @@ public function update(Request $request, Document $document)
                 ->toArray();
 
             if (empty($receivers)) {
-                return back()->withErrors(['receiver_mode' => 'В вашей компании нет других сотрудников']);
+                return back()->withErrors(['receiver_mode' => 'В вашей компании нет других сотрудников'])->withInput();
             }
 
         } elseif ($request->receiver_mode === 'select_team') {
             if (empty($request->team_receivers)) {
-                return back()->withErrors(['team_receivers' => 'Выберите хотя бы одного получателя']);
+                return back()->withErrors(['team_receivers' => 'Выберите хотя бы одного получателя'])->withInput();
             }
             $receiverIds = array_map('intval', explode(',', $request->team_receivers));
             $receivers = User::whereIn('id', $receiverIds)
@@ -1154,16 +1125,16 @@ public function update(Request $request, Document $document)
                 ->toArray();
 
             if (empty($receivers)) {
-                return back()->withErrors(['team_receivers' => 'Выбранные пользователи не найдены']);
+                return back()->withErrors(['team_receivers' => 'Выбранные пользователи не найдены'])->withInput();
             }
 
         } elseif ($request->receiver_mode === 'other_company') {
             if (empty($request->other_receiver_id)) {
-                return back()->withErrors(['other_receiver_id' => 'Выберите получателя']);
+                return back()->withErrors(['other_receiver_id' => 'Выберите получателя'])->withInput();
             }
             $otherUser = User::find($request->other_receiver_id);
             if (!$otherUser) {
-                return back()->withErrors(['other_receiver_id' => 'Выбранный пользователь не найден']);
+                return back()->withErrors(['other_receiver_id' => 'Выбранный пользователь не найден'])->withInput();
             }
             $receivers = [$request->other_receiver_id];
 
@@ -1178,14 +1149,14 @@ public function update(Request $request, Document $document)
             $recipientIds = array_filter($recipientIds, fn($id) => $id > 0);
 
             if (empty($recipientIds)) {
-                return back()->withErrors(['receiver_mode' => 'Сессия получателей пуста. Выберите получателей по региону заново.']);
+                return back()->withErrors(['receiver_mode' => 'Сессия получателей пуста. Выберите получателей по региону заново.'])->withInput();
             }
 
             $foundUsers = User::whereIn('id', $recipientIds)->get();
 
             if ($foundUsers->isEmpty()) {
                 session()->forget('selected_recipients');
-                return back()->withErrors(['receiver_mode' => 'Выбранные пользователи не найдены в системе. Выберите заново.']);
+                return back()->withErrors(['receiver_mode' => 'Выбранные пользователи не найдены в системе. Выберите заново.'])->withInput();
             }
 
             // ✅ Разрешаем отправку себе
@@ -1202,7 +1173,7 @@ public function update(Request $request, Document $document)
             $deptIds = array_filter($deptIds, fn($id) => $id > 0);
 
             if (empty($deptIds)) {
-                return back()->withErrors(['receiver_mode' => 'Выберите хотя бы один отдел']);
+                return back()->withErrors(['receiver_mode' => 'Выберите хотя бы один отдел'])->withInput();
             }
 
                        $receivers = User::whereHas('departments', function ($query) use ($deptIds) {
@@ -1213,7 +1184,7 @@ public function update(Request $request, Document $document)
                 ->toArray();
 
             if (empty($receivers)) {
-                return back()->withErrors(['receiver_mode' => 'В выбранных отделах нет доступных пользователей (кроме вас)']);
+                return back()->withErrors(['receiver_mode' => 'В выбранных отделах нет доступных пользователей (кроме вас)'])->withInput();
             }
 
         // ═══════════════════════════════════════════════════════════
@@ -1228,7 +1199,7 @@ public function update(Request $request, Document $document)
             $userIds = array_filter($userIds, fn($id) => $id > 0);
 
             if (empty($companyId) || empty($userIds)) {
-                return back()->withErrors(['receiver_mode' => 'Выберите компанию и хотя бы одного сотрудника']);
+                return back()->withErrors(['receiver_mode' => 'Выберите компанию и хотя бы одного сотрудника'])->withInput();
             }
 
             $receivers = User::whereIn('id', $userIds)
@@ -1238,15 +1209,40 @@ public function update(Request $request, Document $document)
                 ->toArray();
 
             if (empty($receivers)) {
-                return back()->withErrors(['receiver_mode' => 'В выбранной компании нет доступных сотрудников (кроме вас)']);
+                return back()->withErrors(['receiver_mode' => 'В выбранной компании нет доступных сотрудников (кроме вас)'])->withInput();
             }
         }
 
         if (empty($receivers)) {
-            return back()->withErrors(['receiver_mode' => 'Не удалось определить получателей']);
+            return back()->withErrors(['receiver_mode' => 'Не удалось определить получателей'])->withInput();
         }
 
         $receivers = array_unique($receivers);
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // ✅ ЛОГИКА ФАЙЛА (как в store)
+    // ═══════════════════════════════════════════════════════════
+    if ($request->hasFile('file_path')) {
+        if ($document->file_path && Storage::disk('public')->exists($document->file_path)) {
+            Storage::disk('public')->delete($document->file_path);
+        }
+        $data['file_path'] = $request->file('file_path')->store('documents', 'public');
+    } elseif (!empty($request->input('temp_file_path'))) {
+        $tempPath = $request->input('temp_file_path');
+        if (Storage::disk('public')->exists($tempPath)) {
+            if ($document->file_path && Storage::disk('public')->exists($document->file_path)) {
+                Storage::disk('public')->delete($document->file_path);
+            }
+            $data['file_path'] = $tempPath;
+        } else {
+            return back()->withErrors(['file_path' => 'Файл не найден на сервере. Загрузите его снова.'])->withInput();
+        }
+    } elseif ($request->input('remove_existing_file') === '1') {
+        if ($document->file_path && Storage::disk('public')->exists($document->file_path)) {
+            Storage::disk('public')->delete($document->file_path);
+        }
+        $data['file_path'] = null;
     }
 
     // ═══════════════════════════════════════════════════════════

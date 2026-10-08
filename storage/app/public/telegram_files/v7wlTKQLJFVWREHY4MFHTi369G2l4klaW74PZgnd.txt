@@ -1,0 +1,6 @@
+Git branch номи веткат
+Git checkout номи ветки нав сохтагит
+Git add .
+Git commit -m "   "
+Git status 
+Git push origin номи ветки нават

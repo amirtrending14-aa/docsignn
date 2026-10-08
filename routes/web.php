@@ -1,5 +1,5 @@
 <?php
-
+use App\Http\Controllers\ArchivistController; 
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\AIChatController;
 use App\Http\Controllers\ContractController;
@@ -8,6 +8,7 @@ use App\Http\Controllers\DocumentRecipientController;
 use App\Http\Controllers\SuperAdminController;
 use App\Http\Controllers\SuperAdmin\UserController as SuperAdminUserController;
 use App\Http\Controllers\SuperAdmin\CompanyController as SuperAdminCompanyController;
+use App\Http\Controllers\SuperAdmin\DocumentController as SuperAdminDocumentController;
 use App\Http\Controllers\Admin\AvatarController;
 use App\Http\Controllers\StrelController;
 use App\Http\Controllers\CompanyController;
@@ -36,6 +37,10 @@ use App\Http\Controllers\FaceController;
 use App\Http\Controllers\Admin\AttendanceReportController;
 use App\Http\Controllers\Admin\CompanySettingsController;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\TelegramChatController;
+use App\Http\Controllers\TelegramMessageController;
+
+
 /*
 |--------------------------------------------------------------------------
 | 1. ПУБЛИЧНЫЕ МАРШРУТЫ (без авторизации)
@@ -245,10 +250,13 @@ Route::middleware(['auth', 'last.seen'])->group(function () {
     // COMMENTS (🔒 IDOR Protection)
     // ============================================
     Route::post('/comments', [DocumentCommentController::class, 'store'])
+        ->middleware('auth')
         ->name('comments.store');
     Route::get('/documents/{document}/comments', [DocumentCommentController::class, 'index'])
+        ->middleware('auth')
         ->name('comments.index');
     Route::delete('/comments/{comment}', [DocumentCommentController::class, 'destroy'])
+        ->middleware('auth')
         ->name('comments.destroy');
 
     // ============================================
@@ -326,22 +334,7 @@ Route::middleware(['auth', 'superadmin', 'last.seen'])
         // ============================================
         // USERS MANAGEMENT
         // ============================================
-        Route::get('users/no-companies', [SuperAdminUserController::class, 'noCompanies'])
-            ->name('users.no-companies');
-
-        Route::get('users/export', [SuperAdminUserController::class, 'exportUsers'])
-            ->name('users.export');
-
-        Route::post('users/bulk-delete', [SuperAdminUserController::class, 'bulkDelete'])
-            ->name('users.bulk');
-
-        Route::resource('users', SuperAdminUserController::class);
-
-        Route::post('users/{user}/reset-password', [SuperAdminUserController::class, 'resetPassword'])
-            ->name('users.reset-password');
-
-        Route::post('users/{user}/toggle-status', [SuperAdminUserController::class, 'toggleStatus'])
-            ->name('users.toggle-status');
+        Route::resource('users', SuperAdminUserController::class)->except(['show']);
 
         Route::get('users/{user}/activity', [SuperAdminUserController::class, 'userActivity'])
             ->name('users.activity');
@@ -350,6 +343,11 @@ Route::middleware(['auth', 'superadmin', 'last.seen'])
         // COMPANIES MANAGEMENT
         // ============================================
         Route::resource('companies', SuperAdminCompanyController::class);
+
+        // ============================================
+        // DOCUMENTS MANAGEMENT
+        // ============================================
+        Route::resource('documents', SuperAdminDocumentController::class)->except(['show']);
 
         // ============================================
         // ACTIVITY LOGS
@@ -577,6 +575,122 @@ Route::middleware('auth')->group(function () {
     Route::get('/ai-chat/download/{id}/{format}', [ChatController::class, 'download'])
         ->where('format', 'docx|pdf')
         ->name('ai.download');
-
+Route::get('/ai-archivist', [ArchivistController::class, 'page'])->name('archivist.page');
+Route::post('/ai-archivist/chat', [ArchivistController::class, 'chat'])->name('archivist.chat');
     Route::delete('/ai-chat/{id}', [ChatController::class, 'destroy'])->name('ai.chat.delete');
 });
+
+
+
+Route::middleware(['auth'])->prefix('chat')->group(function () {
+
+    Route::get('/', [TelegramChatController::class, 'index'])->name('telegram.chat');
+
+    // Отдача файлов чата (безопасная + Range для аудио)
+    Route::get('/file/{path}', function (string $path) {
+        $path = ltrim(str_replace('\\', '/', $path), '/');
+
+        // 🔒 Разрешаем ОБЕ папки: старую telegram/ и новую telegram_files/
+        abort_unless(
+            (str_starts_with($path, 'telegram_files/') || str_starts_with($path, 'telegram/'))
+            && !str_contains($path, '..'),
+            404
+        );
+
+        $fullPath = storage_path('app/public/' . $path);
+        abort_unless(file_exists($fullPath), 404);
+
+        $message = \App\Models\TelegramMessage::where('attachment_path', $path)->first();
+        if ($message && $message->conversation && !$message->conversation->users->contains(auth()->id())) {
+            abort(403, 'Нет доступа к этому файлу');
+        }
+
+        $ext = strtolower(pathinfo($fullPath, PATHINFO_EXTENSION));
+        $mimeTypes = [
+            'webm' => 'audio/webm', 'ogg' => 'audio/ogg', 'mp3' => 'audio/mpeg',
+            'm4a' => 'audio/mp4', 'wav' => 'audio/wav', 'mp4' => 'video/mp4',
+            'png' => 'image/png', 'jpg' => 'image/jpeg', 'jpeg' => 'image/jpeg',
+            'gif' => 'image/gif', 'pdf' => 'application/pdf',
+            'doc' => 'application/msword',
+            'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        ];
+        $mime = $mimeTypes[$ext] ?? 'application/octet-stream';
+
+        if (str_starts_with($mime, 'audio/') || str_starts_with($mime, 'video/')) {
+            $size = filesize($fullPath);
+            $start = 0;
+            $end = $size - 1;
+            $status = 200;
+            $headers = [
+                'Content-Type' => $mime,
+                'Content-Length' => $size,
+                'Accept-Ranges' => 'bytes',
+                'Cache-Control' => 'public, max-age=31536000',
+            ];
+
+            if (isset($_SERVER['HTTP_RANGE'])) {
+                if (preg_match('/bytes=(\d+)-(\d*)/', $_SERVER['HTTP_RANGE'], $matches)) {
+                    $start = intval($matches[1]);
+                    $end = isset($matches[2]) && $matches[2] !== '' ? intval($matches[2]) : $size - 1;
+                    $status = 206;
+                    $headers['Content-Range'] = "bytes $start-$end/$size";
+                    $headers['Content-Length'] = $end - $start + 1;
+                }
+            }
+
+            return response()->stream(function () use ($fullPath, $start, $end) {
+                $fp = fopen($fullPath, 'rb');
+                fseek($fp, $start);
+                $remaining = $end - $start + 1;
+                while ($remaining > 0 && !feof($fp)) {
+                    echo fread($fp, min(8192, $remaining));
+                    flush();
+                    $remaining -= 8192;
+                }
+                fclose($fp);
+            }, $status, $headers);
+        }
+
+        return response()->file($fullPath, ['Content-Type' => $mime]);
+    })->where('path', '.*')->name('telegram.file');
+
+    Route::prefix('api')->group(function () {
+        // Список чатов / пользователи / создание
+        Route::get('/conversations', [TelegramChatController::class, 'getConversations']);
+        Route::get('/users', [TelegramChatController::class, 'getUsers'])->name('telegram.users');
+        Route::post('/group', [TelegramChatController::class, 'createGroup']);
+        Route::post('/private', [TelegramChatController::class, 'startPrivateChat'])->name('telegram.private');
+
+        // Сообщения
+        Route::get('/messages/{id}', [TelegramChatController::class, 'getMessages']);
+        Route::post('/send', [TelegramChatController::class, 'send']);
+        Route::delete('/message/{id}', [TelegramChatController::class, 'deleteMessage']);
+
+        // Прочитано / печатает
+        Route::post('/mark-read/{id}', [TelegramChatController::class, 'markAsRead']);
+        Route::post('/mark-unread/{id}', [TelegramChatController::class, 'markUnread']);
+        Route::post('/typing', [TelegramChatController::class, 'typing']);
+        Route::get('/typing/{id}', [TelegramChatController::class, 'getTyping']);
+
+        // Инфо + медиа-галерея
+        Route::get('/info/{id}', [TelegramChatController::class, 'info']);
+        Route::get('/media/{id}', [TelegramChatController::class, 'media']);          // 🆕 было отсутствующее
+
+        // Управление группой
+        Route::post('/group/{id}/add-members', [TelegramChatController::class, 'addMembers']);        // 🆕
+        Route::delete('/group/{id}/member/{userId}', [TelegramChatController::class, 'removeMember']); // 🆕
+        Route::post('/leave/{id}', [TelegramChatController::class, 'leave']);
+        Route::delete('/conversation/{id}', [TelegramChatController::class, 'deleteConversation']);
+
+        // Блокировки
+        Route::post('/block/{userId}', [TelegramChatController::class, 'blockUser'])->name('telegram.block');
+        Route::delete('/block/{userId}', [TelegramChatController::class, 'unblockUser'])->name('telegram.unblock');
+        Route::get('/block/status/{userId}', [TelegramChatController::class, 'blockStatus']);
+
+        // Отправка документа в чат
+        Route::post('/send-document', [TelegramMessageController::class, 'sendDocument'])
+            ->middleware('throttle:20,1')
+            ->name('telegram.send-document');
+    });
+});
+

@@ -179,7 +179,13 @@ class UserController extends Controller
                     ->orWhere('phone', 'like', "%{$search}%");
             });
         }
-        if ($request->filled('company_id')) $query->where('company_id', $request->company_id);
+        if ($request->input('company_id') === 'none') {
+            $query->where(function ($users) {
+                $users->whereNull('company_id')->orWhere('company_id', 0);
+            });
+        } elseif ($request->filled('company_id')) {
+            $query->where('company_id', $request->company_id);
+        }
         if ($request->filled('status')) {
             if ($request->status === 'online') {
                 $query->where('last_seen_at', '>=', now()->subMinutes(5));
@@ -203,10 +209,7 @@ class UserController extends Controller
 
     public function noCompanies()
     {
-        $users = User::where(function ($q) {
-            $q->whereNull('company_id')->orWhere('company_id', 0);
-        })->where('is_super_admin', false)->latest()->paginate(20);
-        return view('superadmin.users.no-companies', compact('users'));
+        return redirect()->route('superadmin.users.index', ['company_id' => 'none']);
     }
 
     public function store(Request $request)
@@ -276,6 +279,12 @@ class UserController extends Controller
 
     public function update(Request $request, User $user)
     {
+        if ($user->is(auth()->user()) && $request->input('role') !== 'super_admin') {
+            return back()->withInput()->withErrors([
+                'role' => 'Нельзя снять с себя права супер-администратора.',
+            ]);
+        }
+
         $data = $request->validate([
             'name'              => 'required|string|max:255',
             'email'             => 'required|email|unique:users,email,' . $user->id,
@@ -342,11 +351,30 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         if ($user->id === auth()->id()) return back()->with('error', '❌ Нельзя удалить самого себя');
-        if ($user->is_super_admin) return back()->with('error', '❌ Нельзя удалить супер-администратора');
-        if ($user->avatar) Storage::disk('public')->delete($user->avatar);
+        if ($user->is_super_admin || $user->role === 'super_admin') {
+            return back()->with('error', '❌ Нельзя удалить супер-администратора');
+        }
 
         $userName = $user->name;
-        $user->delete();
+        $avatar = $user->avatar;
+        DB::transaction(function () use ($user) {
+            $company = $user->companyRelation;
+            if ($company && (int) $company->owner_id === (int) $user->id) {
+                $replacementOwner = User::where('company_id', $company->id)
+                    ->where('id', '!=', $user->id)
+                    ->orderBy('id')
+                    ->first();
+
+                $company->update(['owner_id' => $replacementOwner?->id]);
+            }
+
+            $user->delete();
+        });
+
+        if ($avatar) {
+            Storage::disk('public')->delete($avatar);
+        }
+
         return redirect()->route('superadmin.users.index')
             ->with('success', "✅ Пользователь '{$userName}' успешно удалён");
     }
