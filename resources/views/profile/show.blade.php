@@ -1,139 +1,91 @@
 @extends('layouts.admin')
 
 @section('content')
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-
 <style>
-    .font-inter { font-family: 'Inter', sans-serif; }
-
-    /* === DOC SIGN PROFILE STYLE === */
-
-    /* Глобальная защита от горизонтального скролла на мобильных.
-       Именно это было главной причиной "некрасиво": элементы вылезали
-       за пределы экрана и страницу можно было скроллить вбок. */
-    .profile-page,
-    .profile-page *,
-    .profile-page *::before,
-    .profile-page *::after {
-        box-sizing: border-box;
-    }
-
+    /* === ADMIN PROFILE STYLE === */
     .profile-page {
-        min-height: 100vh;
+        padding: clamp(16px, 3vw, 32px);
+        max-width: 1200px;
+        margin: 0 auto;
         width: 100%;
-        max-width: 100vw;
-        overflow-x: hidden;
-        padding: clamp(14px, 4vw, 32px) clamp(10px, 3.5vw, 24px);
-        color: var(--text);
     }
 
-    /* Заголовок страницы */
     .profile-header {
-        max-width: 1200px;
-        margin: 0 auto clamp(14px, 3vw, 28px);
+        margin-bottom: 24px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
     }
 
     .profile-title {
-        font-size: clamp(16px, 3.2vw, 22px);
+        font-size: clamp(20px, 3vw, 24px);
         font-weight: 700;
         color: var(--text);
+        margin: 0;
         display: flex;
         align-items: center;
-        gap: clamp(5px, 1.2vw, 10px);
-        letter-spacing: -0.3px;
-        margin: 0;
+        gap: 10px;
     }
 
     .profile-title::before {
         content: "";
         width: 4px;
-        height: clamp(16px, 2.8vw, 22px);
-        background: linear-gradient(180deg, rgba(var(--glow), 1), rgba(var(--glow), 0.3));
+        height: 24px;
+        background: rgb(var(--glow));
         border-radius: 2px;
-        box-shadow: 0 0 10px rgba(var(--glow), 0.6);
-        flex-shrink: 0;
+        box-shadow: 0 0 10px rgba(var(--glow), 0.5);
     }
 
-    /* Сетка карточек */
+    /* Сетка профиля */
     .profile-grid {
-        max-width: 1200px;
-        margin: 0 auto;
         display: grid;
         grid-template-columns: 1fr;
-        gap: clamp(12px, 2.5vw, 20px);
-        align-items: stretch;
-        width: 100%;
+        gap: 20px;
     }
 
-    @media (min-width: 1024px) {
+    @media (min-width: 992px) {
         .profile-grid {
-            grid-template-columns: 1fr 2fr;
+            grid-template-columns: 320px 1fr;
         }
     }
 
-    /* Карточка - glassmorphism */
+    /* Карточки в стиле админки */
     .profile-card {
-        position: relative;
-        background: linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.01));
+        background: var(--bg-1);
         border: 1px solid var(--line);
         border-radius: var(--radius);
-        padding: 0;
         overflow: hidden;
-        min-width: 0; /* критично внутри grid, иначе контент может распирать колонку */
-        transition: all 0.3s ease;
-    }
-
-    .profile-card::before {
-        content: "";
-        position: absolute;
-        inset: -1px;
-        border-radius: var(--radius);
-        padding: 1px;
-        background: linear-gradient(135deg, rgba(var(--glow),0.4), transparent 40%, transparent 60%, rgba(var(--glow),0.2));
-        -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-        -webkit-mask-composite: xor;
-        mask-composite: exclude;
-        opacity: 0.6;
-        pointer-events: none;
+        transition: all 0.2s ease;
     }
 
     .profile-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 20px 40px -20px rgba(var(--glow), 0.3);
+        border-color: rgba(var(--glow), 0.3);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
     }
 
-    /* Левая карточка - аватар */
+    /* Левая карточка: Аватар */
     .avatar-card {
-        padding: clamp(18px, 4vw, 32px) clamp(14px, 3vw, 24px);
+        padding: 32px 24px;
         text-align: center;
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: center;
         position: relative;
-        background: radial-gradient(ellipse at 50% 0%, rgba(var(--glow), 0.15), transparent 70%);
+        background: radial-gradient(circle at 50% 0%, rgba(var(--glow), 0.08), transparent 60%);
     }
 
     .avatar-box {
-        width: clamp(70px, 18vw, 128px);
-        height: clamp(70px, 18vw, 128px);
-        border-radius: clamp(12px, 2.5vw, 20px);
-        background: linear-gradient(135deg, rgba(var(--glow), 0.6), rgba(var(--glow), 0.2));
-        border: 3px solid rgba(10, 13, 20, 0.8);
+        width: 120px;
+        height: 120px;
+        border-radius: 16px;
+        background: rgba(var(--glow), 0.1);
+        border: 2px solid rgba(var(--glow), 0.2);
         display: flex;
         align-items: center;
         justify-content: center;
-        margin-bottom: clamp(12px, 2.5vw, 20px);
-        box-shadow: 0 12px 28px rgba(var(--glow), 0.3), 0 0 0 1px rgba(var(--glow), 0.3);
-        position: relative;
+        margin-bottom: 20px;
         overflow: hidden;
         flex-shrink: 0;
-        transition: all 0.3s ease;
-    }
-
-    .avatar-box:hover {
-        transform: scale(1.03);
-        box-shadow: 0 16px 36px rgba(var(--glow), 0.4), 0 0 0 1px rgba(var(--glow), 0.5);
     }
 
     .avatar-box img {
@@ -143,53 +95,38 @@
     }
 
     .avatar-letter {
-        color: #ffffff;
-        font-size: clamp(32px, 7vw, 56px);
-        font-weight: 900;
-        font-style: italic;
-        text-shadow: 0 2px 12px rgba(0,0,0,0.3);
+        color: rgb(var(--glow));
+        font-size: 48px;
+        font-weight: 800;
     }
 
     .profile-name {
-        font-size: clamp(16px, 3.2vw, 22px);
-        font-weight: 800;
+        font-size: 20px;
+        font-weight: 700;
         color: var(--text);
         margin: 0 0 4px;
-        letter-spacing: -0.3px;
-        max-width: 100%;
-        overflow-wrap: break-word;
-        word-break: break-word;
-        hyphens: auto;
     }
 
     .profile-email {
-        font-size: clamp(9px, 1.8vw, 11px);
-        font-weight: 600;
+        font-size: 13px;
         color: var(--muted);
-        margin: 0 0 clamp(12px, 2.5vw, 20px);
-        max-width: 100%;
-        overflow-wrap: anywhere;
-        word-break: break-word;
-        letter-spacing: 0.3px;
+        margin: 0 0 16px;
+        word-break: break-all;
     }
 
     .role-badge {
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        padding: clamp(4px, 1vw, 6px) clamp(10px, 2.5vw, 16px);
+        padding: 6px 14px;
         border-radius: 20px;
-        font-size: clamp(8px, 1.6vw, 10px);
+        font-size: 11px;
         font-weight: 700;
         text-transform: uppercase;
-        letter-spacing: 0.8px;
-        background: rgba(var(--glow), 0.15);
-        border: 1px solid rgba(var(--glow), 0.3);
-        color: rgba(var(--glow), 1);
-        font-family: 'JetBrains Mono', monospace;
-        max-width: 100%;
-        white-space: nowrap;
-        justify-content: center;
+        letter-spacing: 0.5px;
+        background: rgba(var(--glow), 0.1);
+        border: 1px solid rgba(var(--glow), 0.25);
+        color: rgb(var(--glow));
     }
 
     .role-badge::before {
@@ -197,34 +134,25 @@
         width: 6px;
         height: 6px;
         border-radius: 50%;
-        background: #4cd982;
-        box-shadow: 0 0 8px #4cd982;
-        flex-shrink: 0;
+        background: #10b981;
+        box-shadow: 0 0 8px #10b981;
     }
 
-    /* Правая карточка - детали */
-    .details-card {
-        display: flex;
-        flex-direction: column;
-        min-width: 0;
-    }
-
+    /* Правая карточка: Детали */
     .details-header {
-        padding: clamp(11px, 2vw, 18px) clamp(14px, 3vw, 24px);
+        padding: 16px 24px;
         border-bottom: 1px solid var(--line);
         background: rgba(255,255,255,0.02);
         display: flex;
         justify-content: space-between;
         align-items: center;
-        flex-wrap: wrap;
-        gap: 10px;
     }
 
     .details-header-label {
-        font-size: clamp(8px, 1.6vw, 10px);
+        font-size: 11px;
         font-weight: 700;
         text-transform: uppercase;
-        letter-spacing: 1.5px;
+        letter-spacing: 1px;
         color: var(--muted);
     }
 
@@ -232,88 +160,67 @@
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        font-size: clamp(8px, 1.6vw, 10px);
+        font-size: 11px;
         font-weight: 700;
         text-transform: uppercase;
-        color: #4cd982;
-        letter-spacing: 0.8px;
-        white-space: nowrap;
+        color: #10b981;
     }
 
     .status-dot {
-        width: clamp(6px, 1.2vw, 8px);
-        height: clamp(6px, 1.2vw, 8px);
+        width: 8px;
+        height: 8px;
         border-radius: 50%;
-        background: #4cd982;
-        box-shadow: 0 0 0 3px rgba(76, 217, 130, 0.2), 0 0 8px rgba(76, 217, 130, 0.6);
+        background: #10b981;
+        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
         animation: pulse 2s infinite;
-        flex-shrink: 0;
     }
 
     @keyframes pulse {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.5; }
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.7; transform: scale(0.9); }
     }
 
     .details-body {
-        padding: clamp(12px, 3vw, 24px);
-        flex-grow: 1;
-        min-width: 0;
+        padding: 24px;
     }
 
     .info-grid {
         display: grid;
         grid-template-columns: 1fr;
-        gap: clamp(12px, 2.5vw, 20px);
+        gap: 20px;
     }
 
-    @media (min-width: 480px) {
+    @media (min-width: 640px) {
         .info-grid {
             grid-template-columns: 1fr 1fr;
         }
     }
 
-    .info-grid > div {
-        min-width: 0;
-    }
-
     .info-label {
-        font-size: clamp(7px, 1.5vw, 10px);
-        font-weight: 700;
+        font-size: 11px;
+        font-weight: 600;
         text-transform: uppercase;
-        letter-spacing: 0.8px;
+        letter-spacing: 0.5px;
         color: var(--muted);
         margin-bottom: 6px;
         display: block;
     }
 
     .info-value {
-        font-size: clamp(11px, 2.2vw, 14px);
+        font-size: 15px;
         font-weight: 600;
         color: var(--text);
-        letter-spacing: -0.2px;
-        overflow-wrap: anywhere;
-        word-break: break-word;
+        margin: 0;
     }
 
     .access-section {
-        margin-top: clamp(12px, 2.5vw, 24px);
-        padding-top: clamp(10px, 2vw, 20px);
+        margin-top: 24px;
+        padding-top: 20px;
         border-top: 1px solid var(--line);
     }
 
-    .access-text {
-        font-size: clamp(9px, 1.8vw, 12px);
-        font-weight: 700;
-        text-transform: uppercase;
-        color: var(--text);
-        letter-spacing: 0.3px;
-        line-height: 1.4;
-        overflow-wrap: break-word;
-    }
-
     .details-footer {
-        padding: 0 clamp(12px, 3vw, 24px) clamp(12px, 3vw, 24px);
+        padding: 16px 24px 24px;
         display: flex;
         justify-content: flex-end;
     }
@@ -322,247 +229,189 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        gap: clamp(6px, 1.3vw, 8px);
-        background: linear-gradient(180deg, rgba(var(--glow), 0.95), rgba(var(--glow), 0.65));
-        color: #0a0d14;
-        font-size: clamp(9px, 1.8vw, 10px);
+        gap: 8px;
+        background: rgb(var(--glow));
+        color: #ffffff;
+        font-size: 12px;
         font-weight: 700;
         text-transform: uppercase;
-        letter-spacing: 1.2px;
-        padding: clamp(9px, 2vw, 10px) clamp(14px, 3vw, 20px);
-        border-radius: 10px;
+        letter-spacing: 0.5px;
+        padding: 10px 20px;
+        border-radius: 8px;
         text-decoration: none;
-        transition: all 0.25s ease;
+        transition: all 0.2s ease;
         border: 1px solid transparent;
-        box-shadow: 0 8px 24px rgba(var(--glow), 0.35), inset 0 1px 0 rgba(255,255,255,0.3);
-        min-height: 44px; /* touch-friendly на всех размерах, не только на телефонах */
-        white-space: nowrap;
+        box-shadow: 0 4px 12px rgba(var(--glow), 0.3);
     }
 
     .btn-edit:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 28px rgba(var(--glow), 0.5);
-        filter: brightness(1.08);
-    }
-
-    .btn-edit:active {
-        transform: scale(0.97);
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(var(--glow), 0.4);
+        filter: brightness(1.1);
     }
 
     .btn-edit svg {
-        width: clamp(10px, 2vw, 12px);
-        height: clamp(10px, 2vw, 12px);
-        flex-shrink: 0;
+        width: 14px;
+        height: 14px;
     }
 
-    /* На узких экранах кнопка растягивается на всю ширину — это удобнее пальцем */
-    @media (max-width: 480px) {
-        .details-footer {
-            justify-content: stretch;
-        }
-        .btn-edit {
-            width: 100%;
-        }
-    }
-
-    /* === ACTIVITY GRID === */
+    /* === ACTIVITY GRID (Admin Style) === */
     .activity-card {
-        max-width: 1200px;
-        margin: clamp(14px, 3vw, 20px) auto 0;
-        background: linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.01));
+        margin-top: 20px;
+        background: var(--bg-1);
         border: 1px solid var(--line);
         border-radius: var(--radius);
-        padding: clamp(12px, 3vw, 20px) clamp(14px, 3vw, 24px);
-        position: relative;
-        width: 100%;
-        min-width: 0;
-    }
-
-    .activity-card::before {
-        content: "";
-        position: absolute;
-        inset: -1px;
-        border-radius: var(--radius);
-        padding: 1px;
-        background: linear-gradient(135deg, rgba(var(--glow),0.4), transparent 40%, transparent 60%, rgba(var(--glow),0.2));
-        -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-        -webkit-mask-composite: xor;
-        mask-composite: exclude;
-        opacity: 0.6;
-        pointer-events: none;
+        padding: 24px;
     }
 
     .activity-title {
-        font-size: clamp(11px, 2.2vw, 14px);
-        font-weight: 700;
+        font-size: 14px;
+        font-weight: 600;
         color: var(--text);
-        margin-bottom: clamp(9px, 2vw, 16px);
-        letter-spacing: -0.2px;
+        margin-bottom: 20px;
     }
 
     .activity-title span {
-        color: rgba(var(--glow), 1);
-        font-family: 'JetBrains Mono', monospace;
+        color: rgb(var(--glow));
+        font-weight: 700;
     }
 
-    /* Сетка вкладов (github-style) всегда скроллится по горизонтали
-       ВНУТРИ своего блока, а не толкает всю страницу вбок */
     .gh-wrapper {
         overflow-x: auto;
         overflow-y: hidden;
-        max-width: 100%;
-        scrollbar-width: none;
-        position: relative;
-        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+        scrollbar-color: var(--line) transparent;
         padding-bottom: 8px;
     }
-    .gh-wrapper::-webkit-scrollbar { display: none; }
 
-    .scroll-indicator {
-        display: none;
-        text-align: center;
-        font-size: 9px;
-        color: var(--muted);
-        margin-top: 8px;
-        opacity: 0.7;
+    .gh-wrapper::-webkit-scrollbar {
+        height: 6px;
     }
-
-    @media (max-width: 768px) {
-        .scroll-indicator { display: block; }
-    }
-
-    :root {
-        --sq-size: 11px;
-    }
-    @media (max-width: 768px) {
-        :root { --sq-size: 10px; }
-    }
-    @media (max-width: 640px) {
-        :root { --sq-size: 9px; }
-    }
-    @media (max-width: 480px) {
-        :root { --sq-size: 8px; }
-    }
-    @media (max-width: 380px) {
-        :root { --sq-size: 7px; }
+    .gh-wrapper::-webkit-scrollbar-thumb {
+        background: var(--line);
+        border-radius: 3px;
     }
 
     .gh-grid {
         display: inline-grid;
         grid-template-areas: ". months" "days squares";
-        grid-template-columns: clamp(28px, 8vw, 45px) 1fr;
+        grid-template-columns: 40px 1fr;
         gap: 4px 8px;
         min-width: fit-content;
     }
+
     .gh-months {
         grid-area: months;
         display: grid;
-        grid-template-columns: repeat({{ $weeksCount }}, var(--sq-size));
-        gap: 3px;
-        font-size: 9px;
+        grid-template-columns: repeat(var(--weeks-count, 53), 12px);
+        gap: 4px;
+        font-size: 10px;
         color: var(--muted);
-        font-weight: 600;
+        font-weight: 500;
         height: 16px;
-        position: relative;
     }
+
     .gh-days {
         grid-area: days;
         display: grid;
-        grid-template-rows: repeat(7, var(--sq-size));
-        gap: 3px;
-        font-size: 9px;
+        grid-template-rows: repeat(7, 12px);
+        gap: 4px;
+        font-size: 10px;
         color: var(--muted);
-        font-weight: 600;
-        user-select: none;
+        font-weight: 500;
+        line-height: 12px;
     }
-    .gh-day-label {
-        display: flex;
-        align-items: center;
-        height: var(--sq-size);
-        line-height: 1;
-    }
+
     .gh-squares {
         grid-area: squares;
         display: grid;
-        grid-template-rows: repeat(7, var(--sq-size));
+        grid-template-rows: repeat(7, 12px);
         grid-auto-flow: column;
-        grid-auto-columns: var(--sq-size);
-        gap: 3px;
+        grid-auto-columns: 12px;
+        gap: 4px;
     }
+
     .sq {
-        width: var(--sq-size);
-        height: var(--sq-size);
+        width: 12px;
+        height: 12px;
         border-radius: 2px;
         background-color: rgba(255,255,255,0.04);
         border: 1px solid var(--line);
-        box-sizing: border-box;
         cursor: pointer;
-        transition: all 0.1s ease;
+        transition: transform 0.1s ease;
     }
+
     .sq:hover {
         transform: scale(1.3);
         z-index: 5;
         border-color: rgba(var(--glow), 0.6);
     }
-    .l1 { background-color: #9be9a8 !important; border: none; box-shadow: 0 0 8px rgba(155, 233, 168, 0.4); }
-    .l2 { background-color: #40c463 !important; border: none; box-shadow: 0 0 8px rgba(64, 196, 99, 0.4); }
-    .l3 { background-color: #30a14e !important; border: none; box-shadow: 0 0 8px rgba(48, 161, 78, 0.4); }
-    .l4 { background-color: #216e39 !important; border: none; box-shadow: 0 0 8px rgba(33, 110, 57, 0.4); }
+
+    /* Цвета квадратов на основе системного --glow */
+    .l1 { background-color: rgba(var(--glow), 0.2) !important; border-color: rgba(var(--glow), 0.3) !important; }
+    .l2 { background-color: rgba(var(--glow), 0.4) !important; border-color: rgba(var(--glow), 0.5) !important; }
+    .l3 { background-color: rgba(var(--glow), 0.7) !important; border-color: rgba(var(--glow), 0.8) !important; }
+    .l4 { background-color: rgb(var(--glow)) !important; border-color: rgb(var(--glow)) !important; box-shadow: 0 0 8px rgba(var(--glow), 0.4); }
 
     .activity-footer {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-top: clamp(8px, 2vw, 14px);
-        font-size: clamp(8px, 1.6vw, 10px);
-        font-weight: 600;
+        margin-top: 20px;
+        font-size: 11px;
         color: var(--muted);
         flex-wrap: wrap;
-        gap: 10px;
-    }
-
-    @media (max-width: 640px) {
-        .activity-footer {
-            flex-direction: column;
-            align-items: flex-start;
-        }
+        gap: 12px;
     }
 
     .activity-legend {
         display: flex;
         align-items: center;
-        gap: 6px;
-        flex-wrap: wrap;
+        gap: 4px;
     }
 
     .activity-legend .sq {
+        cursor: default;
         width: 10px;
         height: 10px;
-        cursor: default;
     }
-
     .activity-legend .sq:hover { transform: none; }
+
+    /* Светлая тема */
+    html[data-theme="light"] .profile-card,
+    html[data-theme="light"] .activity-card {
+        background: #ffffff;
+        border-color: #e2e8f0;
+    }
+    html[data-theme="light"] .details-header {
+        background: #f8fafc;
+        border-color: #e2e8f0;
+    }
+    html[data-theme="light"] .sq {
+        background-color: #f1f5f9;
+        border-color: #e2e8f0;
+    }
+    html[data-theme="light"] .l1 { background-color: rgba(var(--glow), 0.15) !important; border-color: rgba(var(--glow), 0.2) !important; }
+    html[data-theme="light"] .l2 { background-color: rgba(var(--glow), 0.35) !important; border-color: rgba(var(--glow), 0.4) !important; }
+    html[data-theme="light"] .l3 { background-color: rgba(var(--glow), 0.6) !important; border-color: rgba(var(--glow), 0.7) !important; }
+    html[data-theme="light"] .l4 { background-color: rgb(var(--glow)) !important; border-color: rgb(var(--glow)) !important; }
 </style>
 
 <div class="profile-page font-inter">
-
-    {{-- Заголовок --}}
     <div class="profile-header">
         <h1 class="profile-title">
             <span data-i18n="profileTitle">Профиль</span>
         </h1>
     </div>
 
-    {{-- СЕТКА КАРТОЧЕК --}}
     <div class="profile-grid">
-
-        {{-- ЛЕВАЯ КАРТОЧКА (АВАТАР) --}}
+        <!-- Левая карточка -->
         <div class="profile-card avatar-card">
             <div class="avatar-box">
                 @if($user->avatar)
-                <img src="{{ asset('storage/' . $user->avatar) }}" alt="{{ $user->name }}">
+                    <img src="{{ $user->avatar_url }}" alt="{{ $user->name }}">
                 @else
-                <span class="avatar-letter">{{ Str::upper(Str::substr($user->name, 0, 1)) }}</span>
+                    <span class="avatar-letter">{{ Str::upper(Str::substr($user->name, 0, 1)) }}</span>
                 @endif
             </div>
 
@@ -570,11 +419,11 @@
             <p class="profile-email">{{ $user->email }}</p>
 
             <div class="role-badge">
-                {{ $user->role ?? 'Director' }}
+                {{ ucfirst($user->role ?? 'User') }}
             </div>
         </div>
 
-        {{-- ПРАВАЯ КАРТОЧКА (ДЕТАЛИ) --}}
+        <!-- Правая карточка -->
         <div class="profile-card details-card">
             <div class="details-header">
                 <span class="details-header-label" data-i18n="mainInfo">Основная информация</span>
@@ -591,97 +440,103 @@
                         <p class="info-value">{{ $user->name }}</p>
                     </div>
                     <div>
-                        <label class="info-label" data-i18n="labelEmail">Email</label>
+                        <label class="info-label" data-i18n="labelEmail">Email адрес</label>
                         <p class="info-value">{{ $user->email }}</p>
                     </div>
                     <div>
-                        <label class="info-label" data-i18n="labelCompany">Название компании</label>
+                        <label class="info-label" data-i18n="labelCompany">Компания</label>
                         <p class="info-value">{{ $user->company ?? '—' }}</p>
                     </div>
                     <div>
-                        <label class="info-label" data-i18n="labelPhone">Контактный телефон</label>
-                        <p class="info-value">{{ $user->phone ?? '+992 00 000 0000' }}</p>
+                        <label class="info-label" data-i18n="labelPhone">Телефон</label>
+                        <p class="info-value">{{ $user->phone ?? '—' }}</p>
                     </div>
                     <div>
-                        <label class="info-label" data-i18n="labelCreatedAt">Дата создания</label>
+                        <label class="info-label" data-i18n="labelCreatedAt">Дата регистрации</label>
                         <p class="info-value">{{ $user->created_at->translatedFormat('d M Y') }}</p>
                     </div>
                 </div>
 
                 <div class="access-section">
                     <label class="info-label" data-i18n="labelAccess">Уровень доступа</label>
-                    <p class="access-text" data-i18n="accessFull">Назорати пурраи маъмурӣ</p>
+                    <p class="info-value" style="color: rgb(var(--glow));" data-i18n="accessFull">Полный административный контроль</p>
                 </div>
             </div>
 
             <div class="details-footer">
                 <a href="{{ route('profile.edit', $user->id) }}" class="btn-edit">
-                    <svg fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M21.731 2.269a2.625 2.625 0 00-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 000-3.712zM19.513 8.199l-3.712-3.712-12.15 12.15a5.25 5.25 0 00-1.32 2.214l-.8 2.685a.75.75 0 00.933.933l2.685-.8a5.25 5.25 0 002.214-1.32L19.513 8.2z" />
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                     </svg>
-                    <span data-i18n="btnEdit">Таҳрир</span>
+                    <span data-i18n="btnEdit">Редактировать</span>
                 </a>
             </div>
         </div>
     </div>
 
-    {{-- ACTIVITY GRID --}}
+    <!-- График активности -->
     <div class="activity-card">
         <div class="activity-title">
             <span>{{ array_sum($activityData) }}</span>
-            <span data-i18n="activitySummary">вкладов в</span> {{ $year }}
+            <span data-i18n="activitySummary">вкладов в</span> {{ $year ?? date('Y') }}
         </div>
 
         <div class="gh-wrapper">
-            <div class="gh-grid">
-                <div class="gh-months select-none">
+            <div class="gh-grid" style="--weeks-count: {{ $weeksCount ?? 53 }}">
+                <div class="gh-days">
+                    <div class="gh-day-label" data-i18n="dayMon">Пн</div>
+                    <div class="gh-day-label"></div>
+                    <div class="gh-day-label" data-i18n="dayWed">Ср</div>
+                    <div class="gh-day-label"></div>
+                    <div class="gh-day-label" data-i18n="dayFri">Пт</div>
+                    <div class="gh-day-label"></div>
+                    <div class="gh-day-label" data-i18n="daySun">Вс</div>
+                </div>
+
+                <div class="gh-months">
                     @php $lastMonth = -1; @endphp
-                    @for($w = 0; $w < $weeksCount; $w++)
-                    @php
-                    $dateInWeek = $startDate->copy()->addWeeks($w);
-                    $month = $dateInWeek->month;
-                    @endphp
-                    <div style="grid-column: {{ $w + 1 }}; position: relative;">
-                        @if($month != $lastMonth && $dateInWeek->year == $year)
-                        <span style="position: absolute; left: 0; bottom: 0; white-space: nowrap;">
-                                        {{ $dateInWeek->translatedFormat('M') }}
-                                    </span>
-                        @php $lastMonth = $month; @endphp
+                    @for($w = 0; $w < ($weeksCount ?? 53); $w++)
+                        @php
+                            $dateInWeek = ($startDate ?? now()->startOfYear())->copy()->addWeeks($w);
+                            $month = $dateInWeek->month;
+                        @endphp
+                        @if($month != $lastMonth)
+                            <span style="grid-column: {{ $w + 1 }}; font-size: 10px; color: var(--muted);">
+                                {{ $dateInWeek->translatedFormat('M') }}
+                            </span>
+                            @php $lastMonth = $month; @endphp
                         @endif
-                    </div>
                     @endfor
                 </div>
 
                 <div class="gh-squares">
-                    @for($i = 0; $i < ($weeksCount * 7); $i++)
-                    @php
-                    $day = $startDate->copy()->addDays($i);
-                    $isCurrentYear = $day->year == $year;
-                    $key = $day->toDateString();
-                    $count = $activityData[$key] ?? 0;
+                    @for($i = 0; $i < (($weeksCount ?? 53) * 7); $i++)
+                        @php
+                            $day = ($startDate ?? now()->startOfYear())->copy()->addDays($i);
+                            $isCurrentYear = $day->year == ($year ?? date('Y'));
+                            $key = $day->toDateString();
+                            $count = $activityData[$key] ?? 0;
 
-                    $level = 0;
-                    if ($count > 0) $level = 1;
-                    if ($count > 2) $level = 2;
-                    if ($count > 5) $level = 3;
-                    if ($count > 10) $level = 4;
+                            $level = 0;
+                            if ($count > 0) $level = 1;
+                            if ($count > 2) $level = 2;
+                            if ($count > 5) $level = 3;
+                            if ($count > 10) $level = 4;
 
-                    $tooltipText = ($count > 0 ? $count : 'No') . ' contributions on ' . $day->translatedFormat('j F, Y');
-                    @endphp
-                    @if($isCurrentYear)
-                    <div class="sq {{ $level ? 'l'.$level : '' }}" data-tippy-content="{{ $tooltipText }}"></div>
-                    @else
-                    <div class="sq" style="background: transparent; border: none; cursor: default;"></div>
-                    @endif
+                            $tooltipText = ($count > 0 ? $count : 'Нет') . ' действий за ' . $day->translatedFormat('j F Y');
+                        @endphp
+                        @if($isCurrentYear)
+                            <div class="sq {{ $level ? 'l'.$level : '' }}" data-tippy-content="{{ $tooltipText }}"></div>
+                        @else
+                            <div class="sq" style="background: transparent; border: none; cursor: default;"></div>
+                        @endif
                     @endfor
                 </div>
             </div>
         </div>
 
-        <div class="scroll-indicator" data-i18n="scrollHint">← Прокрутите для просмотра →</div>
-
         <div class="activity-footer">
-            <span data-i18n="activityLegend">Как мы считаем вклады</span>
+            <span data-i18n="activityLegend">Уровень активности</span>
             <div class="activity-legend">
                 <span data-i18n="legendLess">Меньше</span>
                 <div class="sq"></div>
@@ -708,18 +563,17 @@
                 statusActive: 'Активен',
                 labelFullName: 'Полное имя',
                 labelEmail: 'Email адрес',
-                labelCompany: 'Название компании',
-                labelPhone: 'Контактный телефон',
-                labelCreatedAt: 'Дата создания',
+                labelCompany: 'Компания',
+                labelPhone: 'Телефон',
+                labelCreatedAt: 'Дата регистрации',
                 labelAccess: 'Уровень доступа',
                 accessFull: 'Полный административный контроль',
-                btnEdit: 'Изменить',
+                btnEdit: 'Редактировать',
                 activitySummary: 'вкладов в',
-                activityLegend: 'Как мы считаем вклады',
+                activityLegend: 'Уровень активности',
                 legendLess: 'Меньше',
                 legendMore: 'Больше',
-                scrollHint: '← Прокрутите для просмотра →',
-                dayMon: 'Пн', dayTue: 'Вт', dayWed: 'Ср', dayThu: 'Чт', dayFri: 'Пт', daySat: 'Сб', daySun: 'Вс'
+                dayMon: 'Пн', dayWed: 'Ср', dayFri: 'Пт', daySun: 'Вс'
             },
             tj: {
                 profileTitle: 'Профил',
@@ -727,18 +581,17 @@
                 statusActive: 'Фаъол',
                 labelFullName: 'Номи пурра',
                 labelEmail: 'Суроғаи Email',
-                labelCompany: 'Номи ширкат',
-                labelPhone: 'Телефони тамос',
-                labelCreatedAt: 'Санаи эҷод',
+                labelCompany: 'Ширкат',
+                labelPhone: 'Телефон',
+                labelCreatedAt: 'Санаи бақайдгирӣ',
                 labelAccess: 'Сатҳи дастрасӣ',
                 accessFull: 'Назорати пурраи маъмурӣ',
                 btnEdit: 'Таҳрир',
                 activitySummary: 'саҳмҳо дар соли',
-                activityLegend: 'Чӣ тавр мо саҳмҳоро ҳисоб мекунем',
+                activityLegend: 'Сатҳи фаъолият',
                 legendLess: 'Камтар',
                 legendMore: 'Бештар',
-                scrollHint: '← Барои дидан скрол кунед →',
-                dayMon: 'Дш', dayTue: 'Сш', dayWed: 'Чш', dayThu: 'Пш', dayFri: 'Ҷм', daySat: 'Шн', daySun: 'Як'
+                dayMon: 'Дш', dayWed: 'Чш', dayFri: 'Ҷм', daySun: 'Як'
             },
             en: {
                 profileTitle: 'Profile',
@@ -746,60 +599,43 @@
                 statusActive: 'Active',
                 labelFullName: 'Full Name',
                 labelEmail: 'Email Address',
-                labelCompany: 'Company Name',
-                labelPhone: 'Phone Number',
-                labelCreatedAt: 'Created At',
+                labelCompany: 'Company',
+                labelPhone: 'Phone',
+                labelCreatedAt: 'Registration Date',
                 labelAccess: 'Access Level',
                 accessFull: 'Full Administrative Control',
                 btnEdit: 'Edit',
                 activitySummary: 'contributions in',
-                activityLegend: 'Learn how we count contributions',
+                activityLegend: 'Activity Level',
                 legendLess: 'Less',
                 legendMore: 'More',
-                scrollHint: '← Scroll to view →',
-                dayMon: 'Mon', dayTue: 'Tue', dayWed: 'Wed', dayThu: 'Thu', dayFri: 'Fri', daySat: 'Sat', daySun: 'Sun'
+                dayMon: 'Mon', dayWed: 'Wed', dayFri: 'Fri', daySun: 'Sun'
             }
         };
 
         function applyProfileTranslations(lang) {
             const dict = PROFILE_TRANSLATIONS[lang] || PROFILE_TRANSLATIONS.ru;
-
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
                 if (dict[key] !== undefined) el.textContent = dict[key];
             });
-
-            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
-                const key = el.getAttribute('data-i18n-placeholder');
-                if (dict[key] !== undefined) el.setAttribute('placeholder', dict[key]);
-            });
-
-            document.querySelectorAll('[data-i18n-title]').forEach(el => {
-                const key = el.getAttribute('data-i18n-title');
-                if (dict[key] !== undefined) el.setAttribute('title', dict[key]);
-            });
         }
 
-        tippy('[data-tippy-content]', {
-            theme: 'dark',
-            animation: 'fade',
-            duration: [200, 50],
-            offset: [0, 10],
-            touch: ['hold', 500],
-        });
+        // Инициализация тултипов графика
+        if (typeof tippy !== 'undefined') {
+            tippy('[data-tippy-content]', {
+                theme: 'custom-admin',
+                animation: 'fade',
+                duration: 150,
+                offset: [0, 8],
+            });
+        }
 
         const initialLang = localStorage.getItem('docsign_lang') || 'ru';
         applyProfileTranslations(initialLang);
 
         window.addEventListener('docsign:lang-changed', (e) => {
-            const lang = e.detail?.lang || 'ru';
-            applyProfileTranslations(lang);
-        });
-
-        window.addEventListener('storage', (e) => {
-            if (e.key === 'docsign_lang' && e.newValue) {
-                applyProfileTranslations(e.newValue);
-            }
+            applyProfileTranslations(e.detail?.lang || 'ru');
         });
     });
 </script>

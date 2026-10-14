@@ -24,8 +24,85 @@ $fillPercent = round(($memberCount / $maxUsers) * 100);
 @endphp
 
 <style>
-    *{box-sizing:border-box;margin:0;padding:0;}
+    html[data-theme="light"] .ds {
+        color: #0f172a !important;
+        background: transparent !important;
+    }
+    html[data-theme="light"] .bc,
+    html[data-theme="light"] .ds-back,
+    html[data-theme="light"] .st-t,
+    html[data-theme="light"] .asg,
+    html[data-theme="light"] .mb,
+    html[data-theme="light"] .ch-c,
+    html[data-theme="light"] .emp-st,
+    html[data-theme="light"] .room__sign {
+        background: #ffffff;
+        border-color: #cbd5e1 !important;
+        box-shadow: 0 8px 22px rgba(15, 23, 42, 0.08);
+    }
+    html[data-theme="light"] .bc a,
+    html[data-theme="light"] .bc .sp,
+    html[data-theme="light"] .ds-sub,
+    html[data-theme="light"] .rh-desc,
+    html[data-theme="light"] .st-l,
+    html[data-theme="light"] .st-n small,
+    html[data-theme="light"] .asg-l,
+    html[data-theme="light"] .asg-n,
+    html[data-theme="light"] .mb-em,
+    html[data-theme="light"] .ch-mt,
+    html[data-theme="light"] .emp-st p {
+        color: #475569 !important;
+    }
+    html[data-theme="light"] .bc .cr,
+    html[data-theme="light"] .ds-title,
+    html[data-theme="light"] .room__sign .nm,
+    html[data-theme="light"] .st-n,
+    html[data-theme="light"] .sec-t h2,
+    html[data-theme="light"] .sec-c,
+    html[data-theme="light"] .mb-nm,
+    html[data-theme="light"] .ch-nm {
+        color: #0f172a !important;
+    }
+    html[data-theme="light"] .rh {
+        background: radial-gradient(ellipse at 50% 30%, rgba(var(--rc), .12), #ffffff 72%);
+        border-color: rgba(var(--rc), .45) !important;
+        box-shadow: 0 10px 28px rgba(15, 23, 42, .08);
+    }
+    html[data-theme="light"] .st-ch,
+    html[data-theme="light"] .sec-c,
+    html[data-theme="light"] .btn-a,
+    html[data-theme="light"] .btn-rm {
+        background: #f8fafc;
+        border-color: #b8c4d3 !important;
+        color: #334155 !important;
+    }
+    html[data-theme="light"] .sec-t {
+        border-bottom-color: #cbd5e1 !important;
+    }
+    html[data-theme="light"] .asg-s {
+        background: #f8fafc !important;
+        border-color: #b8c4d3 !important;
+        color: #0f172a !important;
+    }
+    html[data-theme="light"] .asg-s option {
+        background: #ffffff;
+        color: #0f172a;
+    }
+    html[data-theme="light"] .asg-s:focus {
+        background: #ffffff !important;
+        border-color: rgba(var(--rc), .6) !important;
+    }
+    html[data-theme="light"] .btn-ad {
+        border-color: rgba(var(--rc), .45);
+    }
+    html[data-theme="light"] .ch-c:hover,
+    html[data-theme="light"] .mb:hover {
+        background: #f8fafc;
+    }
+</style>
 
+<div class="ds">
+<style>
     :root{
         --rm-w:440px;
         --rm-h:420px;
@@ -817,6 +894,46 @@ $fillPercent = round(($memberCount / $maxUsers) * 100);
         .ds-w{max-width:1400px;}
         :root{--rm-w:480px;--rm-h:458px;--sign-w:250px;--ppl-w:26px;--ppl-h:54px;}
     }
+
+    html[data-theme="light"] .ds,
+    html[data-theme="light"] .ds * {
+        --text: #0f172a;
+        --muted: #475569;
+    }
+    html[data-theme="light"] .ds { background: transparent !important; color: #0f172a !important; }
+    html[data-theme="light"] .bc,
+    html[data-theme="light"] .ds-back,
+    html[data-theme="light"] .st-t,
+    html[data-theme="light"] .asg,
+    html[data-theme="light"] .mb,
+    html[data-theme="light"] .ch-c,
+    html[data-theme="light"] .emp-st,
+    html[data-theme="light"] .room__sign { background: #fff !important; border-color: #cbd5e1 !important; box-shadow: 0 8px 22px rgba(15,23,42,.08); }
+    html[data-theme="light"] .ds-title,
+    html[data-theme="light"] .ds-sub,
+    html[data-theme="light"] .bc .cr,
+    html[data-theme="light"] .room__sign .nm,
+    html[data-theme="light"] .st-n,
+    html[data-theme="light"] .sec-t h2,
+    html[data-theme="light"] .mb-nm,
+    html[data-theme="light"] .ch-nm { color: #0f172a !important; }
+    html[data-theme="light"] .bc a,
+    html[data-theme="light"] .rh-desc,
+    html[data-theme="light"] .st-l,
+    html[data-theme="light"] .st-n small,
+    html[data-theme="light"] .asg-l,
+    html[data-theme="light"] .asg-n,
+    html[data-theme="light"] .mb-em,
+    html[data-theme="light"] .ch-mt,
+    html[data-theme="light"] .emp-st p { color: #475569 !important; }
+    html[data-theme="light"] .rh { background: radial-gradient(ellipse at 50% 30%, rgba(var(--rc),.12), #fff 72%) !important; border-color: rgba(var(--rc),.45) !important; }
+    html[data-theme="light"] .asg-s { background: #f8fafc !important; border-color: #b8c4d3 !important; color: #0f172a !important; }
+    html[data-theme="light"] .asg-s option { background: #fff; color: #0f172a; }
+    html[data-theme="light"] .st-ch,
+    html[data-theme="light"] .sec-c,
+    html[data-theme="light"] .btn-a,
+    html[data-theme="light"] .btn-rm { background: #f8fafc !important; border-color: #b8c4d3 !important; color: #334155 !important; }
+    html[data-theme="light"] .sec-t { border-bottom-color: #cbd5e1 !important; }
 </style>
 
 <div class="ds" style="--rc: {{ $rgb }}">

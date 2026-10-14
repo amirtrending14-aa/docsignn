@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\DocumentComment;
 use App\Models\Document;
-use App\Models\DocumentLog; // 🔥 Подключили модель логов
+use App\Models\DocumentLog; 
 use App\Models\Notification;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -79,6 +79,8 @@ class DocumentCommentController extends Controller
     public function destroy($id)
     {
         $comment = DocumentComment::findOrFail($id);
+        $this->authorize('delete', $comment);
+
         $documentId = $comment->document_id;
         $commentPreview = Str::limit($comment->comment, 40);
 

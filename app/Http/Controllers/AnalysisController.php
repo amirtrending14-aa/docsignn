@@ -5,91 +5,137 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\Document;
+use App\Models\DocumentLog;
 use App\Models\User;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class AnalysisController extends Controller
 {
     public function index(Request $request)
     {
-        $month = (int)$request->get('month', Carbon::now()->month);
-        $year = (int)$request->get('year', Carbon::now()->year);
+        $user = Auth::user();
+        if (!$user) return redirect()->route('login');
+        $userId = $user->id;
+
+        $month = max(1, min(12, (int) $request->get('month', Carbon::now()->month)));
+        $year  = (int) $request->get('year', Carbon::now()->year);
+        if ($year < 2020 || $year > 2050) $year = Carbon::now()->year;
 
         $startDate = Carbon::createFromDate($year, $month, 1)->startOfMonth();
-        $endDate = Carbon::createFromDate($year, $month, 1)->endOfMonth();
+        $endDate   = $startDate->copy()->endOfMonth();
 
-        // Базовый запрос для фильтрации по датам (упрощает код)
-        $query = Document::whereBetween('created_at', [$startDate, $endDate]);
+        $prevStartDate = $startDate->copy()->subMonth()->startOfMonth();
+        $prevEndDate   = $prevStartDate->copy()->endOfMonth();
 
-        // Статистика статусов
-        // Используем явное указание на связь, чтобы избежать проблем с 'active'
-        $statusData = [
-            'signed' => (clone $query)
-                ->whereHas('signatures', function ($q) {
-                    $q->whereNotNull('signature');
-                })->count(),
+        $statusData     = $this->getStatusData($startDate, $endDate);
+        $prevStatusData = $this->getStatusData($prevStartDate, $prevEndDate);
 
-            'pending' => (clone $query)
-                ->where('status', 'active')
-                ->whereDoesntHave('signatures', function ($q) {
-                    $q->whereNotNull('signature');
-                })->count(),
+        $trends = [];
+        foreach ($statusData as $key => $value) {
+            $prev = $prevStatusData[$key] ?? 0;
+            $trends[$key] = [
+                'diff'    => $value - $prev,
+                'percent' => $prev > 0 ? round((($value - $prev) / $prev) * 100, 1) : ($value > 0 ? 100 : 0),
+            ];
+        }
 
-            'incoming' => (clone $query)->whereNotNull('receiver_id')->count(),
-            'outgoing' => (clone $query)->whereNotNull('created_by')->count(),
-            'rejected' => (clone $query)->where('status', 'rejected')->count(),
-        ];
-
-        // Активность документов по дням
-        $rawDocs = (clone $query)
-            ->select(DB::raw('DATE(created_at) as date'), DB::raw('COUNT(*) as count'))
+       $rawDocs = DocumentLog::where('user_id', $userId)
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->whereIn('action', ['CREATED', 'RECEIVED', 'создание', 'отправка'])
+            ->selectRaw('DATE(created_at) as date, COUNT(DISTINCT document_id) as count')
             ->groupBy('date')
             ->pluck('count', 'date');
 
-        // Активность пользователей
-        $registrations = User::select(DB::raw('DATE(created_at) as date'), DB::raw('COUNT(*) as count'))
+        $registrations = User::selectRaw('DATE(created_at) as date, COUNT(*) as count')
             ->whereBetween('created_at', [$startDate, $endDate])
             ->groupBy('date')->pluck('count', 'date');
 
         $deletions = User::onlyTrashed()
-            ->select(DB::raw('DATE(deleted_at) as date'), DB::raw('COUNT(*) as count'))
+            ->selectRaw('DATE(deleted_at) as date, COUNT(*) as count')
             ->whereBetween('deleted_at', [$startDate, $endDate])
             ->groupBy('date')->pluck('count', 'date');
 
-        // Подготовка данных для графиков
         $dailyActivity = collect();
-        $userActivity = collect();
-        $daysInMonth = $startDate->daysInMonth;
+        $userActivity  = collect();
+        $daysInMonth   = $startDate->daysInMonth;
 
         for ($i = 1; $i <= $daysInMonth; $i++) {
             $dateInstance = Carbon::createFromDate($year, $month, $i);
-            $currentDate = $dateInstance->format('Y-m-d');
-            $displayDate = $dateInstance->format('d.m');
+            $currentDate  = $dateInstance->format('Y-m-d');
+            $displayDate  = $dateInstance->format('d.m');
 
             $dailyActivity->push([
-                'date' => $displayDate,
+                'date'  => $displayDate,
                 'count' => $rawDocs->get($currentDate, 0),
             ]);
-
             $userActivity->push([
                 'date' => $displayDate,
-                'reg' => $registrations->get($currentDate, 0),
-                'del' => $deletions->get($currentDate, 0),
+                'reg'  => $registrations->get($currentDate, 0),
+                'del'  => $deletions->get($currentDate, 0),
             ]);
         }
 
-        $totalDocuments = Document::count();
-        $totalUsers = User::count();
-        $newThisMonth = User::whereBetween('created_at', [$startDate, $endDate])->count();
+        $totalDocuments   = Document::count();
+        $totalUsers       = User::count();
+        $newThisMonth     = User::whereBetween('created_at', [$startDate, $endDate])->count();
         $deletedThisMonth = User::onlyTrashed()->whereBetween('deleted_at', [$startDate, $endDate])->count();
-
-        $churnRate = $totalUsers > 0 ? round(($deletedThisMonth / $totalUsers) * 100, 1) : 0;
+        $churnRate        = $totalUsers > 0 ? round(($deletedThisMonth / $totalUsers) * 100, 1) : 0;
 
         $viewName = $request->is('analysis*') ? 'analysis.index' : 'layouts.site';
 
         return view($viewName, compact(
-            'dailyActivity', 'statusData', 'userActivity', 'totalUsers',
-            'totalDocuments', 'newThisMonth', 'deletedThisMonth', 'churnRate', 'month', 'year'
+            'dailyActivity', 'statusData', 'prevStatusData', 'trends',
+            'userActivity', 'totalUsers', 'totalDocuments',
+            'newThisMonth', 'deletedThisMonth', 'churnRate',
+            'month', 'year', 'startDate', 'endDate'
         ));
+    }
+
+    private function getStatusData(Carbon $startDate, Carbon $endDate): array
+    {
+        $monthlyDocuments = Document::withTrashed()
+            ->visibleToAuth()
+            ->whereBetween('created_at', [$startDate, $endDate]);
+        $statusCounts = (clone $monthlyDocuments)
+            ->selectRaw('status, COUNT(*) as total')
+            ->groupBy('status')
+            ->pluck('total', 'status');
+
+        $activeSigned = (clone $monthlyDocuments)
+            ->where('status', Document::STATUS_ACTIVE)
+            ->whereHas('signatures', fn ($query) => $query
+                ->whereNotNull('signature')
+                ->where('signature', '!=', ''))
+            ->count();
+        $processingSigned = (clone $monthlyDocuments)
+            ->where('status', Document::STATUS_PROCESSING)
+            ->whereHas('signatures', fn ($query) => $query
+                ->whereNotNull('signature')
+                ->where('signature', '!=', ''))
+            ->count();
+        $activeCount = (int) $statusCounts->get(Document::STATUS_ACTIVE, 0);
+        $processingCount = (int) $statusCounts->get(Document::STATUS_PROCESSING, 0);
+        $processing = max(0, $activeCount - $activeSigned) + $processingSigned;
+        $generating = max(0, $processingCount - $processingSigned);
+        $archive = (int) $statusCounts->get(Document::STATUS_COMPLETED, 0)
+            + (int) $statusCounts->get(Document::STATUS_APPROVED, 0)
+            + $activeSigned;
+        $failed = (int) $statusCounts->get(Document::STATUS_FAILED, 0);
+        $total = (int) $statusCounts->sum();
+        $other = max(0, $total - $processing - $generating
+            - (int) $statusCounts->get(Document::STATUS_DRAFT, 0)
+            - (int) $statusCounts->get(Document::STATUS_REJECTED, 0)
+            - $archive - $failed);
+
+        return [
+            'total' => $total,
+            'processing' => $processing,
+            'generating' => $generating,
+            'draft' => (int) $statusCounts->get(Document::STATUS_DRAFT, 0),
+            'rejected' => (int) $statusCounts->get(Document::STATUS_REJECTED, 0),
+            'archive' => $archive,
+            'failed' => $failed,
+            'other' => $other,
+        ];
     }
 }

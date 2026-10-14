@@ -25,7 +25,7 @@
                 <div class="pf-avatar-wrapper">
                     <div id="avatarWrapper" class="pf-avatar-box">
                         @if(auth()->user()->avatar)
-                        <img src="{{ asset('storage/' . auth()->user()->avatar) }}" alt="Avatar" class="pf-avatar-img">
+                        <img src="{{ auth()->user()->avatar_url }}" alt="Avatar" class="pf-avatar-img">
                         <img id="avatarPreview" src="" alt="Preview" class="pf-avatar-preview hidden">
                         <span id="avatarLetter" class="pf-avatar-letter hidden">
                             {{ Str::upper(Str::substr(auth()->user()->name, 0, 1)) }}

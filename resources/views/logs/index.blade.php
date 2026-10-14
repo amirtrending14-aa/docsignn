@@ -666,6 +666,62 @@
             }
         </style>
 
+        <style>
+            html[data-theme="light"] .logs-page {
+                color: #0f172a !important;
+            }
+            html[data-theme="light"] .logs-title,
+            html[data-theme="light"] .cell-doc-title,
+            html[data-theme="light"] .user-name {
+                color: #0f172a !important;
+            }
+            html[data-theme="light"] .logs-subtitle,
+            html[data-theme="light"] .logs-counter-label,
+            html[data-theme="light"] .cell-id,
+            html[data-theme="light"] .cell-meta,
+            html[data-theme="light"] .cell-time {
+                color: #475569 !important;
+            }
+            html[data-theme="light"] .logs-counter,
+            html[data-theme="light"] .glass-card {
+                background: #ffffff;
+                border: 1.5px solid #cbd5e1;
+                box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+            }
+            html[data-theme="light"] .logs-table th {
+                color: #334155;
+                background: #f1f5f9;
+                border-bottom: 1.5px solid #cbd5e1;
+            }
+            html[data-theme="light"] .logs-table td {
+                color: #1e293b;
+                border-bottom: 1px solid #e2e8f0;
+            }
+            html[data-theme="light"] .tr-hover:hover {
+                background: rgba(var(--glow), 0.08);
+            }
+            html[data-theme="light"] .tr-hover:hover td {
+                color: #0f172a;
+            }
+            html[data-theme="light"] .user-name,
+            html[data-theme="light"] .cell-doc-title {
+                font-weight: 700;
+            }
+            html[data-theme="light"] .mini-avatar {
+                border-color: #cbd5e1;
+                box-shadow: 0 3px 10px rgba(15, 23, 42, 0.12);
+            }
+            html[data-theme="light"] .pagination-btn {
+                color: #334155;
+                background: #ffffff;
+                border: 1.5px solid #cbd5e1;
+            }
+            html[data-theme="light"] .pagination-btn:hover:not(.disabled) {
+                color: #0f172a;
+                background: #f1f5f9;
+            }
+        </style>
+
         {{-- HEADER --}}
         <div class="logs-header">
             <div>

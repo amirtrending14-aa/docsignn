@@ -2,11 +2,12 @@
 
 @section('content')
 <style>
-    /* Fallback если layout не загрузился */
-    body {
-        background: #06070b !important;
-        color: #e7ecf3 !important;
-    }
+    /* ============================================================ */
+    /* ===== ФОН ПО ТЕМЕ: ТЁМНАЯ → ЧЁРНЫЙ, СВЕТЛАЯ → СВЕТЛЫЙ ===== */
+    /* ============================================================ */
+    html[data-theme="dark"] body{ background:#06070b !important; color:#e7ecf3 !important; }
+    html[data-theme="light"] body{ background:#f4f6fa !important; color:#1e293b !important; }
+
     .att-page-custom { color: var(--text, #e7ecf3); }
 </style>
 <style>
@@ -16,7 +17,7 @@
     .att-page-custom {
         color: var(--text);
         max-width: 100%;
-        overflow-x: clip; /* гарантия: нет горизонтального скролла */
+        overflow-x: clip;
     }
 
     @keyframes attFadeUp {
@@ -39,6 +40,7 @@
     .att-head-icon i { font-size: 20px; color: #0a0d14; }
     .att-page-custom h1 {
         margin: 0; font-size: 24px; font-weight: 800; letter-spacing: -0.5px; line-height: 1.15;
+        color: var(--text);
     }
     .att-subtitle { font-size: 12px; color: var(--muted); font-weight: 600; margin-top: 3px; }
 
@@ -480,15 +482,11 @@
     .att-empty-link:hover { text-decoration: underline; }
 
     /* ===== RESPONSIVE ===== */
-
-    /* ≤1200px */
     @media (max-width: 1200px) {
         .att-settings-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
         .att-field-save { grid-column: span 2; }
         .att-save-btn { width: 100%; justify-content: center; }
     }
-
-    /* ≤992px */
     @media (max-width: 992px) {
         .att-page-custom h1 { font-size: 21px; }
         .att-head-icon { width: 44px; height: 44px; border-radius: 12px; }
@@ -497,8 +495,6 @@
         .att-panel-head { padding: 13px 16px; }
         .att-stat-num { font-size: 20px; }
     }
-
-    /* ≤768px */
     @media (max-width: 768px) {
         .att-page-custom .page-head-custom { margin-bottom: 18px; gap: 10px; }
         .att-page-custom h1 { font-size: 19px; }
@@ -514,8 +510,6 @@
         .att-info-value { font-size: 12px; }
         .att-money-value { font-size: 10.5px; }
     }
-
-    /* ≤576px */
     @media (max-width: 576px) {
         .att-page-custom h1 { font-size: 17px; }
         .att-date-form { width: 100%; }
@@ -526,8 +520,6 @@
         .att-grid { grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); }
         .att-empty { padding: 44px 16px; }
     }
-
-    /* ≤480px */
     @media (max-width: 480px) {
         .att-page-custom h1 { font-size: 16px; }
         .att-head-icon { width: 40px; height: 40px; border-radius: 10px; }
@@ -551,8 +543,6 @@
         .att-money-value { font-size: 9.5px; }
         .att-act { font-size: 9px; padding: 8px 4px; }
     }
-
-    /* ≤380px */
     @media (max-width: 380px) {
         .att-page-custom h1 { font-size: 15px; }
         .att-stat-num { font-size: 16px; }
@@ -560,6 +550,256 @@
         .att-card-badges { flex-wrap: wrap; }
         .att-money-value small { display: block; }
         .att-act { font-size: 8.5px; gap: 4px; }
+    }
+</style>
+
+<style>
+    /* ============================================================ */
+    /* ===== ПОЛНАЯ СВЕТЛАЯ ТЕМА ===== */
+    /* ============================================================ */
+    html[data-theme="light"] .att-page-custom { color: #0f172a !important; }
+
+    html[data-theme="light"] .att-page-custom h1,
+    html[data-theme="light"] .att-panel-title,
+    html[data-theme="light"] .att-card-name,
+    html[data-theme="light"] .att-empty-title {
+        color: #0f172a !important;
+        font-weight: 800 !important;
+    }
+    html[data-theme="light"] .att-subtitle,
+    html[data-theme="light"] .att-stat-label,
+    html[data-theme="light"] .att-label,
+    html[data-theme="light"] .att-company-note,
+    html[data-theme="light"] .att-empty-desc {
+        color: #475569 !important;
+    }
+
+    /* Шапка */
+    html[data-theme="light"] .att-head-icon {
+        background: linear-gradient(135deg, rgba(var(--glow), 0.95), rgba(var(--glow), 0.75));
+        box-shadow: 0 6px 18px rgba(var(--glow), 0.28), inset 0 1px 0 rgba(255,255,255,0.5);
+    }
+
+    /* Кнопка */
+    html[data-theme="light"] .att-page-custom .btn-new {
+        background: linear-gradient(180deg, rgba(var(--glow), 0.95), rgba(var(--glow), 0.75));
+        color: #0a0d14;
+        border: 1px solid rgba(var(--glow), 0.40);
+        box-shadow: 0 4px 14px rgba(var(--glow), 0.22), inset 0 1px 0 rgba(255,255,255,0.5);
+    }
+
+    /* Алерт */
+    html[data-theme="light"] .att-alert {
+        background: #f0fdf4;
+        border-color: #86efac;
+        color: #166534;
+        box-shadow: 0 2px 8px rgba(16,185,129,0.10);
+    }
+
+    /* Форма даты */
+    html[data-theme="light"] .att-date-form {
+        background: #ffffff !important;
+        border-color: #cbd5e1 !important;
+        box-shadow: 0 4px 12px rgba(15,23,42,0.05);
+    }
+
+    /* Инпуты */
+    html[data-theme="light"] .att-input {
+        background: #f8fafc !important;
+        border-color: #cbd5e1 !important;
+        color: #0f172a !important;
+        color-scheme: light;
+    }
+    html[data-theme="light"] .att-input:focus {
+        background: #ffffff !important;
+        border-color: rgba(var(--glow), 0.65) !important;
+        box-shadow: 0 0 0 3px rgba(var(--glow), 0.12) !important;
+    }
+    html[data-theme="light"] select.att-input option {
+        background: #ffffff !important;
+        color: #0f172a !important;
+    }
+
+    /* Статистика */
+    html[data-theme="light"] .att-stat {
+        background: #ffffff !important;
+        border-color: #cbd5e1 !important;
+        box-shadow: 0 4px 14px rgba(15,23,42,0.06);
+    }
+    html[data-theme="light"] .att-stat:hover {
+        box-shadow: 0 12px 28px rgba(15,23,42,0.10), 0 0 0 2px rgba(var(--glow), 0.15);
+    }
+    html[data-theme="light"] .att-stat::before { opacity: 0.75; }
+
+    html[data-theme="light"] .att-stat.st-total  .att-stat-icon { background: rgba(var(--glow), 0.10); border-color: rgba(var(--glow), 0.30); color: rgba(var(--glow), 1); box-shadow: none; }
+    html[data-theme="light"] .att-stat.st-total  .att-stat-num  { color: rgba(var(--glow), 1); text-shadow: none; }
+    html[data-theme="light"] .att-stat.st-green  .att-stat-icon { background: rgba(16,185,129,0.12); border-color: rgba(16,185,129,0.30); color: #059669; box-shadow: none; }
+    html[data-theme="light"] .att-stat.st-green  .att-stat-num  { color: #059669; text-shadow: none; }
+    html[data-theme="light"] .att-stat.st-orange .att-stat-icon { background: rgba(245,158,11,0.12); border-color: rgba(245,158,11,0.30); color: #d97706; box-shadow: none; }
+    html[data-theme="light"] .att-stat.st-orange .att-stat-num  { color: #d97706; text-shadow: none; }
+    html[data-theme="light"] .att-stat.st-red    .att-stat-icon { background: rgba(220,38,38,0.12);  border-color: rgba(220,38,38,0.30);  color: #dc2626; box-shadow: none; }
+    html[data-theme="light"] .att-stat.st-red    .att-stat-num  { color: #dc2626; text-shadow: none; }
+    html[data-theme="light"] .att-stat.st-purple .att-stat-icon { background: rgba(124,58,237,0.10); border-color: rgba(124,58,237,0.30); color: #7c3aed; box-shadow: none; }
+    html[data-theme="light"] .att-stat.st-purple .att-stat-num  { color: #7c3aed; text-shadow: none; }
+
+    /* Фильтры */
+    html[data-theme="light"] .att-filter {
+        background: #ffffff !important;
+        border-color: #cbd5e1 !important;
+        color: #334155 !important;
+        font-weight: 700;
+        box-shadow: 0 2px 6px rgba(15,23,42,0.04);
+    }
+    html[data-theme="light"] .att-filter:hover {
+        background: #f8fafc !important;
+        border-color: rgba(var(--glow), 0.45) !important;
+        color: #0f172a !important;
+    }
+    html[data-theme="light"] .att-filter.active {
+        background: linear-gradient(180deg, rgba(var(--glow), 0.95), rgba(var(--glow), 0.75)) !important;
+        color: #0a0d14 !important;
+        border-color: rgba(var(--glow), 0.45) !important;
+        box-shadow: 0 6px 18px rgba(var(--glow), 0.25);
+    }
+    html[data-theme="light"] .att-filter.active .cnt {
+        background: rgba(0,0,0,0.18);
+        color: #0a0d14;
+    }
+    html[data-theme="light"] .att-filter.active i { color: #0a0d14; }
+
+    html[data-theme="light"] .att-filter.f-all     .cnt { background: rgba(var(--glow), 0.14); color: rgba(var(--glow), 1); }
+    html[data-theme="light"] .att-filter.f-ontime  .cnt { background: rgba(16,185,129,0.14);  color: #059669; }
+    html[data-theme="light"] .att-filter.f-late    .cnt { background: rgba(245,158,11,0.14);  color: #d97706; }
+    html[data-theme="light"] .att-filter.f-absent  .cnt { background: rgba(220,38,38,0.12);   color: #dc2626; }
+    html[data-theme="light"] .att-filter.f-excused .cnt { background: rgba(100,116,139,0.12); color: #475569; }
+
+    /* Панель настроек */
+    html[data-theme="light"] .att-panel {
+        background: #ffffff !important;
+        border-color: #cbd5e1 !important;
+        box-shadow: 0 6px 20px rgba(15,23,42,0.07);
+    }
+    html[data-theme="light"] .att-panel::before { opacity: 0.30; }
+    html[data-theme="light"] .att-panel-head {
+        background: #f8fafc !important;
+        border-bottom-color: #e2e8f0 !important;
+    }
+    html[data-theme="light"] .att-panel-title > i {
+        color: rgba(var(--glow), 1);
+        filter: none;
+    }
+    html[data-theme="light"] .att-label i { color: rgba(var(--glow), 1); }
+
+    html[data-theme="light"] .att-company-note b {
+        color: #0f172a;
+        background: rgba(var(--glow), 0.10);
+        border-color: rgba(var(--glow), 0.30);
+    }
+
+    /* Карточки сотрудников */
+    html[data-theme="light"] .att-card {
+        background: #ffffff !important;
+        border-color: #cbd5e1 !important;
+        box-shadow: 0 4px 16px rgba(15,23,42,0.07);
+    }
+    html[data-theme="light"] .att-card:hover {
+        box-shadow: 0 18px 40px -10px rgba(15,23,42,0.18), 0 0 0 2px rgba(var(--glow), 0.18);
+    }
+
+    html[data-theme="light"] .att-card-photo {
+        background:
+            radial-gradient(circle at 70% 20%, rgba(var(--glow), 0.18), transparent 55%),
+            linear-gradient(135deg, rgba(var(--glow), 0.22), rgba(var(--glow), 0.08));
+    }
+    html[data-theme="light"] .att-card-photo::after {
+        background: linear-gradient(180deg, transparent 45%, rgba(255,255,255,0.92) 100%);
+    }
+    html[data-theme="light"] .att-card-initials {
+        color: #0a0d14;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.15);
+    }
+
+    html[data-theme="light"] .att-online-badge {
+        background: rgba(255,255,255,0.95);
+        border-color: rgba(15,23,42,0.12);
+        backdrop-filter: blur(6px);
+    }
+    html[data-theme="light"] .att-online-badge.on  { color: #059669; border-color: rgba(16,185,129,0.40); }
+    html[data-theme="light"] .att-online-badge.off { color: #dc2626; border-color: rgba(220,38,38,0.35); }
+
+    html[data-theme="light"] .att-status.s-ontime  { background: #dcfce7; color: #166534; box-shadow: none; }
+    html[data-theme="light"] .att-status.s-late    { background: #fef3c7; color: #92400e; box-shadow: none; }
+    html[data-theme="light"] .att-status.s-absent  { background: #fee2e2; color: #991b1b; box-shadow: none; }
+    html[data-theme="light"] .att-status.s-excused { background: #f1f5f9; color: #334155; }
+    html[data-theme="light"] .att-status.s-waiting { background: #dbeafe; color: #1e40af; box-shadow: none; }
+
+    html[data-theme="light"] .att-card-role {
+        background: rgba(var(--glow), 0.08);
+        border-color: rgba(var(--glow), 0.28);
+    }
+
+    /* Info-grid и money-grid */
+    html[data-theme="light"] .att-info-item,
+    html[data-theme="light"] .att-money-item {
+        background: #f8fafc !important;
+        border-color: #e2e8f0 !important;
+    }
+    html[data-theme="light"] .att-info-label,
+    html[data-theme="light"] .att-money-label {
+        color: #64748b !important;
+    }
+    html[data-theme="light"] .att-info-value { color: #0f172a; }
+    html[data-theme="light"] .att-v-danger  { color: #dc2626; }
+    html[data-theme="light"] .att-v-success { color: #059669; }
+    html[data-theme="light"] .att-v-warning { color: #d97706; }
+    html[data-theme="light"] .att-v-muted   { color: #94a3b8; }
+
+    html[data-theme="light"] .att-money-value { color: #0f172a; }
+    html[data-theme="light"] .att-money-value small { color: #64748b; }
+    html[data-theme="light"] .att-m-red   { color: #dc2626; }
+    html[data-theme="light"] .att-m-green { color: #059669; text-shadow: none; }
+
+    /* Actions */
+    html[data-theme="light"] .att-card-actions {
+        border-top-color: #e2e8f0 !important;
+    }
+    html[data-theme="light"] .att-act {
+        background: #f8fafc !important;
+        border-color: #cbd5e1 !important;
+        color: #475569;
+    }
+    html[data-theme="light"] .att-act:hover {
+        color: rgba(var(--glow), 1);
+        border-color: rgba(var(--glow), 0.45);
+        background: rgba(var(--glow), 0.06) !important;
+        box-shadow: none;
+    }
+    html[data-theme="light"] .att-act.excuse:hover {
+        color: #059669;
+        border-color: rgba(16,185,129,0.45);
+        background: rgba(16,185,129,0.08) !important;
+        box-shadow: none;
+    }
+
+    /* Empty state */
+    html[data-theme="light"] .att-empty {
+        background: #ffffff !important;
+        border-color: rgba(var(--glow), 0.35) !important;
+        box-shadow: 0 4px 14px rgba(15,23,42,0.05);
+    }
+    html[data-theme="light"] .att-empty-icon {
+        background: rgba(var(--glow), 0.10);
+        border-color: rgba(var(--glow), 0.30);
+        box-shadow: 0 0 16px rgba(var(--glow), 0.15);
+    }
+    html[data-theme="light"] .att-empty-link { color: rgba(var(--glow), 1); }
+
+    /* Алерт с ошибками — красный вариант */
+    html[data-theme="light"] .att-alert[style*="rgba(255,122,122"] {
+        background: #fef2f2 !important;
+        border-color: #fecaca !important;
+        color: #991b1b !important;
+        box-shadow: 0 2px 8px rgba(220,38,38,0.08) !important;
     }
 </style>
 
@@ -587,7 +827,7 @@
     @if (session('success'))
         <div class="att-alert"><i class="bi bi-check-circle-fill"></i>{{ session('success') }}</div>
     @endif
-@if ($errors->any())
+    @if ($errors->any())
     <div class="att-alert" style="background: rgba(255,122,122,0.08); border-color: rgba(255,122,122,0.3); color: #ff7a7a;">
         <i class="bi bi-exclamation-triangle-fill"></i>
         <div>
@@ -599,7 +839,8 @@
             </ul>
         </div>
     </div>
-@endif
+    @endif
+
     {{-- ===== СТАТИСТИКА ===== --}}
     <div class="att-stats">
         <div class="att-stat st-total">
@@ -743,7 +984,7 @@
             <div class="att-card c-{{ $cClass }}" style="animation-delay:{{ min($loop->index, 8) * 0.05 }}s">
                 <div class="att-card-photo">
                     @if ($user->avatar)
-                        <img src="{{ asset('storage/' . $user->avatar) }}" alt="">
+                        <img src="{{ $user->avatar_url }}" alt="">
                     @else
                         <div class="att-card-initials">{{ $initials }}</div>
                     @endif
@@ -812,24 +1053,24 @@
                         </div>
                     </div>
 
-                   <div class="att-card-actions">
-    <a href="{{ route('users.show', $user->id) }}" class="att-act">
-        <i class="bi bi-eye-fill"></i> <span data-i18n="profileBtn">Профиль</span>
-    </a>
-    <a href="{{ route('admin.reports.user', $user->id) }}?month={{ substr($date, 0, 7) }}" class="att-act">
-        <i class="bi bi-calendar3"></i> <span data-i18n="calendarBtn">Отчёт</span>
-    </a>
-    @if (in_array($c->status, ['absent', 'late', 'waiting']))
-        <form method="POST" action="{{ route('admin.reports.excuse') }}">
-            @csrf
-            <input type="hidden" name="user_id" value="{{ $user->id }}">
-            <input type="hidden" name="date" value="{{ $date }}">
-            <button type="submit" class="att-act excuse">
-                <i class="bi bi-shield-check"></i> <span data-i18n="excuseBtn">Я знал</span>
-            </button>
-        </form>
-    @endif
-</div>
+                    <div class="att-card-actions">
+                        <a href="{{ route('users.show', $user->id) }}" class="att-act">
+                            <i class="bi bi-eye-fill"></i> <span data-i18n="profileBtn">Профиль</span>
+                        </a>
+                        <a href="{{ route('admin.reports.user', $user->id) }}?month={{ substr($date, 0, 7) }}" class="att-act">
+                            <i class="bi bi-calendar3"></i> <span data-i18n="calendarBtn">Отчёт</span>
+                        </a>
+                        @if (in_array($c->status, ['absent', 'late', 'waiting']))
+                            <form method="POST" action="{{ route('admin.reports.excuse') }}">
+                                @csrf
+                                <input type="hidden" name="user_id" value="{{ $user->id }}">
+                                <input type="hidden" name="date" value="{{ $date }}">
+                                <button type="submit" class="att-act excuse">
+                                    <i class="bi bi-shield-check"></i> <span data-i18n="excuseBtn">Я знал</span>
+                                </button>
+                            </form>
+                        @endif
+                    </div>
                 </div>
             </div>
         @empty
@@ -851,158 +1092,78 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // ============================================================
-        // СЛОВАРЬ СТРАНИЦЫ ПОСЕЩАЕМОСТИ (RU / TJ / EN)
-        // ============================================================
         const ATT_TRANSLATIONS = {
             ru: {
-                attTitle: 'ПОСЕЩАЕМОСТЬ КОМАНДЫ',
-                attSubtitle: 'Все сотрудники и их действия',
+                attTitle: 'ПОСЕЩАЕМОСТЬ КОМАНДЫ', attSubtitle: 'Все сотрудники и их действия',
                 showBtn: 'Показать',
-                statTotal: 'Всего',
-                statOnTime: 'Вовремя',
-                statLate: 'Опоздали',
-                statAbsent: 'Не пришли',
-                statFines: 'Штрафы дня',
-                filterAll: 'Все',
-                filterOnTime: 'Вовремя',
-                filterLate: 'Опоздали',
-                filterAbsent: 'Не пришли',
-                filterExcused: 'Разрешено',
+                statTotal: 'Всего', statOnTime: 'Вовремя', statLate: 'Опоздали',
+                statAbsent: 'Не пришли', statFines: 'Штрафы дня',
+                filterAll: 'Все', filterOnTime: 'Вовремя', filterLate: 'Опоздали',
+                filterAbsent: 'Не пришли', filterExcused: 'Разрешено',
                 rulesTitle: 'Правила штрафов',
-                companyLabel: 'Компания',
-                workStartLabel: 'Начало работы',
-                everyMinLabel: 'Каждые (мин)',
-                minusSomLabel: '= минус (сом)',
-                absenceSomLabel: 'Неявка (сом)',
-                saveBtn: 'Сохранить',
-                online: 'Онлайн',
-                offline: 'Офлайн',
-                infoStart: 'Начало',
-                infoArrival: 'Приход',
-                infoLate: 'Опоздал',
-                infoFine: 'Штраф',
-                monthLabel: 'Месяц',
-                salaryLabel: 'Зарплата',
-                payoutLabel: 'К выплате',
-                som: 'сом',
-                profileBtn: 'Профиль',
-                excuseBtn: 'Я знал',
-                emptyTitle: 'Нет сотрудников',
-                emptyFiltered: 'В этой категории никого нет.',
-                showAll: 'Показать всех',
-                emptyAll: 'Добавьте сотрудников с галочкой «нужен скан»',
-                status_on_time: 'Вовремя',
-                status_late: 'Опоздал',
-                status_absent: 'Не пришёл',
-                status_excused: 'Разрешено',
-                status_waiting: 'Ожидание',
-                lateH: 'ч',
-                lateM: 'мин'
+                companyLabel: 'Компания', workStartLabel: 'Начало работы',
+                everyMinLabel: 'Каждые (мин)', minusSomLabel: '= минус (сом)',
+                absenceSomLabel: 'Неявка (сом)', saveBtn: 'Сохранить',
+                online: 'Онлайн', offline: 'Офлайн',
+                infoStart: 'Начало', infoArrival: 'Приход', infoLate: 'Опоздал', infoFine: 'Штраф',
+                monthLabel: 'Месяц', salaryLabel: 'Зарплата', payoutLabel: 'К выплате', som: 'сом',
+                profileBtn: 'Профиль', calendarBtn: 'Отчёт', excuseBtn: 'Я знал',
+                emptyTitle: 'Нет сотрудников', emptyFiltered: 'В этой категории никого нет.',
+                showAll: 'Показать всех', emptyAll: 'Добавьте сотрудников с галочкой «нужен скан»',
+                status_on_time: 'Вовремя', status_late: 'Опоздал', status_absent: 'Не пришёл',
+                status_excused: 'Разрешено', status_waiting: 'Ожидание',
+                lateH: 'ч', lateM: 'мин'
             },
             tj: {
-                attTitle: 'ҲУЗУРИ ДАСТА',
-                attSubtitle: 'Ҳамаи кормандон ва амалҳои онҳо',
+                attTitle: 'ҲУЗУРИ ДАСТА', attSubtitle: 'Ҳамаи кормандон ва амалҳои онҳо',
                 showBtn: 'Нишон додан',
-                statTotal: 'Ҳамагӣ',
-                statOnTime: 'Сари вақт',
-                statLate: 'Деркарда',
-                statAbsent: 'Наомада',
-                statFines: 'Ҷаримаҳои рӯз',
-                filterAll: 'Ҳама',
-                filterOnTime: 'Сари вақт',
-                filterLate: 'Деркарда',
-                filterAbsent: 'Наомада',
-                filterExcused: 'Иҷозат',
+                statTotal: 'Ҳамагӣ', statOnTime: 'Сари вақт', statLate: 'Деркарда',
+                statAbsent: 'Наомада', statFines: 'Ҷаримаҳои рӯз',
+                filterAll: 'Ҳама', filterOnTime: 'Сари вақт', filterLate: 'Деркарда',
+                filterAbsent: 'Наомада', filterExcused: 'Иҷозат',
                 rulesTitle: 'Қоидаҳои ҷарима',
-                companyLabel: 'Ширкат',
-                workStartLabel: 'Оғози кор',
-                everyMinLabel: 'Ҳар (дақиқа)',
-                minusSomLabel: '= минус (сом)',
-                absenceSomLabel: 'Неомадан (сом)',
-                saveBtn: 'Захира',
-                online: 'Онлайн',
-                offline: 'Офлайн',
-                infoStart: 'Оғоз',
-                infoArrival: 'Омад',
-                infoLate: 'Деромад',
-                infoFine: 'Ҷарима',
-                monthLabel: 'Моҳ',
-                salaryLabel: 'Маош',
-                payoutLabel: 'Пардохт',
-                som: 'сом',
-                profileBtn: 'Профил',
-                excuseBtn: 'Медонистам',
-                emptyTitle: 'Кормандон нестанд',
-                emptyFiltered: 'Дар ин категория касе нест.',
-                showAll: 'Ҳамаро нишон додан',
-                emptyAll: 'Кормандонро бо қайди «скан лозим» илова кунед',
-                status_on_time: 'Сари вақт',
-                status_late: 'Дер кард',
-                status_absent: 'Наомад',
-                status_excused: 'Иҷозат',
-                status_waiting: 'Интизорӣ',
-                lateH: 'с',
-                lateM: 'дақ'
+                companyLabel: 'Ширкат', workStartLabel: 'Оғози кор',
+                everyMinLabel: 'Ҳар (дақиқа)', minusSomLabel: '= минус (сом)',
+                absenceSomLabel: 'Неомадан (сом)', saveBtn: 'Захира',
+                online: 'Онлайн', offline: 'Офлайн',
+                infoStart: 'Оғоз', infoArrival: 'Омад', infoLate: 'Деромад', infoFine: 'Ҷарима',
+                monthLabel: 'Моҳ', salaryLabel: 'Маош', payoutLabel: 'Пардохт', som: 'сом',
+                profileBtn: 'Профил', calendarBtn: 'Ҳисобот', excuseBtn: 'Медонистам',
+                emptyTitle: 'Кормандон нестанд', emptyFiltered: 'Дар ин категория касе нест.',
+                showAll: 'Ҳамаро нишон додан', emptyAll: 'Кормандонро бо қайди «скан лозим» илова кунед',
+                status_on_time: 'Сари вақт', status_late: 'Дер кард', status_absent: 'Наомад',
+                status_excused: 'Иҷозат', status_waiting: 'Интизорӣ',
+                lateH: 'с', lateM: 'дақ'
             },
             en: {
-                attTitle: 'TEAM ATTENDANCE',
-                attSubtitle: 'All employees and their actions',
+                attTitle: 'TEAM ATTENDANCE', attSubtitle: 'All employees and their actions',
                 showBtn: 'Show',
-                statTotal: 'Total',
-                statOnTime: 'On time',
-                statLate: 'Late',
-                statAbsent: 'Absent',
-                statFines: 'Day fines',
-                filterAll: 'All',
-                filterOnTime: 'On time',
-                filterLate: 'Late',
-                filterAbsent: 'Absent',
-                filterExcused: 'Excused',
+                statTotal: 'Total', statOnTime: 'On time', statLate: 'Late',
+                statAbsent: 'Absent', statFines: 'Day fines',
+                filterAll: 'All', filterOnTime: 'On time', filterLate: 'Late',
+                filterAbsent: 'Absent', filterExcused: 'Excused',
                 rulesTitle: 'Fine rules',
-                companyLabel: 'Company',
-                workStartLabel: 'Work start',
-                everyMinLabel: 'Every (min)',
-                minusSomLabel: '= minus (som)',
-                absenceSomLabel: 'Absence (som)',
-                saveBtn: 'Save',
-                online: 'Online',
-                offline: 'Offline',
-                infoStart: 'Start',
-                infoArrival: 'Arrival',
-                infoLate: 'Late',
-                infoFine: 'Fine',
-                monthLabel: 'Month',
-                salaryLabel: 'Salary',
-                payoutLabel: 'Payout',
-                som: 'som',
-                profileBtn: 'Profile',
-                excuseBtn: 'I knew',
-                emptyTitle: 'No employees',
-                emptyFiltered: 'Nobody in this category.',
-                showAll: 'Show all',
-                emptyAll: 'Add employees with the "scan required" flag',
-                status_on_time: 'On time',
-                status_late: 'Late',
-                status_absent: 'Absent',
-                status_excused: 'Excused',
-                status_waiting: 'Waiting',
-                lateH: 'h',
-                lateM: 'min'
+                companyLabel: 'Company', workStartLabel: 'Work start',
+                everyMinLabel: 'Every (min)', minusSomLabel: '= minus (som)',
+                absenceSomLabel: 'Absence (som)', saveBtn: 'Save',
+                online: 'Online', offline: 'Offline',
+                infoStart: 'Start', infoArrival: 'Arrival', infoLate: 'Late', infoFine: 'Fine',
+                monthLabel: 'Month', salaryLabel: 'Salary', payoutLabel: 'Payout', som: 'som',
+                profileBtn: 'Profile', calendarBtn: 'Report', excuseBtn: 'I knew',
+                emptyTitle: 'No employees', emptyFiltered: 'Nobody in this category.',
+                showAll: 'Show all', emptyAll: 'Add employees with the "scan required" flag',
+                status_on_time: 'On time', status_late: 'Late', status_absent: 'Absent',
+                status_excused: 'Excused', status_waiting: 'Waiting',
+                lateH: 'h', lateM: 'min'
             }
         };
 
-        // ============================================================
-        // ПРИМЕНЕНИЕ ПЕРЕВОДОВ
-        // ============================================================
         function applyAttTranslations(lang) {
             const dict = ATT_TRANSLATIONS[lang] || ATT_TRANSLATIONS.ru;
-
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
                 if (dict[key] !== undefined) el.textContent = dict[key];
             });
-
             document.querySelectorAll('[data-status-key]').forEach(el => {
                 const key = el.getAttribute('data-status-key');
                 if (dict[key]) {
@@ -1014,9 +1175,6 @@
             });
         }
 
-        // ============================================================
-        // АНИМАЦИЯ ЦИФР (count-up)
-        // ============================================================
         function animateCounters() {
             document.querySelectorAll('.att-stat-num[data-count]').forEach(el => {
                 const target = parseFloat(el.getAttribute('data-count'));
@@ -1035,17 +1193,13 @@
             });
         }
 
-        // Старт
         const initialLang = localStorage.getItem('docsign_lang') || 'ru';
         applyAttTranslations(initialLang);
         animateCounters();
 
-        // Смена языка из layout
         window.addEventListener('docsign:lang-changed', (e) => {
             applyAttTranslations(e.detail?.lang || 'ru');
         });
-
-        // Синхронизация между вкладками
         window.addEventListener('storage', (e) => {
             if (e.key === 'docsign_lang' && e.newValue) {
                 applyAttTranslations(e.newValue);

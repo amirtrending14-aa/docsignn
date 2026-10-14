@@ -12,7 +12,7 @@
         <div class="flex items-center gap-4">
             <div class="w-16 h-16 rounded-full bg-gradient-to-br from-red-500 to-purple-600 flex items-center justify-center text-white font-bold text-2xl ring-2 ring-white/10 shadow-lg overflow-hidden">
                 @if($user->avatar)
-                <img src="{{ asset('storage/' . $user->avatar) }}" alt="" class="w-16 h-16 rounded-full object-cover">
+                <img src="{{ $user->avatar_url }}" alt="" class="w-16 h-16 rounded-full object-cover">
                 @else
                 {{ Str::upper(Str::substr($user->name, 0, 1)) }}
                 @endif
@@ -197,7 +197,7 @@
             <div class="flex items-center gap-6">
                 <div class="w-24 h-24 rounded-full bg-gradient-to-br from-red-500 to-purple-600 flex items-center justify-center text-white font-bold text-3xl ring-2 ring-white/10 shadow-lg flex-shrink-0 overflow-hidden">
                     @if($user->avatar)
-                    <img src="{{ asset('storage/' . $user->avatar) }}" alt="" class="w-24 h-24 rounded-full object-cover">
+                    <img src="{{ $user->avatar_url }}" alt="" class="w-24 h-24 rounded-full object-cover">
                     @else
                     {{ Str::upper(Str::substr($user->name, 0, 1)) }}
                     @endif

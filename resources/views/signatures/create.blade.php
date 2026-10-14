@@ -436,14 +436,20 @@
 
     .docx-wrapper {
         background: transparent !important;
-        padding: 0 !important;
+        padding: 20px 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
     }
 
+    /* ВАЖНО: раньше здесь было width:100% !important; min-height:100% !important —
+       это растягивало страницу Word и ломало её реальные пропорции (A4/Letter),
+       из-за чего клик по превью не совпадал с реальной позицией в файле.
+       Теперь docx-preview сам задаёт настоящий размер страницы в пикселях —
+       мы только добавляем внешний вид (тень, отступ), не трогая размеры. */
     .docx {
-        width: 100% !important;
-        min-height: 100% !important;
-        padding: 20px !important;
-        box-shadow: none !important;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.4) !important;
+        margin: 0 auto 20px auto !important;
     }
 
     .btn-download {
@@ -741,6 +747,85 @@
     }
 
     /* ============================================ */
+    /* === РУЧНОЕ ПОЗИЦИОНИРОВАНИЕ QR === */
+    /* ============================================ */
+
+    .qr-marker {
+        position: absolute;
+        width: 40px;
+        height: 40px;
+        margin-left: -20px;
+        margin-top: -20px;
+        background: linear-gradient(135deg, rgba(76, 217, 130, 0.95), rgba(76, 217, 130, 0.75));
+        border: 2px solid #fff;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 18px;
+        cursor: grab;
+        box-shadow: 0 0 14px rgba(76, 217, 130, 0.6), 0 4px 10px rgba(0,0,0,0.4);
+        z-index: 999;
+        touch-action: none;
+        animation: qrMarkerAppear 0.25s ease-out;
+    }
+    .qr-marker:active { cursor: grabbing; }
+    @keyframes qrMarkerAppear {
+        from { opacity: 0; transform: scale(0.5); }
+        to { opacity: 1; transform: scale(1); }
+    }
+
+    .qr-picker-active { outline: 2px dashed rgba(76, 217, 130, 0.5); outline-offset: -2px; cursor: crosshair; }
+
+    .virtual-a4-page {
+        position: relative;
+        width: 100%;
+        max-width: 620px;
+        aspect-ratio: 210 / 297;
+        background: #fff;
+        margin: 20px auto;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        cursor: crosshair;
+        outline: 2px dashed rgba(76, 217, 130, 0.5);
+        outline-offset: -2px;
+    }
+    .virtual-page-note {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 30px;
+        color: #8892a6;
+        font-size: 12px;
+        font-weight: 600;
+        pointer-events: none;
+    }
+
+    .position-hint {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 12px;
+        background: rgba(255, 99, 99, 0.1);
+        border: 1px solid rgba(255, 99, 99, 0.3);
+        border-radius: 10px;
+        font-size: 11px;
+        font-weight: 700;
+        color: #ff8a8a;
+        margin-top: 14px;
+        transition: all 0.25s ease;
+    }
+    .position-hint.ok {
+        background: rgba(76, 217, 130, 0.1);
+        border-color: rgba(76, 217, 130, 0.3);
+        color: #4cd982;
+    }
+    .position-hint i { font-size: 15px; }
+
+    /* ============================================ */
     /* === ПОЛНАЯ АДАПТИВНОСТЬ === */
     /* ============================================ */
 
@@ -958,6 +1043,65 @@
     }
 </style>
 
+<style>
+    html[data-theme="light"] .sig-container {
+        color: #0f172a !important;
+    }
+    html[data-theme="light"] .sig-panel,
+    html[data-theme="light"] .qr-section,
+    html[data-theme="light"] .viewer-container {
+        background: #ffffff !important;
+        border-color: #cbd5e1 !important;
+        box-shadow: 0 10px 26px rgba(15, 23, 42, 0.08);
+    }
+    html[data-theme="light"] .sig-panel-title,
+    html[data-theme="light"] .info-box p,
+    html[data-theme="light"] .qr-subtitle,
+    html[data-theme="light"] .document-title {
+        color: #0f172a !important;
+        font-weight: 800;
+    }
+    html[data-theme="light"] .sig-label,
+    html[data-theme="light"] .qr-title,
+    html[data-theme="light"] .info-box p:last-child,
+    html[data-theme="light"] .viewer-toolbar,
+    html[data-theme="light"] .document-meta {
+        color: #475569 !important;
+        font-weight: 700;
+    }
+    html[data-theme="light"] .sig-select,
+    html[data-theme="light"] .signature-input,
+    html[data-theme="light"] .signature-textarea {
+        background: #f8fafc !important;
+        border-color: #b8c4d3 !important;
+        color: #0f172a !important;
+    }
+    html[data-theme="light"] .sig-select:focus,
+    html[data-theme="light"] .signature-input:focus,
+    html[data-theme="light"] .signature-textarea:focus {
+        background: #ffffff !important;
+        border-color: #4f8cff !important;
+    }
+    html[data-theme="light"] .sig-select option {
+        background: #ffffff;
+        color: #0f172a;
+    }
+    html[data-theme="light"] .document-wrapper,
+    html[data-theme="light"] .pdf-page,
+    html[data-theme="light"] .docx-preview {
+        background: #ffffff !important;
+    }
+    html[data-theme="light"] .viewer-toolbar,
+    html[data-theme="light"] .viewer-footer {
+        background: #f8fafc !important;
+        border-color: #cbd5e1 !important;
+    }
+    html[data-theme="light"] .btn-submit {
+        color: #0f172a !important;
+        font-weight: 800;
+    }
+</style>
+
 <div class="sig-container">
     <div class="sig-layout">
 
@@ -969,21 +1113,28 @@
             <div class="info-box">
                 <h3>
                     <i class="bi bi-info-circle-fill"></i>
-                    <span data-i18n="autoSignTitle">Автоматическая подпись</span>
+                    <span data-i18n="autoSignTitle">Ручное размещение QR</span>
                 </h3>
                 <p data-i18n="autoSignDesc">
-                    QR-код с подписью будет автоматически размещён на <strong>последней странице</strong> документа в правом нижнем углу.
+                    Кликните по документу справа в нужном месте — туда и будет вставлен QR-код подписи. Маркер можно перетащить мышкой, чтобы уточнить позицию.
                 </p>
                 <p>
-                    ✅ PDF — последняя страница<br>
-                    ✅ DOCX — последняя страница<br>
-                    ✅ XLSX — последний лист<br>
-                    ✅ RTF — конвертируется в DOCX
+                    ✅ PDF — точный клик по странице<br>
+                    ✅ DOCX — клик по последней странице<br>
+                    ✅ XLSX — клик по ячейке на последнем листе<br>
+                    ✅ RTF — конвертируется в DOCX, клик по превью
                 </p>
             </div>
 
             <form action="{{ route('signatures.store') }}" method="POST" id="signatureForm">
                 @csrf
+
+                <input type="hidden" name="position_mode" id="positionMode">
+                <input type="hidden" name="qr_x_percent" id="qrXPercent">
+                <input type="hidden" name="qr_y_percent" id="qrYPercent">
+                <input type="hidden" name="qr_cell" id="qrCell">
+                <input type="hidden" name="qr_offset_x" id="qrOffsetX">
+                <input type="hidden" name="qr_offset_y" id="qrOffsetY">
 
                 <div class="sig-select-wrapper">
                     <label class="sig-label" data-i18n="selectDocument">
@@ -1007,11 +1158,19 @@
 
                         $qrText = "DocSign | DOC: {$doc->title} | SENDER: {$senderName} | SIGNED BY: {$signerName} | DATE: {$dateSent}";
                         $qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=" . urlencode($qrText);
+
+                        // ✅ НОВОЕ: для pdf/docx/doc/rtf превью теперь всегда идёт через
+                        // единый PDF-роут (для Word сервер конвертирует в PDF на лету) —
+                        // это даёт превью и позиционирование клика ТОЧНО как у PDF.
+                        $previewUrl = in_array($ext, ['pdf', 'docx', 'doc', 'rtf'])
+                            ? route('documents.previewPdf', $doc->id)
+                            : null;
                         @endphp
                         <option value="{{ $doc->id }}"
                                 {{ (request('document_id') == $doc->id) || (!request('document_id') && $index == 0 && !$documents->isEmpty()) ? 'selected' : '' }}
                        data-file="{{ route('documents.stream', $doc->id) }}"
 data-download="{{ route('documents.download', $doc->id) }}"
+data-preview="{{ $previewUrl }}"
 data-filename="{{ basename($doc->file_path) }}"
                         data-type="{{ $formatType }}"
                         data-ext="{{ $ext }}"
@@ -1039,8 +1198,13 @@ data-filename="{{ basename($doc->file_path) }}"
                     <span id="formatBadge" class="format-badge"></span>
                 </div>
 
+                <div id="positionHint" class="position-hint">
+                    <i class="bi bi-cursor-fill"></i>
+                    <span data-i18n="positionNeeded">Кликните по документу справа, чтобы указать место QR-кода</span>
+                </div>
+
                 <div class="submit-wrapper" style="margin-top: 20px;">
-                    <button type="submit" id="submitBtn" class="btn-submit">
+                    <button type="submit" id="submitBtn" class="btn-submit" disabled>
                         <i class="bi bi-shield-check"></i>
                         <span data-i18n="applyStamp">Подписать документ</span>
                     </button>
@@ -1091,8 +1255,8 @@ data-filename="{{ basename($doc->file_path) }}"
         const SIGN_TRANSLATIONS = {
             ru: {
                 title: 'Подпись документа',
-                autoSignTitle: 'Автоматическая подпись',
-                autoSignDesc: 'QR-код с подписью будет автоматически размещён на последней странице документа.',
+                autoSignTitle: 'Ручное размещение QR',
+                autoSignDesc: 'Кликните по документу справа в нужном месте — туда и будет вставлен QR-код подписи. Маркер можно перетащить мышкой.',
                 selectDocument: 'Выбор документа',
                 selectPlaceholder: '-- Список документов --',
                 signatureCheck: 'Проверка подписи',
@@ -1103,18 +1267,22 @@ data-filename="{{ basename($doc->file_path) }}"
                 applyStamp: 'Подписать документ',
                 applyingStamp: 'Подписание...',
                 selectAlert: 'Выберите документ!',
+                positionAlert: 'Кликните по документу, чтобы указать место QR-кода!',
+                positionNeeded: 'Кликните по документу справа, чтобы указать место QR-кода',
+                positionSet: 'Место для QR-кода выбрано',
                 selectDocPreview: 'Выберите документ для предпросмотра',
                 excelSheets: 'листов',
                 excelRows: 'строк',
                 excelCols: 'столбцов',
                 excelEmpty: 'Лист пуст',
                 excelLoadError: 'Ошибка предпросмотра Excel',
+                excelWrongSheet: 'QR будет добавлен только на последний лист — переключитесь на него',
                 rowNumber: '№'
             },
             tj: {
                 title: 'Имзои ҳуҷҷат',
-                autoSignTitle: 'Имзои автоматикӣ',
-                autoSignDesc: 'QR-коди имзо ба таври худкор дар саҳифаи охирини ҳуҷҷат ҷойгир мешавад.',
+                autoSignTitle: 'Ҷойгиркунии дастии QR',
+                autoSignDesc: 'Дар ҳуҷҷат дар тарафи рост дар ҷои лозимӣ клик кунед — QR-код дар он ҷо гузошта мешавад. Нишонаро бо муш кашидан мумкин аст.',
                 selectDocument: 'Интихоби ҳуҷҷат',
                 selectPlaceholder: '-- Рӯйхати ҳуҷҷатҳо --',
                 signatureCheck: 'Санҷиши имзо',
@@ -1125,18 +1293,22 @@ data-filename="{{ basename($doc->file_path) }}"
                 applyStamp: 'Имзо кардан',
                 applyingStamp: 'Имзо шуда истодааст...',
                 selectAlert: 'Ҳуҷҷатро интихоб кунед!',
+                positionAlert: 'Ҷои QR-кодро дар ҳуҷҷат нишон диҳед!',
+                positionNeeded: 'Дар ҳуҷҷат клик кунед, то ҷои QR-кодро нишон диҳед',
+                positionSet: 'Ҷои QR-код интихоб шуд',
                 selectDocPreview: 'Барои пешнамоиш ҳуҷҷатро интихоб кунед',
                 excelSheets: 'варақҳо',
                 excelRows: 'сатрҳо',
                 excelCols: 'сутунҳо',
                 excelEmpty: 'Варақ холӣ аст',
                 excelLoadError: 'Хатои пешнамоиши Excel',
+                excelWrongSheet: 'QR танҳо ба варақи охирин гузошта мешавад — ба он гузаред',
                 rowNumber: '№'
             },
             en: {
                 title: 'Document Signing',
-                autoSignTitle: 'Automatic Signature',
-                autoSignDesc: 'QR code with signature will be automatically placed on the last page of the document.',
+                autoSignTitle: 'Manual QR placement',
+                autoSignDesc: 'Click anywhere on the document preview to choose where the QR code goes. Drag the marker to fine-tune the position.',
                 selectDocument: 'Select Document',
                 selectPlaceholder: '-- Document List --',
                 signatureCheck: 'Signature Verification',
@@ -1147,12 +1319,16 @@ data-filename="{{ basename($doc->file_path) }}"
                 applyStamp: 'Sign Document',
                 applyingStamp: 'Signing...',
                 selectAlert: 'Please select a document!',
+                positionAlert: 'Click on the document to choose where to place the QR code!',
+                positionNeeded: 'Click on the document to choose the QR code position',
+                positionSet: 'QR code position selected',
                 selectDocPreview: 'Select a document to preview',
                 excelSheets: 'sheets',
                 excelRows: 'rows',
                 excelCols: 'columns',
                 excelEmpty: 'Sheet is empty',
                 excelLoadError: 'Excel preview error',
+                excelWrongSheet: 'QR is only placed on the last sheet — switch to it',
                 rowNumber: '#'
             }
         };
@@ -1179,6 +1355,8 @@ data-filename="{{ basename($doc->file_path) }}"
                 const key = el.getAttribute('data-i18n-title');
                 if (dict[key] !== undefined) el.setAttribute('title', dict[key]);
             });
+
+            updateSubmitState();
         }
 
         const form = document.getElementById('signatureForm');
@@ -1191,7 +1369,135 @@ data-filename="{{ basename($doc->file_path) }}"
         const qrPreview = document.getElementById('qrPreview');
         const wrapper = document.getElementById('documentWrapper');
         const submitBtn = document.getElementById('submitBtn');
+        const positionHint = document.getElementById('positionHint');
+        const viewBtn = document.getElementById('viewBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
 
+        // ====== ПОЗИЦИОНИРОВАНИЕ QR ======
+        let qrPosition = null; // {mode:'page', xPercent, yPercent} | {mode:'cell', cell, offsetX, offsetY}
+        let excelLastSheetIndex = 0;
+        let excelActiveSheetIndex = 0;
+
+        function resetQrPosition() {
+            qrPosition = null;
+            document.querySelectorAll('.qr-marker').forEach(m => m.remove());
+            updateSubmitState();
+        }
+
+        function updateSubmitState() {
+            const dict = getCurrentDict();
+            if (!submitBtn || !positionHint) return;
+            if (qrPosition) {
+                submitBtn.disabled = false;
+                positionHint.classList.add('ok');
+                positionHint.innerHTML = '<i class="bi bi-check-circle-fill"></i><span>' + dict.positionSet + '</span>';
+            } else {
+                submitBtn.disabled = true;
+                positionHint.classList.remove('ok');
+                positionHint.innerHTML = '<i class="bi bi-cursor-fill"></i><span>' + dict.positionNeeded + '</span>';
+            }
+        }
+
+        function placeMarker(container, x, y) {
+            document.querySelectorAll('.qr-marker').forEach(m => m.remove());
+            const marker = document.createElement('div');
+            marker.className = 'qr-marker';
+            marker.innerHTML = '<i class="bi bi-qr-code"></i>';
+            marker.style.left = x + 'px';
+            marker.style.top = y + 'px';
+            container.appendChild(marker);
+            enableMarkerDrag(marker, container);
+            return marker;
+        }
+
+        function enableMarkerDrag(marker, container) {
+            let dragging = false;
+            marker.addEventListener('pointerdown', (e) => {
+                dragging = true;
+                marker.setPointerCapture(e.pointerId);
+                e.stopPropagation();
+            });
+            marker.addEventListener('pointermove', (e) => {
+                if (!dragging) return;
+                const rect = container.getBoundingClientRect();
+                let x = e.clientX - rect.left;
+                let y = e.clientY - rect.top;
+                x = Math.max(0, Math.min(rect.width, x));
+                y = Math.max(0, Math.min(rect.height, y));
+                marker.style.left = x + 'px';
+                marker.style.top = y + 'px';
+                if (qrPosition && qrPosition.mode === 'page') {
+                    qrPosition.xPercent = (x / rect.width) * 100;
+                    qrPosition.yPercent = (y / rect.height) * 100;
+                }
+            });
+            marker.addEventListener('pointerup', (e) => {
+                dragging = false;
+                marker.releasePointerCapture(e.pointerId);
+            });
+        }
+
+        function attachPagePicker(pageEl) {
+            pageEl.style.position = 'relative';
+            pageEl.classList.add('qr-picker-active');
+            pageEl.addEventListener('click', (e) => {
+                if (e.target.closest('.qr-marker')) return;
+                const rect = pageEl.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                qrPosition = {
+                    mode: 'page',
+                    xPercent: (x / rect.width) * 100,
+                    yPercent: (y / rect.height) * 100
+                };
+                placeMarker(pageEl, x, y);
+                updateSubmitState();
+            });
+        }
+
+        function attachCellPicker(tableWrapperEl) {
+            tableWrapperEl.style.cursor = 'crosshair';
+            tableWrapperEl.style.position = 'relative';
+            tableWrapperEl.addEventListener('click', (e) => {
+                const td = e.target.closest('td[data-cell-ref]');
+                if (!td) return;
+
+                if (excelActiveSheetIndex !== excelLastSheetIndex) {
+                    alert(getCurrentDict().excelWrongSheet);
+                    return;
+                }
+
+                const cellRect = td.getBoundingClientRect();
+                const wrapperRect = tableWrapperEl.getBoundingClientRect();
+
+                // ВАЖНО: считаем позицию клика как ПРОЦЕНТ от размера ячейки (0-100),
+                // а не сырые пиксели браузерной таблицы. Реальная ширина столбца
+                // в файле Excel почти всегда отличается от того, как ячейка
+                // отрисована в HTML-превью — проценты одинаково корректно
+                // переносятся на настоящие размеры столбца/строки на сервере.
+                const offsetXPercent = ((e.clientX - cellRect.left) / cellRect.width) * 100;
+                const offsetYPercent = ((e.clientY - cellRect.top) / cellRect.height) * 100;
+
+                qrPosition = {
+                    mode: 'cell',
+                    cell: td.dataset.cellRef,
+                    offsetX: offsetXPercent,
+                    offsetY: offsetYPercent
+                };
+
+                document.querySelectorAll('.qr-marker').forEach(m => m.remove());
+                const marker = document.createElement('div');
+                marker.className = 'qr-marker';
+                marker.innerHTML = '<i class="bi bi-qr-code"></i>';
+                marker.style.left = (cellRect.left - wrapperRect.left + tableWrapperEl.scrollLeft + (cellRect.width / 2)) + 'px';
+                marker.style.top = (cellRect.top - wrapperRect.top + tableWrapperEl.scrollTop + (cellRect.height / 2)) + 'px';
+                tableWrapperEl.appendChild(marker);
+
+                updateSubmitState();
+            });
+        }
+
+        // ====== EXCEL ======
         function getExcelColumnLabel(colIndex) {
             let label = '';
             let n = colIndex;
@@ -1257,6 +1563,7 @@ data-filename="{{ basename($doc->file_path) }}"
                 for (let c = 0; c < maxCols; c++) {
                     const td = document.createElement('td');
                     const cellValue = row[c] !== undefined ? row[c] : '';
+                    td.dataset.cellRef = getExcelColumnLabel(c) + (r + 1);
 
                     if (cellValue === '' || cellValue === null) {
                         td.className = 'cell-empty';
@@ -1287,6 +1594,8 @@ data-filename="{{ basename($doc->file_path) }}"
                 })
                 .then(data => {
                     const workbook = XLSX.read(data, { type: 'array' });
+                    excelLastSheetIndex = workbook.SheetNames.length - 1;
+                    excelActiveSheetIndex = excelLastSheetIndex;
 
                     const container = document.createElement('div');
                     container.className = 'excel-preview-container';
@@ -1306,30 +1615,34 @@ data-filename="{{ basename($doc->file_path) }}"
                     `;
                     container.appendChild(toolbar);
 
-                    if (workbook.SheetNames.length > 0) {
-                        const tabsDiv = document.createElement('div');
-                        tabsDiv.className = 'excel-sheet-tabs';
+                    const tabsDiv = document.createElement('div');
+                    tabsDiv.className = 'excel-sheet-tabs';
 
-                        workbook.SheetNames.forEach((sheetName, index) => {
-                            const tab = document.createElement('div');
-                            tab.className = 'excel-sheet-tab';
-                            tab.innerHTML = `<i class="bi bi-table"></i><span>${sheetName}</span>`;
-                            tab.dataset.sheetIndex = index;
+                    workbook.SheetNames.forEach((sheetName, index) => {
+                        const tab = document.createElement('div');
+                        tab.className = 'excel-sheet-tab';
+                        tab.innerHTML = `<i class="bi bi-table"></i><span>${sheetName}</span>` + (index === excelLastSheetIndex ? ' <i class="bi bi-qr-code" title="QR будет здесь"></i>' : '');
+                        tab.dataset.sheetIndex = index;
 
-                            if (index === 0) tab.classList.add('active');
+                        if (index === excelLastSheetIndex) tab.classList.add('active');
 
-                            tab.addEventListener('click', () => {
-                                tabsDiv.querySelectorAll('.excel-sheet-tab').forEach(t => t.classList.remove('active'));
-                                tab.classList.add('active');
-                                const stats = renderExcelSheet(workbook.Sheets[sheetName], tableWrapper, dict);
-                                toolbar.querySelector('[data-stat="rows"]').textContent = stats.rows;
-                                toolbar.querySelector('[data-stat="cols"]').textContent = stats.cols;
-                            });
-
-                            tabsDiv.appendChild(tab);
+                        tab.addEventListener('click', () => {
+                            tabsDiv.querySelectorAll('.excel-sheet-tab').forEach(t => t.classList.remove('active'));
+                            tab.classList.add('active');
+                            excelActiveSheetIndex = index;
+                            const stats = renderExcelSheet(workbook.Sheets[sheetName], tableWrapper, dict);
+                            toolbar.querySelector('[data-stat="rows"]').textContent = stats.rows;
+                            toolbar.querySelector('[data-stat="cols"]').textContent = stats.cols;
+                            if (index !== excelLastSheetIndex) {
+                                resetQrPosition();
+                            } else {
+                                attachCellPicker(tableWrapper);
+                            }
                         });
-                        container.appendChild(tabsDiv);
-                    }
+
+                        tabsDiv.appendChild(tab);
+                    });
+                    container.appendChild(tabsDiv);
 
                     const tableWrapper = document.createElement('div');
                     tableWrapper.className = 'excel-table-wrapper';
@@ -1338,11 +1651,12 @@ data-filename="{{ basename($doc->file_path) }}"
                     renderTarget.innerHTML = '';
                     renderTarget.appendChild(container);
 
-                    if (workbook.SheetNames.length > 0) {
-                        const stats = renderExcelSheet(workbook.Sheets[workbook.SheetNames[0]], tableWrapper, dict);
-                        toolbar.querySelector('[data-stat="rows"]').textContent = stats.rows;
-                        toolbar.querySelector('[data-stat="cols"]').textContent = stats.cols;
-                    }
+                    const stats = renderExcelSheet(workbook.Sheets[workbook.SheetNames[excelLastSheetIndex]], tableWrapper, dict);
+                    toolbar.querySelector('[data-stat="rows"]').textContent = stats.rows;
+                    toolbar.querySelector('[data-stat="cols"]').textContent = stats.cols;
+
+                    resetQrPosition();
+                    attachCellPicker(tableWrapper);
 
                     loader.style.display = 'none';
                     previewViewport.style.opacity = '1';
@@ -1374,54 +1688,95 @@ data-filename="{{ basename($doc->file_path) }}"
             formatBadge.className = 'format-badge ' + ext + ' visible';
         }
 
-        function renderDocument(fileSource, type, ext) {
+        // ✅ ФОЛБЭК: клиентский рендер DOCX через docx-preview.js — используется
+        // ТОЛЬКО когда серверная конвертация в PDF недоступна (нет LibreOffice).
+        // Даёт неидеальную, но рабочую точность позиционирования клика —
+        // без него на машинах без LibreOffice (например, локальная разработка
+        // на Windows/OSPanel) подписание Word было бы вообще без превью.
+        function renderDocxClientFallback(fileSource) {
+            renderTarget.innerHTML = '';
+
+            fetch(fileSource, { credentials: 'include' })
+                .then(async (res) => {
+                    if (!res.ok) {
+                        throw new Error(`HTTP ${res.status}. Нет доступа к файлу или он не найден.`);
+                    }
+                    const contentType = res.headers.get('content-type');
+                    if (contentType && contentType.includes('text/html')) {
+                        throw new Error('Сервер вернул HTML вместо DOCX (возможно, редирект на логин).');
+                    }
+                    return res.arrayBuffer();
+                })
+                .then(data => {
+                    const wordDiv = document.createElement('div');
+                    wordDiv.id = 'word-preview';
+                    renderTarget.appendChild(wordDiv);
+
+                    // breakPages + ignoreHeight:false — страница рисуется в
+                    // полный реальный размер (с пустым местом внизу, если
+                    // текста меньше страницы), иначе клик считался бы от
+                    // усечённой по высоте текста области.
+                    return docx.renderAsync(data, wordDiv, null, {
+                        inWrapper: true,
+                        ignoreWidth: false,
+                        ignoreHeight: false,
+                        ignoreFonts: false,
+                        breakPages: true,
+                        ignoreLastRenderedPageBreak: true,
+                        experimental: false,
+                        trimXmlDeclaration: true,
+                        renderHeaders: true,
+                        renderFooters: true,
+                        renderFootnotes: true,
+                        renderEndnotes: true,
+                        debug: false
+                    }).then(() => wordDiv);
+                })
+                .then((wordDiv) => {
+                    loader.style.display = 'none';
+                    previewViewport.style.opacity = '1';
+
+                    const pages = wordDiv.querySelectorAll('.docx');
+                    if (pages.length > 0) {
+                        const lastPage = pages[pages.length - 1];
+                        lastPage.classList.add('qr-target-page');
+                        attachPagePicker(lastPage);
+                    }
+                })
+                .catch(e => {
+                    loader.style.display = 'none';
+                    previewViewport.style.opacity = '1';
+                    renderTarget.innerHTML = '<div style="padding: 24px; text-align: center; color: #ff6363; font-weight: 600;">Ошибка предпросмотра DOCX: ' + (e.message || 'Не удалось загрузить') + '</div>';
+                });
+        }
+
+        function renderDocument(fileSource, type, ext, previewUrl) {
             loader.style.display = 'block';
             previewViewport.style.opacity = '0.3';
             renderTarget.innerHTML = '';
             wrapper.style.display = 'flex';
+            resetQrPosition();
 
             updateFormatBadge(ext);
 
-            if (ext === 'pdf') {
-                fullScreenBtn.style.display = 'none';
-            } else {
+            if (type === 'excel') {
                 fullScreenBtn.href = fileSource;
                 fullScreenBtn.style.display = 'inline-flex';
+                const dict = getCurrentDict();
+                renderExcelFile(fileSource, dict);
+                return;
             }
 
-           // ✅ НОВЫЙ КОД (ВСТАВИТЬ ВМЕСТО СТАРОГО)
-if (ext === 'docx') {
-    fetch(fileSource, { credentials: 'include' })
-        .then(async (res) => {
-            if (!res.ok) {
-                throw new Error(`HTTP ${res.status}. Нет доступа к файлу или он не найден.`);
-            }
-            const contentType = res.headers.get('content-type');
-            if (contentType && contentType.includes('text/html')) {
-                throw new Error(`Сервер вернул HTML вместо DOCX (возможно, редирект на логин).`);
-            }
-            return res.arrayBuffer();
-        })
-        .then(data => {
-            const wordDiv = document.createElement('div');
-            wordDiv.id = 'word-preview';
-            renderTarget.appendChild(wordDiv);
-            return docx.renderAsync(data, wordDiv);
-        })
-        .then(() => {
-            loader.style.display = 'none';
-            previewViewport.style.opacity = '1';
-        })
-        .catch(e => {
-            loader.style.display = 'none';
-            previewViewport.style.opacity = '1';
-            renderTarget.innerHTML = '<div style="padding: 24px; text-align: center; color: #ff6363; font-weight: 600;">Ошибка предпросмотра DOCX: ' + (e.message || 'Не удалось загрузить') + '</div>';
-        });
-    return;
-}
+            // ✅ PDF и Word (docx/doc/rtf) теперь рендерятся ОДНИМ И ТЕМ ЖЕ кодом
+            // через pdf.js. Для Word сервер на лету конвертирует файл в PDF
+            // (previewUrl = роут documents.previewPdf) — превью и точность клика
+            // получаются ТОЧНО такими же, как у обычного PDF, потому что оба
+            // случая работают с реальными физическими размерами страницы.
+            if (previewUrl) {
+                fullScreenBtn.href = fileSource;
+                fullScreenBtn.style.display = (ext === 'pdf') ? 'none' : 'inline-flex';
 
-            if (ext === 'pdf') {
-              const loadingTask = pdfjsLib.getDocument({ url: fileSource, withCredentials: true });
+                const loadingTask = pdfjsLib.getDocument({ url: previewUrl, withCredentials: true });
                 loadingTask.promise.then(function (pdf) {
                     const totalPages = pdf.numPages;
 
@@ -1433,7 +1788,7 @@ if (ext === 'docx') {
                     if (totalPages === 0) {
                         loader.style.display = 'none';
                         previewViewport.style.opacity = '1';
-                        renderTarget.innerHTML = '<div style="padding: 24px; text-align: center; color: #ff6363; font-weight: 600;">PDF не содержит страниц.</div>';
+                        renderTarget.innerHTML = '<div style="padding: 24px; text-align: center; color: #ff6363; font-weight: 600;">Документ не содержит страниц.</div>';
                         return;
                     }
 
@@ -1449,6 +1804,7 @@ if (ext === 'docx') {
                             canvas.style.border = '1px solid rgba(255,255,255,0.06)';
                             canvas.style.maxWidth = '100%';
                             canvas.style.height = 'auto';
+                            canvas.style.display = 'block';
 
                             return page.render({canvasContext: context, viewport: viewport}).promise.then(function () {
                                 return canvas;
@@ -1462,37 +1818,60 @@ if (ext === 'docx') {
                     }
 
                     Promise.allSettled(pageRenderPromises).then(results => {
+                        const canvases = [];
                         results.forEach(result => {
                             if (result.status === 'fulfilled') {
                                 renderTarget.appendChild(result.value);
+                                canvases.push(result.value);
                             }
                         });
 
                         loader.style.display = 'none';
                         previewViewport.style.opacity = '1';
+
+                        if (canvases.length > 0) {
+                            const lastCanvas = canvases[canvases.length - 1];
+                            lastCanvas.classList.add('qr-target-page');
+                            attachPagePicker(lastCanvas);
+                        }
                     });
                 }).catch(function (error) {
+                    // ✅ Если сервер не смог отдать PDF (например, на Windows/OSPanel
+                    // нет LibreOffice — previewPdf() отвечает 501), для настоящего
+                    // DOCX откатываемся на клиентский рендер docx-preview.js —
+                    // он не даёт 100% той же точности, что серверный PDF, но
+                    // достаточно точен и не требует LibreOffice вообще.
+                    if (ext === 'docx') {
+                        renderDocxClientFallback(fileSource);
+                        return;
+                    }
+
+                    // Для .doc (старый бинарный формат) и .rtf клиентский
+                    // рендер ненадёжен — ставим автоматическую позицию,
+                    // чтобы подписание не блокировалось полностью.
                     loader.style.display = 'none';
                     previewViewport.style.opacity = '1';
-                    renderTarget.innerHTML = '<div style="padding: 24px; text-align: center; color: #ff6363; font-weight: 600;">Ошибка предпросмотра PDF: ' + error.message + '</div>';
+                    renderTarget.innerHTML = '<div style="padding: 24px; text-align: center; color: #ff8a8a; font-weight: 600;">' +
+                        '<i class="bi bi-exclamation-triangle-fill" style="font-size: 28px; display:block; margin-bottom:10px;"></i>' +
+                        'Точный предпросмотр недоступен (нет LibreOffice на сервере). QR будет поставлен автоматически в правый нижний угол последней страницы.</div>';
+                    qrPosition = { mode: 'page', xPercent: 90, yPercent: 92 };
+                    updateSubmitState();
                 });
                 return;
             }
 
-            if (type === 'excel') {
-                const dict = getCurrentDict();
-                renderExcelFile(fileSource, dict);
-                return;
-            }
-
+            // Фолбэк — если предпросмотр в PDF недоступен (например, на сервере
+            // нет LibreOffice). Точная позиция недоступна, ставим позицию
+            // автоматически (правый нижний угол последней страницы).
             let iframeSrc = '';
             if (type === 'word') {
                 iframeSrc = 'https://view.officeapps.live.com/op/view.aspx?src=' + encodeURIComponent(fileSource);
-            } else if (type === 'rtf') {
-                iframeSrc = fileSource;
             } else {
                 iframeSrc = fileSource + '#toolbar=0&navpanes=0&scrollbar=0&view=FitH';
             }
+
+            fullScreenBtn.href = fileSource;
+            fullScreenBtn.style.display = 'inline-flex';
 
             const iframe = document.createElement('iframe');
             iframe.src = iframeSrc;
@@ -1501,8 +1880,10 @@ if (ext === 'docx') {
             iframe.onload = () => {
                 loader.style.display = 'none';
                 previewViewport.style.opacity = '1';
+                qrPosition = { mode: 'page', xPercent: 90, yPercent: 92 };
+                updateSubmitState();
             };
-            iframe.onerror = (e) => {
+            iframe.onerror = () => {
                 loader.style.display = 'none';
                 previewViewport.style.opacity = '1';
                 renderTarget.innerHTML = '<div style="padding: 24px; text-align: center; color: #ff6363; font-weight: 600;">Ошибка загрузки предпросмотра.</div>';
@@ -1519,16 +1900,16 @@ if (ext === 'docx') {
                 const type = selectedOption.getAttribute('data-type');
                 const ext = selectedOption.getAttribute('data-ext');
                 const qrUrl = selectedOption.getAttribute('data-qr');
+                const previewUrl = selectedOption.getAttribute('data-preview') || null;
 
-            if (qrPreview) qrPreview.src = qrUrl;
+                if (qrPreview) qrPreview.src = qrUrl;
 
-// Показать кнопки
-const downloadUrl = selectedOption.getAttribute('data-download');
-const filename = selectedOption.getAttribute('data-filename');
-if (viewBtn) { viewBtn.href = fileUrl; viewBtn.style.display = 'inline-flex'; }
-if (downloadBtn) { downloadBtn.href = downloadUrl; downloadBtn.setAttribute('download', filename); downloadBtn.style.display = 'inline-flex'; }
+                const downloadUrl = selectedOption.getAttribute('data-download');
+                const filename = selectedOption.getAttribute('data-filename');
+                if (viewBtn) { viewBtn.href = fileUrl; viewBtn.style.display = 'inline-flex'; }
+                if (downloadBtn) { downloadBtn.href = downloadUrl; downloadBtn.setAttribute('download', filename); downloadBtn.style.display = 'inline-flex'; }
 
-renderDocument(fileUrl, type, ext);
+                renderDocument(fileUrl, type, ext, previewUrl);
             } else {
                 if (renderTarget) renderTarget.innerHTML = '<div class="viewer-empty"><i class="bi bi-file-earmark-text"></i><p>' + dict.selectDocPreview + '</p></div>';
                 if (loader) loader.style.display = 'none';
@@ -1536,6 +1917,7 @@ renderDocument(fileUrl, type, ext);
                 if (formatBadge) formatBadge.classList.remove('visible');
                 if (fullScreenBtn) fullScreenBtn.style.display = 'none';
                 if (wrapper) wrapper.style.display = 'flex';
+                resetQrPosition();
             }
         }
 
@@ -1545,6 +1927,8 @@ renderDocument(fileUrl, type, ext);
 
         if (select && select.value && select.value !== '') {
             updateSelection();
+        } else {
+            updateSubmitState();
         }
 
         if (form) {
@@ -1555,6 +1939,22 @@ renderDocument(fileUrl, type, ext);
                     e.preventDefault();
                     alert(dict.selectAlert);
                     return false;
+                }
+
+                if (!qrPosition) {
+                    e.preventDefault();
+                    alert(dict.positionAlert);
+                    return false;
+                }
+
+                document.getElementById('positionMode').value = qrPosition.mode;
+                if (qrPosition.mode === 'page') {
+                    document.getElementById('qrXPercent').value = qrPosition.xPercent;
+                    document.getElementById('qrYPercent').value = qrPosition.yPercent;
+                } else if (qrPosition.mode === 'cell') {
+                    document.getElementById('qrCell').value = qrPosition.cell;
+                    document.getElementById('qrOffsetX').value = qrPosition.offsetX;
+                    document.getElementById('qrOffsetY').value = qrPosition.offsetY;
                 }
 
                 submitBtn.disabled = true;

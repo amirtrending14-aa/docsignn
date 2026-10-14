@@ -67,18 +67,26 @@ class NotificationController extends Controller
     /**
      * Список всех уведомлений
      */
-    public function index()
-    {
-        $notifications = Notification::where('user_id', auth()->id())
-            ->latest()
-            ->paginate(25);
+   /**
+ * Список всех уведомлений
+ */
+public function index()
+{
+    $user = Auth::user(); // 👈 ДОБАВИТЬ ЭТУ СТРОКУ
 
-        $unreadCount = Notification::where('user_id', auth()->id())
-            ->where('is_read', false)
-            ->count();
+    $notifications = Notification::where('user_id', $user->id)
+        ->latest()
+        ->paginate(25);
 
-        return view('notifications.index', compact('notifications', 'unreadCount'));
-    }
+    $unreadCount = Notification::where('user_id', $user->id)
+        ->where('is_read', false)
+        ->count();
+
+    // Последние 4 уведомления для правой колонки (если нужно)
+    $recentFour = $user->notifications()->latest()->take(4)->get();
+
+    return view('notifications.index', compact('notifications', 'unreadCount', 'recentFour'));
+}
 
     /**
      * 🔒 Отметить одно уведомление как прочитанное (AJAX - возвращает JSON)

@@ -766,6 +766,64 @@ $levelNames = [
     }
 </style>
 
+<style>
+    html[data-theme="light"] .dp {
+        color: #0f172a !important;
+    }
+    html[data-theme="light"] .dp-top__t,
+    html[data-theme="light"] .dp-st__v,
+    html[data-theme="light"] .iso-lv__bg,
+    html[data-theme="light"] .room__sign .nm,
+    html[data-theme="light"] .dp-empty__t,
+    html[data-theme="light"] .m-hd h4,
+    html[data-theme="light"] .m-nm {
+        color: #0f172a !important;
+    }
+    html[data-theme="light"] .dp-top__s,
+    html[data-theme="light"] .dp-st__l,
+    html[data-theme="light"] .dp-empty__d,
+    html[data-theme="light"] .m-hd span,
+    html[data-theme="light"] .m-em {
+        color: #475569 !important;
+    }
+    html[data-theme="light"] .dp-st,
+    html[data-theme="light"] .iso-lv__bg,
+    html[data-theme="light"] .room__sign,
+    html[data-theme="light"] .dp-empty__ic {
+        background: #ffffff;
+        border-color: #cbd5e1 !important;
+        box-shadow: 0 8px 22px rgba(15, 23, 42, 0.08);
+    }
+    html[data-theme="light"] .dp-add {
+        border: 1px solid rgba(var(--glow), 0.65);
+        box-shadow: 0 6px 18px rgba(var(--glow), 0.22);
+    }
+    html[data-theme="light"] .room__sign .lv {
+        font-weight: 800;
+    }
+    html[data-theme="light"] .room__members,
+    html[data-theme="light"] .room__abtn {
+        background: #f8fafc;
+        border-color: #cbd5e1;
+    }
+    html[data-theme="light"] .room__abtn {
+        color: #475569;
+    }
+    html[data-theme="light"] .m-bx {
+        background: #ffffff;
+        border-color: #cbd5e1;
+        box-shadow: 0 20px 50px rgba(15, 23, 42, 0.18);
+    }
+    html[data-theme="light"] .m-hd {
+        border-bottom-color: #cbd5e1;
+    }
+    html[data-theme="light"] .m-cl {
+        color: #475569;
+        background: #f8fafc;
+        border-color: #cbd5e1;
+    }
+</style>
+
 <div class="dp">
 
     <div class="dp-top">

@@ -6,6 +6,9 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>DocSign — Восстановление пароля</title>
 
+
+
+    
     <link rel="icon" type="image/png" href="{{ asset('img/dss.png') }}">
     <link rel="apple-touch-icon" href="{{ asset('img/dss.png') }}">
 

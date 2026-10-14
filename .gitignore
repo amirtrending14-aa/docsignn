@@ -1,25 +1,67 @@
-*.log
-.DS_Store
+# Environment / secrets
 .env
-.env.backup
-.env.production
-.phpactor.json
-.phpunit.result.cache
-/.fleet
-/.idea
-/.nova
-/.phpunit.cache
-/.vscode
-/.zed
-/auth.json
-/node_modules
+.env.*
+!.env.example
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+.nova/
+.zed/
+.fleet/
+
+# PHP / Laravel
+/vendor/
+/node_modules/
 /public/build
 /public/hot
 /public/storage
 /storage/*.key
 /storage/pail
-/vendor
+/storage/framework/cache/*
+!storage/framework/cache/.gitignore
+/storage/framework/sessions/*
+!storage/framework/sessions/.gitignore
+/storage/framework/views/*
+!storage/framework/views/.gitignore
+/storage/logs/*
+!storage/logs/.gitignore
+/bootstrap/cache/*
+!bootstrap/cache/.gitignore
+.phpactor.json
+.phpunit.result.cache
+.phpunit.cache
 _ide_helper.php
+.auth.json
+
+# Runtime-generated data
+/storage/app/public/avatars/*
+!/storage/app/public/avatars/.gitkeep
+/storage/app/public/documents/*
+!/storage/app/public/documents/.gitkeep
+/storage/app/public/signatures/*
+!/storage/app/public/signatures/.gitkeep
+/storage/app/ai_docs/
+/storage/app/documents/
+/tmp_upload/
+/python/output/
+/public/js/
+/public/face-models/
+/vector_db/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Local DBs and temp
+*.sqlite
+*.sqlite3
+
+# Composer / PHP local metadata
+composer.lock
 Homestead.json
 Homestead.yaml
-Thumbs.db

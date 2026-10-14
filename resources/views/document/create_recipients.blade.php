@@ -94,6 +94,70 @@
     @media (max-width: 480px) { .recipients-page { padding: 14px 8px; } .glass-card { padding: 14px; border-radius: 10px; } .step-label { font-size: 9px; gap: 6px; } .custom-select, .custom-input { padding: 10px 12px; font-size: 11px; } .user-item { padding: 8px; gap: 8px; } .user-name { font-size: 11px; } }
 </style>
 
+<style>
+    html[data-theme="light"] .recipients-page {
+        color: #0f172a !important;
+    }
+    html[data-theme="light"] .glass-card,
+    html[data-theme="light"] .sidebar-card {
+        background: #ffffff !important;
+        border-color: #cbd5e1 !important;
+        box-shadow: 0 10px 26px rgba(15, 23, 42, 0.08);
+    }
+    html[data-theme="light"] .page-header {
+        border-bottom-color: #cbd5e1 !important;
+    }
+    html[data-theme="light"] .back-label,
+    html[data-theme="light"] .sidebar-title,
+    html[data-theme="light"] .user-role,
+    html[data-theme="light"] .empty-state,
+    html[data-theme="light"] .selected-item-name {
+        color: #475569 !important;
+    }
+    html[data-theme="light"] .custom-select,
+    html[data-theme="light"] .custom-input,
+    html[data-theme="light"] .btn-sm,
+    html[data-theme="light"] .org-item,
+    html[data-theme="light"] .user-item,
+    html[data-theme="light"] .selected-item {
+        background: #f8fafc !important;
+        border-color: #b8c4d3 !important;
+        color: #0f172a !important;
+    }
+    html[data-theme="light"] .custom-select:focus,
+    html[data-theme="light"] .custom-input:focus {
+        background: #ffffff !important;
+        border-color: #4f8cff !important;
+    }
+    html[data-theme="light"] .custom-select option,
+    html[data-theme="light"] .custom-select optgroup {
+        background: #ffffff;
+        color: #0f172a;
+    }
+    html[data-theme="light"] .org-item-name,
+    html[data-theme="light"] .user-name {
+        color: #0f172a !important;
+        font-weight: 700;
+    }
+    html[data-theme="light"] .org-item:hover,
+    html[data-theme="light"] .user-item:hover,
+    html[data-theme="light"] .org-item.active {
+        background: rgba(245, 158, 11, 0.1) !important;
+    }
+    html[data-theme="light"] .org-users-container {
+        background: #f8fafc;
+        border-color: #f1c453;
+    }
+    html[data-theme="light"] .org-group {
+        background: rgba(34, 197, 94, 0.06);
+        border-color: rgba(34, 197, 94, 0.35);
+    }
+    html[data-theme="light"] .btn-save {
+        font-weight: 800;
+        border-width: 1.5px;
+    }
+</style>
+
 <div class="recipients-page">
     <div class="max-w-6xl mx-auto">
         <div class="page-header">

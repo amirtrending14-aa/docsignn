@@ -1,5 +1,5 @@
 <?php
-
+use App\Http\Controllers\ArchivistController; 
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\AIChatController;
 use App\Http\Controllers\ContractController;
@@ -8,6 +8,7 @@ use App\Http\Controllers\DocumentRecipientController;
 use App\Http\Controllers\SuperAdminController;
 use App\Http\Controllers\SuperAdmin\UserController as SuperAdminUserController;
 use App\Http\Controllers\SuperAdmin\CompanyController as SuperAdminCompanyController;
+use App\Http\Controllers\SuperAdmin\DocumentController as SuperAdminDocumentController;
 use App\Http\Controllers\Admin\AvatarController;
 use App\Http\Controllers\StrelController;
 use App\Http\Controllers\CompanyController;
@@ -35,6 +36,10 @@ use App\Http\Controllers\CompanyTreeController;
 use App\Http\Controllers\FaceController;
 use App\Http\Controllers\Admin\AttendanceReportController;
 use App\Http\Controllers\Admin\CompanySettingsController;
+use App\Http\Controllers\ChatController;
+use App\Http\Controllers\TelegramChatController;
+use App\Http\Controllers\TelegramMessageController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -44,9 +49,18 @@ use App\Http\Controllers\Admin\CompanySettingsController;
 Route::get('/', fn() => view('layouts.site'))->name('site.home');
 Route::get('/site', fn() => view('layouts.site'))->name('site.main');
 
+// Отдача аватаров напрямую из storage/app/public, включая Windows без симлинка.
+Route::get('/avatar/{path}', function (string $path) {
+    $path = ltrim(str_replace('\\', '/', $path), '/');
+
+    abort_unless(str_starts_with($path, 'avatars/') && !str_contains($path, '..'), 404);
+    abort_unless(Storage::disk('public')->exists($path), 404);
+
+    return response()->file(Storage::disk('public')->path($path));
+})->where('path', '.*')->name('avatar.show');
+
 // 🔒 Публичная проверка подлинности документа по коду
 Route::get('/verify/{code}', [DocumentSignatureController::class, 'verify'])
-    ->middleware('throttle:30,1') // 30 проверок в минуту
     ->name('document.verify');
 
 /*
@@ -132,7 +146,6 @@ Route::middleware(['auth', 'last.seen'])->group(function () {
     // ============================================
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard/chart-data', [DashboardController::class, 'getChartData'])
-        ->middleware('throttle:60,1')
         ->name('dashboard.chart-data');
     Route::get('/analysis', [AnalysisController::class, 'index'])->name('analysis.index');
 
@@ -141,11 +154,9 @@ Route::middleware(['auth', 'last.seen'])->group(function () {
     // ============================================
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])
-        ->middleware('throttle:10,1')
-        ->name('profile.update');
+   Route::patch('/profile', [ProfileController::class, 'update'])
+    ->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])
-        ->middleware('throttle:3,1')
         ->name('profile.destroy');
 
     // ============================================
@@ -153,36 +164,28 @@ Route::middleware(['auth', 'last.seen'])->group(function () {
     // ============================================
     Route::get('/setting', fn() => view('settings.index'))->name('settings');
     Route::post('/settings/signature', [ProfileController::class, 'updateSignature'])
-        ->middleware('throttle:10,1')
         ->name('settings.signature.update');
     Route::post('/settings/general', [ProfileController::class, 'updateGeneral'])
-        ->middleware('throttle:10,1')
         ->name('settings.general.update');
     Route::put('/settings/edi', [SettingsController::class, 'update'])
-        ->middleware('throttle:10,1')
         ->name('settings.update');
 
     // ============================================
     // DOCUMENTS (🔒 IDOR Protection через Route Model Binding)
     // ============================================
     Route::get('/documents/{document}/download-pdf', [DocumentController::class, 'downloadPdf'])
-        ->middleware('throttle:10,1')
         ->name('documents.downloadPdf');
 
     Route::get('/documents/{document}/download-word', [DocumentController::class, 'downloadWord'])
-        ->middleware('throttle:10,1')
         ->name('documents.downloadWord');
 
     Route::post('/documents/contracts-process', [DocumentController::class, 'storeFromPdf'])
-        ->middleware('throttle:10,1')
         ->name('documents.contracts-process');
 
     Route::post('/documents/{document}/sign', [DocumentController::class, 'sign'])
-        ->middleware('throttle:signing')
         ->name('documents.sign');
 
     Route::post('/documents/{document}/reject', [DocumentController::class, 'reject'])
-        ->middleware('throttle:10,1')
         ->name('documents.reject');
 // Временная загрузка файла (AJAX) — внутри группы auth
     Route::post('/documents/upload-temp', [DocumentController::class, 'uploadTemp'])->name('documents.upload-temp');
@@ -202,7 +205,6 @@ Route::post('/documents/recipients/store-region', [DocumentController::class, 's
     // ============================================
     Route::resource('logs', DocumentLogController::class);
     Route::post('/logs/clear', [DocumentLogController::class, 'clear'])
-        ->middleware('throttle:3,1')
         ->name('logs.clear');
     Route::get('/documents/{document}/logs', [DocumentLogController::class, 'documentLogs'])
         ->name('logs.document');
@@ -220,7 +222,6 @@ Route::post('/documents/recipients/store-region', [DocumentController::class, 's
     // SEARCH
     // ============================================
     Route::get('/search', [SearchController::class, 'index'])
-        ->middleware('throttle:30,1')
         ->name('search');
 
     // 🔒 Защита от перебора email (User Enumeration)
@@ -234,27 +235,21 @@ Route::post('/documents/recipients/store-region', [DocumentController::class, 's
             'exists' => !!$user,
             // 🔒 НЕ отдаём имя для защиты приватности
         ]);
-    })->middleware('throttle:10,1')->name('users.search_api');
+    })->name('users.search_api');
 });
 
-Route::middleware(['auth', 'last.seen'])->group(function () {
-    Route::get('/documents/select-by-department', [DocumentController::class, 'selectByDepartment'])
-        ->name('documents.select-by-department');
-
-    Route::post('/documents/select-by-department', [DocumentController::class, 'storeDepartmentSelection'])
-        ->name('documents.select-by-department.store');
-});
 
     // ============================================
     // COMMENTS (🔒 IDOR Protection)
     // ============================================
     Route::post('/comments', [DocumentCommentController::class, 'store'])
-        ->middleware('throttle:10,1')
+        ->middleware('auth')
         ->name('comments.store');
     Route::get('/documents/{document}/comments', [DocumentCommentController::class, 'index'])
+        ->middleware('auth')
         ->name('comments.index');
     Route::delete('/comments/{comment}', [DocumentCommentController::class, 'destroy'])
-        ->middleware('throttle:10,1')
+        ->middleware('auth')
         ->name('comments.destroy');
 
     // ============================================
@@ -264,22 +259,17 @@ Route::middleware(['auth', 'last.seen'])->group(function () {
         Route::get('/', [NotificationController::class, 'index'])->name('index');
         Route::get('/create', [NotificationController::class, 'create'])->name('create');
         Route::get('/check', [NotificationController::class, 'checkNew'])
-            ->middleware('throttle:60,1')
             ->name('check');
         Route::any('/{notification}/read', [NotificationController::class, 'read'])->name('read');
         Route::patch('/{notification}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('read_patch');
         Route::delete('/{notification}', [NotificationController::class, 'destroy'])
-            ->middleware('throttle:10,1')
             ->name('destroy');
         Route::delete('/clear-all', [NotificationController::class, 'clearAll'])
-            ->middleware('throttle:3,1')
             ->name('clearAll');
         Route::post('/read-all', [NotificationController::class, 'readAll'])
-            ->middleware('throttle:10,1')
             ->name('readAll');
     });
     Route::post('/comments/store_notification', [NotificationController::class, 'store'])
-        ->middleware('throttle:forms')
         ->name('comments.store_notification');
 
     // ============================================
@@ -288,14 +278,12 @@ Route::middleware(['auth', 'last.seen'])->group(function () {
     Route::resource('messages', MessageController::class);
 
     // ============================================
-    // AI (🔒 Строгий Rate Limiting)
+    // AI
     // ============================================
     Route::post('/contracts/generate-document', [AIController::class, 'generateDocument'])
-        ->middleware('throttle:contracts-generation')
         ->name('contracts.generate-document');
 // Алиас для старого адреса (чтобы кэш браузера не ломал работу)
 Route::post('/ai/generate-document', [AIController::class, 'generateDocument'])
-    ->middleware('throttle:contracts-generation')
     ->name('ai.generate-document');
     // ============================================
     // HEARTBEAT (🔒 Защита от спама)
@@ -308,7 +296,7 @@ Route::post('/ai/generate-document', [AIController::class, 'generateDocument'])
 
         DB::table('users')->where('id', $user->id)->update(['last_seen_at' => now()]);
         return response()->json(['status' => 'ok', 'online' => true]);
-    })->middleware('throttle:60,1')->name('heartbeat');
+    })->name('heartbeat');
 
     // ============================================
     // STREL
@@ -339,26 +327,7 @@ Route::middleware(['auth', 'superadmin', 'last.seen'])
         // ============================================
         // USERS MANAGEMENT
         // ============================================
-        Route::get('users/no-companies', [SuperAdminUserController::class, 'noCompanies'])
-            ->name('users.no-companies');
-
-        Route::get('users/export', [SuperAdminUserController::class, 'exportUsers'])
-            ->middleware('throttle:5,1') // 🔒 Защита экспорта
-            ->name('users.export');
-
-        Route::post('users/bulk-delete', [SuperAdminUserController::class, 'bulkDelete'])
-            ->middleware('throttle:3,1') // 🔒 Строгая защита массового удаления
-            ->name('users.bulk');
-
-        Route::resource('users', SuperAdminUserController::class);
-
-        Route::post('users/{user}/reset-password', [SuperAdminUserController::class, 'resetPassword'])
-            ->middleware('throttle:5,1')
-            ->name('users.reset-password');
-
-        Route::post('users/{user}/toggle-status', [SuperAdminUserController::class, 'toggleStatus'])
-            ->middleware('throttle:10,1')
-            ->name('users.toggle-status');
+        Route::resource('users', SuperAdminUserController::class)->except(['show']);
 
         Route::get('users/{user}/activity', [SuperAdminUserController::class, 'userActivity'])
             ->name('users.activity');
@@ -367,6 +336,11 @@ Route::middleware(['auth', 'superadmin', 'last.seen'])
         // COMPANIES MANAGEMENT
         // ============================================
         Route::resource('companies', SuperAdminCompanyController::class);
+
+        // ============================================
+        // DOCUMENTS MANAGEMENT
+        // ============================================
+        Route::resource('documents', SuperAdminDocumentController::class)->except(['show']);
 
         // ============================================
         // ACTIVITY LOGS
@@ -378,7 +352,6 @@ Route::middleware(['auth', 'superadmin', 'last.seen'])
         // ============================================
         Route::get('profile', [SuperAdminController::class, 'profile'])->name('profile');
         Route::put('profile', [SuperAdminController::class, 'updateProfile'])
-            ->middleware('throttle:10,1')
             ->name('profile.update');
     });
 
@@ -389,7 +362,7 @@ Route::middleware(['auth', 'superadmin', 'last.seen'])
 */
 // 🔒 Защищённый маршрут обновления dashboard
 Route::get('/dashboard-update', fn() => 'Данные обновлены успешно!')
-    ->middleware(['auth', 'throttle:60,1'])
+    ->middleware('auth')
     ->name('dashboard.update');
 
 /*
@@ -414,53 +387,18 @@ Route::fallback(function () {
 
 
 
+
+
 Route::get('/documents/{id}/preview', [DocumentController::class, 'previewPdf'])->name('documents.preview');
 // В routes/web.php
 Route::get('/documents/{id}/pdf', [DocumentController::class, 'pdf'])->name('documents.pdf');
 Route::get('/documents/{id}/debug', [DocumentController::class, 'debugFilePath']);
-Route::get('/contracts-assistant', [AIController::class, 'index'])->name('contracts.index');
-
+Route::get('/contracts-assistant', [AIController::class, 'index'])->name('contracts.assistant');
 // API для отправки сообщений (которое мы писали выше)
 Route::post('/contracts/chat', [AIController::class, 'chat'])->name('contracts.chat');
 
 
-Route::prefix('documents/recipients')->name('documents.recipients.')->group(function () {
-    // Страница формы
-    Route::get('/create', [DocumentRecipientController::class, 'create'])->name('create');
 
-    // Сохранение
-    Route::post('/', [DocumentRecipientController::class, 'store'])->name('store');
-
-    // AJAX: Каскадная подгрузка
-    Route::get('/cities/{regionId}', [DocumentRecipientController::class, 'getCities'])->name('cities');
-    Route::get('/org-types/{cityId}', [DocumentRecipientController::class, 'getOrganizationTypes'])->name('org-types');
-    Route::get('/organizations/{cityId}/{type}', [DocumentRecipientController::class, 'getOrganizations'])->name('organizations');
-    Route::get('/users/{organizationId}', [DocumentRecipientController::class, 'getUsers'])->name('users');
-
-// Маршруты для выбора получателей
-    Route::get('/documents/recipients/create', [DocumentController::class, 'recipientsCreate'])->name('documents.recipients.create');
-Route::post('/documents/recipients/store', [DocumentController::class, 'recipientsStore'])->name('documents.recipients.store');
-
-    Route::get('/documents/recipients/cities/{regionId}', [DocumentRecipientController::class, 'getCities'])
-        ->name('documents.recipients.cities');
-
-    Route::get('/documents/recipients/org-types/{cityId}', [DocumentRecipientController::class, 'getOrganizationTypes'])
-        ->name('documents.recipients.org-types');
-
-    Route::get('/documents/recipients/organizations/{cityId}/{category}', [DocumentRecipientController::class, 'getOrganizations'])
-        ->name('documents.recipients.organizations');
-
-    Route::get('/documents/recipients/users/{organizationId}', [DocumentRecipientController::class, 'getUsers'])
-        ->name('documents.recipients.users');
-
-    Route::post('/documents/recipients', [DocumentRecipientController::class, 'store'])
-        ->name('documents.recipients.store');
-    Route::get('/api/users-by-ids', function(\Illuminate\Http\Request $request) {
-        $ids = explode(',', $request->input('ids'));
-        $users = \App\Models\User::whereIn('id', $ids)->get(['id', 'name', 'email', 'phone']);
-        return response()->json($users);
-    })->middleware('auth');
-});
 
 
 
@@ -481,6 +419,12 @@ Route::post('documents/recipients/department', [DocumentController::class, 'depa
     ->name('documents.recipients.department.store');
 
 Route::get('/documents/{id}/stream', [DocumentSignatureController::class, 'stream'])->name('documents.stream');
+
+// ✅ ДОБАВЛЕНО: роут для предпросмотра Word/PDF в едином PDF-виджете подписи
+// (без него view: 'Route [documents.previewPdf] not defined.')
+Route::get('/documents/{id}/preview-pdf', [DocumentSignatureController::class, 'previewPdf'])
+    ->name('documents.previewPdf');
+
 Route::get('/documents/{id}/download', [DocumentSignatureController::class, 'download'])->name('documents.download');
 Route::get('/signatures/{id}/qr', [DocumentSignatureController::class, 'qrImage'])
     ->name('signatures.qr');
@@ -502,7 +446,12 @@ Route::middleware('auth')->group(function () {
     Route::put('/companies/{company}',       [CompanyTreeController::class, 'update'])->name('companies.update');
     Route::delete('/companies/{company}',    [CompanyTreeController::class, 'destroy'])->name('companies.destroy');
     Route::get('/companies/{company}',       [CompanyTreeController::class, 'show'])->name('companies.show');
-});
+
+
+
+
+// Генерация договоров
+   });
 
 
 // ===== АДМИНКА: отчёты и настройки =====
@@ -519,19 +468,190 @@ Route::middleware('auth')->prefix('face')->name('face.')->controller(FaceControl
 });
 
 // ===== АДМИНКА: отчёты и настройки посещаемости =====
-Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->controller(AttendanceReportController::class)->group(function () {
-    // Страница отчета
-    Route::get('/reports', 'index')->name('reports');
-    
-    // Сохранение настроек штрафов (ТА САМАЯ КНОПКА "СОХРАНИТЬ")
-    Route::post('/reports/settings', 'saveSettings')->name('reports.settings');
-    
-    // Кнопка "Я знал" (Снять штраф)
-    Route::post('/reports/excuse', 'excuse')->name('reports.excuse');
-});
+
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->controller(AttendanceReportController::class)->group(function () {
     Route::get('/reports', 'index')->name('reports');
     Route::get('/reports/user/{userId}', 'userReport')->name('reports.user'); // ← ДОБАВЬ ЭТУ СТРОКУ
     Route::post('/reports/excuse', 'excuse')->name('reports.excuse');
     Route::post('/reports/settings', 'saveSettings')->name('reports.settings');
 });
+
+
+
+    Route::middleware(['auth'])->group(function () {
+           Route::get('/contracts/index', [ContractController::class, 'index'])->name('contracts.list');
+  
+    // Создание
+    Route::get('/contracts/create', [ContractController::class, 'create'])->name('contracts.create');
+    Route::post('/contracts/generate', [ContractController::class, 'generate'])->name('contracts.generate');
+    Route::post('/contracts/generate-ajax', [ContractController::class, 'generateAjax'])->name('contracts.generate-ajax');
+    
+    // Анализ (шаг 1)
+    Route::post('/contracts/analyze-ajax', [ContractController::class, 'analyzeAjax'])->name('contracts.analyze-ajax');
+    
+    // Список
+    Route::get('/contracts', [ContractController::class, 'index'])->name('contracts.index');
+    
+    // Просмотр
+    Route::get('/contracts/{id}/preview', [ContractController::class, 'preview'])->name('contracts.preview');
+    
+    // 📄 Скачать Word
+    Route::get('/contracts/{id}/download', [ContractController::class, 'download'])->name('contracts.download');
+    
+    // 📕 Скачать PDF  ← ДОБАВЬ ЭТО
+    Route::get('/contracts/{id}/download-pdf', [ContractController::class, 'downloadPdf'])
+        ->name('contracts.downloadPdf');
+    
+    // Анализатор
+    Route::get('/contracts/analyze-page', [ContractController::class, 'analyzePage'])->name('contracts.analyze-page');
+    Route::post('/contracts/analyze-upload', [ContractController::class, 'analyzeUpload'])->name('contracts.analyze-upload');
+});
+
+
+
+/*
+|--------------------------------------------------------------------------
+| AI CHAT — ПОМОЩНИК ЭДО
+|--------------------------------------------------------------------------
+*/
+Route::middleware('auth')->group(function () {
+    Route::get('/ai-chat', [ChatController::class, 'index'])->name('ai.chat');
+
+    Route::get('/ai-chat/{id}', [ChatController::class, 'index'])->name('ai.chat.show');
+
+    Route::post('/ai-chat/send', [ChatController::class, 'send'])->name('ai.send');
+
+    Route::get('/ai-chat/download/{id}/{format}', [ChatController::class, 'download'])
+        ->where('format', 'docx|pdf')
+        ->name('ai.download');
+Route::get('/ai-archivist', [ArchivistController::class, 'page'])->name('archivist.page');
+Route::post('/ai-archivist/chat', [ArchivistController::class, 'chat'])->name('archivist.chat');
+    Route::delete('/ai-chat/{id}', [ChatController::class, 'destroy'])->name('ai.chat.delete');
+});
+
+
+
+Route::middleware(['auth'])->prefix('chat')->group(function () {
+
+    Route::get('/chat/file/{path}', [TelegramChatController::class, 'downloadFile'])
+        ->where('path', '.*')
+        ->middleware('auth')
+        ->name('chat.file');
+
+    Route::get('/', [TelegramChatController::class, 'index'])->name('telegram.chat');
+
+    // Отдача файлов чата (безопасная + Range для аудио)
+    Route::get('/file/{path}', function (string $path) {
+        $path = ltrim(str_replace('\\', '/', $path), '/');
+
+        abort_unless(
+            (str_starts_with($path, 'telegram_files/') || str_starts_with($path, 'telegram/'))
+            && !str_contains($path, '..'),
+            404
+        );
+
+        $fullPath = storage_path('app/public/' . $path);
+        abort_unless(file_exists($fullPath), 404);
+
+        $message = \App\Models\TelegramMessage::where('attachment_path', $path)->first();
+        if ($message && $message->conversation && !$message->conversation->users->contains(auth()->id())) {
+            abort(403, 'Нет доступа к этому файлу');
+        }
+
+        $ext = strtolower(pathinfo($fullPath, PATHINFO_EXTENSION));
+        $mimeTypes = [
+            'webm' => 'audio/webm', 'ogg' => 'audio/ogg', 'mp3' => 'audio/mpeg',
+            'm4a' => 'audio/mp4', 'wav' => 'audio/wav', 'mp4' => 'video/mp4',
+            'png' => 'image/png', 'jpg' => 'image/jpeg', 'jpeg' => 'image/jpeg',
+            'gif' => 'image/gif', 'pdf' => 'application/pdf',
+            'doc' => 'application/msword',
+            'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        ];
+        $mime = $mimeTypes[$ext] ?? 'application/octet-stream';
+
+        if (str_starts_with($mime, 'audio/') || str_starts_with($mime, 'video/')) {
+            $size = filesize($fullPath);
+            $start = 0;
+            $end = $size - 1;
+            $status = 200;
+            $headers = [
+                'Content-Type' => $mime,
+                'Content-Length' => $size,
+                'Accept-Ranges' => 'bytes',
+                'Cache-Control' => 'public, max-age=31536000',
+            ];
+
+            if (isset($_SERVER['HTTP_RANGE'])) {
+                if (preg_match('/bytes=(\d+)-(\d*)/', $_SERVER['HTTP_RANGE'], $matches)) {
+                    $start = intval($matches[1]);
+                    $end = isset($matches[2]) && $matches[2] !== '' ? intval($matches[2]) : $size - 1;
+                    $status = 206;
+                    $headers['Content-Range'] = "bytes $start-$end/$size";
+                    $headers['Content-Length'] = $end - $start + 1;
+                }
+            }
+
+            return response()->stream(function () use ($fullPath, $start, $end) {
+                $fp = fopen($fullPath, 'rb');
+                fseek($fp, $start);
+                $remaining = $end - $start + 1;
+                while ($remaining > 0 && !feof($fp)) {
+                    echo fread($fp, min(8192, $remaining));
+                    flush();
+                    $remaining -= 8192;
+                }
+                fclose($fp);
+            }, $status, $headers);
+        }
+
+        return response()->file($fullPath, ['Content-Type' => $mime]);
+    })->where('path', '.*')->name('telegram.file');
+
+    Route::prefix('api')->group(function () {
+        // Список чатов / пользователи / создание
+        Route::get('/conversations', [TelegramChatController::class, 'getConversations']);
+        Route::get('/users', [TelegramChatController::class, 'getUsers'])->name('telegram.users');
+        Route::post('/group', [TelegramChatController::class, 'createGroup']);
+        Route::post('/private', [TelegramChatController::class, 'startPrivateChat'])->name('telegram.private');
+
+        // Сообщения
+        Route::get('/messages/{id}', [TelegramChatController::class, 'getMessages']);
+        Route::post('/send', [TelegramChatController::class, 'send']);
+        Route::delete('/message/{id}', [TelegramChatController::class, 'deleteMessage']);
+
+        // Прочитано / печатает
+        Route::post('/mark-read/{id}', [TelegramChatController::class, 'markAsRead']);
+        Route::post('/mark-unread/{id}', [TelegramChatController::class, 'markUnread']);
+        Route::post('/typing', [TelegramChatController::class, 'typing']);
+        Route::get('/typing/{id}', [TelegramChatController::class, 'getTyping']);
+
+        // Инфо + медиа-галерея
+        Route::get('/info/{id}', [TelegramChatController::class, 'info']);
+        Route::get('/media/{id}', [TelegramChatController::class, 'media']);
+
+        // Управление группой
+        Route::post('/group/{id}/add-members', [TelegramChatController::class, 'addMembers']);
+        Route::delete('/group/{id}/member/{userId}', [TelegramChatController::class, 'removeMember']);
+        Route::post('/leave/{id}', [TelegramChatController::class, 'leave']);
+        Route::delete('/conversation/{id}', [TelegramChatController::class, 'deleteConversation']);
+
+        // Блокировки
+        Route::post('/block/{userId}', [TelegramChatController::class, 'blockUser'])->name('telegram.block');
+        Route::delete('/block/{userId}', [TelegramChatController::class, 'unblockUser'])->name('telegram.unblock');
+        Route::get('/block/status/{userId}', [TelegramChatController::class, 'blockStatus']);
+
+        // Отправка документа в чат
+        Route::post('/send-document', [TelegramMessageController::class, 'sendDocument'])
+            ->middleware('throttle:20,1')
+            ->name('telegram.send-document');
+
+      // 🆕 ===== ВИДЕОЗВОНКИ =====
+    Route::post('/video-signal', [\App\Http\Controllers\VideoCallController::class, 'sendSignal']);
+    Route::get('/video-signals/{conversationId}', [\App\Http\Controllers\VideoCallController::class, 'getSignals']);
+    Route::post('/video-signals/{signalId}', [\App\Http\Controllers\VideoCallController::class, 'deleteSignal']); // Laravel использует POST+DELETE через _method
+    Route::delete('/video-signals/{signalId}', [\App\Http\Controllers\VideoCallController::class, 'deleteSignal']);
+    Route::get('/user/{userId}/online', [\App\Http\Controllers\VideoCallController::class, 'checkOnline']);
+
+    });
+});
+

@@ -18,6 +18,7 @@
                     class="w-full bg-zinc-800 border border-white/20 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-red-500/50 focus:ring-2 focus:ring-red-500/20 appearance-none cursor-pointer [&>option]:bg-zinc-900 [&>option]:text-white"
                     style="color-scheme: dark;">
                 <option value="" class="bg-zinc-900 text-white">Все компании</option>
+                <option value="none" {{ request('company_id') === 'none' ? 'selected' : '' }} class="bg-zinc-900 text-white">Без компании</option>
                 @foreach($companies as $company)
                 <option value="{{ $company->id }}" {{ request('company_id') == $company->id ? 'selected' : '' }} class="bg-zinc-900 text-white">
                 {{ $company->name }}
@@ -74,7 +75,7 @@
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 rounded-full bg-gradient-to-br from-red-500 to-purple-600 flex items-center justify-center text-white font-semibold text-sm ring-2 ring-white/10">
                             @if($user->avatar)
-                            <img src="{{ asset('storage/' . $user->avatar) }}" alt="" class="w-10 h-10 rounded-full object-cover">
+                            <img src="{{ $user->avatar_url }}" alt="" class="w-10 h-10 rounded-full object-cover">
                             @else
                             {{ Str::upper(Str::substr($user->name, 0, 1)) }}
                             @endif

@@ -45,9 +45,8 @@ class CommentPolicy
      */
     public function delete(User $user, DocumentComment $comment): bool
     {
-        // Удалять может тот, кто написал, ИЛИ тот, кто владеет документом
-        return $comment->user_id === $user->id ||
-            $comment->document->user_id === $user->id;
+        return (int) $comment->user_id === (int) $user->id ||
+            (int) $comment->document->created_by === (int) $user->id;
     }
 
     /**

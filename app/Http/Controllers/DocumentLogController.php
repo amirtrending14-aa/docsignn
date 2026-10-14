@@ -16,11 +16,7 @@ class DocumentLogController extends Controller
         if (!auth()->user()->isAdmin()) {
             $userId = auth()->id();
 
-            // Показываем логи где пользователь:
-            // 1. Создатель документа ИЛИ
-            // 2. Получатель документа ИЛИ
-            // 3. Совершил действие (подписал, обновил и т.д.)
-            $query->where(function($q) use ($userId) {
+         $query->where(function($q) use ($userId) {
                 $q->whereHas('document', function($docQ) use ($userId) {
                     $docQ->where('created_by', $userId)
                         ->orWhere('receiver_id', $userId)

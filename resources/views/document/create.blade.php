@@ -28,6 +28,38 @@
     select.input-field { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%238892a6' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; cursor: pointer; }
     input[type="date"].input-field::-webkit-calendar-picker-indicator { filter: invert(0.8); cursor: pointer; }
 
+    /* ==== ИСПРАВЛЕНИЕ: нативный выпадающий список <select> рисуется браузером со своим
+       (обычно белым) фоном, из-за чего белый текст опций становится невидимым.
+       Явно задаём тёмный фон и белый текст для самих <option>, чтобы список читался. ==== */
+    select.input-field option {
+        background-color: #141826;
+        color: #ffffff;
+        padding: 10px 12px;
+    }
+    select.input-field option:checked,
+    select.input-field option:hover,
+    select.input-field option:focus {
+        background: rgba(79,140,255,0.35);
+        color: #ffffff;
+    }
+    select.input-field:focus option:checked {
+        background: linear-gradient(rgba(79,140,255,0.35), rgba(79,140,255,0.35));
+    }
+
+    /* ==== НОМЕР ДОКУМЕНТА: поле + кнопка "Авто" ==== */
+    .number-row { display: flex; gap: 8px; align-items: stretch; }
+    .number-row .input-field { flex: 1; min-width: 0; }
+    .btn-auto-number { flex-shrink: 0; height: 40px; padding: 0 14px; border-radius: 8px; border: 1px solid rgba(79,140,255,0.4); background: rgba(79,140,255,0.12); color: #4f8cff; font: 700 11px 'Inter', sans-serif; letter-spacing: 0.3px; cursor: pointer; display: flex; align-items: center; gap: 6px; white-space: nowrap; transition: all 0.2s ease; }
+    .btn-auto-number:hover { background: rgba(79,140,255,0.22); border-color: rgba(79,140,255,0.7); box-shadow: 0 0 10px rgba(79,140,255,0.25); }
+    .btn-auto-number:active { transform: scale(0.97); }
+    .btn-auto-number i { font-size: 13px; }
+    .number-auto-hint { font-size: 9px; color: #4f8cff; margin-top: 4px; display: none; align-items: center; gap: 4px; }
+    .number-auto-hint.show { display: flex; }
+
+    /* ==== ТИП ДОКУМЕНТА: select + кастомное поле ==== */
+    .type-custom-wrap { margin-top: 8px; display: none; }
+    .type-custom-wrap.show { display: block; }
+
     .receiver-section { margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.06); }
     .section-title { font-size: 11px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: #8892a6; margin-bottom: 10px; }
 
@@ -263,6 +295,7 @@
         .carried-meta span { font-size: 9px; }
         .carried-remove { width: 26px; height: 26px; font-size: 11px; }
         .byregion-add-btn { padding: 10px 16px; font-size: 11px; }
+        .btn-auto-number { font-size: 10px; padding: 0 10px; }
     }
     @media (max-width: 576px) {
         .doc-create-page { padding: 16px 10px; }
@@ -328,6 +361,8 @@
         .carried-meta span { font-size: 9px; }
         .carried-remove { width: 25px; height: 25px; font-size: 11px; border-radius: 7px; }
         .byregion-add-btn { padding: 9px 14px; font-size: 10px; }
+        .btn-auto-number { font-size: 9px; padding: 0 8px; }
+        .btn-auto-number i { font-size: 12px; }
     }
     @media (max-width: 480px) {
         .doc-create-page { padding: 14px 8px; }
@@ -404,6 +439,84 @@
     }
 </style>
 
+<style>
+    html[data-theme="light"] .doc-create-page {
+        color: #0f172a !important;
+    }
+    html[data-theme="light"] .form-card,
+    html[data-theme="light"] .ai-generator-card {
+        background: #ffffff !important;
+        border-color: #cbd5e1 !important;
+        box-shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
+    }
+    html[data-theme="light"] .page-title,
+    html[data-theme="light"] .mode-btn .mode-title,
+    html[data-theme="light"] .byregion-title,
+    html[data-theme="light"] .carried-name,
+    html[data-theme="light"] .ai-title,
+    html[data-theme="light"] .question-text {
+        color: #0f172a !important;
+    }
+    html[data-theme="light"] .page-subtitle,
+    html[data-theme="light"] .field-label,
+    html[data-theme="light"] .section-title,
+    html[data-theme="light"] .mode-btn .mode-desc,
+    html[data-theme="light"] .dropdown-item .meta,
+    html[data-theme="light"] .carried-meta span,
+    html[data-theme="light"] .ai-subtitle {
+        color: #475569 !important;
+    }
+    html[data-theme="light"] .back-btn,
+    html[data-theme="light"] .input-field,
+    html[data-theme="light"] .receiver-block,
+    html[data-theme="light"] .carried-item,
+    html[data-theme="light"] .ai-textarea,
+    html[data-theme="light"] .ai-questions,
+    html[data-theme="light"] .format-label,
+    html[data-theme="light"] .question-input,
+    html[data-theme="light"] .file-upload,
+    html[data-theme="light"] .mode-btn {
+        background: #f8fafc !important;
+        border-color: #b8c4d3 !important;
+        color: #0f172a !important;
+    }
+    html[data-theme="light"] .input-field::placeholder,
+    html[data-theme="light"] .ai-textarea::placeholder {
+        color: #64748b !important;
+    }
+    html[data-theme="light"] .input-field:focus,
+    html[data-theme="light"] .ai-textarea:focus,
+    html[data-theme="light"] .question-input:focus {
+        background: #ffffff !important;
+        border-color: #4f8cff !important;
+    }
+    html[data-theme="light"] .mode-btn:hover,
+    html[data-theme="light"] .mode-btn.active {
+        background: rgba(79, 140, 255, 0.1) !important;
+    }
+    html[data-theme="light"] .search-dropdown {
+        background: #ffffff !important;
+        border-color: #b8c4d3 !important;
+        box-shadow: 0 14px 30px rgba(15, 23, 42, 0.16);
+    }
+    html[data-theme="light"] .dropdown-item {
+        border-bottom-color: #e2e8f0;
+    }
+    html[data-theme="light"] .dropdown-item .name,
+    html[data-theme="light"] .ai-status-text {
+        color: #0f172a !important;
+    }
+    html[data-theme="light"] select.input-field option {
+        background: #ffffff;
+        color: #0f172a;
+    }
+    html[data-theme="light"] .btn-submit,
+    html[data-theme="light"] .byregion-add-btn {
+        color: #0f172a !important;
+        font-weight: 800;
+    }
+</style>
+
 <div class="doc-create-page">
     <div class="max-w-3xl mx-auto">
 
@@ -423,41 +536,6 @@
         </div>
         @endif
 
-        <div class="ai-generator-card">
-            <div class="ai-header">
-                <div class="ai-icon"><i class="bi bi-stars"></i></div>
-                <div>
-                    <div class="ai-title">ИИ Генератор Документов</div>
-                    <div class="ai-subtitle">Опиши документ — ИИ заполнит все поля автоматически</div>
-                </div>
-            </div>
-            <div class="ai-input-group">
-                <textarea id="aiPrompt" class="ai-textarea" placeholder="Например: Создай договор аренды квартиры на 11 месяцев между Иванов Иван Иванович и Петров Петр Петрович, сумма 50000 руб/мес..." rows="3"></textarea>
-                <div class="ai-format-selector">
-                    <label class="format-option">
-                        <input type="radio" name="ai_format" value="pdf" checked>
-                        <span class="format-label"><i class="bi bi-file-earmark-pdf"></i> PDF</span>
-                    </label>
-                    <label class="format-option">
-                        <input type="radio" name="ai_format" value="word">
-                        <span class="format-label"><i class="bi bi-file-earmark-word"></i> Word</span>
-                    </label>
-                </div>
-            </div>
-            <button type="button" id="generateBtn" class="ai-generate-btn"><i class="bi bi-magic"></i> <span>Сгенерировать с ИИ</span></button>
-            <div id="aiStatus" class="ai-status hidden"><div class="ai-status-icon"><i class="bi bi-hourglass-split"></i></div><div class="ai-status-text">ИИ генерирует документ...</div></div>
-            <div id="aiQuestions" class="ai-questions hidden">
-                <div class="questions-title"><i class="bi bi-question-circle"></i> ИИ задаёт уточняющие вопросы:</div>
-                <div id="questionsList"></div>
-                <button type="button" id="submitAnswers" class="ai-submit-btn"><i class="bi bi-check-circle"></i> Отправить ответы</button>
-            </div>
-            <div id="aiResult" class="ai-result hidden">
-                <div class="result-header"><i class="bi bi-check-circle-fill"></i> Документ успешно сгенерирован!</div>
-                <div class="result-actions"><a id="downloadLink" href="#" class="download-btn" download><i class="bi bi-download"></i> Скачать документ</a></div>
-            </div>
-            <div id="aiError" class="ai-error hidden"></div>
-        </div>
-
         <div class="form-card">
             <h1 class="page-title" data-i18n="pageTitle">Новый документ</h1>
             <p class="page-subtitle" data-i18n="pageSubtitle">Заполните информацию о документе</p>
@@ -468,11 +546,25 @@
                 <div class="field-row">
                     <div class="field-group">
                         <label class="field-label"><span data-i18n="labelNumber">Номер документа</span> <span class="required">*</span></label>
-                        <input type="text" name="number" id="field-number" class="input-field" value="{{ old('number', '№ ') }}" data-i18n-placeholder="numberPlaceholder" placeholder="№ 001" required>
+                        <div class="number-row">
+                            <input type="text" name="number" id="field-number" class="input-field" value="{{ old('number', '№ ') }}" data-i18n-placeholder="numberPlaceholder" placeholder="№ 001" required>
+                            <button type="button" id="autoNumberBtn" class="btn-auto-number" title="Автоматически подставить следующий номер">
+                                <i class="bi bi-magic"></i>
+                                <span data-i18n="autoNumberBtn">Авто</span>
+                            </button>
+                        </div>
+                        <div class="number-auto-hint" id="numberAutoHint">
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span data-i18n="numberAutoHint">Номер подставлен автоматически</span>
+                        </div>
                     </div>
                     <div class="field-group">
                         <label class="field-label"><span data-i18n="labelType">Тип документа</span> <span class="required">*</span></label>
-                        <input type="text" name="type" id="field-type" class="input-field" data-i18n-placeholder="typePlaceholder" placeholder="Договор, Акт..." value="{{ old('type') }}" required>
+                        <select id="field-type-select" class="input-field"></select>
+                        <div class="type-custom-wrap" id="typeCustomWrap">
+                            <input type="text" id="field-type-custom" class="input-field" data-i18n-placeholder="typeCustomPlaceholder" placeholder="Впишите свой тип документа">
+                        </div>
+                        <input type="hidden" name="type" id="field-type" value="{{ old('type') }}">
                     </div>
                 </div>
 
@@ -484,7 +576,7 @@
                             <option value="draft" {{ old('status') == 'draft' ? 'selected' : '' }} data-i18n="statusDraft">Сохранить как черновик</option>
                         </select>
                     </div>
-                  
+
                     <div class="field-group">
                         <label class="field-label" data-i18n="labelDeadline">Дедлайн</label>
                         <input type="date" name="deadline" id="field-deadline" class="input-field" value="{{ old('deadline') }}">
@@ -601,7 +693,7 @@
                         </div>
                         <input type="hidden" name="team_receivers" id="team_receivers" value="">
                         <p id="team-error" style="font-size:10px;color:#ff6b6b;margin-top:6px;font-weight:600;display:none;">
-                             <span data-i18n="selectError">Выберите хотя бы одного получателя</span>
+                            <span data-i18n="selectError">Выберите хотя бы одного получателя</span>
                         </p>
                     </div>
 
@@ -696,7 +788,7 @@
                         </a>
 
                         <p class="byregion-error" id="bydepartment-error">
-                             <span data-i18n="byDepartmentError">Выберите хотя бы один отдел</span>
+                            <span data-i18n="byDepartmentError">Выберите хотя бы один отдел</span>
                         </p>
                     </div>
 
@@ -746,7 +838,7 @@
                         </a>
 
                         <p class="byregion-error" id="bycompany-error">
-                             <span data-i18n="byCompanyError">Выберите компанию и хотя бы одного сотрудника</span>
+                            <span data-i18n="byCompanyError">Выберите компанию и хотя бы одного сотрудника</span>
                         </p>
                     </div>
                 </div>
@@ -765,9 +857,11 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const FORM_STORAGE_KEY = 'docsign_draft_create_form';
+        const AUTO_NUMBER_KEY = 'docsign_auto_number_counter';
         const UPLOAD_TEMP_URL = '{{ route("documents.upload-temp") }}';
         const DEPT_SYNC_URL = '{{ route("documents.select-by-department.store") }}';
         const COMP_SYNC_URL = '{{ route("documents.select-by-company.store") }}';
+        const OLD_TYPE_VALUE = @json(old('type', ''));
 
         const translations = {
             ru: {
@@ -797,7 +891,9 @@
                 fileRequiredError: "❌ Файл не выбран! Пожалуйста, прикрепите файл для отправки.",
                 fileUploading: "⏳ Загружаем файл на сервер...",
                 fileUploaded: "✓ Файл загружен на сервер. Можно переходить к выбору получателей.",
-                fileRestored: "✓ Файл уже загружен на сервер. Не нужно выбирать заново."
+                fileRestored: "✓ Файл уже загружен на сервер. Не нужно выбирать заново.",
+                autoNumberBtn: "Авто", numberAutoHint: "Номер подставлен автоматически",
+                typeCustomPlaceholder: "Впишите свой тип документа", typeOtherOption: "Другое (указать вручную)"
             },
             tj: {
                 back: "Бозгашт", errorTitle: "Хато ҳангоми эҷоди ҳуҷҷат", pageTitle: "Ҳуҷҷати нав",
@@ -826,7 +922,9 @@
                 fileRequiredError: "❌ Файл интихоб нашудааст! Лутфан, барои фиристодан файлро замима кунед.",
                 fileUploading: "⏳ Файл ба сервер бор шуда истодааст...",
                 fileUploaded: "✓ Файл ба сервер бор шуд. Метавонед гирандаҳоро интихоб кунед.",
-                fileRestored: "✓ Файл аллакай дар сервер аст. Аз нав интихоб кардан лозим нест."
+                fileRestored: "✓ Файл аллакай дар сервер аст. Аз нав интихоб кардан лозим нест.",
+                autoNumberBtn: "Худкор", numberAutoHint: "Рақам ба таври худкор гузошта шуд",
+                typeCustomPlaceholder: "Намуди ҳуҷҷати худро нависед", typeOtherOption: "Дигар (дастӣ ворид кунед)"
             },
             en: {
                 back: "Back", errorTitle: "Error creating document", pageTitle: "New Document",
@@ -855,9 +953,40 @@
                 fileRequiredError: "❌ File not selected! Please attach a file to submit.",
                 fileUploading: "⏳ Uploading file to server...",
                 fileUploaded: "✓ File uploaded to server. You can now select recipients.",
-                fileRestored: "✓ File already on server. No need to select again."
+                fileRestored: "✓ File already on server. No need to select again.",
+                autoNumberBtn: "Auto", numberAutoHint: "Number filled in automatically",
+                typeCustomPlaceholder: "Type your own document type", typeOtherOption: "Other (enter manually)"
             }
         };
+
+        // =====================================================================
+        // ✅ СПИСОК ТИПОВ ДОКУМЕНТОВ (ru / tj / en) — переключается вместе с языком сайта
+        // =====================================================================
+        const docTypeOptions = [
+            { key: 'order',              ru: 'Приказ',                    tj: 'Фармон',              en: 'Order' },
+            { key: 'decision',           ru: 'Решение / Постановление',   tj: 'Қарор',               en: 'Decision / Resolution' },
+            { key: 'application',        ru: 'Заявление',                 tj: 'Ариза',               en: 'Application' },
+            { key: 'act',                ru: 'Акт',                       tj: 'Санад',               en: 'Act' },
+            { key: 'protocol',           ru: 'Протокол',                  tj: 'Протокол',            en: 'Protocol' },
+            { key: 'contract',           ru: 'Договор',                   tj: 'Шартнома',            en: 'Contract' },
+            { key: 'agreement',          ru: 'Соглашение',                tj: 'Созишнома',           en: 'Agreement' },
+            { key: 'promissory_note',    ru: 'Вексель',                   tj: 'Вексел',              en: 'Promissory Note' },
+            { key: 'license',           ru: 'Лицензия / Разрешение',      tj: 'Иҷозатнома',          en: 'License / Permit' },
+            { key: 'power_of_attorney',  ru: 'Доверенность',              tj: 'Ваколатнома',         en: 'Power of Attorney' },
+            { key: 'invoice',            ru: 'Счёт-фактура',              tj: 'Ҳисоб-фактура',       en: 'Invoice' },
+            { key: 'cash_receipt',       ru: 'Кассовый чек',              tj: 'Чеки хазинавӣ',       en: 'Cash Receipt' },
+            { key: 'letter',             ru: 'Письмо',                    tj: 'Хат',                 en: 'Letter' },
+            { key: 'reference',          ru: 'Справка',                   tj: 'Маълумотнома',        en: 'Certificate / Reference' },
+            { key: 'report',             ru: 'Отчёт',                     tj: 'Ҳисобот',             en: 'Report' },
+            { key: 'memo',               ru: 'Служебная записка',         tj: 'Хатти хизматӣ',       en: 'Memo' },
+            { key: 'bill',               ru: 'Счёт на оплату',            tj: 'Ҳисоб барои пардохт', en: 'Bill' },
+            { key: 'waybill',            ru: 'Накладная',                 tj: 'Роҳнома',             en: 'Waybill' },
+            { key: 'charter',            ru: 'Устав',                     tj: 'Оиннома',             en: 'Charter' },
+            { key: 'regulation',         ru: 'Положение',                 tj: 'Низомнома',           en: 'Regulation' },
+            { key: 'instruction',        ru: 'Инструкция',                tj: 'Дастур',              en: 'Instruction' },
+            { key: 'guarantee_letter',   ru: 'Гарантийное письмо',        tj: 'Хатти кафолатӣ',      en: 'Guarantee Letter' },
+            { key: 'other',              ru: null, tj: null, en: null } // подпись берётся из translations.typeOtherOption
+        ];
 
         function getCurrentLang() {
             return localStorage.getItem('docsign_lang') || localStorage.getItem('app-lang') || 'ru';
@@ -878,12 +1007,100 @@
         }
 
         let currentT = applyTranslations();
+
+        // =====================================================================
+        // ✅ ТИП ДОКУМЕНТА: построение select + переключение языка + "Другое"
+        // =====================================================================
+        const typeSelect = document.getElementById('field-type-select');
+        const typeHidden = document.getElementById('field-type');
+        const typeCustomWrap = document.getElementById('typeCustomWrap');
+        const typeCustomInput = document.getElementById('field-type-custom');
+        let currentTypeKey = '';
+
+        function findKeyByAnyLangValue(value) {
+            if (!value) return null;
+            const v = value.trim().toLowerCase();
+            for (const opt of docTypeOptions) {
+                if (opt.key === 'other') continue;
+                if ([opt.ru, opt.tj, opt.en].some(label => label && label.trim().toLowerCase() === v)) {
+                    return opt.key;
+                }
+            }
+            return null;
+        }
+
+        function renderTypeOptions(preserveKey) {
+            const lang = getCurrentLang();
+            const t = translations[lang] || translations['ru'];
+            typeSelect.innerHTML = '';
+            docTypeOptions.forEach(opt => {
+                const optionEl = document.createElement('option');
+                optionEl.value = opt.key;
+                optionEl.textContent = opt.key === 'other' ? t.typeOtherOption : (opt[lang] || opt.ru);
+                typeSelect.appendChild(optionEl);
+            });
+            if (preserveKey) {
+                typeSelect.value = preserveKey;
+            }
+        }
+
+        function updateHiddenTypeFromSelect() {
+            const lang = getCurrentLang();
+            const t = translations[lang] || translations['ru'];
+            const key = typeSelect.value;
+            currentTypeKey = key;
+            if (key === 'other') {
+                typeCustomWrap.classList.add('show');
+                typeHidden.value = typeCustomInput.value.trim();
+                typeCustomInput.focus();
+            } else {
+                typeCustomWrap.classList.remove('show');
+                const opt = docTypeOptions.find(o => o.key === key);
+                typeHidden.value = opt ? (opt[lang] || opt.ru) : '';
+            }
+            saveFormToStorage();
+        }
+
+        // Инициализация: если форма вернулась с ошибками валидации — восстанавливаем выбор
+        (function initTypeField() {
+            let initialKey = findKeyByAnyLangValue(OLD_TYPE_VALUE);
+            if (!initialKey && OLD_TYPE_VALUE) {
+                initialKey = 'other';
+            }
+            renderTypeOptions(initialKey || null);
+            if (initialKey === 'other') {
+                typeCustomWrap.classList.add('show');
+                typeCustomInput.value = OLD_TYPE_VALUE;
+                typeHidden.value = OLD_TYPE_VALUE;
+                currentTypeKey = 'other';
+            } else if (initialKey) {
+                currentTypeKey = initialKey;
+                updateHiddenTypeFromSelect();
+            } else {
+                // по умолчанию выбираем первый тип из списка
+                typeSelect.selectedIndex = 0;
+                updateHiddenTypeFromSelect();
+            }
+        })();
+
+        typeSelect.addEventListener('change', updateHiddenTypeFromSelect);
+        typeCustomInput.addEventListener('input', function() {
+            if (currentTypeKey === 'other') {
+                typeHidden.value = this.value.trim();
+                saveFormToStorage();
+            }
+        });
+
         window.addEventListener('docsign:lang-changed', function(e) {
             if (e.detail && e.detail.lang) {
                 localStorage.setItem('docsign_lang', e.detail.lang);
                 localStorage.setItem('app-lang', e.detail.lang);
             }
             currentT = applyTranslations();
+            renderTypeOptions(currentTypeKey);
+            if (currentTypeKey !== 'other') {
+                updateHiddenTypeFromSelect();
+            }
         });
 
         function getCsrfToken() {
@@ -919,7 +1136,8 @@
             const tempPath = document.getElementById('temp-file-path');
             const formData = {
                 number: document.getElementById('field-number').value,
-                type: document.getElementById('field-type').value,
+                type: typeHidden.value,
+                typeKey: currentTypeKey,
                 status: document.getElementById('field-status').value,
                 deadline: document.getElementById('field-deadline').value,
                 title: document.getElementById('field-title').value,
@@ -940,11 +1158,24 @@
                 if (hoursPassed > 2) { localStorage.removeItem(FORM_STORAGE_KEY); return; }
 
                 if (data.number) document.getElementById('field-number').value = data.number;
-                if (data.type) document.getElementById('field-type').value = data.type;
                 if (data.status) document.getElementById('field-status').value = data.status;
                 if (data.deadline) document.getElementById('field-deadline').value = data.deadline;
                 if (data.title) document.getElementById('field-title').value = data.title;
                 if (data.content) document.getElementById('field-content').value = data.content;
+
+                if (data.typeKey && !OLD_TYPE_VALUE) {
+                    if (data.typeKey === 'other') {
+                        typeSelect.value = 'other';
+                        typeCustomWrap.classList.add('show');
+                        typeCustomInput.value = data.type || '';
+                        currentTypeKey = 'other';
+                        typeHidden.value = data.type || '';
+                    } else {
+                        typeSelect.value = data.typeKey;
+                        currentTypeKey = data.typeKey;
+                        updateHiddenTypeFromSelect();
+                    }
+                }
 
                 if (data.tempFilePath && data.fileName) {
                     const tempPath = document.getElementById('temp-file-path');
@@ -1002,7 +1233,7 @@
                 const mode = this.dataset.mode;
                 activeMode = mode;
                 modeInput.value = mode; 
-               
+
                 const block = document.getElementById('mode-' + mode);
                 if (block) block.classList.remove('hidden');
                 
@@ -1042,6 +1273,38 @@
             if (bcBtn) bcBtn.classList.add('active');
             const bcBlock = document.getElementById('mode-by_company');
             if (bcBlock) bcBlock.classList.remove('hidden');
+        }
+
+        // =====================================================================
+        // ✅ НОМЕР ДОКУМЕНТА: кнопка "Авто" — берёт следующее число из памяти браузера
+        // =====================================================================
+        const numberInput = document.getElementById('field-number');
+        const autoNumberBtn = document.getElementById('autoNumberBtn');
+        const numberAutoHint = document.getElementById('numberAutoHint');
+        let numberIsAuto = false;
+
+        function getNextAutoNumber() {
+            const stored = parseInt(localStorage.getItem(AUTO_NUMBER_KEY) || '0', 10);
+            return (isNaN(stored) ? 0 : stored) + 1;
+        }
+        function formatAutoNumber(n) {
+            return '№ ' + String(n).padStart(3, '0');
+        }
+        if (autoNumberBtn && numberInput) {
+            autoNumberBtn.addEventListener('click', function() {
+                const next = getNextAutoNumber();
+                numberInput.value = formatAutoNumber(next);
+                numberInput.dataset.autoValue = String(next);
+                numberIsAuto = true;
+                if (numberAutoHint) numberAutoHint.classList.add('show');
+                saveFormToStorage();
+            });
+            numberInput.addEventListener('input', function() {
+                // если человек начал печатать номер сам — отключаем авто-режим
+                numberIsAuto = false;
+                delete numberInput.dataset.autoValue;
+                if (numberAutoHint) numberAutoHint.classList.remove('show');
+            });
         }
 
         const fileInput = document.getElementById('file-input');
@@ -1093,7 +1356,7 @@
                         fileUploadBox.style.borderColor = 'rgba(34, 197, 94, 0.6)';
                         fileUploadBox.style.background = 'rgba(34, 197, 94, 0.05)';
                         fileUploadStatus.innerHTML = `<span style="color:#22c55e;">${t.fileUploaded}</span>`;
-                     saveFormToStorage();
+                    saveFormToStorage();
                     }
                 })
                 .catch(error => {
@@ -1110,13 +1373,20 @@
         const form = document.getElementById('documentForm');
 
         // =====================================================================
-        // ✅ ИСПРАВЛЕННАЯ ВАЛИДАЦИЯ: ПЕРЕД SUBMIT ОЧИЩАЕМ СЕССИЮ КОМПАНИИ
+        // ✅ ИСПРАВЛЕННАЯ ВАЛИДАЦИЯ: ПЕРЕД SUBMIT ОЧИЩАЕМ СЕССИЮ КОМПАНИИ + СОХРАНЯЕМ АВТО-НОМЕР
         // =====================================================================
         form.addEventListener('submit', async function(e) {
             const t = translations[getCurrentLang()] || translations['ru'];
             let hasError = false;
 
-            if (!activeMode) {
+            if (currentTypeKey === 'other' && !typeCustomInput.value.trim()) {
+                e.preventDefault();
+                typeCustomInput.style.borderColor = '#ff6b6b';
+                typeCustomInput.focus();
+                hasError = true;
+            }
+
+            if (!hasError && !activeMode) {
                 e.preventDefault(); alert(t.alertSelectMode); hasError = true;
             }
 
@@ -1172,6 +1442,12 @@
             }
 
             if (!hasError) {
+                // ✅ Если номер был подставлен автоматически — запоминаем его как последний использованный,
+                // чтобы в следующий раз кнопка "Авто" предложила следующее число (1 → 2 → 3 → 4...)
+                if (numberIsAuto && numberInput.dataset.autoValue) {
+                    localStorage.setItem(AUTO_NUMBER_KEY, numberInput.dataset.autoValue);
+                }
+
                 // ✅ ВАЖНО: Очищаем сессию компании ПЕРЕД отправкой формы
                 // Это гарантирует что при следующем создании документа старые данные не останутся
                 try {
@@ -1472,7 +1748,22 @@
 
         function fillFormFields(data) {
             if (!data) return;
-            const fields = { 'field-number': data.number, 'field-type': data.type, 'field-title': data.title, 'field-content': data.content, 'field-deadline': data.deadline, 'field-status': data.status };
+            if (data.number) { document.getElementById('field-number').value = data.number; numberIsAuto = false; if (numberAutoHint) numberAutoHint.classList.remove('show'); }
+            if (data.type) {
+                const matchedKey = findKeyByAnyLangValue(data.type);
+                if (matchedKey) {
+                    typeSelect.value = matchedKey;
+                    currentTypeKey = matchedKey;
+                    updateHiddenTypeFromSelect();
+                } else {
+                    typeSelect.value = 'other';
+                    currentTypeKey = 'other';
+                    typeCustomWrap.classList.add('show');
+                    typeCustomInput.value = data.type;
+                    typeHidden.value = data.type;
+                }
+            }
+            const fields = { 'field-title': data.title, 'field-content': data.content, 'field-deadline': data.deadline, 'field-status': data.status };
             Object.keys(fields).forEach(fieldId => {
                 const field = document.getElementById(fieldId);
                 if (field && fields[fieldId]) {

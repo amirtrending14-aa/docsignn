@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;    // ← ДОБАВЬ ЭТУ СТРОКУ
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -19,42 +20,52 @@ const STATUS_ACTIVE     = 'active';
 const STATUS_PROCESSING = 'processing';
 const STATUS_COMPLETED  = 'completed';
 const STATUS_REJECTED   = 'rejected';
+const STATUS_APPROVED   = 'approved';
+const STATUS_FAILED     = 'failed';
 
-    protected $fillable =[
-        'number',
-        'title',
-        'content',
-        'type',
-        'file_path',
-        'status',
-        'created_by',
-        'user_id',
-        'receiver_id',
-        'deadline'
-    ];
+    protected $fillable = [
+    'number',
+    'title',
+    'content',
+    'type',
+    'file_path',
+    'status',
+    'created_by',
+    'sender_id',      // ← ДОБАВЛЕНО
+    'receiver_id',
+    'receiver_mode',  // ← ДОБАВЛЕНО
+    'deadline',
+];
 
     protected $casts = [
         'deadline' => 'datetime',
     ];
 
 
-    public function scopeVisibleToAuth($query)
-    {
-        $user = Auth::user();
+  public function scopeVisibleToAuth($query)
+{
+    $user = Auth::user();
 
-        if (!$user) return $query->whereRaw('1 = 0');
+    if (!$user) return $query->whereRaw('1 = 0');
 
-        if ($user->is_admin) {
-            return $query;
-        }
-
-        return $query->where(function($q) use ($user) {
-            $q->where('created_by', $user->id)->orWhere(function($subQ) use ($user) {
-                    $subQ->where('receiver_id', $user->id)->where('status', '!=', self::STATUS_DRAFT);
-                });
-        });
+    // Админ видит всё
+    if ($user->is_admin) {
+        return $query;
     }
 
+    return $query->where(function ($q) use ($user) {
+        $q->where('created_by', $user->id)
+          ->orWhere('sender_id', $user->id)           // ← ДОБАВЛЕНО
+          ->orWhere(function ($subQ) use ($user) {
+              $subQ->where('receiver_id', $user->id)
+                   ->where('status', '!=', self::STATUS_DRAFT);
+          });
+    });
+}
+public function sender(): BelongsTo
+{
+    return $this->belongsTo(User::class, 'sender_id');
+}
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
@@ -72,7 +83,7 @@ const STATUS_REJECTED   = 'rejected';
     }
 
 
-    public function signatures(): HasMany
+      public function signatures(): HasMany
     {
         return $this->hasMany(DocumentSignature::class);
     }
@@ -80,6 +91,12 @@ const STATUS_REJECTED   = 'rejected';
     public function logs(): HasMany
     {
         return $this->hasMany(DocumentLog::class);
+    }
+
+    // ✅ ДОБАВЬ ЭТОТ МЕТОД СЮДА:
+    public function comments(): HasMany
+    {
+        return $this->hasMany(DocumentComment::class);
     }
 
 
@@ -152,4 +169,13 @@ const STATUS_REJECTED   = 'rejected';
         ->withPivot('status', 'created_at', 'updated_at')
             ->withTimestamps();
     }
+    public function index(): HasOne
+{
+    return $this->hasOne(DocumentIndex::class);
+}
+
+public function chunks(): HasMany
+{
+    return $this->hasMany(DocumentChunk::class);
+}
 }

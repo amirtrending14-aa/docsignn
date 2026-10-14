@@ -618,7 +618,7 @@
                 <div class="user-card" id="user-{{ $user->id }}" data-user-id="{{ $user->id }}">
                     <div class="user-photo">
                         @if($user->avatar)
-                        <img src="{{ asset('storage/' . $user->avatar) }}" alt="{{ $user->name }}" loading="eager">
+                        <img src="{{ $user->avatar_url }}" alt="{{ $user->name }}" loading="eager">
                         @else
                         <div class="user-photo-placeholder">
                             {{ strtoupper(mb_substr($user->name, 0, 1)) }}

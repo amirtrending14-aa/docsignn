@@ -196,18 +196,29 @@ public function departments(): BelongsToMany
         return $this->company ?? 'Моя команда';
     }
 
-    public function getAvatarUrlAttribute(): ?string
-    {
-        if (!$this->avatar) {
-            return null;
-        }
-
-        if (filter_var($this->avatar, FILTER_VALIDATE_URL)) {
-            return $this->avatar;
-        }
-
-        return Storage::disk('public')->url($this->avatar);
+   public function getAvatarUrlAttribute(): ?string
+{
+    if (! $this->avatar) {
+        return null;
     }
+
+    $path = ltrim(str_replace('\\', '/', $this->avatar), '/');
+
+    if (! str_starts_with($path, 'avatars/')) {
+        $path = 'avatars/' . ltrim(basename($path), '/');
+    }
+
+    // ✅ Через рабочий роут /avatar/{path} (без симлинка storage)
+    if (\Illuminate\Support\Facades\Storage::disk('public')->exists($path)) {
+        return url('/avatar/' . $path);
+    }
+
+    if (file_exists(public_path($path))) {
+        return asset($path);
+    }
+
+    return null;
+}
 
     public function getAvatarColorAttribute(): string
     {
@@ -383,5 +394,33 @@ public function departments(): BelongsToMany
     public function attendances()
 {
     return $this->hasMany(Attendance::class);
+}
+
+
+public function telegramConversations()
+{
+    return $this->belongsToMany(
+        \App\Models\TelegramConversation::class,
+        'telegram_conversation_user',
+        'user_id',
+        'telegram_conversation_id'
+    )->withPivot('last_read_at')->withTimestamps();
+}
+public function telegramBlockedUsers()
+{
+    return $this->hasMany(\App\Models\TelegramBlock::class, 'user_id');
+}
+
+public function telegramBlockedBy()
+{
+    return $this->hasMany(\App\Models\TelegramBlock::class, 'blocked_user_id');
+}
+
+/**
+ * Проверить, заблокирован ли $userId текущим пользователем
+ */
+public function hasBlocked(int $userId): bool
+{
+    return $this->telegramBlockedUsers()->where('blocked_user_id', $userId)->exists();
 }
 }

@@ -1,475 +1,329 @@
 @extends('layouts.superadmin')
 
 @section('title', 'История активности')
-@section('page-title', '📜 История действий')
-@section('page-subtitle', 'Полный лог активности в системе')
+@section('page-title', 'История действий')
+@section('page-subtitle', 'Журнал событий и операций пользователей')
 
 @section('content')
 <style>
-    .activity-page {
-        font-family: 'Inter', -apple-system, sans-serif;
-        background: #000000;
-        color: #f1f5f9;
+    .activity-stat {
+        border: 1px solid #e5eaf1;
+        border-radius: 14px;
+        background: #fff;
+        padding: 18px;
+        box-shadow: 0 2px 8px rgba(15, 23, 42, .035);
     }
-
-    .page-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        border-radius: 16px;
-        padding: 20px 24px;
-        color: white;
-        margin-bottom: 20px;
-        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.35);
-    }
-    .page-header h1 { font-size: 1.4rem; font-weight: 600; margin: 0; color: white; }
-    .page-header p { margin: 4px 0 0; opacity: 0.9; font-size: 0.85rem; color: rgba(255,255,255,0.9); }
-
-    .stat-card {
-        background: #0a0a0a;
+    .activity-stat-icon {
+        display: flex;
+        width: 42px;
+        height: 42px;
+        flex: 0 0 42px;
+        align-items: center;
+        justify-content: center;
         border-radius: 12px;
-        padding: 14px 16px;
-        border: 1px solid #1f1f1f;
-        transition: all 0.25s ease;
-        height: 100%;
+        background: #eff6ff;
+        color: #2563eb;
     }
-    .stat-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(0,0,0,0.6);
-        border-color: #2a2a2a;
-    }
-    .stat-icon {
-        width: 36px; height: 36px;
-        border-radius: 10px;
-        display: flex; align-items: center; justify-content: center;
-        font-size: 1rem;
-    }
-    .stat-value { font-size: 1.3rem; font-weight: 700; margin: 0; line-height: 1.2; color: #f1f5f9; }
-    .stat-label { font-size: 0.72rem; color: #777777; text-transform: uppercase; letter-spacing: 0.5px; margin: 0; }
-
-    .filter-card {
-        background: #0a0a0a;
-        border-radius: 14px;
-        border: 1px solid #1f1f1f;
-        padding: 16px 18px;
-        margin-bottom: 16px;
-    }
-    .filter-card .form-label {
-        font-size: 0.72rem;
+    .activity-stat-label {
+        color: #64748b;
+        font-size: .76rem;
         font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.4px;
-        color: #888888;
-        margin-bottom: 5px;
     }
-    .filter-card .form-select,
-    .filter-card .form-control {
-        font-size: 0.82rem;
-        padding: 7px 11px;
-        border-radius: 8px;
-        border: 1.5px solid #2a2a2a;
-        background: #000000;
-        color: #f1f5f9;
-        transition: all 0.2s;
+    .activity-stat-value {
+        margin-top: 3px;
+        color: #0f172a;
+        font-size: 1.45rem;
+        font-weight: 750;
+        line-height: 1.2;
     }
-    .filter-card .form-select:focus,
-    .filter-card .form-control:focus {
-        border-color: #667eea;
-        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.25);
-        background: #000000;
-        color: #f1f5f9;
+    .activity-filter {
+        width: 100%;
+        min-height: 42px;
+        border: 1px solid #dbe2ea;
+        border-radius: 9px;
+        background: #fff;
+        padding: 9px 11px;
+        color: #172033;
+        font-size: .84rem;
+        outline: none;
+        transition: border-color .2s, box-shadow .2s;
     }
-    .filter-card .form-select option {
-        background: #0a0a0a;
-        color: #f1f5f9;
+    .activity-filter:focus {
+        border-color: #60a5fa;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, .12);
     }
-    .btn-filter {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        border: none;
-        border-radius: 8px;
-        font-size: 0.82rem;
-        font-weight: 500;
-        padding: 8px 14px;
-        transition: all 0.2s;
+    .activity-label {
+        display: block;
+        margin-bottom: 6px;
+        color: #475569;
+        font-size: .76rem;
+        font-weight: 650;
     }
-    .btn-filter:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 6px 16px rgba(102, 126, 234, 0.45);
-        color: white;
-    }
-    .btn-reset {
-        background: #1a1a1a;
-        color: #aaaaaa;
-        border: none;
-        border-radius: 8px;
-        font-size: 0.82rem;
-        padding: 8px 14px;
-    }
-    .btn-reset:hover { background: #252525; color: #f1f5f9; }
-
-    .activity-table-wrap {
-        background: #0a0a0a;
-        border-radius: 14px;
-        border: 1px solid #1f1f1f;
-        overflow: hidden;
-    }
-    .activity-table { margin: 0; font-size: 0.82rem; color: #f1f5f9; }
-    .activity-table thead th {
-        background: #000000;
-        border-bottom: 1px solid #1f1f1f;
-        font-size: 0.7rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        color: #888888;
-        padding: 11px 14px;
-    }
-    .activity-table tbody td {
-        padding: 12px 14px;
-        vertical-align: middle;
-        border-bottom: 1px solid #1a1a1a;
-        color: #e2e8f0;
-    }
-    .activity-table tbody tr { transition: background 0.15s; }
-    .activity-table tbody tr:hover { background: #121212; }
-    .activity-table tbody tr:last-child td { border-bottom: none; }
-
-    .user-cell { display: flex; align-items: center; gap: 10px; }
-    .user-avatar {
-        width: 32px; height: 32px;
-        border-radius: 50%;
-        display: flex; align-items: center; justify-content: center;
-        color: white;
-        font-weight: 600;
-        font-size: 0.78rem;
-        flex-shrink: 0;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    }
-    .user-name { font-weight: 600; font-size: 0.82rem; color: #f1f5f9; line-height: 1.2; }
-    .user-email { font-size: 0.7rem; color: #888888; }
-
-    .action-badge {
+    .activity-badge {
         display: inline-flex;
         align-items: center;
-        gap: 5px;
-        padding: 4px 10px;
-        border-radius: 20px;
-        font-size: 0.7rem;
-        font-weight: 600;
+        gap: 7px;
+        border: 1px solid #dbeafe;
+        border-radius: 999px;
+        background: #eff6ff;
+        padding: 5px 10px;
+        color: #1d4ed8;
+        font-size: .74rem;
+        font-weight: 650;
         white-space: nowrap;
     }
-    .action-login      { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
-    .action-logout     { background: rgba(148, 163, 184, 0.15); color: #cbd5e1; border: 1px solid rgba(148, 163, 184, 0.25); }
-    .action-doc-create { background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3); }
-    .action-doc-update { background: rgba(251, 191, 36, 0.2); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.3); }
-    .action-doc-delete { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
-    .action-doc-sign   { background: rgba(99, 102, 241, 0.2); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.3); }
-    .action-doc-send   { background: rgba(139, 92, 246, 0.2); color: #a78bfa; border: 1px solid rgba(139, 92, 246, 0.3); }
-    .action-doc-reject { background: rgba(244, 63, 94, 0.2); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.3); }
-    .action-doc-export { background: rgba(14, 165, 233, 0.2); color: #38bdf8; border: 1px solid rgba(14, 165, 233, 0.3); }
-    .action-doc-download { background: rgba(20, 184, 166, 0.2); color: #2dd4bf; border: 1px solid rgba(20, 184, 166, 0.3); }
-    .action-doc-ai     { background: rgba(168, 85, 247, 0.2); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); }
-    .action-user-create{ background: rgba(6, 182, 212, 0.2); color: #22d3ee; border: 1px solid rgba(6, 182, 212, 0.3); }
-    .action-user-update{ background: rgba(251, 191, 36, 0.2); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.3); }
-    .action-user-delete{ background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
-    .action-default    { background: rgba(148, 163, 184, 0.15); color: #cbd5e1; border: 1px solid rgba(148, 163, 184, 0.25); }
-
-    .time-cell .time-main { font-weight: 500; color: #f1f5f9; font-size: 0.8rem; }
-    .time-cell .time-ago  { font-size: 0.7rem; color: #888888; }
-
-    .ip-chip {
-        display: inline-block;
-        padding: 3px 8px;
-        background: #000000;
-        border: 1px solid #2a2a2a;
-        border-radius: 6px;
-        font-family: 'SF Mono', Monaco, monospace;
-        font-size: 0.72rem;
-        color: #cbd5e1;
+    .activity-badge[data-kind="success"] { border-color: #bbf7d0; background: #f0fdf4; color: #15803d; }
+    .activity-badge[data-kind="warning"] { border-color: #fde68a; background: #fffbeb; color: #b45309; }
+    .activity-badge[data-kind="danger"] { border-color: #fecaca; background: #fef2f2; color: #b91c1c; }
+    .activity-badge[data-kind="muted"] { border-color: #e2e8f0; background: #f8fafc; color: #64748b; }
+    .activity-avatar {
+        display: flex;
+        width: 38px;
+        height: 38px;
+        flex: 0 0 38px;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid #dbeafe;
+        border-radius: 12px;
+        background: #eff6ff;
+        color: #1d4ed8;
+        font-size: .9rem;
+        font-weight: 700;
     }
-
-    .empty-state {
-        padding: 50px 20px;
+    .activity-empty {
+        padding: 54px 20px;
         text-align: center;
     }
-    .empty-state-icon {
-        width: 60px; height: 60px;
-        border-radius: 50%;
-        background: #1a1a1a;
-        display: inline-flex;
-        align-items: center; justify-content: center;
-        font-size: 1.5rem;
-        margin-bottom: 12px;
-    }
-    .empty-state-title { font-weight: 600; color: #f1f5f9; margin-bottom: 4px; }
-    .empty-state-text { font-size: 0.82rem; color: #888888; }
-
-    .pagination-wrap { padding: 14px 18px; border-top: 1px solid #1f1f1f; }
-    .pagination .page-link {
-        font-size: 0.78rem;
-        padding: 6px 11px;
-        border-radius: 8px !important;
-        margin: 0 2px;
-        border: 1px solid #2a2a2a;
-        background: #000000;
-        color: #aaaaaa;
-    }
-    .pagination .page-item.active .page-link {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        border-color: transparent;
-        box-shadow: 0 4px 10px rgba(102, 126, 234, 0.45);
-    }
-    .pagination .page-link:hover {
-        background: #1a1a1a;
-        color: #f1f5f9;
-        border-color: #667eea;
-    }
-    .pagination .page-item.disabled .page-link {
-        background: #0a0a0a;
-        color: #555555;
-        border-color: #1f1f1f;
+    @media (max-width: 640px) {
+        .activity-stat { padding: 14px; }
+        .activity-stat-icon { width: 36px; height: 36px; flex-basis: 36px; }
+        .activity-stat-value { font-size: 1.2rem; }
     }
 </style>
 
-<div class="container-fluid px-4 py-3 activity-page">
+<div class="space-y-6">
+    <section class="grid grid-cols-2 gap-3 xl:grid-cols-4">
+        <div class="activity-stat flex items-center gap-3">
+            <div class="activity-stat-icon" aria-hidden="true">
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 8v4l3 2m6-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <div class="min-w-0">
+                <div class="activity-stat-label">Всего записей</div>
+                <div class="activity-stat-value">{{ number_format($totalActivities, 0, ',', ' ') }}</div>
+            </div>
+        </div>
+        <div class="activity-stat flex items-center gap-3">
+            <div class="activity-stat-icon !bg-emerald-50 !text-emerald-700" aria-hidden="true">
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.5 20.1a7.5 7.5 0 0115 0A17.9 17.9 0 0112 22.5a17.9 17.9 0 01-7.5-2.4z"/></svg>
+            </div>
+            <div class="min-w-0">
+                <div class="activity-stat-label">Входов сегодня</div>
+                <div class="activity-stat-value">{{ number_format($todayLogins, 0, ',', ' ') }}</div>
+            </div>
+        </div>
+        <div class="activity-stat flex items-center gap-3">
+            <div class="activity-stat-icon !bg-violet-50 !text-violet-700" aria-hidden="true">
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414A1 1 0 0119 9v10a2 2 0 01-2 2z"/></svg>
+            </div>
+            <div class="min-w-0">
+                <div class="activity-stat-label">Операций с документами</div>
+                <div class="activity-stat-value">{{ number_format($documentActions, 0, ',', ' ') }}</div>
+            </div>
+        </div>
+        <div class="activity-stat flex items-center gap-3">
+            <div class="activity-stat-icon !bg-amber-50 !text-amber-700" aria-hidden="true">
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2m16 0v-2a4 4 0 00-3-3.87M14 3.13a4 4 0 010 7.75M14 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+            </div>
+            <div class="min-w-0">
+                <div class="activity-stat-label">Всего пользователей</div>
+                <div class="activity-stat-value">{{ number_format($activeUsersCount, 0, ',', ' ') }}</div>
+            </div>
+        </div>
+    </section>
 
-    <!-- Заголовок страницы -->
-    <div class="page-header d-flex justify-content-between align-items-center">
-        <div>
-            <h1>📜 История всех действий</h1>
-            <p>Полный лог активности пользователей в системе</p>
+    <section class="card">
+        <div class="mb-4">
+            <h2 class="text-base font-bold text-slate-900">Фильтры журнала</h2>
+            <p class="mt-1 text-sm text-slate-500">Найдите событие по действию, пользователю или описанию.</p>
         </div>
-        <a href="{{ route('superadmin.dashboard') }}" class="btn btn-light btn-sm" style="border-radius: 8px; font-size: 0.8rem;">
-            <i class="bi bi-arrow-left"></i> Назад
-        </a>
-    </div>
-
-    <!-- Мини-статистика (ИСПРАВЛЕНО - используем переменные из контроллера) -->
-    <div class="row g-3 mb-3">
-        <div class="col-md-3 col-6">
-            <div class="stat-card d-flex align-items-center gap-3">
-                <div class="stat-icon" style="background: rgba(102, 126, 234, 0.2); color: #667eea;"><i class="bi bi-clock-history"></i></div>
-                <div>
-                    <p class="stat-value">{{ number_format($totalActivities ?? 0, 0, '.', ' ') }}</p>
-                    <p class="stat-label">Всего записей</p>
-                </div>
+        <form method="GET" action="{{ route('superadmin.activity') }}" class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-6">
+            <div class="xl:col-span-2">
+                <label class="activity-label" for="activity-search">Поиск</label>
+                <input id="activity-search" type="search" name="search" class="activity-filter"
+                       value="{{ request('search') }}" placeholder="По описанию события">
             </div>
-        </div>
-        <div class="col-md-3 col-6">
-            <div class="stat-card d-flex align-items-center gap-3">
-                <div class="stat-icon" style="background: rgba(34, 197, 94, 0.2); color: #4ade80;"><i class="bi bi-box-arrow-in-right"></i></div>
-                <div>
-                    <p class="stat-value">{{ $todayLogins ?? 0 }}</p>
-                    <p class="stat-label">Входов сегодня</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 col-6">
-            <div class="stat-card d-flex align-items-center gap-3">
-                <div class="stat-icon" style="background: rgba(251, 191, 36, 0.2); color: #fbbf24;"><i class="bi bi-file-earmark-text"></i></div>
-                <div>
-                    <p class="stat-value">{{ number_format($documentActions ?? 0, 0, '.', ' ') }}</p>
-                    <p class="stat-label">Операции с документами</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 col-6">
-            <div class="stat-card d-flex align-items-center gap-3">
-                <div class="stat-icon" style="background: rgba(239, 68, 68, 0.2); color: #f87171;"><i class="bi bi-people"></i></div>
-                <div>
-                    <p class="stat-value">{{ $activeUsersCount ?? 0 }}</p>
-                    <p class="stat-label">Активных пользователей</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Фильтры (ДОБАВЛЕНЫ новые типы действий) -->
-    <div class="filter-card">
-        <form method="GET" action="{{ route('superadmin.activity') }}" class="row g-2 align-items-end">
-            <div class="col-md-3 col-sm-6">
-                <label class="form-label">Действие</label>
-                <select name="action" class="form-select">
+            <div>
+                <label class="activity-label" for="activity-action">Действие</label>
+                <select id="activity-action" name="action" class="activity-filter">
                     <option value="">Все действия</option>
-                    <optgroup label="🔐 Аутентификация">
-                        <option value="login" {{ request('action') == 'login' ? 'selected' : '' }}>Вход в систему</option>
-                        <option value="logout" {{ request('action') == 'logout' ? 'selected' : '' }}>Выход из системы</option>
-                    </optgroup>
-                    <optgroup label="📄 Документы">
-                        <option value="document_created" {{ request('action') == 'document_created' ? 'selected' : '' }}>Создание документа</option>
-                        <option value="document_updated" {{ request('action') == 'document_updated' ? 'selected' : '' }}>Обновление документа</option>
-                        <option value="document_deleted" {{ request('action') == 'document_deleted' ? 'selected' : '' }}>Удаление документа</option>
-                        <option value="document_signed" {{ request('action') == 'document_signed' ? 'selected' : '' }}>Подписание документа</option>
-                        <option value="document_sent" {{ request('action') == 'document_sent' ? 'selected' : '' }}>Отправка на подпись</option>
-                        <option value="document_rejected" {{ request('action') == 'document_rejected' ? 'selected' : '' }}>Отклонение документа</option>
-                        <option value="document_exported" {{ request('action') == 'document_exported' ? 'selected' : '' }}>Экспорт документа</option>
-                        <option value="document_downloaded" {{ request('action') == 'document_downloaded' ? 'selected' : '' }}>Скачивание файла</option>
-                        <option value="document_ai_generated" {{ request('action') == 'document_ai_generated' ? 'selected' : '' }}>Генерация через ИИ</option>
-                        <option value="document_ai_parsed" {{ request('action') == 'document_ai_parsed' ? 'selected' : '' }}>Анализ через ИИ</option>
-                    </optgroup>
-                    <optgroup label="👤 Пользователи">
-                        <option value="user_created" {{ request('action') == 'user_created' ? 'selected' : '' }}>Создание пользователя</option>
-                        <option value="user_updated" {{ request('action') == 'user_updated' ? 'selected' : '' }}>Обновление пользователя</option>
-                        <option value="user_deleted" {{ request('action') == 'user_deleted' ? 'selected' : '' }}>Удаление пользователя</option>
-                    </optgroup>
-                </select>
-            </div>
-            <div class="col-md-3 col-sm-6">
-                <label class="form-label">Пользователь</label>
-                <select name="user_id" class="form-select">
-                    <option value="">Все пользователи</option>
-                    @foreach($users as $user)
-                    <option value="{{ $user->id }}" {{ request('user_id') == $user->id ? 'selected' : '' }}>
-                    {{ $user->name }}
-                    </option>
+                    @foreach($actions as $action)
+                        <option value="{{ $action }}" @selected(request('action') === $action)>
+                            {{ match(mb_strtolower($action)) {
+                                'created', 'создание' => 'Создание',
+                                'received', 'получение' => 'Получение',
+                                'updated', 'обновление' => 'Обновление',
+                                'deleted', 'удаление' => 'Удаление',
+                                'signed', 'sign', 'подписание' => 'Подписание',
+                                'sent', 'отправка' => 'Отправка',
+                                'rejected', 'отклонение' => 'Отклонение',
+                                'экспорт' => 'Экспорт',
+                                'скачивание' => 'Скачивание',
+                                'анализ ии', 'генерация ии' => mb_convert_case($action, MB_CASE_TITLE, 'UTF-8'),
+                                'super_admin_access' => 'Доступ супер-администратора',
+                                default => mb_convert_case(str_replace('_', ' ', $action), MB_CASE_TITLE, 'UTF-8'),
+                            } }}
+                        </option>
                     @endforeach
                 </select>
             </div>
-            <div class="col-md-2 col-sm-4">
-                <label class="form-label">Дата с</label>
-                <input type="date" name="date_from" class="form-control" value="{{ request('date_from') }}">
+            <div>
+                <label class="activity-label" for="activity-user">Пользователь</label>
+                <select id="activity-user" name="user_id" class="activity-filter">
+                    <option value="">Все пользователи</option>
+                    @foreach($users as $user)
+                        <option value="{{ $user->id }}" @selected((string) request('user_id') === (string) $user->id)>
+                            {{ $user->name }}
+                        </option>
+                    @endforeach
+                </select>
             </div>
-            <div class="col-md-2 col-sm-4">
-                <label class="form-label">Дата по</label>
-                <input type="date" name="date_to" class="form-control" value="{{ request('date_to') }}">
+            <div>
+                <label class="activity-label" for="activity-date-from">Дата с</label>
+                <input id="activity-date-from" type="date" name="date_from" class="activity-filter" value="{{ request('date_from') }}">
             </div>
-            <div class="col-md-2 col-sm-4 d-flex gap-2">
-                <button type="submit" class="btn btn-filter flex-fill">
-                    <i class="bi bi-funnel-fill"></i> Найти
-                </button>
-                <a href="{{ route('superadmin.activity') }}" class="btn btn-reset" title="Сбросить">
-                    <i class="bi bi-x-lg"></i>
-                </a>
+            <div>
+                <label class="activity-label" for="activity-date-to">Дата по</label>
+                <input id="activity-date-to" type="date" name="date_to" class="activity-filter" value="{{ request('date_to') }}">
+            </div>
+            <div class="flex items-end gap-2 sm:col-span-2 xl:col-span-6">
+                <button type="submit" class="btn-primary justify-center">Применить фильтры</button>
+                @if(request()->hasAny(['search', 'action', 'user_id', 'date_from', 'date_to']))
+                    <a href="{{ route('superadmin.activity') }}" class="btn-ghost">Сбросить</a>
+                @endif
             </div>
         </form>
-    </div>
+    </section>
 
-    <!-- Таблица активности -->
-    <div class="activity-table-wrap">
-        <div class="table-responsive">
-            <table class="table activity-table">
+    <section class="card !p-0">
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 px-5 py-4">
+            <div>
+                <h2 class="text-base font-bold text-slate-900">События</h2>
+                <p class="mt-1 text-sm text-slate-500">Последние события системы в хронологическом порядке.</p>
+            </div>
+            <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+                {{ number_format($activities->total(), 0, ',', ' ') }} записей
+            </span>
+        </div>
+
+        <div class="table-wrap !border-0">
+            <table>
                 <thead>
                 <tr>
-                    <th style="width: 60px;">#</th>
                     <th>Действие</th>
                     <th>Пользователь</th>
                     <th>Описание</th>
-                    <th>IP</th>
-                    <th style="width: 160px;">Время</th>
+                    <th>Документ</th>
+                    <th>IP-адрес</th>
+                    <th>Время</th>
                 </tr>
                 </thead>
                 <tbody>
                 @forelse($activities as $activity)
-                @php
-                $badgeClass = match($activity->action) {
-                'login'                 => 'action-login',
-                'logout'                => 'action-logout',
-                'document_created'      => 'action-doc-create',
-                'document_updated'      => 'action-doc-update',
-                'document_deleted'      => 'action-doc-delete',
-                'document_signed'       => 'action-doc-sign',
-                'document_sent'         => 'action-doc-send',
-                'document_rejected'     => 'action-doc-reject',
-                'document_exported'     => 'action-doc-export',
-                'document_downloaded'   => 'action-doc-download',
-                'document_ai_parsed'    => 'action-doc-ai',
-                'document_ai_generated' => 'action-doc-ai',
-                'user_created'          => 'action-user-create',
-                'user_updated'          => 'action-user-update',
-                'user_deleted'          => 'action-user-delete',
-                default                 => 'action-default',
-                };
-                $icon = match($activity->action) {
-                'login'                 => 'bi-box-arrow-in-right',
-                'logout'                => 'bi-box-arrow-right',
-                'document_created'      => 'bi-file-earmark-plus',
-                'document_updated'      => 'bi-file-earmark-text',
-                'document_deleted'      => 'bi-file-earmark-x',
-                'document_signed'       => 'bi-pen',
-                'document_sent'         => 'bi-send',
-                'document_rejected'     => 'bi-x-circle',
-                'document_exported'     => 'bi-download',
-                'document_downloaded'   => 'bi-cloud-download',
-                'document_ai_parsed'    => 'bi-robot',
-                'document_ai_generated' => 'bi-stars',
-                'user_created'          => 'bi-person-plus',
-                'user_updated'          => 'bi-person-gear',
-                'user_deleted'          => 'bi-person-x',
-                default                 => 'bi-activity',
-                };
-                $label = match($activity->action) {
-                'login'                 => 'Вход',
-                'logout'                => 'Выход',
-                'document_created'      => 'Создание',
-                'document_updated'      => 'Обновление',
-                'document_deleted'      => 'Удаление',
-                'document_signed'       => 'Подписание',
-                'document_sent'         => 'Отправка',
-                'document_rejected'     => 'Отказ',
-                'document_exported'     => 'Экспорт',
-                'document_downloaded'   => 'Скачивание',
-                'document_ai_parsed'    => 'ИИ-анализ',
-                'document_ai_generated' => 'ИИ-генерация',
-                'user_created'          => 'Создание',
-                'user_updated'          => 'Обновление',
-                'user_deleted'          => 'Удаление',
-                default                 => str_replace('_', ' ', ucfirst($activity->action)),
-                };
-                @endphp
-                <tr>
-                    <td class="text-muted">#{{ $activity->id }}</td>
-                    <td>
-                        <span class="action-badge {{ $badgeClass }}">
-                            <i class="bi {{ $icon }}"></i>
-                            {{ $label }}
-                        </span>
-                    </td>
-                    <td>
-                        <div class="user-cell">
-                            <div class="user-avatar">
-                                {{ strtoupper(substr($activity->user->name ?? '?', 0, 1)) }}
+                    @php
+                        $actionText = mb_strtolower($activity->action);
+                        $kind = match(true) {
+                            str_contains($actionText, 'delete') || str_contains($actionText, 'удален') || str_contains($actionText, 'отклон') => 'danger',
+                            str_contains($actionText, 'create') || str_contains($actionText, 'создан') || str_contains($actionText, 'sign') || str_contains($actionText, 'подпис') => 'success',
+                            str_contains($actionText, 'update') || str_contains($actionText, 'обнов') => 'warning',
+                            default => 'default',
+                        };
+                        $actionLabel = match($actionText) {
+                            'created', 'создание' => 'Создание',
+                            'received' => 'Получение',
+                            'updated', 'обновление' => 'Обновление',
+                            'deleted', 'удаление' => 'Удаление',
+                            'signed', 'sign', 'подписание' => 'Подписание',
+                            'sent', 'отправка' => 'Отправка',
+                            'rejected', 'отклонение' => 'Отклонение',
+                            'экспорт' => 'Экспорт',
+                            'скачивание' => 'Скачивание',
+                            'анализ ии' => 'Анализ ИИ',
+                            'генерация ии' => 'Генерация ИИ',
+                            'super_admin_access' => 'Доступ супер-администратора',
+                            default => mb_convert_case(str_replace('_', ' ', $activity->action), MB_CASE_TITLE, 'UTF-8'),
+                        };
+                    @endphp
+                    <tr>
+                        <td>
+                            <span class="activity-badge" data-kind="{{ $kind }}">
+                                <span class="h-1.5 w-1.5 rounded-full bg-current"></span>
+                                {{ $actionLabel }}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="flex min-w-40 items-center gap-3">
+                                <div class="activity-avatar" aria-hidden="true">
+                                    {{ mb_strtoupper(mb_substr($activity->user?->name ?? '?', 0, 1)) }}
+                                </div>
+                                <div class="min-w-0">
+                                    <div class="truncate font-semibold text-slate-800">{{ $activity->user?->name ?? 'Пользователь удалён' }}</div>
+                                    @if($activity->user?->email)
+                                        <div class="truncate text-xs text-slate-500">{{ $activity->user->email }}</div>
+                                    @endif
+                                </div>
                             </div>
-                            <div>
-                                <div class="user-name">{{ $activity->user->name ?? 'Неизвестно' }}</div>
-                                <div class="user-email">{{ $activity->user->email ?? '' }}</div>
-                            </div>
-                        </div>
-                    </td>
-                    <td style="max-width: 350px;">
-                        <span class="text-truncate d-inline-block" style="max-width: 350px;" title="{{ $activity->description }}">
-                            {{ $activity->description ?? '—' }}
-                        </span>
-                    </td>
-                    <td><span class="ip-chip">{{ $activity->ip_address ?? '—' }}</span></td>
-                    <td class="time-cell">
-                        <div class="time-main">{{ $activity->created_at->format('d.m.Y H:i') }}</div>
-                        <div class="time-ago">{{ $activity->created_at->diffForHumans() }}</div>
-                    </td>
-                </tr>
+                        </td>
+                        <td class="max-w-sm">
+                            <span class="line-clamp-2 text-slate-600" title="{{ $activity->description }}">
+                                {{ $activity->description ?: 'Описание не указано' }}
+                            </span>
+                        </td>
+                        <td>
+                            @if($activity->document)
+                                <div class="max-w-48 truncate font-medium text-slate-700" title="{{ $activity->document->title }}">
+                                    {{ $activity->document->title }}
+                                </div>
+                                @if($activity->document->number)
+                                    <div class="text-xs text-slate-500">{{ $activity->document->number }}</div>
+                                @endif
+                            @else
+                                <span class="text-slate-400">—</span>
+                            @endif
+                        </td>
+                        <td><span class="font-mono text-xs text-slate-500">{{ $activity->ip_address ?: '—' }}</span></td>
+                        <td>
+                            <div class="whitespace-nowrap font-medium text-slate-700">{{ $activity->created_at?->format('d.m.Y H:i') }}</div>
+                            <div class="mt-0.5 whitespace-nowrap text-xs text-slate-500">{{ $activity->created_at?->diffForHumans() }}</div>
+                        </td>
+                    </tr>
                 @empty
-                <tr>
-                    <td colspan="6">
-                        <div class="empty-state">
-                            <div class="empty-state-icon">📭</div>
-                            <div class="empty-state-title">Записей не найдено</div>
-                            <div class="empty-state-text">Попробуйте изменить параметры фильтра или выполните действия в системе</div>
-                        </div>
-                    </td>
-                </tr>
+                    <tr>
+                        <td colspan="6">
+                            <div class="activity-empty">
+                                <div class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100 text-slate-500">
+                                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 7h8m-8 4h8m-8 4h5m-8 6h14a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                                </div>
+                                <div class="font-semibold text-slate-800">События не найдены</div>
+                                <p class="mt-1 text-sm text-slate-500">Измените фильтры или сбросьте поиск, чтобы увидеть другие записи.</p>
+                                @if(request()->hasAny(['search', 'action', 'user_id', 'date_from', 'date_to']))
+                                    <a href="{{ route('superadmin.activity') }}" class="btn-ghost mt-4 inline-flex">Сбросить фильтры</a>
+                                @endif
+                            </div>
+                        </td>
+                    </tr>
                 @endforelse
                 </tbody>
             </table>
         </div>
 
         @if($activities->hasPages())
-        <div class="pagination-wrap d-flex justify-content-between align-items-center">
-            <div style="font-size: 0.78rem; color: #888888;">
-                Показано {{ $activities->firstItem() ?? 0 }}–{{ $activities->lastItem() ?? 0 }} из {{ $activities->total() }}
+            <div class="flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 px-5 py-4">
+                <div class="text-sm text-slate-500">
+                    Показаны {{ $activities->firstItem() }}–{{ $activities->lastItem() }} из {{ $activities->total() }}
+                </div>
+                {{ $activities->withQueryString()->links() }}
             </div>
-            {{ $activities->appends(request()->query())->links() }}
-        </div>
         @endif
-    </div>
-
+    </section>
 </div>
 @endsection

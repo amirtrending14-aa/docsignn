@@ -993,6 +993,61 @@ $overdueCount = $signatures->filter(fn($s) => !$s->signed_at && $s->expires_at &
     }
 </style>
 
+<style>
+    html[data-theme="light"] .sig-page {
+        color: #0f172a !important;
+    }
+    html[data-theme="light"] .sig-title,
+    html[data-theme="light"] .stat-value.total,
+    html[data-theme="light"] .sig-card-title h3,
+    html[data-theme="light"] .executor-name,
+    html[data-theme="light"] .empty-state-text {
+        color: #0f172a !important;
+        font-weight: 800 !important;
+    }
+    html[data-theme="light"] .sig-subtitle,
+    html[data-theme="light"] .stat-label,
+    html[data-theme="light"] .sig-card-id,
+    html[data-theme="light"] .sig-card-meta,
+    html[data-theme="light"] .deadline-label,
+    html[data-theme="light"] .action-link,
+    html[data-theme="light"] .empty-state-desc {
+        color: #475569 !important;
+        font-weight: 600;
+    }
+    html[data-theme="light"] .stat-card,
+    html[data-theme="light"] .filters-bar,
+    html[data-theme="light"] .sig-card,
+    html[data-theme="light"] .empty-state,
+    html[data-theme="light"] .pagination-wrapper {
+        background: #ffffff !important;
+        border-color: #cbd5e1 !important;
+        box-shadow: 0 8px 22px rgba(15, 23, 42, 0.07);
+    }
+    html[data-theme="light"] .filter-btn {
+        color: #475569 !important;
+        font-weight: 700;
+    }
+    html[data-theme="light"] .filter-btn.active {
+        color: #0f172a !important;
+        font-weight: 800;
+    }
+    html[data-theme="light"] .sig-card-header,
+    html[data-theme="light"] .sig-card-actions,
+    html[data-theme="light"] .sig-signature-area {
+        border-color: #cbd5e1 !important;
+    }
+    html[data-theme="light"] .sig-signature-area {
+        background: #f8fafc !important;
+    }
+    html[data-theme="light"] .sig-card-title h3 {
+        font-size: 1.05em;
+    }
+    html[data-theme="light"] .deadline-value {
+        font-weight: 800;
+    }
+</style>
+
 <div class="sig-page">
     {{-- HEADER --}}
     <div class="sig-header">

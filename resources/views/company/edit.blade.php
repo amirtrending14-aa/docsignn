@@ -6,63 +6,436 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
 <style>
-    .cc-page{min-height:100vh;padding:40px 24px 60px;color:var(--text);font-family:'Inter',sans-serif;position:relative;}
-    .cc-blob{position:absolute;border-radius:50%;pointer-events:none;z-index:0;filter:blur(100px);opacity:.35;}
-    .cc-blob-1{top:-120px;left:-120px;width:500px;height:500px;background:radial-gradient(circle,rgba(var(--glow),.35) 0%,transparent 70%);animation:ccBlob 20s ease-in-out infinite;}
-    .cc-blob-2{bottom:-120px;right:-120px;width:600px;height:600px;background:radial-gradient(circle,rgba(168,85,247,.28) 0%,transparent 70%);animation:ccBlob 25s ease-in-out infinite reverse;}
-    .cc-blob-3{top:40%;left:60%;width:400px;height:400px;background:radial-gradient(circle,rgba(236,72,153,.22) 0%,transparent 70%);animation:ccBlob3 30s ease-in-out infinite;}
-    @keyframes ccBlob{0%,100%{transform:translate(0,0);}50%{transform:translate(30px,-30px);}}
-    @keyframes ccBlob3{0%,100%{transform:translate(0,0);}50%{transform:translate(-30px,30px);}}
+    /* Базовые переменные для светлой темы */
+    :root {
+        --cc-bg: #f8fafc;
+        --cc-card-bg: #ffffff;
+        --cc-text: #1e293b;
+        --cc-text-muted: #64748b;
+        --cc-border: #e2e8f0;
+        --cc-border-hover: #cbd5e1;
+        --cc-shadow: rgba(0,0,0,0.05);
+        --cc-shadow-hover: rgba(0,0,0,0.08);
+        --cc-accent-blue: #3b82f6;
+        --cc-accent-purple: #8b5cf6;
+        --cc-accent-pink: #ec4899;
+        --cc-input-bg: #f8fafc;
+        --cc-input-focus-bg: #f1f5f9;
+        --cc-info-banner-bg: rgba(59, 130, 246, 0.08);
+        --cc-info-banner-border: rgba(59, 130, 246, 0.25);
+        --cc-error-color: #dc2626;
+        --cc-submit-gradient-start: #3b82f6;
+        --cc-submit-gradient-end: #2563eb;
+        --cc-submit-text: #ffffff;
+        --cc-blob-opacity: 0.15;
+        --cc-line: #e2e8f0;
+        --cc-glow: 59, 130, 246;
+    }
 
-    .cc-wrap{max-width:760px;margin:0 auto;position:relative;z-index:1;}
-    .cc-topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:24px;background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02));border:1px solid var(--line);border-radius:var(--radius);padding:18px 22px;position:relative;}
-    .cc-topbar::before{content:"";position:absolute;inset:-1px;border-radius:var(--radius);padding:1px;background:linear-gradient(135deg,rgba(var(--glow),.4),transparent 40%,transparent 60%,rgba(var(--glow),.2));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:.6;pointer-events:none;}
-    .cc-topbar-left{display:flex;align-items:center;gap:14px;min-width:0;flex:1;}
-    .cc-topbar-icon{width:48px;height:48px;border-radius:13px;background:linear-gradient(135deg,rgba(var(--glow),.95),rgba(var(--glow),.4));display:grid;place-items:center;flex-shrink:0;box-shadow:0 0 24px rgba(var(--glow),.5),inset 0 0 12px rgba(255,255,255,.2);}
-    .cc-topbar-icon svg{width:24px;height:24px;color:#0a0d14;}
-    .cc-topbar-title{font-size:20px;font-weight:800;color:var(--text);letter-spacing:-.3px;margin:0;}
-    .cc-topbar-subtitle{font-size:12px;color:var(--muted);font-weight:600;margin-top:3px;}
-    .cc-topbar-subtitle strong{color:rgba(var(--glow),1);font-weight:700;}
-    .btn-back{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;background:rgba(255,255,255,.04);color:var(--muted);border:1px solid var(--line);border-radius:10px;font-size:12px;font-weight:700;text-decoration:none;text-transform:uppercase;letter-spacing:.8px;transition:all .25s ease;white-space:nowrap;flex-shrink:0;}
-    .btn-back:hover{color:rgba(var(--glow),1);border-color:rgba(var(--glow),.5);background:rgba(var(--glow),.08);box-shadow:0 0 18px rgba(var(--glow),.25);transform:translateX(-2px);}
-    .btn-back svg{width:14px;height:14px;}
+    /* Тёмная тема */
+    .dark-theme {
+        --cc-bg: #0f172a;
+        --cc-card-bg: #1e293b;
+        --cc-text: #e2e8f0;
+        --cc-text-muted: #94a3b8;
+        --cc-border: #334155;
+        --cc-border-hover: #475569;
+        --cc-shadow: rgba(0,0,0,0.3);
+        --cc-shadow-hover: rgba(0,0,0,0.4);
+        --cc-accent-blue: #60a5fa;
+        --cc-accent-purple: #a78bfa;
+        --cc-accent-pink: #f472b6;
+        --cc-input-bg: #334155;
+        --cc-input-focus-bg: #475569;
+        --cc-info-banner-bg: rgba(96, 165, 250, 0.15);
+        --cc-info-banner-border: rgba(96, 165, 250, 0.3);
+        --cc-error-color: #f87171;
+        --cc-submit-gradient-start: #60a5fa;
+        --cc-submit-gradient-end: #3b82f6;
+        --cc-submit-text: #0f172a;
+        --cc-blob-opacity: 0.25;
+        --cc-line: #334155;
+        --cc-glow: 96, 165, 250;
+    }
 
-    .form-card{background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02));border:1px solid var(--line);border-radius:var(--radius);padding:36px 32px;position:relative;}
-    .form-card::before{content:"";position:absolute;inset:-1px;border-radius:var(--radius);padding:1px;background:linear-gradient(135deg,rgba(var(--glow),.5),transparent 40%,transparent 60%,rgba(var(--glow),.25));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:.7;pointer-events:none;}
-    .form-section{margin-bottom:28px;}
-    .form-section:last-child{margin-bottom:0;}
-    .section-title{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:16px;display:flex;align-items:center;gap:10px;}
-    .section-title::before{content:"";width:4px;height:14px;border-radius:2px;background:linear-gradient(180deg,rgba(var(--glow),1),rgba(var(--glow),.4));box-shadow:0 0 10px rgba(var(--glow),.6);flex-shrink:0;}
+    .cc-page{
+        min-height:100vh;
+        padding:40px 24px 60px;
+        color:var(--cc-text);
+        font-family:'Inter',sans-serif;
+        position:relative;
+        background:var(--cc-bg);
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
 
-    .field-group{margin-bottom:18px;}
-    .field-group:last-child{margin-bottom:0;}
-    .field-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
-    .field-label{display:block;text-transform:uppercase;letter-spacing:1px;font-size:11px;font-weight:800;color:var(--muted);margin-bottom:8px;}
-    .field-label .required{color:rgba(var(--glow),1);margin-left:2px;}
-    .input-custom{width:100%;background:rgba(255,255,255,.04) !important;border:1px solid var(--line) !important;color:var(--text) !important;font-size:14px !important;font-weight:500;padding:13px 16px !important;border-radius:10px !important;transition:all .25s ease;font-family:'Inter',sans-serif;box-sizing:border-box;}
-    .input-custom:focus{border-color:rgba(var(--glow),.6) !important;background:rgba(var(--glow),.06) !important;box-shadow:0 0 0 3px rgba(var(--glow),.15),0 0 20px rgba(var(--glow),.2) !important;outline:none !important;}
-    .input-custom::placeholder{color:var(--muted) !important;opacity:.6;}
-    .input-custom option,.input-custom optgroup{background:#0d1018;color:var(--text);}
-    select.input-custom{appearance:none;cursor:pointer;color-scheme:dark;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%238892a6' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E") !important;background-repeat:no-repeat !important;background-position:right 16px center !important;padding-right:40px !important;}
-    .err-msg{font-size:11px;color:#ff7a7a;margin-top:6px;font-weight:600;}
+    .cc-blob{
+        position:absolute;
+        border-radius:50%;
+        pointer-events:none;
+        z-index:0;
+        filter:blur(100px);
+        opacity:var(--cc-blob-opacity);
+    }
+    .cc-blob-1{
+        top:-120px;
+        left:-120px;
+        width:500px;
+        height:500px;
+        background:radial-gradient(circle,rgba(var(--cc-glow),.3) 0%,transparent 70%);
+        animation:ccBlob 20s ease-in-out infinite;
+    }
+    .cc-blob-2{
+        bottom:-120px;
+        right:-120px;
+        width:600px;
+        height:600px;
+        background:radial-gradient(circle,rgba(139,92,246,.25) 0%,transparent 70%);
+        animation:ccBlob 25s ease-in-out infinite reverse;
+    }
+    .cc-blob-3{
+        top:40%;
+        left:60%;
+        width:400px;
+        height:400px;
+        background:radial-gradient(circle,rgba(236,72,153,.2) 0%,transparent 70%);
+        animation:ccBlob3 30s ease-in-out infinite;
+    }
+    @keyframes ccBlob{
+        0%,100%{transform:translate(0,0);}
+        50%{transform:translate(30px,-30px);}
+    }
+    @keyframes ccBlob3{
+        0%,100%{transform:translate(0,0);}
+        50%{transform:translate(-30px,30px);}
+    }
 
-    .info-banner{background:rgba(var(--glow),.08);border:1px solid rgba(var(--glow),.25);border-radius:12px;padding:16px 18px;display:flex;align-items:flex-start;gap:14px;position:relative;overflow:hidden;}
-    .info-banner::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,rgba(var(--glow),1),rgba(var(--glow),.4));box-shadow:0 0 12px rgba(var(--glow),.6);}
-    .info-banner-icon{width:36px;height:36px;border-radius:10px;background:rgba(var(--glow),.18);border:1px solid rgba(var(--glow),.35);display:grid;place-items:center;flex-shrink:0;}
-    .info-banner-icon svg{width:18px;height:18px;color:rgba(var(--glow),1);}
-    .info-banner-text{font-size:13px;color:var(--text);font-weight:500;line-height:1.5;}
-    .info-banner-text strong{color:rgba(var(--glow),1);font-weight:700;}
+    .cc-wrap{
+        max-width:760px;
+        margin:0 auto;
+        position:relative;
+        z-index:1;
+    }
 
-    .submit-wrap{padding-top:24px;margin-top:28px;border-top:1px solid var(--line);display:flex;justify-content:center;}
-    .btn-submit{display:inline-flex;align-items:center;gap:10px;padding:14px 36px;background:linear-gradient(180deg,rgba(var(--glow),.95),rgba(var(--glow),.65));color:#0a0d14;border-radius:11px;font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:1.2px;transition:all .3s ease;box-shadow:0 8px 28px rgba(var(--glow),.4),inset 0 1px 0 rgba(255,255,255,.3);border:1px solid transparent;cursor:pointer;white-space:nowrap;}
-    .btn-submit:hover{transform:translateY(-2px);box-shadow:0 14px 40px rgba(var(--glow),.6);filter:brightness(1.08);}
-    .btn-submit svg{width:18px;height:18px;}
+    .cc-topbar{
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap:16px;
+        flex-wrap:wrap;
+        margin-bottom:24px;
+        background:var(--cc-card-bg);
+        border:1px solid var(--cc-border);
+        border-radius:14px;
+        padding:18px 22px;
+        position:relative;
+        box-shadow:0 1px 3px var(--cc-shadow);
+        transition: all 0.3s ease;
+    }
 
-    @media(max-width:992px){.cc-page{padding:32px 20px 50px;}.form-card{padding:28px 24px;}.cc-topbar-title{font-size:18px;}.field-row{gap:14px;}}
-    @media(max-width:768px){.cc-page{padding:28px 18px 45px;}.form-card{padding:24px 20px;}.cc-topbar-title{font-size:17px;}}
-    @media(max-width:640px){.cc-page{padding:24px 16px 40px;}.cc-topbar{flex-direction:column;align-items:stretch;}.btn-back{width:100%;justify-content:center;}.field-row{grid-template-columns:1fr;}.form-card{padding:22px 18px;}.btn-submit{width:100%;max-width:320px;justify-content:center;}}
-    @media(max-width:480px){.cc-page{padding:20px 14px 36px;}.form-card{padding:20px 16px;}.cc-topbar-title{font-size:15px;}.btn-submit{padding:12px 24px;font-size:11px;}}
-    @media(max-width:380px){.cc-page{padding:18px 12px 32px;}.form-card{padding:18px 14px;}.cc-topbar-title{font-size:14px;}}
+    .cc-topbar-left{
+        display:flex;
+        align-items:center;
+        gap:14px;
+        min-width:0;
+        flex:1;
+    }
+
+    .cc-topbar-icon{
+        width:48px;
+        height:48px;
+        border-radius:13px;
+        background:linear-gradient(135deg,var(--cc-accent-blue),#818cf8);
+        display:grid;
+        place-items:center;
+        flex-shrink:0;
+        box-shadow:0 4px 12px rgba(59,130,246,0.3);
+    }
+    .cc-topbar-icon svg{
+        width:24px;
+        height:24px;
+        color:#ffffff;
+    }
+
+    .cc-topbar-title{
+        font-size:20px;
+        font-weight:800;
+        color:var(--cc-text);
+        letter-spacing:-.3px;
+        margin:0;
+    }
+
+    .cc-topbar-subtitle{
+        font-size:12px;
+        color:var(--cc-text-muted);
+        font-weight:600;
+        margin-top:3px;
+    }
+    .cc-topbar-subtitle strong{
+        color:var(--cc-accent-blue);
+        font-weight:700;
+    }
+
+    .btn-back{
+        display:inline-flex;
+        align-items:center;
+        gap:8px;
+        padding:10px 18px;
+        background:var(--cc-card-bg);
+        color:var(--cc-text-muted);
+        border:1px solid var(--cc-border);
+        border-radius:10px;
+        font-size:12px;
+        font-weight:700;
+        text-decoration:none;
+        text-transform:uppercase;
+        letter-spacing:.8px;
+        transition:all .25s ease;
+        white-space:nowrap;
+        flex-shrink:0;
+        box-shadow:0 1px 2px var(--cc-shadow);
+    }
+    .btn-back:hover{
+        color:var(--cc-accent-blue);
+        border-color:var(--cc-border-hover);
+        background:var(--cc-input-focus-bg);
+        transform:translateX(-2px);
+        box-shadow:0 2px 8px var(--cc-shadow-hover);
+    }
+    .btn-back svg{
+        width:14px;
+        height:14px;
+    }
+
+    .form-card{
+        background:var(--cc-card-bg);
+        border:1px solid var(--cc-border);
+        border-radius:14px;
+        padding:36px 32px;
+        position:relative;
+        box-shadow:0 1px 3px var(--cc-shadow);
+        transition: all 0.3s ease;
+    }
+
+    .form-section{
+        margin-bottom:28px;
+    }
+    .form-section:last-child{
+        margin-bottom:0;
+    }
+
+    .section-title{
+        font-size:11px;
+        font-weight:800;
+        text-transform:uppercase;
+        letter-spacing:1.5px;
+        color:var(--cc-text-muted);
+        margin-bottom:16px;
+        display:flex;
+        align-items:center;
+        gap:10px;
+    }
+    .section-title::before{
+        content:"";
+        width:4px;
+        height:14px;
+        border-radius:2px;
+        background:linear-gradient(180deg,var(--cc-accent-blue),var(--cc-accent-purple));
+        box-shadow:0 0 10px rgba(59,130,246,0.4);
+        flex-shrink:0;
+    }
+
+    .field-group{
+        margin-bottom:18px;
+    }
+    .field-group:last-child{
+        margin-bottom:0;
+    }
+
+    .field-row{
+        display:grid;
+        grid-template-columns:1fr 1fr;
+        gap:16px;
+    }
+
+    .field-label{
+        display:block;
+        text-transform:uppercase;
+        letter-spacing:1px;
+        font-size:11px;
+        font-weight:800;
+        color:var(--cc-text-muted);
+        margin-bottom:8px;
+    }
+    .field-label .required{
+        color:var(--cc-accent-blue);
+        margin-left:2px;
+    }
+
+    .input-custom{
+        width:100%;
+        background:var(--cc-input-bg) !important;
+        border:1px solid var(--cc-border) !important;
+        color:var(--cc-text) !important;
+        font-size:14px !important;
+        font-weight:500;
+        padding:13px 16px !important;
+        border-radius:10px !important;
+        transition:all .25s ease;
+        font-family:'Inter',sans-serif;
+        box-sizing:border-box;
+    }
+    .input-custom:focus{
+        border-color:var(--cc-accent-blue) !important;
+        background:var(--cc-input-focus-bg) !important;
+        box-shadow:0 0 0 3px rgba(59,130,246,0.15),0 0 20px rgba(59,130,246,0.1) !important;
+        outline:none !important;
+    }
+    .input-custom::placeholder{
+        color:var(--cc-text-muted) !important;
+        opacity:.6;
+    }
+
+    .input-custom option,
+    .input-custom optgroup{
+        background:var(--cc-card-bg);
+        color:var(--cc-text);
+    }
+
+    select.input-custom{
+        appearance:none;
+        cursor:pointer;
+        background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E") !important;
+        background-repeat:no-repeat !important;
+        background-position:right 16px center !important;
+        padding-right:40px !important;
+    }
+
+    .dark-theme select.input-custom{
+        background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2394a3b8' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E") !important;
+    }
+
+    .err-msg{
+        font-size:11px;
+        color:var(--cc-error-color);
+        margin-top:6px;
+        font-weight:600;
+    }
+
+    .info-banner{
+        background:var(--cc-info-banner-bg);
+        border:1px solid var(--cc-info-banner-border);
+        border-radius:12px;
+        padding:16px 18px;
+        display:flex;
+        align-items:flex-start;
+        gap:14px;
+        position:relative;
+        overflow:hidden;
+    }
+    .info-banner::before{
+        content:"";
+        position:absolute;
+        left:0;
+        top:0;
+        bottom:0;
+        width:3px;
+        background:linear-gradient(180deg,var(--cc-accent-blue),var(--cc-accent-purple));
+        box-shadow:0 0 12px rgba(59,130,246,0.4);
+    }
+
+    .info-banner-icon{
+        width:36px;
+        height:36px;
+        border-radius:10px;
+        background:rgba(59,130,246,0.15);
+        border:1px solid rgba(59,130,246,0.3);
+        display:grid;
+        place-items:center;
+        flex-shrink:0;
+    }
+    .info-banner-icon svg{
+        width:18px;
+        height:18px;
+        color:var(--cc-accent-blue);
+    }
+
+    .info-banner-text{
+        font-size:13px;
+        color:var(--cc-text);
+        font-weight:500;
+        line-height:1.5;
+    }
+    .info-banner-text strong{
+        color:var(--cc-accent-blue);
+        font-weight:700;
+    }
+
+    .submit-wrap{
+        padding-top:24px;
+        margin-top:28px;
+        border-top:1px solid var(--cc-border);
+        display:flex;
+        justify-content:center;
+    }
+
+    .btn-submit{
+        display:inline-flex;
+        align-items:center;
+        gap:10px;
+        padding:14px 36px;
+        background:linear-gradient(180deg,var(--cc-submit-gradient-start),var(--cc-submit-gradient-end));
+        color:var(--cc-submit-text);
+        border-radius:11px;
+        font-size:13px;
+        font-weight:800;
+        text-transform:uppercase;
+        letter-spacing:1.2px;
+        transition:all .3s ease;
+        box-shadow:0 8px 28px rgba(59,130,246,0.3),inset 0 1px 0 rgba(255,255,255,.3);
+        border:1px solid transparent;
+        cursor:pointer;
+        white-space:nowrap;
+    }
+    .btn-submit:hover{
+        transform:translateY(-2px);
+        box-shadow:0 14px 40px rgba(59,130,246,0.5);
+        filter:brightness(1.08);
+    }
+    .btn-submit svg{
+        width:18px;
+        height:18px;
+    }
+
+    @media(max-width:992px){
+        .cc-page{padding:32px 20px 50px;}
+        .form-card{padding:28px 24px;}
+        .cc-topbar-title{font-size:18px;}
+        .field-row{gap:14px;}
+    }
+    @media(max-width:768px){
+        .cc-page{padding:28px 18px 45px;}
+        .form-card{padding:24px 20px;}
+        .cc-topbar-title{font-size:17px;}
+    }
+    @media(max-width:640px){
+        .cc-page{padding:24px 16px 40px;}
+        .cc-topbar{flex-direction:column;align-items:stretch;}
+        .btn-back{width:100%;justify-content:center;}
+        .field-row{grid-template-columns:1fr;}
+        .form-card{padding:22px 18px;}
+        .btn-submit{width:100%;max-width:320px;justify-content:center;}
+    }
+    @media(max-width:480px){
+        .cc-page{padding:20px 14px 36px;}
+        .form-card{padding:20px 16px;}
+        .cc-topbar-title{font-size:15px;}
+        .btn-submit{padding:12px 24px;font-size:11px;}
+    }
+    @media(max-width:380px){
+        .cc-page{padding:18px 12px 32px;}
+        .form-card{padding:18px 14px;}
+        .cc-topbar-title{font-size:14px;}
+    }
 </style>
 
 <div class="cc-page">
@@ -74,7 +447,9 @@
         <div class="cc-topbar">
             <div class="cc-topbar-left">
                 <div class="cc-topbar-icon">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                    </svg>
                 </div>
                 <div>
                     <div class="cc-topbar-title" data-i18n="cc_title">Редактировать компанию</div>
@@ -82,7 +457,9 @@
                 </div>
             </div>
             <a href="{{ route('companies.show', $company) }}" class="btn-back">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+                </svg>
                 <span data-i18n="cc_back">Назад к просмотру</span>
             </a>
         </div>
@@ -96,13 +473,21 @@
                     <div class="section-title" data-i18n="cc_company">Данные компании</div>
 
                     <div class="field-group">
-                        <label class="field-label"><span data-i18n="cc_name">Название компании</span><span class="required">*</span></label>
+                        <label class="field-label">
+                            <span data-i18n="cc_name">Название компании</span>
+                            <span class="required">*</span>
+                        </label>
                         <input name="company_name" type="text" required class="input-custom" value="{{ old('company_name', $company->name) }}" data-i18n-placeholder="cc_name_ph" placeholder="Например: Филиал №2">
-                        @error('company_name')<div class="err-msg">{{ $message }}</div>@enderror
+                        @error('company_name')
+                            <div class="err-msg">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     <div class="field-group">
-                        <label class="field-label"><span data-i18n="cc_type">Тип организации</span><span class="required">*</span></label>
+                        <label class="field-label">
+                            <span data-i18n="cc_type">Тип организации</span>
+                            <span class="required">*</span>
+                        </label>
                         <select name="company_type" required class="input-custom">
                             <option value="" data-i18n="cc_type_select">-- Выберите тип --</option>
                             <optgroup label="1. Органы государственной власти" data-i18n-label="og_1">
@@ -140,12 +525,17 @@
                                 <option value="communication" {{ old('company_type', $company->type)=='communication'?'selected':'' }} data-i18n="t_communication">Связь</option>
                             </optgroup>
                         </select>
-                        @error('company_type')<div class="err-msg">{{ $message }}</div>@enderror
+                        @error('company_type')
+                            <div class="err-msg">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     <div class="field-row">
                         <div class="field-group">
-                            <label class="field-label"><span data-i18n="cc_region">Область</span><span class="required">*</span></label>
+                            <label class="field-label">
+                                <span data-i18n="cc_region">Область</span>
+                                <span class="required">*</span>
+                            </label>
                             <select name="region_id" id="ccRegion" required class="input-custom">
                                 <option value="" data-i18n="cc_region_select">-- Выберите область --</option>
                                 <option value="1" {{ old('region_id', $company->region_id)=='1'?'selected':'' }}>Согдийская область (Вилояти Суғд)</option>
@@ -154,37 +544,53 @@
                                 <option value="4" {{ old('region_id', $company->region_id)=='4'?'selected':'' }}>Горно-Бадахшанская АО (ГБАО/ВМКБ)</option>
                                 <option value="5" {{ old('region_id', $company->region_id)=='5'?'selected':'' }}>Город Душанбе (Шаҳри Душанбе)</option>
                             </select>
-                            @error('region_id')<div class="err-msg">{{ $message }}</div>@enderror
+                            @error('region_id')
+                                <div class="err-msg">{{ $message }}</div>
+                            @enderror
                         </div>
                         <div class="field-group">
-                            <label class="field-label"><span data-i18n="cc_city">Город / Район</span><span class="required">*</span></label>
+                            <label class="field-label">
+                                <span data-i18n="cc_city">Город / Район</span>
+                                <span class="required">*</span>
+                            </label>
                             <select name="city_id" id="ccCity" required class="input-custom">
                                 <option value="" data-i18n="cc_city_select">-- Сначала выберите область --</option>
                             </select>
-                            @error('city_id')<div class="err-msg">{{ $message }}</div>@enderror
+                            @error('city_id')
+                                <div class="err-msg">{{ $message }}</div>
+                            @enderror
                         </div>
                     </div>
 
-                    {{-- ✅ Email компании на всю ширину (адрес убран) --}}
                     <div class="field-group">
-                        <label class="field-label"><span data-i18n="cc_cemail">Email компании</span></label>
+                        <label class="field-label">
+                            <span data-i18n="cc_cemail">Email компании</span>
+                        </label>
                         <input name="company_email" type="email" class="input-custom" value="{{ old('company_email', $company->email) }}" data-i18n-placeholder="cc_cemail_ph" placeholder="info@company.tj">
-                        @error('company_email')<div class="err-msg">{{ $message }}</div>@enderror
+                        @error('company_email')
+                            <div class="err-msg">{{ $message }}</div>
+                        @enderror
                     </div>
                 </div>
 
                 <div class="form-section">
                     <div class="info-banner">
                         <div class="info-banner-icon">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
                         </div>
-                        <div class="info-banner-text" data-i18n="cc_edit_note"><strong>Родительская компания</strong> и <strong>уровень вложенности</strong> не изменяются при редактировании.</div>
+                        <div class="info-banner-text" data-i18n="cc_edit_note">
+                            <strong>Родительская компания</strong> и <strong>уровень вложенности</strong> не изменяются при редактировании.
+                        </div>
                     </div>
                 </div>
 
                 <div class="submit-wrap">
                     <button type="submit" class="btn-submit">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                        </svg>
                         <span data-i18n="cc_save">Сохранить изменения</span>
                     </button>
                 </div>
@@ -197,9 +603,44 @@
 document.addEventListener('DOMContentLoaded', function(){
     'use strict';
 
-    // =====================================================================
-    // 1. ПЕРЕВОДЫ (RU / TJ / EN)
-    // =====================================================================
+    // Определение текущей темы
+    function getCurrentTheme() {
+        if (document.body.classList.contains('dark-theme') || 
+            document.documentElement.classList.contains('dark-theme')) {
+            return 'dark';
+        }
+        const savedTheme = localStorage.getItem('docsign_theme') || localStorage.getItem('app-theme');
+        if (savedTheme) return savedTheme;
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            return 'dark';
+        }
+        return 'light';
+    }
+
+    // Применение темы
+    function applyTheme(theme) {
+        if (theme === 'dark') {
+            document.body.classList.add('dark-theme');
+        } else {
+            document.body.classList.remove('dark-theme');
+        }
+    }
+
+    // Инициализация темы
+    applyTheme(getCurrentTheme());
+
+    // Слушатель изменений темы
+    window.addEventListener('docsign:theme-changed', function(e) {
+        applyTheme(e.detail.theme);
+    });
+
+    window.addEventListener('storage', function(e) {
+        if ((e.key === 'docsign_theme' || e.key === 'app-theme') && e.newValue) {
+            applyTheme(e.newValue);
+        }
+    });
+
+    // Переводы
     var translations = {
         ru: {
             cc_title:'Редактировать компанию', cc_current:'Текущая', cc_back:'Назад к просмотру',
@@ -301,9 +742,7 @@ document.addEventListener('DOMContentLoaded', function(){
         }
     });
 
-    // =====================================================================
-    // 2. ГОРОДА (данные из БД, переданные контроллером)
-    // =====================================================================
+    // Города
     var UC_CITIES = @json($citiesByRegion);
     var region = document.getElementById('ccRegion');
     var city   = document.getElementById('ccCity');
@@ -335,9 +774,7 @@ document.addEventListener('DOMContentLoaded', function(){
         loadCities(currentRegion, currentCity);
     }
 
-    // =====================================================================
-    // 3. BLOB ANIMATION
-    // =====================================================================
+    // Blob animation
     var blobs = document.querySelectorAll('.cc-blob');
     document.addEventListener('mousemove', function(e){
         var x = (e.clientX / window.innerWidth - 0.5) * 30;

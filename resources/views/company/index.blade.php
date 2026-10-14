@@ -273,6 +273,54 @@
     }
 </style>
 
+<style>
+    html[data-theme="light"] .ot-page {
+        color: #0f172a !important;
+    }
+    html[data-theme="light"] .ot-topbar-title,
+    html[data-theme="light"] .ot-stat-value,
+    html[data-theme="light"] .ot-tree-header h2,
+    html[data-theme="light"] .oc-name,
+    html[data-theme="light"] .oc-parent strong,
+    html[data-theme="light"] .ot-empty-title {
+        color: #0f172a !important;
+    }
+    html[data-theme="light"] .ot-topbar-subtitle,
+    html[data-theme="light"] .zoom-level,
+    html[data-theme="light"] .ot-stat-label,
+    html[data-theme="light"] .ot-tree-header p,
+    html[data-theme="light"] .oc-city,
+    html[data-theme="light"] .oc-parent,
+    html[data-theme="light"] .ot-empty-desc {
+        color: #475569 !important;
+    }
+    html[data-theme="light"] .zoom-toolbar,
+    html[data-theme="light"] .ot-stat,
+    html[data-theme="light"] .ot-tree-wrap,
+    html[data-theme="light"] .org-card,
+    html[data-theme="light"] .ot-empty-icon {
+        background: #ffffff !important;
+        border-color: #cbd5e1 !important;
+        box-shadow: 0 8px 22px rgba(15, 23, 42, 0.08);
+    }
+    html[data-theme="light"] .zoom-btn,
+    html[data-theme="light"] .oc-act {
+        background: #f8fafc;
+        border-color: #b8c4d3;
+        color: #334155;
+    }
+    html[data-theme="light"] .oc-parent {
+        background: #f8fafc;
+    }
+    html[data-theme="light"] .org-dot {
+        background: #ffffff;
+    }
+    html[data-theme="light"] .ot-btn-add {
+        border-color: rgba(var(--glow), 0.6);
+        box-shadow: 0 6px 18px rgba(var(--glow), 0.22);
+    }
+</style>
+
 <div class="ot-page" id="otPage">
     <div class="ot-blob ot-blob-1"></div>
     <div class="ot-blob ot-blob-2"></div>
