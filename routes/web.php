@@ -387,6 +387,8 @@ Route::fallback(function () {
 
 
 
+
+
 Route::get('/documents/{id}/preview', [DocumentController::class, 'previewPdf'])->name('documents.preview');
 // В routes/web.php
 Route::get('/documents/{id}/pdf', [DocumentController::class, 'pdf'])->name('documents.pdf');

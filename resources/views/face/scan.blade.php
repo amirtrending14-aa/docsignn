@@ -8,6 +8,8 @@
             padding: 2rem;
         }
 
+
+        
         .scan-card {
             background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
             border-radius: 20px;
