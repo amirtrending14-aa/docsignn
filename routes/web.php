@@ -238,13 +238,6 @@ Route::post('/documents/recipients/store-region', [DocumentController::class, 's
     })->name('users.search_api');
 });
 
-Route::middleware(['auth', 'last.seen'])->group(function () {
-    Route::get('/documents/select-by-department', [DocumentController::class, 'selectByDepartment'])
-        ->name('documents.select-by-department');
-
-    Route::post('/documents/select-by-department', [DocumentController::class, 'storeDepartmentSelection'])
-        ->name('documents.select-by-department.store');
-});
 
     // ============================================
     // COMMENTS (🔒 IDOR Protection)
@@ -398,49 +391,12 @@ Route::get('/documents/{id}/preview', [DocumentController::class, 'previewPdf'])
 // В routes/web.php
 Route::get('/documents/{id}/pdf', [DocumentController::class, 'pdf'])->name('documents.pdf');
 Route::get('/documents/{id}/debug', [DocumentController::class, 'debugFilePath']);
-Route::get('/contracts-assistant', [AIController::class, 'index'])->name('contracts.index');
-
+Route::get('/contracts-assistant', [AIController::class, 'index'])->name('contracts.assistant');
 // API для отправки сообщений (которое мы писали выше)
 Route::post('/contracts/chat', [AIController::class, 'chat'])->name('contracts.chat');
 
 
-Route::prefix('documents/recipients')->name('documents.recipients.')->group(function () {
-    // Страница формы
-    Route::get('/create', [DocumentRecipientController::class, 'create'])->name('create');
 
-    // Сохранение
-    Route::post('/', [DocumentRecipientController::class, 'store'])->name('store');
-
-    // AJAX: Каскадная подгрузка
-    Route::get('/cities/{regionId}', [DocumentRecipientController::class, 'getCities'])->name('cities');
-    Route::get('/org-types/{cityId}', [DocumentRecipientController::class, 'getOrganizationTypes'])->name('org-types');
-    Route::get('/organizations/{cityId}/{type}', [DocumentRecipientController::class, 'getOrganizations'])->name('organizations');
-    Route::get('/users/{organizationId}', [DocumentRecipientController::class, 'getUsers'])->name('users');
-
-// Маршруты для выбора получателей
-    Route::get('/documents/recipients/create', [DocumentController::class, 'recipientsCreate'])->name('documents.recipients.create');
-Route::post('/documents/recipients/store', [DocumentController::class, 'recipientsStore'])->name('documents.recipients.store');
-
-    Route::get('/documents/recipients/cities/{regionId}', [DocumentRecipientController::class, 'getCities'])
-        ->name('documents.recipients.cities');
-
-    Route::get('/documents/recipients/org-types/{cityId}', [DocumentRecipientController::class, 'getOrganizationTypes'])
-        ->name('documents.recipients.org-types');
-
-    Route::get('/documents/recipients/organizations/{cityId}/{category}', [DocumentRecipientController::class, 'getOrganizations'])
-        ->name('documents.recipients.organizations');
-
-    Route::get('/documents/recipients/users/{organizationId}', [DocumentRecipientController::class, 'getUsers'])
-        ->name('documents.recipients.users');
-
-    Route::post('/documents/recipients', [DocumentRecipientController::class, 'store'])
-        ->name('documents.recipients.store');
-    Route::get('/api/users-by-ids', function(\Illuminate\Http\Request $request) {
-        $ids = explode(',', $request->input('ids'));
-        $users = \App\Models\User::whereIn('id', $ids)->get(['id', 'name', 'email', 'phone']);
-        return response()->json($users);
-    })->middleware('auth');
-});
 
 
 
@@ -510,16 +466,7 @@ Route::middleware('auth')->prefix('face')->name('face.')->controller(FaceControl
 });
 
 // ===== АДМИНКА: отчёты и настройки посещаемости =====
-Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->controller(AttendanceReportController::class)->group(function () {
-    // Страница отчета
-    Route::get('/reports', 'index')->name('reports');
-    
-    // Сохранение настроек штрафов (ТА САМАЯ КНОПКА "СОХРАНИТЬ")
-    Route::post('/reports/settings', 'saveSettings')->name('reports.settings');
-    
-    // Кнопка "Я знал" (Снять штраф)
-    Route::post('/reports/excuse', 'excuse')->name('reports.excuse');
-});
+
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->controller(AttendanceReportController::class)->group(function () {
     Route::get('/reports', 'index')->name('reports');
     Route::get('/reports/user/{userId}', 'userReport')->name('reports.user'); // ← ДОБАВЬ ЭТУ СТРОКУ
@@ -584,13 +531,17 @@ Route::post('/ai-archivist/chat', [ArchivistController::class, 'chat'])->name('a
 
 Route::middleware(['auth'])->prefix('chat')->group(function () {
 
+    Route::get('/chat/file/{path}', [TelegramChatController::class, 'downloadFile'])
+        ->where('path', '.*')
+        ->middleware('auth')
+        ->name('chat.file');
+
     Route::get('/', [TelegramChatController::class, 'index'])->name('telegram.chat');
 
     // Отдача файлов чата (безопасная + Range для аудио)
     Route::get('/file/{path}', function (string $path) {
         $path = ltrim(str_replace('\\', '/', $path), '/');
 
-        // 🔒 Разрешаем ОБЕ папки: старую telegram/ и новую telegram_files/
         abort_unless(
             (str_starts_with($path, 'telegram_files/') || str_starts_with($path, 'telegram/'))
             && !str_contains($path, '..'),
@@ -674,11 +625,11 @@ Route::middleware(['auth'])->prefix('chat')->group(function () {
 
         // Инфо + медиа-галерея
         Route::get('/info/{id}', [TelegramChatController::class, 'info']);
-        Route::get('/media/{id}', [TelegramChatController::class, 'media']);          // 🆕 было отсутствующее
+        Route::get('/media/{id}', [TelegramChatController::class, 'media']);
 
         // Управление группой
-        Route::post('/group/{id}/add-members', [TelegramChatController::class, 'addMembers']);        // 🆕
-        Route::delete('/group/{id}/member/{userId}', [TelegramChatController::class, 'removeMember']); // 🆕
+        Route::post('/group/{id}/add-members', [TelegramChatController::class, 'addMembers']);
+        Route::delete('/group/{id}/member/{userId}', [TelegramChatController::class, 'removeMember']);
         Route::post('/leave/{id}', [TelegramChatController::class, 'leave']);
         Route::delete('/conversation/{id}', [TelegramChatController::class, 'deleteConversation']);
 
@@ -691,6 +642,14 @@ Route::middleware(['auth'])->prefix('chat')->group(function () {
         Route::post('/send-document', [TelegramMessageController::class, 'sendDocument'])
             ->middleware('throttle:20,1')
             ->name('telegram.send-document');
+
+      // 🆕 ===== ВИДЕОЗВОНКИ =====
+    Route::post('/video-signal', [\App\Http\Controllers\VideoCallController::class, 'sendSignal']);
+    Route::get('/video-signals/{conversationId}', [\App\Http\Controllers\VideoCallController::class, 'getSignals']);
+    Route::post('/video-signals/{signalId}', [\App\Http\Controllers\VideoCallController::class, 'deleteSignal']); // Laravel использует POST+DELETE через _method
+    Route::delete('/video-signals/{signalId}', [\App\Http\Controllers\VideoCallController::class, 'deleteSignal']);
+    Route::get('/user/{userId}/online', [\App\Http\Controllers\VideoCallController::class, 'checkOnline']);
+
     });
 });
 

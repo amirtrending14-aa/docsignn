@@ -96,61 +96,66 @@ class TelegramChatController extends Controller
     /**
      * Получить сообщения чата (пагинация не нужна — чат небольшой)
      */
-    public function getMessages($conversationId)
-    {
-        $conv = TelegramConversation::findOrFail($conversationId);
+public function getMessages($conversationId)
+{
+    $conv = TelegramConversation::findOrFail($conversationId);
 
-        if (!$conv->users->contains(Auth::id())) {
-            return response()->json(['error' => 'Нет доступа'], 403);
-        }
-
-        $messages = $conv->messages()
-            ->with('sender')
-            ->orderBy('created_at', 'asc')
-            ->limit(500)
-            ->get()
-            ->map(function ($m) {
-                $url = null;
-                if ($m->attachment_path) {
-                    $url = url('/chat/file/' . $m->attachment_path);
-                }
-
-                return [
-                    'id'                => $m->id,
-                    'sender_id'         => $m->sender_id,
-                    'sender'            => $m->sender ? [
-                        'id'   => $m->sender->id,
-                        'name' => $m->sender->name,
-                    ] : null,
-                    'type'              => $m->type,
-                    'body'              => $m->body,
-                    'attachment_url'    => $url,
-                    'reply_to'          => $m->reply_to,
-                    'reply_to_message'  => $m->replyTo ? [
-                        'id'     => $m->replyTo->id,
-                        'body'   => $m->replyTo->body,
-                        'sender' => $m->replyTo->sender ? ['name' => $m->replyTo->sender->name] : null,
-                    ] : null,
-                    'is_read'           => (bool) $m->is_read,
-                    'created_at'        => $m->created_at->toIso8601String(),
-                ];
-            });
-
-        return response()->json($messages);
+    if (! $conv->users->contains(Auth::id())) {
+        return response()->json(['error' => 'Нет доступа'], 403);
     }
+
+    $messages = $conv->messages()
+        ->with('sender')
+        ->latest('id')          // берём ПОСЛЕДНИЕ 500
+        ->limit(500)
+        ->get()
+        ->reverse()             // возвращаем хронологию снизу-вверх
+        ->values()
+        ->map(function ($m) {
+            $url = $m->attachment_path ? url('/chat/file/' . $m->attachment_path) : null;
+
+            // ✅ Безопасный reply: не зависит от eager-loading
+            $reply = null;
+            if (! empty($m->reply_to)) {
+                $r = TelegramMessage::find($m->reply_to);
+                if ($r) {
+                    $reply = [
+                        'id'     => $r->id,
+                        'body'   => $r->body,
+                        'sender' => $r->sender ? ['name' => $r->sender->name] : null,
+                    ];
+                }
+            }
+
+            return [
+                'id'               => $m->id,
+                'sender_id'        => $m->sender_id,
+                'sender'           => $m->sender ? ['id' => $m->sender->id, 'name' => $m->sender->name] : null,
+                'type'             => $m->type,
+                'body'             => $m->body,
+                'attachment_url'   => $url,
+                'reply_to'         => $m->reply_to,
+                'reply_to_message' => $reply,
+                'is_read'          => (bool) $m->is_read,
+                'created_at'       => optional($m->created_at)->toIso8601String(),
+            ];
+        });
+
+    return response()->json($messages);
+}
 
     /**
      * Отправить сообщение / файл / голос
      */
     public function send(Request $request)
     {
-        $request->validate([
-            'conversation_id' => 'required|exists:telegram_conversations,id',
-            'body'            => 'nullable|string|max:5000',
-            'type'            => 'required|in:text,image,file,voice',
-            'attachment'      => 'nullable|file|max:51200', // 50 MB
-            'reply_to'        => 'nullable|exists:telegram_messages,id',
-        ]);
+      $request->validate([
+        'conversation_id' => 'required|exists:telegram_conversations,id',
+        'body'            => 'nullable|string|max:5000',
+        'type'            => 'required|in:text,image,file,voice,sticker', // ✅ ДОБАВЛЕН sticker
+        'attachment'      => 'nullable|file|max:51200',
+        'reply_to'        => 'nullable|exists:telegram_messages,id',
+    ]);
 
         $conv = TelegramConversation::findOrFail($request->conversation_id);
 
@@ -827,5 +832,72 @@ private function isGroupManager(TelegramConversation $conv, int $me): bool
     }
 
     return false;
+}
+/**
+ * 📁 Отдача файлов с поддержкой Range-запросов (исправляет длительность аудио)
+ */
+public function downloadFile($path)
+{
+    $disk = \Illuminate\Support\Facades\Storage::disk('public');
+    
+    // Защита от выхода за пределы папки
+    $path = str_replace(['..', '\\'], '', $path);
+    
+    if (!$disk->exists($path)) {
+        abort(404);
+    }
+
+    $fullPath = $disk->path($path);
+    $mimeType = $disk->mimeType($path) ?: 'application/octet-stream';
+    $size     = $disk->size($path);
+    $filename = basename($path);
+
+    // ✅ Определяем правильное расширение по MIME
+    $ext = pathinfo($filename, PATHINFO_EXTENSION);
+    if (!$ext || $ext === 'webm') {
+        if (str_contains($mimeType, 'mp4')) $filename = pathinfo($filename, PATHINFO_FILENAME) . '.m4a';
+        elseif (str_contains($mimeType, 'ogg')) $filename = pathinfo($filename, PATHINFO_FILENAME) . '.ogg';
+        elseif (str_contains($mimeType, 'mpeg')) $filename = pathinfo($filename, PATHINFO_FILENAME) . '.mp3';
+    }
+
+    // ✅ Заголовки для корректной работы HTML5 audio
+    $headers = [
+        'Content-Type'        => $mimeType,
+        'Content-Length'      => $size,
+        'Accept-Ranges'       => 'bytes',
+        'Cache-Control'       => 'public, max-age=31536000',
+        'Content-Disposition' => 'inline; filename="' . $filename . '"',
+    ];
+
+    // ✅ Поддержка Range (для перемотки и определения длительности)
+    if (isset($_SERVER['HTTP_RANGE'])) {
+        $range = $_SERVER['HTTP_RANGE'];
+        if (preg_match('/bytes=(\d+)-(\d*)/', $range, $matches)) {
+            $start = (int) $matches[1];
+            $end   = isset($matches[2]) && $matches[2] !== '' ? (int) $matches[2] : $size - 1;
+            $length = $end - $start + 1;
+
+            header('HTTP/1.1 206 Partial Content');
+            header("Content-Range: bytes $start-$end/$size");
+            header("Content-Length: $length");
+            foreach ($headers as $k => $v) {
+                if ($k !== 'Content-Length') header("$k: $v");
+            }
+
+            $fp = fopen($fullPath, 'rb');
+            fseek($fp, $start);
+            $remaining = $length;
+            while ($remaining > 0 && !feof($fp)) {
+                $chunk = min(8192, $remaining);
+                echo fread($fp, $chunk);
+                $remaining -= $chunk;
+                flush();
+            }
+            fclose($fp);
+            exit;
+        }
+    }
+
+    return response()->file($fullPath, $headers);
 } 
 }

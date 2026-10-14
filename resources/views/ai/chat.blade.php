@@ -1,17 +1,17 @@
 {{--
-    AI ЧАТ — ПОМОЩНИК ЭДО (v3 · Fixed)
-    ИСПРАВЛЕНО:
-      1. Правильный рендеринг старых сообщений (HTML-safe + переносы строк)
-      2. НОВАЯ ЛОГИКА: при первом сообщении страница НЕ перезагружается
-      3. URL в адресной строке обновляется через history API (без перезагрузки)
-      4. Удаление работает для только что созданных чатов
+    AI ЧАТ — ПОМОЩНИК ЭДО (v3 · Fixed + Light Theme)
 --}}
 @extends('layouts.admin')
 
 @section('content')
 <style>
     .ai-chat-scope, .ai-chat-scope * { box-sizing: border-box; }
-    body { background: #06070b !important; color: #e7ecf3 !important; }
+
+    /* ============================================================ */
+    /* ===== ФОН ПО ТЕМЕ: ТЁМНАЯ → ЧЁРНЫЙ, СВЕТЛАЯ → СВЕТЛЫЙ ===== */
+    /* ============================================================ */
+    html[data-theme="dark"] body{ background:#06070b !important; color:#e7ecf3 !important; }
+    html[data-theme="light"] body{ background:#f4f6fa !important; color:#1e293b !important; }
 
     .chat-page { display: flex; gap: 16px; max-width: 1240px; margin: 0 auto; height: calc(100vh - 140px); min-height: 520px; }
 
@@ -60,14 +60,14 @@
     .chat-header { display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-bottom: 1px solid rgba(255,255,255,.08); background: rgba(255,255,255,.015); }
     .chat-header-icon { width: 38px; height: 38px; flex-shrink: 0; border-radius: 11px; background: rgba(77,208,225,.1); border: 1px solid rgba(77,208,225,.3); display: flex; align-items: center; justify-content: center; color: #4dd0e1; font-size: 17px; box-shadow: 0 0 18px rgba(77,208,225,.18) inset; }
     .chat-header-info { min-width: 0; flex: 1; }
-    .chat-header-title { font-size: 14px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .chat-header-title { font-size: 14px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text); }
     .chat-header-sub { font-size: 10.5px; color: #8892a6; margin-top: 2px; }
     .chat-header-status { display: inline-flex; align-items: center; gap: 5px; font-size: 10px; font-weight: 700; color: #4dd0e1; background: rgba(77,208,225,.08); border: 1px solid rgba(77,208,225,.22); padding: 4px 9px; border-radius: 20px; flex-shrink: 0; }
     .status-dot { width:6px;height:6px;border-radius:50%;background:#3ddc97;box-shadow:0 0 8px #3ddc97; animation: pulse 1.8s infinite; }
     @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.35} }
     .burger { display: none; width: 38px; height: 38px; flex-shrink: 0; border-radius: 11px; border: 1px solid rgba(255,255,255,.1); background: rgba(255,255,255,.04); color: #cfd6e2; font-size: 16px; cursor: pointer; }
 
-    /* ============ СООБЩЕНИЯ (ИСПРАВЛЕН РЕНДЕРИНГ) ============ */
+    /* ============ СООБЩЕНИЯ ============ */
     .chat-messages { flex: 1; min-height: 0; overflow-y: auto; padding: 22px; display: flex; flex-direction: column; gap: 12px; scroll-behavior: smooth; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,.14) transparent; }
     .chat-messages::-webkit-scrollbar { width: 7px; }
     .chat-messages::-webkit-scrollbar-thumb { background: rgba(255,255,255,.13); border-radius: 10px; }
@@ -76,7 +76,6 @@
     .msg { max-width: 76%; padding: 12px 16px; border-radius: 15px; font-size: 13px; line-height: 1.7; animation: msgIn .28s cubic-bezier(.2,.8,.3,1); }
     @keyframes msgIn { from { opacity:0; transform: translateY(10px) scale(.98);} to {opacity:1; transform:none;} }
 
-    /* ✅ ВАЖНО: pre-wrap для сохранения переносов строк */
     .msg-body { white-space: pre-wrap; word-break: break-word; }
     .msg-body p { margin: 0 0 8px 0; }
     .msg-body p:last-child { margin-bottom: 0; }
@@ -106,7 +105,7 @@
     /* ============ ПРИВЕТСТВИЕ ============ */
     .welcome { text-align:center; margin:auto; max-width:440px; padding:20px; animation: msgIn .4s ease; }
     .welcome-icon { width:66px; height:66px; margin:0 auto 18px; border-radius:19px; background:rgba(77,208,225,.1); border:1px solid rgba(77,208,225,.3); display:flex; align-items:center; justify-content:center; font-size:29px; color:#4dd0e1; box-shadow:0 0 28px rgba(77,208,225,.25); }
-    .welcome h2 { font-size:19px; font-weight:800; margin-bottom:8px; }
+    .welcome h2 { font-size:19px; font-weight:800; margin-bottom:8px; color: var(--text); }
     .welcome p { font-size:12.5px; color:#8892a6; line-height:1.65; margin-bottom:18px; }
     .welcome-chips { display:flex; flex-direction:column; gap:8px; }
     .welcome-chip { padding:11px 14px; border-radius:11px; text-align:left; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.08); font-size:12px; color:#9aa4b8; cursor:pointer; transition:all .2s ease; }
@@ -126,7 +125,7 @@
     /* ============ МОДАЛКА УДАЛЕНИЯ ============ */
     .modal-overlay { position:fixed; inset:0; z-index:1200; background:rgba(4,5,9,.75); backdrop-filter:blur(6px); display:flex; align-items:center; justify-content:center; padding:20px; opacity:0; pointer-events:none; transition:opacity .22s ease; }
     .modal-overlay.show { opacity:1; pointer-events:auto; }
-    .modal-card { width:100%; max-width:400px; background:linear-gradient(180deg,#12151d,#0c0e14); border:1px solid rgba(255,255,255,.1); border-radius:18px; padding:26px 24px 20px; text-align:center; box-shadow:0 30px 70px rgba(0,0,0,.6); transform:translateY(14px) scale(.96); transition:transform .25s cubic-bezier(.2,.8,.3,1); }
+    .modal-card { width:100%; max-width:400px; background:linear-gradient(180deg,#12151d,#0c0e14); border:1px solid rgba(255,255,255,.1); border-radius:18px; padding:26px 24px 20px; text-align:center; box-shadow:0 30px 70px rgba(0,0,0,.6); transform:translateY(14px) scale(.96); transition:transform .25s cubic-bezier(.2,.8,.3,1); color: var(--text); }
     .modal-overlay.show .modal-card { transform:none; }
     .modal-icon { width:56px; height:56px; margin:0 auto 16px; border-radius:16px; background:rgba(255,107,107,.12); border:1px solid rgba(255,107,107,.35); display:flex; align-items:center; justify-content:center; font-size:24px; color:#ff7b7b; box-shadow:0 0 24px rgba(255,107,107,.2); }
     .modal-title { font-size:16px; font-weight:800; margin-bottom:8px; }
@@ -171,81 +170,279 @@
 </style>
 
 <style>
-    html[data-theme="light"] .ai-chat-scope {
-        color: #0f172a !important;
-    }
-    html[data-theme="light"] .chat-sidebar,
-    html[data-theme="light"] .chat-main {
-        background: #ffffff !important;
-        border-color: #cbd5e1 !important;
-        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
-    }
-    html[data-theme="light"] .chat-header,
-    html[data-theme="light"] .chat-input-area {
-        background: #f8fafc !important;
-        border-color: #cbd5e1 !important;
-    }
+    /* ============================================================ */
+    /* ===== ПОЛНАЯ СВЕТЛАЯ ТЕМА ===== */
+    /* ============================================================ */
+    html[data-theme="light"] .ai-chat-scope { color: #0f172a !important; }
+
     html[data-theme="light"] .chat-header-title,
-    html[data-theme="light"] .msg.bot,
-    html[data-theme="light"] .welcome-chip,
-    html[data-theme="light"] .chat-item-link {
+    html[data-theme="light"] .welcome h2 {
         color: #0f172a !important;
     }
+
     html[data-theme="light"] .chat-header-sub,
     html[data-theme="light"] .welcome p,
     html[data-theme="light"] .input-hint,
     html[data-theme="light"] .sidebar-head span,
-    html[data-theme="light"] .chat-item-link,
     html[data-theme="light"] .sidebar-empty {
         color: #475569 !important;
     }
-    html[data-theme="light"] .chat-item:hover,
-    html[data-theme="light"] .welcome-chip:hover {
-        background: #f1f5f9 !important;
+
+    /* Сайдбар и основная область */
+    html[data-theme="light"] .chat-main {
+        background: #ffffff !important;
+        border-color: #cbd5e1 !important;
+        box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08), 0 2px 6px rgba(15, 23, 42, 0.04);
     }
+
+    html[data-theme="light"] .chat-header {
+        background: #f8fafc !important;
+        border-bottom-color: #e2e8f0 !important;
+    }
+    html[data-theme="light"] .chat-header-icon {
+        background: rgba(8,145,178,0.10);
+        border-color: rgba(8,145,178,0.30);
+        color: #0891b2;
+        box-shadow: none;
+    }
+    html[data-theme="light"] .chat-header-status {
+        background: rgba(8,145,178,0.08);
+        border-color: rgba(8,145,178,0.25);
+        color: #0891b2;
+    }
+    html[data-theme="light"] .status-dot {
+        background: #059669;
+        box-shadow: 0 0 6px #059669;
+    }
+
+    /* Кнопка новый чат */
+    html[data-theme="light"] .new-chat-btn {
+        background: linear-gradient(180deg, rgba(77,208,225,0.90), rgba(38,166,154,0.80));
+        color: #083344;
+        border: 1px solid rgba(8,145,178,0.35);
+        box-shadow: 0 4px 14px rgba(8,145,178,0.18);
+    }
+    html[data-theme="light"] .new-chat-btn:hover {
+        color: #083344;
+        box-shadow: 0 6px 18px rgba(8,145,178,0.25);
+    }
+
+    /* Счётчик */
+    html[data-theme="light"] .sidebar-count {
+        background: rgba(8,145,178,0.10);
+        border-color: rgba(8,145,178,0.25);
+        color: #0891b2;
+    }
+
+    /* Элементы чата */
+    html[data-theme="light"] .chat-item-link { color: #475569; }
+    html[data-theme="light"] .chat-item:hover { background: #f1f5f9 !important; }
+    html[data-theme="light"] .chat-item:hover .chat-item-link { color: #0f172a; }
+
     html[data-theme="light"] .chat-item.active {
-        background: rgba(77, 208, 225, 0.12) !important;
-        border-color: rgba(8, 145, 178, 0.45) !important;
+        background: rgba(8,145,178,0.10) !important;
+        border-color: rgba(8,145,178,0.40) !important;
+    }
+    html[data-theme="light"] .chat-item.active::before {
+        background: #0891b2;
+        box-shadow: 0 0 8px rgba(8,145,178,0.6);
     }
     html[data-theme="light"] .chat-item.active .chat-item-link {
         color: #0e7490 !important;
+        font-weight: 700;
     }
-    html[data-theme="light"] .chat-item-del,
+
+    html[data-theme="light"] .chat-item-del {
+        color: #64748b;
+        border-color: transparent;
+    }
+    html[data-theme="light"] .chat-item-del:hover {
+        color: #dc2626;
+        background: rgba(220,38,38,0.08);
+        border-color: rgba(220,38,38,0.25);
+    }
+
+    /* Пустое состояние */
+    html[data-theme="light"] .sidebar-empty {
+        border-color: #cbd5e1 !important;
+        color: #64748b !important;
+    }
+    html[data-theme="light"] .sidebar-empty i { color: #94a3b8; }
+
+    /* Бургер */
     html[data-theme="light"] .burger {
         color: #475569;
         border-color: #cbd5e1;
-        background: #f8fafc;
+        background: #ffffff;
     }
-    html[data-theme="light"] .glass-card,
-    html[data-theme="light"] .msg.bot,
-    html[data-theme="light"] .welcome-chip,
-    html[data-theme="light"] #chatInput,
-    html[data-theme="light"] .modal-chat-name,
-    html[data-theme="light"] .m-btn.cancel {
+    html[data-theme="light"] .burger:hover {
+        background: #f1f5f9;
+    }
+
+    /* Скроллбары в светлой */
+    html[data-theme="light"] .chat-list::-webkit-scrollbar-thumb,
+    html[data-theme="light"] .chat-messages::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+    }
+    html[data-theme="light"] .chat-list::-webkit-scrollbar-thumb:hover,
+    html[data-theme="light"] .chat-messages::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+    }
+
+    /* Сообщения */
+    html[data-theme="light"] .msg.bot {
+        background: #f8fafc !important;
+        border-color: #e2e8f0 !important;
+        color: #1e293b !important;
+        box-shadow: 0 2px 8px rgba(15,23,42,0.04);
+    }
+    html[data-theme="light"] .msg.user {
+        background: linear-gradient(180deg, rgba(77,208,225,0.95), rgba(38,166,154,0.90));
+        color: #083344 !important;
+        box-shadow: 0 4px 14px rgba(8,145,178,0.22);
+    }
+    html[data-theme="light"] .msg.error {
+        background: #fef2f2;
+        border-color: #fecaca;
+        color: #b91c1c;
+    }
+    html[data-theme="light"] .msg-time { color: #64748b; opacity: 0.7; }
+
+    /* Кнопки скачивания */
+    html[data-theme="light"] .dl-btn.word {
+        color: #b45309;
+        background: rgba(245,197,66,0.12);
+        border-color: rgba(180,83,9,0.35);
+    }
+    html[data-theme="light"] .dl-btn.word:hover {
+        background: rgba(245,197,66,0.20);
+        color: #92400e;
+        box-shadow: 0 4px 12px rgba(180,83,9,0.18);
+    }
+    html[data-theme="light"] .dl-btn.pdf {
+        color: #b91c1c;
+        background: rgba(255,107,107,0.10);
+        border-color: rgba(220,38,38,0.30);
+    }
+    html[data-theme="light"] .dl-btn.pdf:hover {
+        background: rgba(255,107,107,0.18);
+        color: #991b1b;
+        box-shadow: 0 4px 12px rgba(220,38,38,0.18);
+    }
+
+    /* Typing dots */
+    html[data-theme="light"] .typing span {
+        background: #0891b2;
+    }
+
+    /* Приветствие */
+    html[data-theme="light"] .welcome-icon {
+        background: rgba(8,145,178,0.10);
+        border-color: rgba(8,145,178,0.30);
+        color: #0891b2;
+        box-shadow: 0 4px 16px rgba(8,145,178,0.15);
+    }
+    html[data-theme="light"] .welcome-chip {
         background: #ffffff !important;
         border-color: #cbd5e1 !important;
+        color: #475569;
     }
-    html[data-theme="light"] .msg.bot {
-        color: #1e293b !important;
+    html[data-theme="light"] .welcome-chip:hover {
+        background: #ecfeff !important;
+        border-color: rgba(8,145,178,0.45) !important;
+        color: #0e7490 !important;
+    }
+
+    /* Поле ввода */
+    html[data-theme="light"] .chat-input-area {
+        background: #f8fafc !important;
+        border-top-color: #e2e8f0 !important;
     }
     html[data-theme="light"] #chatInput {
+        background: #ffffff !important;
+        border-color: #cbd5e1 !important;
         color: #0f172a !important;
     }
-    html[data-theme="light"] #chatInput::placeholder {
+    html[data-theme="light"] #chatInput::placeholder { color: #94a3b8 !important; }
+    html[data-theme="light"] #chatInput:focus {
+        border-color: rgba(8,145,178,0.55);
+        background: #ffffff !important;
+        box-shadow: 0 0 0 3px rgba(8,145,178,0.12);
+    }
+    html[data-theme="light"] #sendBtn {
+        background: linear-gradient(180deg, rgba(77,208,225,0.95), rgba(38,166,154,0.85));
+        color: #083344;
+        box-shadow: 0 4px 14px rgba(8,145,178,0.25);
+    }
+    html[data-theme="light"] .input-hint {
+        background: #f8fafc !important;
         color: #64748b !important;
     }
-    html[data-theme="light"] .modal-card,
+
+    /* Модалка */
+    html[data-theme="light"] .modal-overlay {
+        background: rgba(15,23,42,0.55);
+        backdrop-filter: blur(4px);
+    }
+    html[data-theme="light"] .modal-card {
+        background: #ffffff !important;
+        border-color: #cbd5e1 !important;
+        color: #0f172a !important;
+        box-shadow: 0 20px 50px rgba(15,23,42,0.18), 0 4px 12px rgba(15,23,42,0.06);
+    }
+    html[data-theme="light"] .modal-icon {
+        background: rgba(220,38,38,0.10);
+        border-color: rgba(220,38,38,0.30);
+        color: #dc2626;
+        box-shadow: none;
+    }
+    html[data-theme="light"] .modal-title { color: #0f172a; }
+    html[data-theme="light"] .modal-text { color: #475569 !important; }
+    html[data-theme="light"] .modal-chat-name {
+        color: #0f172a !important;
+        background: #f8fafc !important;
+        border-color: #cbd5e1 !important;
+    }
+    html[data-theme="light"] .m-btn.cancel {
+        background: #f1f5f9 !important;
+        border-color: #cbd5e1 !important;
+        color: #475569;
+    }
+    html[data-theme="light"] .m-btn.cancel:hover {
+        background: #e2e8f0 !important;
+        color: #0f172a;
+    }
+    html[data-theme="light"] .m-btn.danger {
+        background: linear-gradient(180deg, #ef4444, #dc2626);
+        box-shadow: 0 4px 14px rgba(220,38,38,0.25);
+    }
+
+    /* Тосты */
     html[data-theme="light"] .toast {
         background: #ffffff !important;
+        border-color: #cbd5e1 !important;
         color: #0f172a !important;
-        border-color: #cbd5e1 !important;
+        box-shadow: 0 10px 30px rgba(15,23,42,0.12), 0 2px 6px rgba(15,23,42,0.05);
     }
-    html[data-theme="light"] .modal-text,
-    html[data-theme="light"] .modal-chat-name {
-        color: #475569 !important;
+    html[data-theme="light"] .toast.ok { border-color: rgba(16,185,129,0.45); }
+    html[data-theme="light"] .toast.ok i { color: #059669; }
+    html[data-theme="light"] .toast.err { border-color: rgba(220,38,38,0.45); }
+    html[data-theme="light"] .toast.err i { color: #dc2626; }
+    html[data-theme="light"] .toast.info { border-color: rgba(8,145,178,0.45); }
+    html[data-theme="light"] .toast.info i { color: #0891b2; }
+
+    /* Backdrop */
+    html[data-theme="light"] .sidebar-backdrop {
+        background: rgba(15,23,42,0.50);
     }
-    html[data-theme="light"] .sidebar-empty {
-        border-color: #cbd5e1 !important;
+
+    /* Мобильный сайдбар в светлой */
+    @media (max-width: 900px) {
+        html[data-theme="light"] .chat-sidebar {
+            background: #ffffff !important;
+            border-right-color: #cbd5e1 !important;
+            box-shadow: 20px 0 50px rgba(15,23,42,0.12);
+        }
     }
 </style>
 
@@ -308,7 +505,6 @@
         <div class="chat-messages" id="chatMessages">
             @forelse($messages as $m)
                 <div class="msg {{ $m->role === 'user' ? 'user' : 'bot' }}">
-                    {{-- ✅ ИСПРАВЛЕНИЕ 1: безопасный рендеринг с сохранением переносов строк --}}
                     <div class="msg-body">{!! nl2br(e($m->content)) !!}</div>
                     @if($m->file_path)
                         <div class="doc-buttons">
@@ -553,7 +749,6 @@ document.addEventListener('DOMContentLoaded', function () {
             removeItemAnimated(item);
 
             if (isActive) {
-                // ✅ Если удалили АКТИВНЫЙ чат — переходим к новому через 500мс
                 setTimeout(() => { window.location.href = newChatUrl; }, 500);
             }
         } catch (err) {
@@ -610,7 +805,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const body = document.createElement('div');
         body.className = 'msg-body';
-        // ✅ ИСПРАВЛЕНИЕ 1: безопасный рендеринг с переносами строк
         body.innerHTML = escapeHtml(text).replace(/\n/g, '<br>');
         div.appendChild(body);
 
@@ -671,7 +865,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 const wasNew = !currentChatId;
                 currentChatId = data.chat_id;
 
-                // ✅ ИСПРАВЛЕНИЕ 2: НЕ перезагружаем страницу, а обновляем URL через history API
                 if (wasNew) {
                     const newUrl = new URL(window.location.href);
                     newUrl.searchParams.set('chat_id', currentChatId);
@@ -710,7 +903,6 @@ document.addEventListener('DOMContentLoaded', function () {
             '<a class="chat-item-link" href="' + chatViewUrl + '" title="">' +
             '<i class="bi bi-chat-left-text"></i><span class="chat-item-text"></span></a>';
 
-        // Добавляем кнопку удаления, только если маршрут существует
         if (deleteRouteTemplate) {
             item.innerHTML +=
                 '<button type="button" class="chat-item-del js-del-chat" data-id="' + id + '" data-url="' + buildDeleteUrl(id) + '" data-title="" aria-label="Delete">' +

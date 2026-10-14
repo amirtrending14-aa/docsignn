@@ -2,12 +2,22 @@
 
 @section('content')
 <style>
-    body { background: #06070b !important; color: #e7ecf3 !important; }
+    /* ============================================================ */
+    /* ===== ФОН ПО ТЕМЕ: ТЁМНАЯ → ЧЁРНЫЙ, СВЕТЛАЯ → СВЕТЛЫЙ ===== */
+    /* ============================================================ */
+    html[data-theme="dark"] body{
+        background:#06070b !important;
+        color:#e7ecf3 !important;
+    }
+    html[data-theme="light"] body{
+        background:#f4f6fa !important;
+        color:#1e293b !important;
+    }
 
-    .doc-create-page { 
-        color: var(--text, #e7ecf3); 
-        max-width: 1100px; /* Немного расширил для 3 колонок */
-        margin: 0 auto; 
+    .doc-create-page {
+        color: var(--text, #e7ecf3);
+        max-width: 1100px;
+        margin: 0 auto;
         padding: 40px 20px;
     }
 
@@ -41,6 +51,7 @@
         align-items: center;
         justify-content: center;
         gap: 12px;
+        color: var(--text, #e7ecf3);
     }
 
     .hero-title .accent-bar {
@@ -63,7 +74,7 @@
     /* === КНОПКИ === */
     .big-buttons-section {
         display: grid;
-        grid-template-columns: repeat(3, 1fr); /* 3 колонки на десктопе */
+        grid-template-columns: repeat(3, 1fr);
         gap: 16px;
         margin-bottom: 0;
     }
@@ -133,7 +144,7 @@
         color: #4dd0e1;
     }
 
-    /* === НОВАЯ КНОПКА: АРХИВИСТ === */
+    /* === КНОПКА: АРХИВИСТ === */
     .big-btn.btn-archivist {
         background: linear-gradient(180deg, rgba(139,92,246,0.06), rgba(139,92,246,0.02));
     }
@@ -218,10 +229,84 @@
         border-color: rgba(var(--glow, 139,92,246), 0.3);
     }
 
+    /* ============================================================ */
+    /* ===== СВЕТЛАЯ ТЕМА: СВЕТЛЫЙ ФОН + КОНТРАСТНЫЕ ЦВЕТА ===== */
+    /* ============================================================ */
+    html[data-theme="light"] .doc-create-page { color: #0f172a; }
+    html[data-theme="light"] .hero-title { color: #0f172a; }
+    html[data-theme="light"] .hero-subtitle { color: #626b76; }
+
+    html[data-theme="light"] .big-btn {
+        background: #ffffff;
+        border: 1.5px solid #cbd5e1;
+        box-shadow: 0 8px 22px rgba(15, 23, 42, 0.07);
+    }
+    html[data-theme="light"] .big-btn:hover {
+        border-color: rgba(139,92,246, 0.55);
+        box-shadow: 0 12px 28px rgba(15, 23, 42, 0.13), 0 0 20px rgba(139,92,246, 0.12);
+    }
+
+    html[data-theme="light"] .big-btn.btn-rag {
+        background: linear-gradient(135deg, #ffffff, #fffbeb);
+        border-color: #f1c453;
+    }
+    html[data-theme="light"] .big-btn.btn-rag:hover {
+        border-color: #d97706;
+        box-shadow: 0 12px 28px rgba(15,23,42,0.10), 0 0 20px rgba(245,197,66,0.25);
+    }
+    html[data-theme="light"] .big-btn.btn-rag .big-btn-title { color: #713f12; }
+    html[data-theme="light"] .big-btn.btn-rag .big-btn-icon {
+        background: rgba(245,197,66,0.16);
+        border-color: rgba(180,83,9,0.30);
+        color: #b45309;
+    }
+
+    html[data-theme="light"] .big-btn.btn-analyze {
+        background: linear-gradient(135deg, #ffffff, #ecfeff);
+        border-color: #67e8f9;
+    }
+    html[data-theme="light"] .big-btn.btn-analyze:hover {
+        border-color: #0891b2;
+        box-shadow: 0 12px 28px rgba(15,23,42,0.10), 0 0 20px rgba(77,208,225,0.25);
+    }
+    html[data-theme="light"] .big-btn.btn-analyze .big-btn-title { color: #164e63; }
+    html[data-theme="light"] .big-btn.btn-analyze .big-btn-icon {
+        background: rgba(77,208,225,0.14);
+        border-color: rgba(14,116,144,0.30);
+        color: #0e7490;
+    }
+
+    html[data-theme="light"] .big-btn.btn-archivist {
+        background: linear-gradient(135deg, #ffffff, #f5f3ff);
+        border-color: #a78bfa;
+    }
+    html[data-theme="light"] .big-btn.btn-archivist:hover {
+        border-color: #7c3aed;
+        box-shadow: 0 12px 28px rgba(15,23,42,0.10), 0 0 20px rgba(139,92,246,0.25);
+    }
+    html[data-theme="light"] .big-btn.btn-archivist .big-btn-title { color: #5b21b6; }
+    html[data-theme="light"] .big-btn.btn-archivist .big-btn-icon {
+        background: rgba(139,92,246,0.12);
+        border-color: rgba(109,40,217,0.30);
+        color: #6d28d9;
+    }
+
+    html[data-theme="light"] .big-btn-title { color: #0f172a; }
+    html[data-theme="light"] .big-btn-desc { color: #64748b; }
+    html[data-theme="light"] .big-btn-arrow {
+        background: #f8fafc;
+        border-color: #cbd5e1;
+        color: #64748b;
+    }
+    html[data-theme="light"] .big-btn:hover .big-btn-arrow {
+        color: #0f172a;
+        border-color: rgba(139,92,246, 0.45);
+    }
+
     /* === АДАПТИВНОСТЬ === */
     @media (max-width: 900px) {
         .big-buttons-section {
-            grid-template-columns: 1fr; /* 1 колонка на планшетах и мобильных */
+            grid-template-columns: 1fr;
             gap: 14px;
         }
     }
@@ -250,55 +335,6 @@
         .big-btn-title { font-size: 14.5px; margin-bottom: 5px; }
         .big-btn-desc { font-size: 11.5px; line-height: 1.45; }
         .big-btn-arrow { display: none; }
-    }
-</style>
-
-<style>
-    html[data-theme="light"] .doc-create-page {
-        color: #0f172a !important;
-    }
-    html[data-theme="light"] .hero-title,
-    html[data-theme="light"] .big-btn-title {
-        color: #0f172a !important;
-    }
-    html[data-theme="light"] .hero-subtitle,
-    html[data-theme="light"] .big-btn-desc,
-    html[data-theme="light"] .big-btn-arrow {
-        color: #475569 !important;
-    }
-    html[data-theme="light"] .big-btn {
-        background: #ffffff !important;
-        border: 1.5px solid #cbd5e1 !important;
-        box-shadow: 0 8px 22px rgba(15, 23, 42, 0.07);
-    }
-    html[data-theme="light"] .big-btn:hover {
-        border-color: rgba(139,92,246, 0.55) !important;
-        box-shadow: 0 12px 28px rgba(15, 23, 42, 0.13), 0 0 20px rgba(139,92,246, 0.12);
-    }
-    html[data-theme="light"] .big-btn.btn-rag {
-        background: linear-gradient(135deg, #ffffff, #fffbeb) !important;
-        border-color: #f1c453 !important;
-    }
-    html[data-theme="light"] .big-btn.btn-analyze {
-        background: linear-gradient(135deg, #ffffff, #ecfeff) !important;
-        border-color: #67e8f9 !important;
-    }
-    html[data-theme="light"] .big-btn.btn-archivist {
-        background: linear-gradient(135deg, #ffffff, #f5f3ff) !important;
-        border-color: #a78bfa !important;
-    }
-    html[data-theme="light"] .big-btn-arrow {
-        background: #f8fafc;
-        border-color: #cbd5e1;
-    }
-    html[data-theme="light"] .big-btn.btn-rag .big-btn-title {
-        color: #713f12 !important;
-    }
-    html[data-theme="light"] .big-btn.btn-analyze .big-btn-title {
-        color: #164e63 !important;
-    }
-    html[data-theme="light"] .big-btn.btn-archivist .big-btn-title {
-        color: #5b21b6 !important;
     }
 </style>
 
@@ -357,7 +393,7 @@
             </div>
         </a>
 
-        <!-- Кнопка 3: ИИ-Архивист (НОВАЯ) -->
+        <!-- Кнопка 3: ИИ-Архивист -->
         <a href="{{ route('archivist.page') }}" class="big-btn btn-archivist">
             <span class="big-btn-arrow">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">

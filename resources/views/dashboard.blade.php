@@ -54,7 +54,7 @@
     <!-- ===== HERO ===== -->
     <section class="hero">
         <div class="hero-text">
-            <div class="hero-hello" data-i18n="welcomeBack">Добро пожаловать обратно,</div>
+            <div class="hero-hello" data-i18n="welcomeBack">Добро пожаловать</div>
             @auth
             <h1 class="hero-name">{{ $firstName }}!</h1>
             @endauth
@@ -627,7 +627,7 @@
 document.addEventListener('DOMContentLoaded', function () {
     const translations = {
         ru: {
-            welcomeBack:"Добро пожаловать обратно,",dashSubtitle:"У вас {pending} документов ожидают подписания и {incoming} новых входящих.",
+            welcomeBack:"Добро пожаловать",dashSubtitle:"У вас {pending} документов ожидают подписания и {incoming} новых входящих.",
             totalDocs:"Всего документов",pending:"На подписании",signedMonth:"Подписано за месяц",counterparties:"Контакты",
             recentDocuments:"Последние документы",allOperations:"Все операции в системе электронного документооборота",all_documents:"Все документы",
             thId:"ID",thDoc:"Документ",thType:"Тип",thStatus:"Статус",thDate:"Дата",thActions:"Действия",
@@ -672,79 +672,365 @@ document.addEventListener('DOMContentLoaded', function () {
             quickActions:"Quick actions",qa_create:"Create document",qa_sign:"To sign",qa_contact:"Find contact",qa_analytics:"Analytics"
         }
     };
-    function getCurrentLang(){return localStorage.getItem('docsign_lang')||localStorage.getItem('app-lang')||'ru'}
-    function getTr(){return translations[getCurrentLang()]||translations.ru}
-
-    function updateClock(){
-        const lang=getCurrentLang();let locale=lang==='en'?'en-US':(lang==='tj'?'tg-TJ':'ru-RU');
-        if(Intl.DateTimeFormat.supportedLocalesOf([locale]).length===0)locale='ru-RU';
-        const now=new Date();let d=now.toLocaleDateString(locale,{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-        d=d.replace(/\s?г\.$/,'');d=d.charAt(0).toUpperCase()+d.slice(1);
-        const dEl=document.getElementById('heroDate'),tEl=document.getElementById('heroTime');
-        if(dEl)dEl.textContent=d;if(tEl)tEl.textContent=now.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
+    
+    // Массивы дней недели и месяцев для разных языков
+    const daysOfWeek = {
+        ru: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
+        tj: ['Якшанбе', 'Душанбе', 'Сешанбе', 'Чоршанбе', 'Панҷшанбе', 'Ҷумъа', 'Шанбе'],
+        en: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+    };
+    
+    const monthsOfYear = {
+        ru: ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'],
+        tj: ['Январ', 'Феврал', 'Март', 'Апрел', 'Май', 'Июн', 'Июл', 'Август', 'Сентябр', 'Октябр', 'Ноябр', 'Декабр'],
+        en: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+    };
+    
+    function getCurrentLang(){
+        return localStorage.getItem('docsign_lang') || localStorage.getItem('app-lang') || 'ru';
     }
-    updateClock();setInterval(updateClock,15000);
-
-    function applyDataLabels(){const t=getTr();document.querySelectorAll('.doc-table td[data-label-key]').forEach(td=>{td.setAttribute('data-label',t[td.getAttribute('data-label-key')]||'')})}
+    
+    function getTr(){
+        return translations[getCurrentLang()] || translations.ru;
+    }
+    
+    function updateClock(){
+        const lang = getCurrentLang();
+        const now = new Date();
+        
+        // Получаем день недели и месяц на нужном языке
+        const dayName = (daysOfWeek[lang] || daysOfWeek.ru)[now.getDay()];
+        const monthName = (monthsOfYear[lang] || monthsOfYear.ru)[now.getMonth()];
+        const day = now.getDate();
+        const year = now.getFullYear();
+        
+        // Форматируем дату: "Вторник, 13 октября 2026"
+        const d = `${dayName}, ${day} ${monthName} ${year}`;
+        
+        const dEl = document.getElementById('heroDate');
+        const tEl = document.getElementById('heroTime');
+        
+        if(dEl) dEl.textContent = d;
+        if(tEl) {
+            const timeLocale = lang === 'en' ? 'en-US' : (lang === 'tj' ? 'ru-RU' : 'ru-RU');
+            tEl.textContent = now.toLocaleTimeString(timeLocale, {hour: '2-digit', minute: '2-digit'});
+        }
+    }
+    
+    updateClock();
+    setInterval(updateClock, 15000);
+    
+    function applyDataLabels(){
+        const t = getTr();
+        document.querySelectorAll('.doc-table td[data-label-key]').forEach(td => {
+            td.setAttribute('data-label', t[td.getAttribute('data-label-key')] || '');
+        });
+    }
+    
     function applyTranslations(){
-        const t=getTr();
-        const sub=document.querySelector('[data-i18n="dashSubtitle"]');
-        if(sub&&t.dashSubtitle){sub.textContent=t.dashSubtitle.replace('{pending}',{{ (int)($stats['pending']??0) }}).replace('{incoming}',{{ (int)($stats['incoming']??0) }})}
-        document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.getAttribute('data-i18n');if(t[k]&&k!=='dashSubtitle'){if(el.children.length>0){el.childNodes.forEach(n=>{if(n.nodeType===Node.TEXT_NODE&&n.textContent.trim()!=="")n.textContent=t[k]})}else{el.textContent=t[k]}}});
-        document.querySelectorAll('[data-i18n-title]').forEach(el=>{const k=el.getAttribute('data-i18n-title');if(t[k]){el.setAttribute('title',t[k]);el.setAttribute('data-tooltip',t[k])}});
+        const t = getTr();
+        
+        // Обновляем dashSubtitle с заменой переменных
+        const sub = document.querySelector('[data-i18n="dashSubtitle"]');
+        if(sub && t.dashSubtitle){
+            const pendingCount = {{ (int)($stats['pending'] ?? 0) }};
+            const incomingCount = {{ (int)($stats['incoming'] ?? 0) }};
+            sub.textContent = t.dashSubtitle.replace('{pending}', pendingCount).replace('{incoming}', incomingCount);
+        }
+        
+        // Обновляем все остальные элементы с data-i18n
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const k = el.getAttribute('data-i18n');
+            if(t[k] && k !== 'dashSubtitle'){
+                if(el.children.length > 0){
+                    el.childNodes.forEach(n => {
+                        if(n.nodeType === Node.TEXT_NODE && n.textContent.trim() !== ""){
+                            n.textContent = t[k];
+                        }
+                    });
+                } else {
+                    el.textContent = t[k];
+                }
+            }
+        });
+        
+        // Обновляем title и data-tooltip
+        document.querySelectorAll('[data-i18n-title]').forEach(el => {
+            const k = el.getAttribute('data-i18n-title');
+            if(t[k]){
+                el.setAttribute('title', t[k]);
+                el.setAttribute('data-tooltip', t[k]);
+            }
+        });
+        
         applyDataLabels();
     }
+    
     applyTranslations();
-    window.addEventListener('docsign:lang-changed',function(e){if(e.detail&&e.detail.lang){localStorage.setItem('docsign_lang',e.detail.lang);localStorage.setItem('app-lang',e.detail.lang)}applyTranslations();updateClock();if(window.updateChartsLang)window.updateChartsLang()});
-
-    window.showToast=function(type,title,message){const c=document.getElementById('toastContainer');if(!c)return;const t=document.createElement('div');t.className='toast '+type;const i=document.createElement('div');i.className='toast-icon';i.innerHTML='<i class="bi '+(type==='success'?'bi-check-circle-fill':'bi-x-circle-fill')+'"></i>';const co=document.createElement('div');co.className='toast-content';const tt=document.createElement('div');tt.className='toast-title';tt.textContent=title;const m=document.createElement('div');m.className='toast-message';m.textContent=message;co.appendChild(tt);co.appendChild(m);t.appendChild(i);t.appendChild(co);c.appendChild(t);setTimeout(()=>{t.classList.add('toast-out');setTimeout(()=>t.remove(),300)},4000)};
-    @if(session('success'))showToast('success',getTr().toast_success,@json(session('success')));@endif
-    @if(session('error'))showToast('error',getTr().toast_error,@json(session('error')));@endif
-
+    
+    window.addEventListener('docsign:lang-changed', function(e){
+        if(e.detail && e.detail.lang){
+            localStorage.setItem('docsign_lang', e.detail.lang);
+            localStorage.setItem('app-lang', e.detail.lang);
+        }
+        applyTranslations();
+        updateClock();
+        if(window.updateChartsLang) window.updateChartsLang();
+    });
+    
+    window.showToast = function(type, title, message){
+        const c = document.getElementById('toastContainer');
+        if(!c) return;
+        const t = document.createElement('div');
+        t.className = 'toast ' + type;
+        const i = document.createElement('div');
+        i.className = 'toast-icon';
+        i.innerHTML = '<i class="bi ' + (type === 'success' ? 'bi-check-circle-fill' : 'bi-x-circle-fill') + '"></i>';
+        const co = document.createElement('div');
+        co.className = 'toast-content';
+        const tt = document.createElement('div');
+        tt.className = 'toast-title';
+        tt.textContent = title;
+        const m = document.createElement('div');
+        m.className = 'toast-message';
+        m.textContent = message;
+        co.appendChild(tt);
+        co.appendChild(m);
+        t.appendChild(i);
+        t.appendChild(co);
+        c.appendChild(t);
+        setTimeout(() => {
+            t.classList.add('toast-out');
+            setTimeout(() => t.remove(), 300);
+        }, 4000);
+    };
+    
+    @if(session('success'))
+        showToast('success', getTr().toast_success, @json(session('success')));
+    @endif
+    @if(session('error'))
+        showToast('error', getTr().toast_error, @json(session('error')));
+    @endif
+    
     (function initCharts(){
-        if(typeof ApexCharts==='undefined')return;
-        const isDark=()=>(document.documentElement.dataset.theme||'light')==='dark';
-        const cssVar=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
-        const getGlow=()=>{const r=cssVar('--glow');return r?'rgb('+r+')':'rgb(79,140,255)'};
-        const getMuted=()=>isDark()?'#8d99bb':'#7482a3';
-        const getText=()=>isDark()?'#e8ecf8':'#0f1b3d';
-        const getGrid=()=>isDark()?'rgba(255,255,255,0.07)':'rgba(28,43,100,0.08)';
-        const getBg=()=>cssVar('--bg-1')||(isDark()?'#111830':'#ffffff');
-        const hasSplit=@json($hasSplit);
-        const dayLabels=@json($daily->map(fn($r)=>(string)data_get($r,'date'))->values());
-        const dayCount=@json($daily->map(fn($r)=>(int)data_get($r,'count',0))->values());
-        const dayIn=@json($daily->map(fn($r)=>(int)data_get($r,'incoming',0))->values());
-        const dayOut=@json($daily->map(fn($r)=>(int)data_get($r,'outgoing',0))->values());
-        const statusKeys=@json($statusItems->pluck('k')->values());
-        const statusVals=@json($statusItems->pluck('v')->values());
-        const statusColors=@json($statusItems->pluck('c')->values());
-        const statusTotal=statusVals.reduce((a,b)=>Number(a)+Number(b),0);
-        function statusLabels(){const t=getTr();return statusKeys.map(k=>t['st_'+k]||k)}
-        function barSeries(){const t=getTr();return hasSplit?[{name:t.st_incoming,data:dayIn},{name:t.st_outgoing,data:dayOut}]:[{name:t.chart_docs,data:dayCount}]}
-        let barChart=null,donutChart=null;
-        const barEl=document.getElementById('docsFlowChart');
-        if(barEl&&dayLabels.length){
-            barChart=new ApexCharts(barEl,{chart:{type:'bar',height:260,toolbar:{show:false},zoom:{enabled:false},fontFamily:'Inter,sans-serif',foreColor:getMuted()},series:barSeries(),colors:[getGlow(),'#8b5cf6'],plotOptions:{bar:{columnWidth:hasSplit?'60%':'40%',borderRadius:5,borderRadiusApplication:'end'}},dataLabels:{enabled:false},stroke:{show:true,width:2,colors:['transparent']},grid:{borderColor:getGrid(),strokeDashArray:4,padding:{left:4,right:4}},xaxis:{categories:dayLabels,axisBorder:{show:false},axisTicks:{show:false},labels:{style:{fontSize:'11px'}}},yaxis:{forceNiceScale:true,labels:{style:{fontSize:'11px'},formatter:v=>Math.round(v)}},legend:{show:false},tooltip:{theme:isDark()?'dark':'light'}});
+        if(typeof ApexCharts === 'undefined') return;
+        const isDark = () => (document.documentElement.dataset.theme || 'light') === 'dark';
+        const cssVar = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+        const getGlow = () => {const r = cssVar('--glow'); return r ? 'rgb(' + r + ')' : 'rgb(79,140,255)';};
+        const getMuted = () => isDark() ? '#8d99bb' : '#7482a3';
+        const getText = () => isDark() ? '#e8ecf8' : '#0f1b3d';
+        const getGrid = () => isDark() ? 'rgba(255,255,255,0.07)' : 'rgba(28,43,100,0.08)';
+        const getBg = () => cssVar('--bg-1') || (isDark() ? '#111830' : '#ffffff');
+        const hasSplit = @json($hasSplit);
+        const dayLabels = @json($daily->map(fn($r) => (string) data_get($r, 'date'))->values());
+        const dayCount = @json($daily->map(fn($r) => (int) data_get($r, 'count', 0))->values());
+        const dayIn = @json($daily->map(fn($r) => (int) data_get($r, 'incoming', 0))->values());
+        const dayOut = @json($daily->map(fn($r) => (int) data_get($r, 'outgoing', 0))->values());
+        const statusKeys = @json($statusItems->pluck('k')->values());
+        const statusVals = @json($statusItems->pluck('v')->values());
+        const statusColors = @json($statusItems->pluck('c')->values());
+        const statusTotal = statusVals.reduce((a, b) => Number(a) + Number(b), 0);
+        
+        function statusLabels(){
+            const t = getTr();
+            return statusKeys.map(k => t['st_' + k] || k);
+        }
+        
+        function barSeries(){
+            const t = getTr();
+            return hasSplit 
+                ? [{name: t.st_incoming, data: dayIn}, {name: t.st_outgoing, data: dayOut}] 
+                : [{name: t.chart_docs, data: dayCount}];
+        }
+        
+        let barChart = null, donutChart = null;
+        const barEl = document.getElementById('docsFlowChart');
+        if(barEl && dayLabels.length){
+            barChart = new ApexCharts(barEl, {
+                chart: {
+                    type: 'bar',
+                    height: 260,
+                    toolbar: {show: false},
+                    zoom: {enabled: false},
+                    fontFamily: 'Inter, sans-serif',
+                    foreColor: getMuted()
+                },
+                series: barSeries(),
+                colors: [getGlow(), '#8b5cf6'],
+                plotOptions: {
+                    bar: {
+                        columnWidth: hasSplit ? '60%' : '40%',
+                        borderRadius: 5,
+                        borderRadiusApplication: 'end'
+                    }
+                },
+                dataLabels: {enabled: false},
+                stroke: {show: true, width: 2, colors: ['transparent']},
+                grid: {
+                    borderColor: getGrid(),
+                    strokeDashArray: 4,
+                    padding: {left: 4, right: 4}
+                },
+                xaxis: {
+                    categories: dayLabels,
+                    axisBorder: {show: false},
+                    axisTicks: {show: false},
+                    labels: {style: {fontSize: '11px'}}
+                },
+                yaxis: {
+                    forceNiceScale: true,
+                    labels: {
+                        style: {fontSize: '11px'},
+                        formatter: v => Math.round(v)
+                    }
+                },
+                legend: {show: false},
+                tooltip: {theme: isDark() ? 'dark' : 'light'}
+            });
             barChart.render();
-        }else if(barEl){barEl.innerHTML='<div class="rn-empty"><i class="bi bi-bar-chart"></i><span>—</span></div>'}
-        const donutEl=document.getElementById('statusDonutChart');
+        } else if(barEl){
+            barEl.innerHTML = '<div class="rn-empty"><i class="bi bi-bar-chart"></i><span>—</span></div>';
+        }
+        
+        const donutEl = document.getElementById('statusDonutChart');
         if(donutEl){
-            donutChart=new ApexCharts(donutEl,{chart:{type:'donut',height:220,width:220,fontFamily:'Inter,sans-serif',foreColor:getMuted()},series:statusTotal>0?statusVals:[],labels:statusLabels(),colors:statusColors,stroke:{width:3,colors:[getBg()]},dataLabels:{enabled:false},plotOptions:{pie:{expandOnClick:false,donut:{size:'76%',labels:{show:true,name:{show:true,offsetY:20,fontSize:'12px',color:getMuted()},value:{show:true,offsetY:-14,fontSize:'28px',fontWeight:800,color:getText()},total:{show:true,showAlways:true,label:getTr().chart_total,fontSize:'12px',fontWeight:500,color:getMuted(),formatter:function(){return String(statusTotal)}}}}}},legend:{show:false},tooltip:{theme:isDark()?'dark':'light'},noData:{text:'—',align:'center',verticalAlign:'middle',style:{color:getMuted(),fontSize:'14px'}}});
+            donutChart = new ApexCharts(donutEl, {
+                chart: {
+                    type: 'donut',
+                    height: 220,
+                    width: 220,
+                    fontFamily: 'Inter, sans-serif',
+                    foreColor: getMuted()
+                },
+                series: statusTotal > 0 ? statusVals : [],
+                labels: statusLabels(),
+                colors: statusColors,
+                stroke: {width: 3, colors: [getBg()]},
+                dataLabels: {enabled: false},
+                plotOptions: {
+                    pie: {
+                        expandOnClick: false,
+                        donut: {
+                            size: '76%',
+                            labels: {
+                                show: true,
+                                name: {show: true, offsetY: 20, fontSize: '12px', color: getMuted()},
+                                value: {show: true, offsetY: -14, fontSize: '28px', fontWeight: 800, color: getText()},
+                                total: {
+                                    show: true,
+                                    showAlways: true,
+                                    label: getTr().chart_total,
+                                    fontSize: '12px',
+                                    fontWeight: 500,
+                                    color: getMuted(),
+                                    formatter: function(){return String(statusTotal)}
+                                }
+                            }
+                        }
+                    }
+                },
+                legend: {show: false},
+                tooltip: {theme: isDark() ? 'dark' : 'light'},
+                noData: {
+                    text: '—',
+                    align: 'center',
+                    verticalAlign: 'middle',
+                    style: {color: getMuted(), fontSize: '14px'}
+                }
+            });
             donutChart.render();
         }
-        function refreshTheme(){setTimeout(()=>{if(barChart)barChart.updateOptions({colors:[getGlow(),'#8b5cf6'],chart:{foreColor:getMuted()},grid:{borderColor:getGrid()},tooltip:{theme:isDark()?'dark':'light'}});if(donutChart)donutChart.updateOptions({chart:{foreColor:getMuted()},stroke:{colors:[getBg()]},tooltip:{theme:isDark()?'dark':'light'},plotOptions:{pie:{donut:{labels:{name:{color:getMuted()},value:{color:getText()},total:{color:getMuted(),label:getTr().chart_total}}}}}})},60)}
-        new MutationObserver(refreshTheme).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
-        window.updateChartsLang=function(){if(barChart)barChart.updateOptions({series:barSeries()});if(donutChart)donutChart.updateOptions({labels:statusLabels(),plotOptions:{pie:{donut:{labels:{total:{label:getTr().chart_total}}}}}});refreshTheme()};
-        let lastGlow=getGlow();setInterval(()=>{const g=getGlow();if(g!==lastGlow){lastGlow=g;refreshTheme()}},1500);
+        
+        function refreshTheme(){
+            setTimeout(() => {
+                if(barChart) barChart.updateOptions({
+                    colors: [getGlow(), '#8b5cf6'],
+                    chart: {foreColor: getMuted()},
+                    grid: {borderColor: getGrid()},
+                    tooltip: {theme: isDark() ? 'dark' : 'light'}
+                });
+                if(donutChart) donutChart.updateOptions({
+                    chart: {foreColor: getMuted()},
+                    stroke: {colors: [getBg()]},
+                    tooltip: {theme: isDark() ? 'dark' : 'light'},
+                    plotOptions: {
+                        pie: {
+                            donut: {
+                                labels: {
+                                    name: {color: getMuted()},
+                                    value: {color: getText()},
+                                    total: {color: getMuted(), label: getTr().chart_total}
+                                }
+                            }
+                        }
+                    }
+                });
+            }, 60);
+        }
+        
+        new MutationObserver(refreshTheme).observe(document.documentElement, {
+            attributes: true,
+            attributeFilter: ['data-theme']
+        });
+        
+        window.updateChartsLang = function(){
+            if(barChart) barChart.updateOptions({series: barSeries()});
+            if(donutChart) donutChart.updateOptions({
+                labels: statusLabels(),
+                plotOptions: {
+                    pie: {
+                        donut: {
+                            labels: {
+                                total: {label: getTr().chart_total}
+                            }
+                        }
+                    }
+                }
+            });
+            refreshTheme();
+        };
+        
+        let lastGlow = getGlow();
+        setInterval(() => {
+            const g = getGlow();
+            if(g !== lastGlow){
+                lastGlow = g;
+                refreshTheme();
+            }
+        }, 1500);
     })();
 });
 
-let currentDeleteId=null;
-function confirmDelete(id,name){currentDeleteId=id;const m=document.getElementById('deleteModal'),n=document.getElementById('deleteDocName'),f=document.getElementById('deleteForm');if(n)n.textContent=name;if(f)f.action='/documents/'+id;if(m)m.classList.add('active');document.body.style.overflow='hidden'}
-function closeDeleteModal(){const m=document.getElementById('deleteModal');if(m)m.classList.remove('active');document.body.style.overflow='';currentDeleteId=null}
-function submitDelete(){const f=document.getElementById('deleteForm');if(currentDeleteId&&f){f.style.display='block';f.submit()}}
-document.addEventListener('click',function(e){if(e.target.id==='deleteModal')closeDeleteModal()});
-document.addEventListener('keydown',function(e){if(e.key==='Escape')closeDeleteModal()});
+let currentDeleteId = null;
+function confirmDelete(id, name){
+    currentDeleteId = id;
+    const m = document.getElementById('deleteModal');
+    const n = document.getElementById('deleteDocName');
+    const f = document.getElementById('deleteForm');
+    if(n) n.textContent = name;
+    if(f) f.action = '/documents/' + id;
+    if(m) m.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+function closeDeleteModal(){
+    const m = document.getElementById('deleteModal');
+    if(m) m.classList.remove('active');
+    document.body.style.overflow = '';
+    currentDeleteId = null;
+}
+function submitDelete(){
+    const f = document.getElementById('deleteForm');
+    if(currentDeleteId && f){
+        f.style.display = 'block';
+        f.submit();
+    }
+}
+document.addEventListener('click', function(e){
+    if(e.target.id === 'deleteModal') closeDeleteModal();
+});
+document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape') closeDeleteModal();
+});
 </script>
-<script>setInterval(function(){location.reload()},600000);</script>
+<script>setInterval(function(){location.reload()}, 600000);</script>
 @endsection

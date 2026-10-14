@@ -2,8 +2,17 @@
 
 @section('content')
 <style>
-    /* === Fallback === */
-    body { background: #06070b !important; color: #e7ecf3 !important; }
+    /* ============================================================ */
+    /* ===== ФОН ПО ТЕМЕ: ТЁМНАЯ → ЧЁРНЫЙ, СВЕТЛАЯ → СВЕТЛЫЙ ===== */
+    /* ============================================================ */
+    html[data-theme="dark"] body{
+        background:#06070b !important;
+        color:#e7ecf3 !important;
+    }
+    html[data-theme="light"] body{
+        background:#f4f6fa !important;
+        color:#1e293b !important;
+    }
 
     /* === СТРАНИЦА АНАЛИЗА === */
     .analyze-page {
@@ -103,6 +112,7 @@
         align-items: center;
         gap: 10px;
         justify-content: center;
+        color: var(--text, #e7ecf3);
     }
 
     .analyze-page h1 .accent-bar {
@@ -491,7 +501,6 @@
         margin-top: 2px;
     }
 
-    /* Стилизованное отображение текста ответа */
     .result-text {
         font-size: 13.5px;
         color: #d4d9e1;
@@ -541,6 +550,162 @@
     .empty-hint-text strong {
         color: var(--text);
         font-weight: 600;
+    }
+
+    /* ============================================================ */
+    /* ===== СВЕТЛАЯ ТЕМА: СВЕТЛЫЙ ФОН + КОНТРАСТ ===== */
+    /* ============================================================ */
+    html[data-theme="light"] .analyze-page { color: #0f172a; }
+    html[data-theme="light"] .analyze-page::before { opacity: 0.5; }
+
+    html[data-theme="light"] .analyze-page h1,
+    html[data-theme="light"] .form-section-title,
+    html[data-theme="light"] .drop-title,
+    html[data-theme="light"] .file-preview-name,
+    html[data-theme="light"] .result-title,
+    html[data-theme="light"] .empty-hint-text strong {
+        color: #0f172a !important;
+    }
+
+    html[data-theme="light"] .page-sub,
+    html[data-theme="light"] .back-label,
+    html[data-theme="light"] .form-section-sub,
+    html[data-theme="light"] .drop-sub,
+    html[data-theme="light"] .file-preview-meta,
+    html[data-theme="light"] .result-meta,
+    html[data-theme="light"] .empty-hint-text {
+        color: #475569 !important;
+    }
+
+    html[data-theme="light"] .back-btn {
+        background: #ffffff;
+        border-color: #cbd5e1;
+        box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+    }
+    html[data-theme="light"] .back-btn:hover {
+        color: #0891b2;
+        border-color: rgba(8,145,178,0.45);
+        background: rgba(77,208,225,0.10);
+        box-shadow: 0 4px 14px rgba(8,145,178,0.18);
+    }
+
+    html[data-theme="light"] .analyze-page h1 .accent-bar {
+        background: #0891b2;
+        box-shadow: 0 0 10px rgba(8,145,178,0.5);
+    }
+
+    html[data-theme="light"] .head-icon {
+        background: rgba(8,145,178,0.10);
+        border-color: rgba(8,145,178,0.35);
+        color: #0891b2;
+        box-shadow: 0 6px 18px rgba(8,145,178,0.18), inset 0 1px 0 rgba(255,255,255,0.6);
+    }
+
+    html[data-theme="light"] .form-section {
+        background: #ffffff;
+        border-color: #cbd5e1 !important;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.07);
+    }
+    html[data-theme="light"] .form-section::before { opacity: 0.35; }
+
+    html[data-theme="light"] .form-section-head {
+        border-bottom-color: #e2e8f0 !important;
+    }
+
+    html[data-theme="light"] .form-section-icon {
+        background: rgba(8,145,178,0.10);
+        border-color: rgba(8,145,178,0.30);
+        color: #0e7490;
+        box-shadow: none;
+    }
+
+    html[data-theme="light"] .drop-zone {
+        background: #f8fafc;
+        border-color: #94a3b8 !important;
+    }
+    html[data-theme="light"] .drop-zone:hover,
+    html[data-theme="light"] .drop-zone.dragover,
+    html[data-theme="light"] .drop-zone.has-file {
+        background: rgba(77, 208, 225, 0.08);
+        border-color: #0891b2 !important;
+        box-shadow: 0 0 0 3px rgba(8,145,178,0.08);
+    }
+
+    html[data-theme="light"] .drop-icon {
+        background: rgba(8,145,178,0.10);
+        border-color: rgba(8,145,178,0.30);
+        color: #0891b2;
+        box-shadow: 0 4px 14px rgba(8,145,178,0.15);
+    }
+
+    html[data-theme="light"] .drop-sub .hl { color: #0891b2; }
+
+    html[data-theme="light"] .format-chip.pdf { color: #dc2626; background: rgba(255,107,107,0.12); border-color: rgba(220,38,38,0.30); }
+    html[data-theme="light"] .format-chip.word { color: #b45309; background: rgba(245,197,66,0.15); border-color: rgba(180,83,9,0.35); }
+    html[data-theme="light"] .format-chip.txt { color: #64748b; background: rgba(136,146,166,0.12); border-color: rgba(100,116,139,0.30); }
+
+    html[data-theme="light"] .file-preview {
+        background: #ecfeff;
+        border-color: #67e8f9;
+    }
+    html[data-theme="light"] .file-preview-icon.pdf { background: rgba(255,107,107,0.12); color: #dc2626; border-color: rgba(220,38,38,0.30); }
+    html[data-theme="light"] .file-preview-icon.word { background: rgba(245,197,66,0.15); color: #b45309; border-color: rgba(180,83,9,0.30); }
+    html[data-theme="light"] .file-preview-icon.txt { background: rgba(136,146,166,0.12); color: #64748b; border-color: rgba(100,116,139,0.30); }
+
+    html[data-theme="light"] .file-preview-remove {
+        background: rgba(220,38,38,0.08);
+        border-color: rgba(220,38,38,0.30);
+        color: #dc2626;
+    }
+    html[data-theme="light"] .file-preview-remove:hover {
+        background: rgba(220,38,38,0.16);
+        border-color: rgba(220,38,38,0.55);
+        color: #b91c1c;
+    }
+
+    html[data-theme="light"] .submit-btn {
+        color: #083344;
+        border: 1px solid #0891b2;
+        background: linear-gradient(180deg, rgba(77,208,225,0.90), rgba(38,166,154,0.80));
+        box-shadow: 0 6px 18px rgba(8, 145, 178, 0.22), inset 0 1px 0 rgba(255,255,255,0.5);
+    }
+
+    html[data-theme="light"] .result-section {
+        background: linear-gradient(180deg, rgba(77,208,225,0.10), rgba(77,208,225,0.03));
+        border-color: rgba(8,145,178,0.35) !important;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.07);
+    }
+    html[data-theme="light"] .result-section::before { opacity: 0.4; }
+    html[data-theme="light"] .result-section.error {
+        background: linear-gradient(180deg, rgba(255,99,99,0.08), rgba(255,99,99,0.02));
+        border-color: rgba(220,38,38,0.35) !important;
+    }
+    html[data-theme="light"] .result-head { border-bottom-color: rgba(8,145,178,0.20) !important; }
+    html[data-theme="light"] .result-section.error .result-head { border-bottom-color: rgba(220,38,38,0.20) !important; }
+
+    html[data-theme="light"] .result-section:not(.error) .result-icon {
+        background: rgba(8,145,178,0.12);
+        border-color: rgba(8,145,178,0.35);
+        color: #0e7490;
+        box-shadow: none;
+    }
+    html[data-theme="light"] .result-section.error .result-icon {
+        background: rgba(255,99,99,0.12);
+        border-color: rgba(220,38,38,0.35);
+        color: #dc2626;
+    }
+
+    html[data-theme="light"] .result-text { color: #1e293b !important; }
+    html[data-theme="light"] .result-text strong,
+    html[data-theme="light"] .result-text b { color: #0e7490; }
+
+    html[data-theme="light"] .empty-hint {
+        background: #f8fafc;
+        border-color: #94a3b8 !important;
+    }
+    html[data-theme="light"] .empty-hint-icon {
+        background: rgba(var(--glow), 0.10);
+        border-color: rgba(var(--glow), 0.30);
     }
 
     /* === АДАПТИВ === */
@@ -601,68 +766,6 @@
     }
 </style>
 
-<style>
-    html[data-theme="light"] .analyze-page {
-        color: #0f172a !important;
-    }
-    html[data-theme="light"] .analyze-page h1,
-    html[data-theme="light"] .form-section-title,
-    html[data-theme="light"] .drop-title,
-    html[data-theme="light"] .file-preview-name,
-    html[data-theme="light"] .result-title,
-    html[data-theme="light"] .empty-hint-text strong {
-        color: #0f172a !important;
-    }
-    html[data-theme="light"] .page-sub,
-    html[data-theme="light"] .back-label,
-    html[data-theme="light"] .form-section-sub,
-    html[data-theme="light"] .drop-sub,
-    html[data-theme="light"] .file-preview-meta,
-    html[data-theme="light"] .result-meta,
-    html[data-theme="light"] .empty-hint-text {
-        color: #475569 !important;
-    }
-    html[data-theme="light"] .back-btn,
-    html[data-theme="light"] .form-section,
-    html[data-theme="light"] .result-section {
-        background: #ffffff;
-        border-color: #cbd5e1 !important;
-        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.07);
-    }
-    html[data-theme="light"] .form-section-head,
-    html[data-theme="light"] .result-head {
-        border-bottom-color: #cbd5e1 !important;
-    }
-    html[data-theme="light"] .drop-zone {
-        background: #f8fafc;
-        border-color: #94a3b8 !important;
-    }
-    html[data-theme="light"] .drop-zone:hover,
-    html[data-theme="light"] .drop-zone.has-file {
-        background: rgba(77, 208, 225, 0.08);
-        border-color: #0891b2 !important;
-    }
-    html[data-theme="light"] .file-preview {
-        background: #ecfeff;
-        border-color: #67e8f9;
-    }
-    html[data-theme="light"] .result-text {
-        color: #1e293b !important;
-    }
-    html[data-theme="light"] .empty-hint {
-        background: #f8fafc;
-        border-color: #94a3b8 !important;
-    }
-    html[data-theme="light"] .file-preview-remove {
-        color: #dc2626;
-    }
-    html[data-theme="light"] .submit-btn {
-        color: #083344;
-        border: 1px solid #0891b2;
-        box-shadow: 0 6px 18px rgba(8, 145, 178, 0.22);
-    }
-</style>
-
 <div class="analyze-page">
 
     {{-- 🔙 Кнопка назад --}}
@@ -712,7 +815,6 @@
             <div class="drop-chips">
                 <span class="format-chip word">DOCX</span>
                 <span class="format-chip pdf">PDF</span>
-
             </div>
         </div>
 
@@ -780,7 +882,7 @@ document.addEventListener('DOMContentLoaded', function () {
             analyzing: ' ИИ ҳуҷҷатро мехонад...',
             result_title: ' Натиҷаи таҳлил',
             result_error: '❌ Хатои таҳлил',
-           unknown_error: 'Хатои номаълум',
+            unknown_error: 'Хатои номаълум',
             file_selected: 'Интихоб шуд'
         },
         ru: {
@@ -796,7 +898,7 @@ document.addEventListener('DOMContentLoaded', function () {
             analyzing: ' ИИ читает документ...',
             result_title: ' Результат анализа',
             result_error: '❌ Ошибка анализа',
-          unknown_error: 'Неизвестная ошибка',
+            unknown_error: 'Неизвестная ошибка',
             file_selected: 'Выбран'
         },
         en: {
@@ -812,7 +914,7 @@ document.addEventListener('DOMContentLoaded', function () {
             analyzing: ' AI is reading the document...',
             result_title: ' Analysis result',
             result_error: '❌ Analysis error',
-           unknown_error: 'Unknown error',
+            unknown_error: 'Unknown error',
             file_selected: 'Selected'
         }
     };

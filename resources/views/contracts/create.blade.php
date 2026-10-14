@@ -2,17 +2,20 @@
 
 @section('content')
 <style>
-    /* === Fallback === */
-    body { background: #06070b !important; color: #e7ecf3 !important; }
+    /* ============================================================ */
+    /* ===== ФОН ПО ТЕМЕ: ТЁМНАЯ → ЧЁРНЫЙ, СВЕТЛАЯ → СВЕТЛЫЙ ===== */
+    /* ============================================================ */
+    html[data-theme="dark"] body{ background:#06070b !important; color:#e7ecf3 !important; }
+    html[data-theme="light"] body{ background:#f4f6fa !important; color:#1e293b !important; }
 
     /* === КОМПАКТНАЯ АНКЕТА === */
-    .ai-form-page { 
-        color: var(--text, #e7ecf3); 
-        max-width: 760px; 
+    .ai-form-page {
+        color: var(--text, #e7ecf3);
+        max-width: 760px;
         width: 100%;
-        margin-left: auto; 
+        margin-left: auto;
         margin-right: auto;
-        padding: 0 20px; /* отступы по краям */
+        padding: 0 20px;
     }
 
     .ai-form-page .page-head-custom {
@@ -30,6 +33,7 @@
         display: flex;
         align-items: center;
         gap: 10px;
+        color: var(--text);
     }
 
     .ai-form-page h1 .accent-bar {
@@ -47,7 +51,7 @@
         opacity: 0.75;
     }
 
-    /* === АЛЕРТЫ (компактные) === */
+    /* === АЛЕРТЫ === */
     .ai-alert {
         display: flex;
         align-items: flex-start;
@@ -129,12 +133,8 @@
         margin-top: 1px;
     }
 
-    /* === ПОЛЯ: ОДИН СТОЛБИК, ПЛОТНО === */
-    .form-stack {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
+    /* === ПОЛЯ === */
+    .form-stack { display: flex; flex-direction: column; gap: 10px; }
 
     .form-field label {
         display: block;
@@ -145,7 +145,6 @@
         color: var(--muted);
         margin-bottom: 5px;
     }
-
     .form-field label .req { color: #ff6b6b; }
 
     .form-field input,
@@ -173,7 +172,6 @@
         background-position: right 12px center;
         padding-right: 32px;
     }
-
     .form-field select option { background: #1a1f2e; color: #fff; }
 
     .form-field textarea { resize: vertical; min-height: 64px; line-height: 1.5; }
@@ -195,14 +193,13 @@
     }
     .form-field-hint i { color: rgba(var(--glow), 1); margin-right: 4px; }
 
-    /* === ФОРМАТ: МАЛЕНЬКИЕ ПИЛЛЫ (не на всю ширину) === */
+    /* === ФОРМАТ: ПИЛЛЫ === */
     .format-row {
         display: flex;
         align-items: center;
         gap: 8px;
         flex-wrap: wrap;
     }
-
     .format-row .row-label {
         font-size: 10px;
         font-weight: 600;
@@ -213,7 +210,6 @@
     }
 
     .format-pill { position: relative; }
-
     .format-pill input { position: absolute; opacity: 0; pointer-events: none; }
 
     .format-pill label {
@@ -233,9 +229,7 @@
         text-transform: none;
         letter-spacing: 0;
     }
-
     .format-pill label i { font-size: 12px; }
-
     .format-pill label:hover { color: var(--text); }
 
     .format-pill input:checked + label.fmt-word {
@@ -244,7 +238,6 @@
         border-color: rgba(245,197,66,0.4);
         box-shadow: 0 0 10px rgba(245,197,66,0.15);
     }
-
     .format-pill input:checked + label.fmt-pdf {
         color: #ff6b6b;
         background: rgba(255,107,107,0.1);
@@ -252,7 +245,7 @@
         box-shadow: 0 0 10px rgba(255,107,107,0.15);
     }
 
-    /* === ФАЙЛ: КОМПАКТНАЯ СТРОКА === */
+    /* === ФАЙЛ === */
     .file-drop-zone {
         position: relative;
         display: flex;
@@ -265,18 +258,14 @@
         cursor: pointer;
         transition: all 0.2s ease;
     }
-
     .file-drop-zone:hover,
     .file-drop-zone.dragover {
         border-color: rgba(var(--glow), 0.5);
         background: rgba(var(--glow), 0.05);
     }
-
     .file-drop-zone input[type="file"] {
-        position: absolute;
-        inset: 0;
-        opacity: 0;
-        cursor: pointer;
+        position: absolute; inset: 0;
+        opacity: 0; cursor: pointer;
     }
 
     .file-drop-icon {
@@ -291,7 +280,6 @@
     }
 
     .file-drop-text { flex: 1; min-width: 0; }
-
     .file-drop-title {
         font-size: 12px;
         font-weight: 600;
@@ -300,7 +288,6 @@
         overflow: hidden;
         text-overflow: ellipsis;
     }
-
     .file-drop-sub { font-size: 10px; color: var(--muted); opacity: 0.75; }
 
     .file-drop-chips { display: flex; gap: 4px; flex-shrink: 0; }
@@ -410,6 +397,181 @@
         margin-left: 8px;
     }
 
+    /* ============================================================ */
+    /* ===== СВЕТЛАЯ ТЕМА: ПОЛНАЯ АДАПТАЦИЯ ===== */
+    /* ============================================================ */
+    html[data-theme="light"] .ai-form-page { color: #0f172a; }
+
+    html[data-theme="light"] .ai-form-page h1,
+    html[data-theme="light"] .form-section-title,
+    html[data-theme="light"] .file-drop-title,
+    html[data-theme="light"] .file-preview-name,
+    html[data-theme="light"] .format-row .row-label {
+        color: #0f172a !important;
+    }
+
+    html[data-theme="light"] .ai-form-page .page-sub,
+    html[data-theme="light"] .form-section-sub,
+    html[data-theme="light"] .form-field label,
+    html[data-theme="light"] .form-field-hint,
+    html[data-theme="light"] .file-drop-sub,
+    html[data-theme="light"] .file-preview-size {
+        color: #475569 !important;
+        opacity: 1;
+    }
+
+    /* Алерты */
+    html[data-theme="light"] .ai-alert.err {
+        background: #fef2f2;
+        border-color: #fecaca;
+        color: #991b1b;
+    }
+    html[data-theme="light"] .ai-alert.err .ai-alert-icon {
+        background: rgba(220,38,38,0.12);
+        color: #dc2626;
+    }
+    html[data-theme="light"] .ai-alert.warn {
+        background: #fffbeb;
+        border-color: #fed7aa;
+        color: #9a3412;
+    }
+    html[data-theme="light"] .ai-alert.warn .ai-alert-icon {
+        background: rgba(245,158,11,0.15);
+        color: #d97706;
+    }
+
+    /* Карточки-секции */
+    html[data-theme="light"] .form-section {
+        background: #ffffff;
+        border-color: #cbd5e1 !important;
+        box-shadow: 0 4px 14px rgba(15,23,42,0.06);
+    }
+    html[data-theme="light"] .form-section::before { opacity: 0.30; }
+    html[data-theme="light"] .form-section-head {
+        border-bottom-color: #e2e8f0 !important;
+    }
+    html[data-theme="light"] .form-section-icon {
+        background: rgba(var(--glow), 0.08);
+        border-color: rgba(var(--glow), 0.30);
+        color: rgba(var(--glow), 1);
+        box-shadow: none;
+    }
+
+    /* Поля ввода */
+    html[data-theme="light"] .form-field input,
+    html[data-theme="light"] .form-field select,
+    html[data-theme="light"] .form-field textarea {
+        background: #f8fafc;
+        border-color: #cbd5e1;
+        color: #0f172a;
+    }
+    html[data-theme="light"] .form-field input:focus,
+    html[data-theme="light"] .form-field select:focus,
+    html[data-theme="light"] .form-field textarea:focus {
+        border-color: rgba(var(--glow), 0.6);
+        background: #ffffff;
+        box-shadow: 0 0 0 3px rgba(var(--glow), 0.12);
+    }
+    html[data-theme="light"] .form-field input::placeholder,
+    html[data-theme="light"] .form-field textarea::placeholder {
+        color: #94a3b8;
+        opacity: 1;
+    }
+    html[data-theme="light"] .form-field select {
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%2364748b' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+    }
+    html[data-theme="light"] .form-field select option {
+        background: #ffffff;
+        color: #0f172a;
+    }
+
+    /* Пиллы форматов */
+    html[data-theme="light"] .format-pill label {
+        background: #f8fafc;
+        border-color: #cbd5e1;
+        color: #475569;
+    }
+    html[data-theme="light"] .format-pill label:hover { color: #0f172a; }
+    html[data-theme="light"] .format-pill input:checked + label.fmt-word {
+        color: #92400e;
+        background: #fffbeb;
+        border-color: #f59e0b;
+        box-shadow: 0 0 0 3px rgba(245,158,11,0.12);
+    }
+    html[data-theme="light"] .format-pill input:checked + label.fmt-pdf {
+        color: #b91c1c;
+        background: #fef2f2;
+        border-color: #ef4444;
+        box-shadow: 0 0 0 3px rgba(239,68,68,0.12);
+    }
+    html[data-theme="light"] .format-pill input:checked + label.fmt-word i { color: #d97706 !important; }
+    html[data-theme="light"] .format-pill input:checked + label.fmt-pdf i { color: #dc2626 !important; }
+
+    /* Чипы PDF/DOCX */
+    html[data-theme="light"] .format-chip.pdf {
+        color: #dc2626;
+        background: rgba(255,107,107,0.10);
+        border-color: rgba(220,38,38,0.30);
+    }
+    html[data-theme="light"] .format-chip.word {
+        color: #b45309;
+        background: rgba(245,197,66,0.12);
+        border-color: rgba(180,83,9,0.35);
+    }
+
+    /* Drop zone */
+    html[data-theme="light"] .file-drop-zone {
+        background: #f8fafc;
+        border-color: #94a3b8 !important;
+    }
+    html[data-theme="light"] .file-drop-zone:hover,
+    html[data-theme="light"] .file-drop-zone.dragover {
+        background: rgba(var(--glow), 0.06);
+        border-color: rgba(var(--glow), 0.6) !important;
+        box-shadow: 0 0 0 3px rgba(var(--glow), 0.08);
+    }
+    html[data-theme="light"] .file-drop-icon {
+        background: rgba(var(--glow), 0.08);
+        border-color: rgba(var(--glow), 0.30);
+        box-shadow: none;
+    }
+
+    /* Превью файла */
+    html[data-theme="light"] .file-preview {
+        background: rgba(var(--glow), 0.06);
+        border-color: rgba(var(--glow), 0.25);
+    }
+    html[data-theme="light"] .file-preview-icon.pdf {
+        background: rgba(255,107,107,0.12);
+        color: #dc2626;
+    }
+    html[data-theme="light"] .file-preview-icon.word {
+        background: rgba(245,197,66,0.15);
+        color: #b45309;
+    }
+    html[data-theme="light"] .file-preview-remove { color: #64748b; }
+    html[data-theme="light"] .file-preview-remove:hover {
+        color: #b91c1c;
+        background: rgba(255,99,99,0.08);
+    }
+
+    /* Кнопка отправки */
+    html[data-theme="light"] .submit-btn {
+        color: #0a0d14;
+        background: linear-gradient(180deg, rgba(var(--glow), 0.95), rgba(var(--glow), 0.75));
+        box-shadow: 0 4px 14px rgba(var(--glow), 0.25), inset 0 1px 0 rgba(255,255,255,0.5);
+    }
+
+    /* Бейдж "образец найден" */
+    html[data-theme="light"] .ai-sample-badge {
+        color: #15803d;
+        background: rgba(76,217,130,0.12);
+        border-color: rgba(21,128,61,0.30);
+    }
+
+    /* label required */
+    html[data-theme="light"] .form-field label .req { color: #dc2626; }
+
     /* === АДАПТИВ === */
     @media (max-width: 768px) {
         .ai-form-page h1 { font-size: 18px; }
@@ -514,7 +676,6 @@
                 </div>
                 <div class="form-field">
                     <label data-i18n="label_city">Шаҳр</label>
-                    <!-- ИЗМЕНЕНО: убран конкретный город, добавлен нейтральный пример -->
                     <input type="text" name="city" value="{{ old('city') }}" placeholder="Масалан: Душанбе">
                 </div>
             </div>
@@ -532,12 +693,10 @@
             <div class="form-stack">
                 <div class="form-field">
                     <label data-i18n="label_from_whom">Ному насаб пурра <span class="req">*</span></label>
-                    <!-- ИЗМЕНЕНО: убрано твое имя, добавлен нейтральный пример "Иванов Иван Иванович" -->
                     <input type="text" name="from_whom" value="{{ old('from_whom') }}" placeholder="Масалан: Иванов Иван Иванович" required>
                 </div>
                 <div class="form-field">
                     <label data-i18n="label_from_details">Тамос (суроға, телефон)</label>
-                    <!-- ИЗМЕНЕНО: убран твой реальный адрес и телефон, добавлен вымышленный -->
                     <input type="text" name="from_details" value="{{ old('from_details') }}" placeholder="Масалан: ш. Душанбе, кӯчаи Сино 10, тел: +992 900 00 00 00">
                 </div>
             </div>
@@ -585,7 +744,7 @@
             </div>
         </div>
 
-        {{-- 5. Формат + файл (компактно в один кирпичик) --}}
+        {{-- 5. Формат + файл --}}
         <div class="form-section">
             <div class="form-section-head">
                 <div class="form-section-icon"><i class="bi bi-gear-fill"></i></div>
@@ -595,8 +754,6 @@
                 </div>
             </div>
             <div class="form-stack">
-
-                {{-- Формат: маленькие пиллы --}}
                 <div class="format-row">
                     <span class="row-label" data-i18n="label_format">Формат:</span>
                     <div class="format-pill">
@@ -615,7 +772,6 @@
                     </div>
                 </div>
 
-                {{-- Файл: компактная строка --}}
                 <div class="form-field">
                     <label data-i18n="label_attachment">Замима (ихтиёрӣ)</label>
 
@@ -739,12 +895,10 @@ document.addEventListener('DOMContentLoaded', function () {
         if (e.key === 'docsign_lang' && e.newValue) applyTranslations(e.newValue);
     });
 
-    // Смена типа
     document.getElementById('docType').addEventListener('change', function () {
         document.getElementById('customTypeBox').style.display = (this.value === 'Другой') ? 'block' : 'none';
     });
 
-    // Файл
     const fileInput = document.getElementById('fileInput');
     const fileDropZone = document.getElementById('fileDropZone');
     const filePreview = document.getElementById('filePreview');
@@ -801,7 +955,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Отправка
     const form = document.getElementById('contractForm');
     const btn = document.getElementById('submitBtn');
     const submitText = document.getElementById('submitText');
