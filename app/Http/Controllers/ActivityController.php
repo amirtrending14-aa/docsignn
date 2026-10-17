@@ -6,9 +6,10 @@ use App\Models\DocumentLog;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
-
+ 
 class ActivityController extends Controller
 {
+    
     public function index(Request $request)
     {
         $query = DocumentLog::with(['user', 'document']);

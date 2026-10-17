@@ -364,8 +364,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/documents/{id}/pdf', [DocumentController::class, 'pdf'])->name('documents.pdf');
     Route::get('/documents/{id}/debug', [DocumentController::class, 'debugFilePath']);
     
-    Route::get('/contracts-assistant', [AIController::class, 'index'])->name('contracts.index');
-    Route::post('/contracts/chat', [AIController::class, 'chat'])->name('contracts.chat');
+  Route::get('/contracts-assistant', [AIController::class, 'index'])->name('contracts.assistant');
+   Route::post('/contracts/chat', [AIController::class, 'chat'])->name('contracts.chat');
 });
 
 /*

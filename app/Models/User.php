@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Eloquent\Relations\HasMany;
  // Добавлено для проверки схемы
 
+ 
 class User extends Authenticatable implements CanResetPassword
 {
     use HasFactory, Notifiable, SoftDeletes, CanResetPasswordTrait;
