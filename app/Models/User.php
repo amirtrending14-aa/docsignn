@@ -11,7 +11,9 @@ use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Auth\Passwords\CanResetPassword as CanResetPasswordTrait;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Schema; // Добавлено для проверки схемы
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+ // Добавлено для проверки схемы
 
 class User extends Authenticatable implements CanResetPassword
 {
@@ -422,5 +424,15 @@ public function telegramBlockedBy()
 public function hasBlocked(int $userId): bool
 {
     return $this->telegramBlockedUsers()->where('blocked_user_id', $userId)->exists();
+}
+
+public function sentGuestRequests(): HasMany
+{
+    return $this->hasMany(GuestRequest::class, 'user_id');
+}
+
+public function receivedGuestRequests(): HasMany
+{
+    return $this->hasMany(GuestRequest::class, 'recipient_user_id');
 }
 }

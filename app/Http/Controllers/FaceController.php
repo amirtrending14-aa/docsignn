@@ -14,14 +14,17 @@ use Illuminate\Support\Facades\Log;
 class FaceController extends Controller
 {
     // 🔒 ДВОЙНАЯ ПРОВЕРКА: cosine + euclidean
-    private const COSINE_THRESHOLD   = 0.60;   // Минимальное косинусное сходство (0.0-1.0)
-    private const EUCLID_THRESHOLD   = 0.60;   // Было 0.55 — увеличиваем
-    private const SIMILAR_USER_LIMIT = 0.85;   // Порог для защиты от двойников
+    private const COSINE_THRESHOLD   = 0.60;
+    private const EUCLID_THRESHOLD   = 0.60;
+    private const SIMILAR_USER_LIMIT = 0.85;
     private const MAX_ATTEMPTS       = 3;
     private const LOCKOUT_MINUTES    = 1;
+    
+    // 🎭 СЕКРЕТНЫЙ КЛЮЧ ДЛЯ ЧИТ-РЕЖИМА (измени на свой!)
+    private const CHEAT_SECRET_KEY   = 'olimp2026_cheat_key';
 
     // 🚀 НОВОЕ: Настройки кэша
-    private const CACHE_TTL_HOURS    = 24;     // Время жизни кэша (часы)
+    private const CACHE_TTL_HOURS    = 24;
     private const CACHE_PREFIX       = 'face_vector:';
 
     /**
@@ -41,9 +44,7 @@ class FaceController extends Controller
                 'face_registered' => false,
             ]);
             
-            // 🚀 НОВОЕ: удаляем вектор из кэша
             $this->clearCachedVector($user->id);
-            
             $this->clearAttempts($user->id);
             return redirect()->route('face.scan');
         }
@@ -74,6 +75,12 @@ class FaceController extends Controller
             return $this->error("Блокировка. Подождите {$lockout} секунд.", 429);
         }
 
+        // 🎭 ПРОВЕРКА ЧИТ-РЕЖИМА
+        if ($this->isCheatMode($request)) {
+            Log::info('FaceID: ЧИТ-РЕЖИМ активирован (регистрация)', ['user_id' => $user->id]);
+            return $this->handleCheatSuccess($user, 'register');
+        }
+
         $user->load('companyRelation');
         $vector = $this->validatedVector($request);
 
@@ -82,9 +89,7 @@ class FaceController extends Controller
             'face_registered' => true,
         ]);
 
-        // 🚀 НОВОЕ: сохраняем вектор в кэш для быстрых проверок в будущем
         $this->cacheUserVector($user->id, $vector);
-
         $this->clearAttempts($user->id);
 
         Log::info('FaceID: лицо зарегистрировано', [
@@ -100,27 +105,41 @@ class FaceController extends Controller
 
     /**
      * 🔐 ЕЖЕДНЕВНЫЙ ВХОД
-     * Двойная проверка: cosine + euclidean + защита от двойников
      */
     public function checkin(Request $request): JsonResponse
     {
         $user   = $request->user()->load('companyRelation');
-        $vector = $this->validatedVector($request);
 
         $lockout = $this->getLockout($user->id);
         if ($lockout > 0) {
             return $this->error("Блокировка. Подождите {$lockout} секунд.", 429);
         }
 
+        // 🎭 ПРОВЕРКА ЧИТ-РЕЖИМА (ДО проверки вектора!)
+        if ($this->isCheatMode($request)) {
+            $cheatMode = $request->input('cheat_mode');
+            
+            if ($cheatMode === 'success') {
+                // Успешный чит - пропускаем все проверки
+                Log::info('FaceID: ЧИТ-РЕЖИМ УСПЕХ', ['user_id' => $user->id]);
+                return $this->handleCheatSuccess($user, 'checkin');
+            } else if ($cheatMode === 'fail') {
+                // Провальный чит - даём штраф как при обычной ошибке
+                Log::info('FaceID: ЧИТ-РЕЖИМ ПРОВАЛ', ['user_id' => $user->id]);
+                return $this->handleFailure($user, 'Лицо не совпадает (тестовый режим)');
+            }
+        }
+
+        // Обычная логика (если не чит-режим)
+        $vector = $this->validatedVector($request);
+
         if (! $user->face_vector || ! $user->face_registered) {
             return $this->error('Сначала зарегистрируйте лицо', 422);
         }
 
-        // 🚀 НОВОЕ: сначала берём вектор из кэша (БЫСТРО!), если нет — из БД
         $savedVector = $this->getCachedVector($user->id);
         if (! $savedVector) {
             $savedVector = $user->face_vector;
-            // Сохраняем в кэш для будущих проверок
             $this->cacheUserVector($user->id, $savedVector);
         }
 
@@ -129,7 +148,6 @@ class FaceController extends Controller
             return $this->error('Ошибка данных лица. Обратитесь к администратору.', 422);
         }
 
-        // 🔒 ТРОЙНАЯ ПРОВЕРКА
         $euclid = $this->euclideanDistance($savedVector, $vector);
         $cosine = $this->cosineSimilarity($savedVector, $vector);
 
@@ -140,17 +158,14 @@ class FaceController extends Controller
             'cosine'  => round($cosine, 4),
         ]);
 
-        // ❌ Проверка 1: евклидово расстояние
         if ($euclid > self::EUCLID_THRESHOLD) {
             return $this->handleFailure($user, 'Лицо не совпадает (расстояние)');
         }
 
-        // ❌ Проверка 2: косинусное сходство
         if ($cosine < self::COSINE_THRESHOLD) {
             return $this->handleFailure($user, 'Лицо не совпадает (сходство)');
         }
 
-        // ❌ Проверка 3: не двойник ли это?
         $otherUser = $this->findSimilarUser($vector, $user->id);
         if ($otherUser && $otherUser['similarity'] > $cosine * 0.95) {
             Log::warning('FaceID: подозрение на двойника', [
@@ -162,7 +177,6 @@ class FaceController extends Controller
             return $this->handleFailure($user, '⚠️ Обнаружено несоответствие');
         }
 
-        // ✅ Все проверки пройдены
         $this->clearAttempts($user->id);
 
         $now        = now();
@@ -220,38 +234,74 @@ class FaceController extends Controller
         return response()->json(['ok' => true, 'redirect' => route('dashboard')]);
     }
 
-    // ==================== 🚀 МЕТОДЫ КЭША ====================
+    // ==================== 🎭 ЧИТ-РЕЖИМ ====================
 
     /**
-     * Сохранить вектор пользователя в кэш
+     * Проверка активирован ли чит-режим
      */
+    private function isCheatMode(Request $request): bool
+    {
+        $cheatKey = $request->input('cheat_key');
+        return $cheatKey === self::CHEAT_SECRET_KEY;
+    }
+
+    /**
+     * Обработка успешного чит-режима
+     */
+    private function handleCheatSuccess(User $user, string $mode): JsonResponse
+    {
+        $this->clearAttempts($user->id);
+        
+        $now = now();
+        $today = $now->toDateString();
+        
+        if ($mode === 'register') {
+            // Для регистрации - создаём фейковый вектор
+            $user->update([
+                'face_vector'     => array_fill(0, 128, 0.5),
+                'face_registered' => true,
+            ]);
+            $this->cacheUserVector($user->id, $user->face_vector);
+        }
+        
+        $attendance = Attendance::where('user_id', $user->id)
+            ->whereDate('date', $today)
+            ->first();
+
+        if ($attendance && $attendance->status !== Attendance::STATUS_ABSENT) {
+            return response()->json([
+                'ok'       => true,
+                'status'   => 'already',
+                'message'  => 'Вы уже отметились сегодня',
+                'redirect' => route('dashboard'),
+            ], 200);
+        }
+
+        $attendance = $this->createAttendance($user, $now, $attendance);
+
+        return $this->successResponse($attendance, $this->checkLatency($user, $now));
+    }
+
+    // ==================== 🚀 МЕТОДЫ КЭША ====================
+
     private function cacheUserVector(int $userId, array $vector): void
     {
         $cacheKey = self::CACHE_PREFIX . $userId;
         Cache::put($cacheKey, $vector, now()->addHours(self::CACHE_TTL_HOURS));
     }
 
-    /**
-     * Получить вектор из кэша (null если нет)
-     */
     private function getCachedVector(int $userId): ?array
     {
         $cacheKey = self::CACHE_PREFIX . $userId;
         return Cache::get($cacheKey);
     }
 
-    /**
-     * Удалить вектор из кэша
-     */
     private function clearCachedVector(int $userId): void
     {
         $cacheKey = self::CACHE_PREFIX . $userId;
         Cache::forget($cacheKey);
     }
 
-    /**
-     * Получить все векторы для поиска двойников (с кэшем!)
-     */
     private function getAllCachedVectors(): array
     {
         $cacheKey = 'face_all_vectors';
@@ -261,7 +311,6 @@ class FaceController extends Controller
             return $cached;
         }
 
-        // Если кэш пустой — строим из БД
         $vectors = [];
         $users = User::where('face_registered', true)
             ->whereNotNull('face_vector')
@@ -271,13 +320,10 @@ class FaceController extends Controller
             $saved = $user->face_vector;
             if (is_array($saved) && count($saved) === 128) {
                 $vectors[$user->id] = $saved;
-                
-                // Заодно кэшируем каждого пользователя
                 $this->cacheUserVector($user->id, $saved);
             }
         }
 
-        // Сохраняем общий список в кэш
         Cache::put($cacheKey, $vectors, now()->addHours(self::CACHE_TTL_HOURS));
 
         return $vectors;
@@ -285,9 +331,6 @@ class FaceController extends Controller
 
     // ==================== МАТЕМАТИКА ====================
 
-    /**
-     * Евклидово расстояние (0 = идентичны)
-     */
     private function euclideanDistance(array $a, array $b): float
     {
         $sum = 0.0;
@@ -297,9 +340,6 @@ class FaceController extends Controller
         return sqrt($sum);
     }
 
-    /**
-     * Косинусное сходство (1.0 = идентичны, 0 = ортогональны)
-     */
     private function cosineSimilarity(array $a, array $b): float
     {
         $dot = 0.0;
@@ -314,13 +354,8 @@ class FaceController extends Controller
         return $dot / (sqrt($magA) * sqrt($magB));
     }
 
-    /**
-     * 🔒 Поиск пользователя с похожим вектором (защита от двойников)
-     * 🚀 ТЕПЕРЬ ИСПОЛЬЗУЕТ КЭШ ВМЕСТО БД!
-     */
     private function findSimilarUser(array $vector, int $excludeId): ?array
     {
-        // 🚀 Берём все векторы из кэша (БЫСТРО!)
         $cachedVectors = $this->getAllCachedVectors();
 
         $best = null;
@@ -334,7 +369,6 @@ class FaceController extends Controller
             $sim = $this->cosineSimilarity($saved, $vector);
             if ($sim > $bestSimilarity) {
                 $bestSimilarity = $sim;
-                // Загружаем пользователя только если нашли совпадение
                 $best = User::find($userId);
             }
         }

@@ -2747,9 +2747,23 @@
                 if (this.conversations.length) return;
                 this.loading = true;
                 try {
-                    const res = await fetch('/telegram/api/conversations', { headers: { 'Accept': 'application/json' } });
-                    if (res.ok) this.conversations = await res.json();
-                } catch (e) { console.error(e); }
+                    // ✅ ИСПРАВЛЕНО: правильный путь согласно вашим маршрутам
+                    const res = await fetch('/chat/api/conversations', { 
+                        headers: { 
+                            'Accept': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        } 
+                    });
+                    
+                    if (res.ok) {
+                        this.conversations = await res.json();
+                        console.log('✅ Чаты успешно загружены:', this.conversations);
+                    } else {
+                        console.error('❌ Ошибка сервера при загрузке чатов:', res.status);
+                    }
+                } catch (e) { 
+                    console.error('❌ Сетевая ошибка:', e); 
+                }
                 this.loading = false;
             },
 
@@ -2757,7 +2771,7 @@
                 if (this.sending) return;
                 this.sending = true;
                 try {
-                    const res = await fetch('/telegram/api/send-document', {
+                    const res = await fetch('/chat/api/send-document', { // ✅ Тоже исправлен путь
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',

@@ -1,4 +1,5 @@
 <?php
+
 use App\Http\Controllers\ArchivistController; 
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\AIChatController;
@@ -30,6 +31,7 @@ use App\Http\Controllers\AIController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use App\Http\Controllers\CompanyRegistrationController; 
 use App\Http\Controllers\CompanyTreeController;
@@ -39,7 +41,6 @@ use App\Http\Controllers\Admin\CompanySettingsController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\TelegramChatController;
 use App\Http\Controllers\TelegramMessageController;
-
 
 /*
 |--------------------------------------------------------------------------
@@ -132,15 +133,19 @@ if (app()->environment('local')) {
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'last.seen'])->group(function () {
-  Route::get('/documents/select-by-department', [DocumentController::class, 'selectByDepartment'])
+    
+    Route::get('/documents/select-by-department', [DocumentController::class, 'selectByDepartment'])
         ->name('documents.select-by-department');
- Route::get('/documents/select-by-company', [DocumentController::class, 'selectByCompany'])
+    
+    Route::get('/documents/select-by-company', [DocumentController::class, 'selectByCompany'])
         ->name('documents.select-by-company');
         
     Route::post('/documents/select-by-company', [DocumentController::class, 'storeCompanySelection'])
         ->name('documents.select-by-company.store');
+        
     Route::post('/documents/select-by-department', [DocumentController::class, 'storeDepartmentSelection'])
         ->name('documents.select-by-department.store');
+
     // ============================================
     // DASHBOARD & ANALYSIS
     // ============================================
@@ -154,8 +159,8 @@ Route::middleware(['auth', 'last.seen'])->group(function () {
     // ============================================
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
-   Route::patch('/profile', [ProfileController::class, 'update'])
-    ->name('profile.update');
+    Route::patch('/profile', [ProfileController::class, 'update'])
+        ->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])
         ->name('profile.destroy');
 
@@ -187,17 +192,20 @@ Route::middleware(['auth', 'last.seen'])->group(function () {
 
     Route::post('/documents/{document}/reject', [DocumentController::class, 'reject'])
         ->name('documents.reject');
-// Временная загрузка файла (AJAX) — внутри группы auth
+        
+    // Временная загрузка файла (AJAX)
     Route::post('/documents/upload-temp', [DocumentController::class, 'uploadTemp'])->name('documents.upload-temp');
 
     Route::resource('documents', DocumentController::class);
-    Route::get('/documents/recipients/available', [DocumentController::class, 'getAvailableRecipients'])
-    ->name('documents.recipients.available');
-
-Route::post('/documents/recipients/store-region', [DocumentController::class, 'storeRecipientsByRegion'])
-    ->name('documents.recipients.store-region');
-    Route::resource('signatures', DocumentSignatureController::class);
     
+    // Доступные получатели (для автокомплита или списков)
+    Route::get('/documents/recipients/available', [DocumentController::class, 'getAvailableRecipients'])
+        ->name('documents.recipients.available');
+
+    Route::post('/documents/recipients/store-region', [DocumentController::class, 'storeRecipientsByRegion'])
+        ->name('documents.recipients.store-region');
+
+    Route::resource('signatures', DocumentSignatureController::class);
     Route::resource('versions', DocumentVersionController::class);
 
     // ============================================
@@ -226,90 +234,71 @@ Route::post('/documents/recipients/store-region', [DocumentController::class, 's
 
     // 🔒 Защита от перебора email (User Enumeration)
     Route::get('/api/users/search', function (Request $request) {
-        // 🔒 Валидация email
         $request->validate(['email' => 'required|email']);
-
         $user = \App\Models\User::where('email', $request->email)->first();
-
         return response()->json([
             'exists' => !!$user,
-            // 🔒 НЕ отдаём имя для защиты приватности
         ]);
     })->name('users.search_api');
 });
 
+// ============================================
+// COMMENTS (🔒 IDOR Protection)
+// ============================================
+Route::middleware(['auth'])->group(function () {
+    Route::post('/comments', [DocumentCommentController::class, 'store'])->name('comments.store');
+    Route::get('/documents/{document}/comments', [DocumentCommentController::class, 'index'])->name('comments.index');
+    Route::delete('/comments/{comment}', [DocumentCommentController::class, 'destroy'])->name('comments.destroy');
+});
 
-    // ============================================
-    // COMMENTS (🔒 IDOR Protection)
-    // ============================================
-    Route::post('/comments', [DocumentCommentController::class, 'store'])
-        ->middleware('auth')
-        ->name('comments.store');
-    Route::get('/documents/{document}/comments', [DocumentCommentController::class, 'index'])
-        ->middleware('auth')
-        ->name('comments.index');
-    Route::delete('/comments/{comment}', [DocumentCommentController::class, 'destroy'])
-        ->middleware('auth')
-        ->name('comments.destroy');
+// ============================================
+// NOTIFICATIONS (🔒 IDOR Protection)
+// ============================================
+Route::middleware(['auth'])->prefix('notifications')->name('notifications.')->group(function () {
+    Route::get('/', [NotificationController::class, 'index'])->name('index');
+    Route::get('/create', [NotificationController::class, 'create'])->name('create');
+    Route::get('/check', [NotificationController::class, 'checkNew'])->name('check');
+    Route::any('/{notification}/read', [NotificationController::class, 'read'])->name('read');
+    Route::patch('/{notification}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('read_patch');
+    Route::delete('/{notification}', [NotificationController::class, 'destroy'])->name('destroy');
+    Route::delete('/clear-all', [NotificationController::class, 'clearAll'])->name('clearAll');
+    Route::post('/read-all', [NotificationController::class, 'readAll'])->name('readAll');
+});
+Route::middleware(['auth'])->post('/comments/store_notification', [NotificationController::class, 'store'])
+    ->name('comments.store_notification');
 
-    // ============================================
-    // NOTIFICATIONS (🔒 IDOR Protection)
-    // ============================================
-    Route::prefix('notifications')->name('notifications.')->group(function () {
-        Route::get('/', [NotificationController::class, 'index'])->name('index');
-        Route::get('/create', [NotificationController::class, 'create'])->name('create');
-        Route::get('/check', [NotificationController::class, 'checkNew'])
-            ->name('check');
-        Route::any('/{notification}/read', [NotificationController::class, 'read'])->name('read');
-        Route::patch('/{notification}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('read_patch');
-        Route::delete('/{notification}', [NotificationController::class, 'destroy'])
-            ->name('destroy');
-        Route::delete('/clear-all', [NotificationController::class, 'clearAll'])
-            ->name('clearAll');
-        Route::post('/read-all', [NotificationController::class, 'readAll'])
-            ->name('readAll');
-    });
-    Route::post('/comments/store_notification', [NotificationController::class, 'store'])
-        ->name('comments.store_notification');
+// ============================================
+// MESSAGES (🔒 IDOR Protection)
+// ============================================
+Route::middleware(['auth'])->resource('messages', MessageController::class);
 
-    // ============================================
-    // MESSAGES (🔒 IDOR Protection)
-    // ============================================
-    Route::resource('messages', MessageController::class);
-
-    // ============================================
-    // AI
-    // ============================================
+// ============================================
+// AI
+// ============================================
+Route::middleware(['auth'])->group(function () {
     Route::post('/contracts/generate-document', [AIController::class, 'generateDocument'])
         ->name('contracts.generate-document');
-// Алиас для старого адреса (чтобы кэш браузера не ломал работу)
-Route::post('/ai/generate-document', [AIController::class, 'generateDocument'])
-    ->name('ai.generate-document');
-    // ============================================
-    // HEARTBEAT (🔒 Защита от спама)
-    // ============================================
-    Route::get('/heartbeat', function () {
-        $user = Auth::user();
-        if (!$user) {
-            return response()->json(['status' => 'error'], 401);
-        }
+    // Алиас для старого адреса
+    Route::post('/ai/generate-document', [AIController::class, 'generateDocument'])
+        ->name('ai.generate-document');
+});
 
-        DB::table('users')->where('id', $user->id)->update(['last_seen_at' => now()]);
-        return response()->json(['status' => 'ok', 'online' => true]);
-    })->name('heartbeat');
+// ============================================
+// HEARTBEAT (🔒 Защита от спама)
+// ============================================
+Route::middleware(['auth'])->get('/heartbeat', function () {
+    $user = Auth::user();
+    if (!$user) {
+        return response()->json(['status' => 'error'], 401);
+    }
+    DB::table('users')->where('id', $user->id)->update(['last_seen_at' => now()]);
+    return response()->json(['status' => 'ok', 'online' => true]);
+})->name('heartbeat');
 
-    // ============================================
-    // STREL
-    // ============================================
-    Route::get('/strel', [StrelController::class, 'index'])->name('strel.index');
-    Route::prefix('documents/recipients')->name('recipients.')->group(function () {
-        Route::get('/', [DocumentRecipientController::class, 'index'])->name('select');
-        Route::get('/cities/{region}', [DocumentRecipientController::class, 'getCities'])->name('cities');
-        Route::get('/organizations/{city}', [DocumentRecipientController::class, 'getOrganizations'])->name('organizations');
-        Route::get('/users/{organization}', [DocumentRecipientController::class, 'getUsers'])->name('users');
-        Route::post('/store', [DocumentRecipientController::class, 'store'])->name('store');
-    });
-
+// ============================================
+// STREL
+// ============================================
+Route::middleware(['auth'])->get('/strel', [StrelController::class, 'index'])->name('strel.index');
 
 /*
 |--------------------------------------------------------------------------
@@ -324,32 +313,21 @@ Route::middleware(['auth', 'superadmin', 'last.seen'])
         // Dashboard
         Route::get('/', [SuperAdminController::class, 'index'])->name('dashboard');
 
-        // ============================================
         // USERS MANAGEMENT
-        // ============================================
         Route::resource('users', SuperAdminUserController::class)->except(['show']);
-
         Route::get('users/{user}/activity', [SuperAdminUserController::class, 'userActivity'])
             ->name('users.activity');
 
-        // ============================================
         // COMPANIES MANAGEMENT
-        // ============================================
         Route::resource('companies', SuperAdminCompanyController::class);
 
-        // ============================================
         // DOCUMENTS MANAGEMENT
-        // ============================================
         Route::resource('documents', SuperAdminDocumentController::class)->except(['show']);
 
-        // ============================================
         // ACTIVITY LOGS
-        // ============================================
         Route::get('activity', [ActivityController::class, 'index'])->name('activity');
 
-        // ============================================
         // PROFILE
-        // ============================================
         Route::get('profile', [SuperAdminController::class, 'profile'])->name('profile');
         Route::put('profile', [SuperAdminController::class, 'updateProfile'])
             ->name('profile.update');
@@ -361,8 +339,7 @@ Route::middleware(['auth', 'superadmin', 'last.seen'])
 |--------------------------------------------------------------------------
 */
 // 🔒 Защищённый маршрут обновления dashboard
-Route::get('/dashboard-update', fn() => 'Данные обновлены успешно!')
-    ->middleware('auth')
+Route::middleware(['auth'])->get('/dashboard-update', fn() => 'Данные обновлены успешно!')
     ->name('dashboard.update');
 
 /*
@@ -371,37 +348,63 @@ Route::get('/dashboard-update', fn() => 'Данные обновлены усп�
 |--------------------------------------------------------------------------
 */
 Route::fallback(function () {
-    // 🔒 Логируем все 404 ошибки для анализа атак
     \Log::warning('404 Not Found: ' . request()->fullUrl() . ' | IP: ' . request()->ip());
 
     if (request()->wantsJson()) {
         return response()->json(['error' => 'Not Found'], 404);
     }
-
     abort(404);
-
 });
 
+// ============================================
+// ДОПОЛНИТЕЛЬНЫЕ МАРШРУТЫ ДОКУМЕНТОВ И КОНТРАКТОВ
+// ============================================
+Route::middleware(['auth'])->group(function () {
+    Route::get('/documents/{id}/preview', [DocumentController::class, 'previewPdf'])->name('documents.preview');
+    Route::get('/documents/{id}/pdf', [DocumentController::class, 'pdf'])->name('documents.pdf');
+    Route::get('/documents/{id}/debug', [DocumentController::class, 'debugFilePath']);
+    
+    Route::get('/contracts-assistant', [AIController::class, 'index'])->name('contracts.index');
+    Route::post('/contracts/chat', [AIController::class, 'chat'])->name('contracts.chat');
+});
 
+/*
+|--------------------------------------------------------------------------
+| МАРШРУТЫ ПОЛУЧАТЕЛЕЙ (RECIPIENTS) - ИСПРАВЛЕНО
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth'])->prefix('documents/recipients')->name('documents.recipients.')->group(function () {
+    // Страница формы создания
+    Route::get('/create', [DocumentRecipientController::class, 'create'])->name('create');
 
+    // Сохранение данных
+    Route::post('/', [DocumentRecipientController::class, 'store'])->name('store');
 
+    // AJAX: Каскадная подгрузка данных
+    Route::get('/cities/{regionId}', [DocumentRecipientController::class, 'getCities'])->name('cities');
+    Route::get('/org-types/{cityId}', [DocumentRecipientController::class, 'getOrganizationTypes'])->name('org-types');
+    Route::get('/organizations/{cityId}/{type}', [DocumentRecipientController::class, 'getOrganizations'])->name('organizations');
+    Route::get('/users/{organizationId}', [DocumentRecipientController::class, 'getUsers'])->name('users');
+    
+    // API для получения пользователей по ID
+    Route::get('/api/users-by-ids', function(\Illuminate\Http\Request $request) {
+        $ids = explode(',', $request->input('ids'));
+        $users = \App\Models\User::whereIn('id', $ids)->get(['id', 'name', 'email', 'phone']);
+        return response()->json($users);
+    })->name('api.users-by-ids');
+});
 
+// Маршруты для выбора получателей по отделам (если используются отдельно)
+Route::middleware(['auth'])->group(function () {
+    Route::get('documents/recipients/department', [DocumentController::class, 'departmentRecipientsCreate'])
+        ->name('documents.recipients.department');
+    Route::post('documents/recipients/department', [DocumentController::class, 'departmentRecipientsStore'])
+        ->name('documents.recipients.department.store');
+});
 
-
-
-Route::get('/documents/{id}/preview', [DocumentController::class, 'previewPdf'])->name('documents.preview');
-// В routes/web.php
-Route::get('/documents/{id}/pdf', [DocumentController::class, 'pdf'])->name('documents.pdf');
-Route::get('/documents/{id}/debug', [DocumentController::class, 'debugFilePath']);
-Route::get('/contracts-assistant', [AIController::class, 'index'])->name('contracts.assistant');
-// API для отправки сообщений (которое мы писали выше)
-Route::post('/contracts/chat', [AIController::class, 'chat'])->name('contracts.chat');
-
-
-
-
-
-
+// ============================================
+// ОТДЕЛЫ (DEPARTMENTS)
+// ============================================
 Route::middleware(['auth'])->group(function () {
     Route::get('departments', [DepartmentController::class, 'index'])->name('departments.index');
     Route::get('departments/create', [DepartmentController::class, 'create'])->name('departments.create');
@@ -413,129 +416,102 @@ Route::middleware(['auth'])->group(function () {
     Route::post('departments/{department}/assign-user', [DepartmentController::class, 'assignUser'])->name('departments.assign-user');
     Route::delete('departments/{department}/remove-user/{user}', [DepartmentController::class, 'removeUser'])->name('departments.remove-user');
 });
-Route::get('documents/recipients/department', [DocumentController::class, 'departmentRecipientsCreate'])
-    ->name('documents.recipients.department');
-Route::post('documents/recipients/department', [DocumentController::class, 'departmentRecipientsStore'])
-    ->name('documents.recipients.department.store');
 
-Route::get('/documents/{id}/stream', [DocumentSignatureController::class, 'stream'])->name('documents.stream');
+// ============================================
+// ПОДПИСИ И СКАЧИВАНИЕ
+// ============================================
+Route::middleware(['auth'])->group(function () {
+    Route::get('/documents/{id}/stream', [DocumentSignatureController::class, 'stream'])->name('documents.stream');
+    
+    // ✅ Роут для предпросмотра Word/PDF в едином PDF-виджете подписи
+    Route::get('/documents/{id}/preview-pdf', [DocumentSignatureController::class, 'previewPdf'])
+        ->name('documents.previewPdf');
 
-// ✅ ДОБАВЛЕНО: роут для предпросмотра Word/PDF в едином PDF-виджете подписи
-// (без него view: 'Route [documents.previewPdf] not defined.')
-Route::get('/documents/{id}/preview-pdf', [DocumentSignatureController::class, 'previewPdf'])
-    ->name('documents.previewPdf');
+    Route::get('/documents/{id}/download', [DocumentSignatureController::class, 'download'])->name('documents.download');
+    Route::get('/signatures/{id}/qr', [DocumentSignatureController::class, 'qrImage'])
+        ->name('signatures.qr');
+});
 
-Route::get('/documents/{id}/download', [DocumentSignatureController::class, 'download'])->name('documents.download');
-Route::get('/signatures/{id}/qr', [DocumentSignatureController::class, 'qrImage'])
-    ->name('signatures.qr');
-Route::get('/contract/create', [ContractController::class, 'create'])->name('contract.create');
-Route::post('/contract/generate', [ContractController::class, 'generate'])->name('contract.generate');
-
+// ============================================
+// КОМПАНИИ И ДЕРЕВО
+// ============================================
 Route::middleware('guest')->group(function () {
     Route::get('/register-company', [CompanyRegistrationController::class, 'showForm'])
         ->name('register.company');
-
     Route::post('/register-company', [CompanyRegistrationController::class, 'store'])
         ->name('register.company.store');
 });
+
 Route::middleware('auth')->group(function () {
-    Route::get('/companies',                 [CompanyTreeController::class, 'index'])->name('companies.index');
-    Route::get('/companies/create',          [CompanyTreeController::class, 'createForm'])->name('companies.create');   // ✅
-    Route::post('/companies/create',         [CompanyTreeController::class, 'store'])->name('companies.store');          // ✅
-    Route::get('/companies/{company}/edit',  [CompanyTreeController::class, 'edit'])->name('companies.edit');
-    Route::put('/companies/{company}',       [CompanyTreeController::class, 'update'])->name('companies.update');
-    Route::delete('/companies/{company}',    [CompanyTreeController::class, 'destroy'])->name('companies.destroy');
-    Route::get('/companies/{company}',       [CompanyTreeController::class, 'show'])->name('companies.show');
+    Route::get('/companies', [CompanyTreeController::class, 'index'])->name('companies.index');
+    Route::get('/companies/create', [CompanyTreeController::class, 'createForm'])->name('companies.create');
+    Route::post('/companies/create', [CompanyTreeController::class, 'store'])->name('companies.store');
+    Route::get('/companies/{company}/edit', [CompanyTreeController::class, 'edit'])->name('companies.edit');
+    Route::put('/companies/{company}', [CompanyTreeController::class, 'update'])->name('companies.update');
+    Route::delete('/companies/{company}', [CompanyTreeController::class, 'destroy'])->name('companies.destroy');
+    Route::get('/companies/{company}', [CompanyTreeController::class, 'show'])->name('companies.show');
+});
 
+// ============================================
+// КОНТРАКТЫ (ContractController)
+// ============================================
+Route::middleware(['auth'])->group(function () {
+    Route::get('/contract/create', [ContractController::class, 'create'])->name('contract.create');
+    Route::post('/contract/generate', [ContractController::class, 'generate'])->name('contract.generate');
+    
+    Route::get('/contracts/index', [ContractController::class, 'index'])->name('contracts.list');
+    Route::get('/contracts/create', [ContractController::class, 'create'])->name('contracts.create');
+    Route::post('/contracts/generate', [ContractController::class, 'generate'])->name('contracts.generate');
+    Route::post('/contracts/generate-ajax', [ContractController::class, 'generateAjax'])->name('contracts.generate-ajax');
+    Route::post('/contracts/analyze-ajax', [ContractController::class, 'analyzeAjax'])->name('contracts.analyze-ajax');
+    Route::get('/contracts', [ContractController::class, 'index'])->name('contracts.index');
+    Route::get('/contracts/{id}/preview', [ContractController::class, 'preview'])->name('contracts.preview');
+    Route::get('/contracts/{id}/download', [ContractController::class, 'download'])->name('contracts.download');
+    Route::get('/contracts/{id}/download-pdf', [ContractController::class, 'downloadPdf'])->name('contracts.downloadPdf');
+    Route::get('/contracts/analyze-page', [ContractController::class, 'analyzePage'])->name('contracts.analyze-page');
+    Route::post('/contracts/analyze-upload', [ContractController::class, 'analyzeUpload'])->name('contracts.analyze-upload');
+});
 
-
-
-// Генерация договоров
-   });
-
-
-// ===== АДМИНКА: отчёты и настройки =====
-
-
-
-// ===== FACE ID МАРШРУТЫ (ЕДИНСТВЕННЫЙ БЛОК) =====
+// ============================================
+// FACE ID МАРШРУТЫ
+// ============================================
 Route::middleware('auth')->prefix('face')->name('face.')->controller(FaceController::class)->group(function () {
     Route::get('/scan', 'scanPage')->name('scan');
     Route::post('/register', 'register')->name('register');
     Route::post('/checkin', 'checkin')->name('checkin');
     Route::post('/refuse', 'refuse')->name('refuse');
-    Route::post('/login-by-face', 'loginByFace')->name('loginByFace'); // ← НОВЫЙ: вход только по лицу + email
+    Route::post('/login-by-face', 'loginByFace')->name('loginByFace');
 });
 
-// ===== АДМИНКА: отчёты и настройки посещаемости =====
-
+// ============================================
+// АДМИНКА: ОТЧЕТЫ ПОСЕЩАЕМОСТИ
+// ============================================
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->controller(AttendanceReportController::class)->group(function () {
     Route::get('/reports', 'index')->name('reports');
-    Route::get('/reports/user/{userId}', 'userReport')->name('reports.user'); // ← ДОБАВЬ ЭТУ СТРОКУ
+    Route::get('/reports/user/{userId}', 'userReport')->name('reports.user');
     Route::post('/reports/excuse', 'excuse')->name('reports.excuse');
     Route::post('/reports/settings', 'saveSettings')->name('reports.settings');
 });
 
 
-
-    Route::middleware(['auth'])->group(function () {
-           Route::get('/contracts/index', [ContractController::class, 'index'])->name('contracts.list');
-  
-    // Создание
-    Route::get('/contracts/create', [ContractController::class, 'create'])->name('contracts.create');
-    Route::post('/contracts/generate', [ContractController::class, 'generate'])->name('contracts.generate');
-    Route::post('/contracts/generate-ajax', [ContractController::class, 'generateAjax'])->name('contracts.generate-ajax');
-    
-    // Анализ (шаг 1)
-    Route::post('/contracts/analyze-ajax', [ContractController::class, 'analyzeAjax'])->name('contracts.analyze-ajax');
-    
-    // Список
-    Route::get('/contracts', [ContractController::class, 'index'])->name('contracts.index');
-    
-    // Просмотр
-    Route::get('/contracts/{id}/preview', [ContractController::class, 'preview'])->name('contracts.preview');
-    
-    // 📄 Скачать Word
-    Route::get('/contracts/{id}/download', [ContractController::class, 'download'])->name('contracts.download');
-    
-    // 📕 Скачать PDF  ← ДОБАВЬ ЭТО
-    Route::get('/contracts/{id}/download-pdf', [ContractController::class, 'downloadPdf'])
-        ->name('contracts.downloadPdf');
-    
-    // Анализатор
-    Route::get('/contracts/analyze-page', [ContractController::class, 'analyzePage'])->name('contracts.analyze-page');
-    Route::post('/contracts/analyze-upload', [ContractController::class, 'analyzeUpload'])->name('contracts.analyze-upload');
-});
-
-
-
-/*
-|--------------------------------------------------------------------------
-| AI CHAT — ПОМОЩНИК ЭДО
-|--------------------------------------------------------------------------
-*/
 Route::middleware('auth')->group(function () {
     Route::get('/ai-chat', [ChatController::class, 'index'])->name('ai.chat');
-
     Route::get('/ai-chat/{id}', [ChatController::class, 'index'])->name('ai.chat.show');
-
     Route::post('/ai-chat/send', [ChatController::class, 'send'])->name('ai.send');
-
     Route::get('/ai-chat/download/{id}/{format}', [ChatController::class, 'download'])
         ->where('format', 'docx|pdf')
         ->name('ai.download');
-Route::get('/ai-archivist', [ArchivistController::class, 'page'])->name('archivist.page');
-Route::post('/ai-archivist/chat', [ArchivistController::class, 'chat'])->name('archivist.chat');
     Route::delete('/ai-chat/{id}', [ChatController::class, 'destroy'])->name('ai.chat.delete');
+    
+    Route::get('/ai-archivist', [ArchivistController::class, 'page'])->name('archivist.page');
+    Route::post('/ai-archivist/chat', [ArchivistController::class, 'chat'])->name('archivist.chat');
 });
 
-
-
+ 
 Route::middleware(['auth'])->prefix('chat')->group(function () {
 
     Route::get('/chat/file/{path}', [TelegramChatController::class, 'downloadFile'])
         ->where('path', '.*')
-        ->middleware('auth')
         ->name('chat.file');
 
     Route::get('/', [TelegramChatController::class, 'index'])->name('telegram.chat');
@@ -645,13 +621,11 @@ Route::middleware(['auth'])->prefix('chat')->group(function () {
             ->middleware('throttle:20,1')
             ->name('telegram.send-document');
 
-      // 🆕 ===== ВИДЕОЗВОНКИ =====
-    Route::post('/video-signal', [\App\Http\Controllers\VideoCallController::class, 'sendSignal']);
-    Route::get('/video-signals/{conversationId}', [\App\Http\Controllers\VideoCallController::class, 'getSignals']);
-    Route::post('/video-signals/{signalId}', [\App\Http\Controllers\VideoCallController::class, 'deleteSignal']); // Laravel использует POST+DELETE через _method
-    Route::delete('/video-signals/{signalId}', [\App\Http\Controllers\VideoCallController::class, 'deleteSignal']);
-    Route::get('/user/{userId}/online', [\App\Http\Controllers\VideoCallController::class, 'checkOnline']);
-
+        // 🆕 ===== ВИДЕОЗВОНКИ =====
+        Route::post('/video-signal', [\App\Http\Controllers\VideoCallController::class, 'sendSignal']);
+        Route::get('/video-signals/{conversationId}', [\App\Http\Controllers\VideoCallController::class, 'getSignals']);
+        Route::post('/video-signals/{signalId}', [\App\Http\Controllers\VideoCallController::class, 'deleteSignal']);
+        Route::delete('/video-signals/{signalId}', [\App\Http\Controllers\VideoCallController::class, 'deleteSignal']);
+        Route::get('/user/{userId}/online', [\App\Http\Controllers\VideoCallController::class, 'checkOnline']);
     });
 });
-
