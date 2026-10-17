@@ -10,6 +10,7 @@ use Carbon\Carbon;
 class ActivityController extends Controller
 {
     
+
     public function index(Request $request)
     {
         $query = DocumentLog::with(['user', 'document']);

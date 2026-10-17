@@ -243,6 +243,7 @@ class DocumentSeeder extends Seeder
         $content .= "0 -20 Td\n(6. Интеграция с государственными системами) Tj\n";
         $content .= "ET";
         
+        
         $pdf .= "4 0 obj\n<< /Length " . strlen($content) . " >>\nstream\n" . $content . "\nendstream\nendobj\n";
         $pdf .= "5 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>\nendobj\n";
         $pdf .= "xref\n0 6\n0000000000 65535 f \n0000000009 00000 n \n0000000058 00000 n \n0000000115 00000 n \n0000000266 00000 n \n";
