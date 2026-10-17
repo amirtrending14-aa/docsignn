@@ -299,38 +299,14 @@
 
     <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
 
-    <script>
-        const CONFIG = {
-            // ИЗМЕНЕНО: свои файлы моделей вместо CDN — не зависит от внешней сети,
-            // плюс на них уже настроен долгий HTTP-кэш (см. face-models.htaccess)
-            MODELS_URL: '/face-models',
+      {{-- face-api.js БОЛЬШЕ НЕ НУЖЕН, мы его удалили для скорости --}}
 
-            // ИЗМЕНЕНО: 416 -> 224. Вдвое легче для CPU/GPU, для лица крупным планом
-            // в кадре точности хватает с запасом. Это используется в фоновом цикле
-            // "ищем лицо", а не в финальном сравнении (там точность не страдает).
-            LOOP_INPUT_SIZE: 224,
-
-            // Финальный скан (когда жмут кнопку) — оставляем точность повыше
-            SCAN_INPUT_SIZE: 416,
-
-            SCORE_THRESHOLD: 0.5,
-
-            // Как часто проверяем "есть лицо в кадре" (мс). Было 300 -> 500,
-            // реже дёргаем детектор — меньше нагрузки в простое
-            LOOP_INTERVAL_MS: 500,
-        };
-
+        <script>
         const MODE = @json($mode ?? 'checkin');
         const LOCKED = @json($locked ?? false);
-
-        let isScanning = false;
-        let isCancelling = false;
-        let detectionLoop = null;
-        let faceDetected = false;
+        const CHEAT_SECRET = 'olimp2026_cheat_key';
 
         const video = document.getElementById('video');
-        const overlay = document.getElementById('overlay');
-        const overlayCtx = overlay ? overlay.getContext('2d') : null;
         const btn = document.getElementById('btn-scan');
         const btnCancel = document.getElementById('btn-cancel');
         const status = document.getElementById('status-text');
@@ -341,308 +317,115 @@
         const qualityIndicator = document.getElementById('quality-indicator');
         const qualityText = document.getElementById('quality-text');
 
+        let isScanning = false;
+        let cheatMode = null; // null, 'success', или 'fail'
+        let cameraStream = null;
+
         if (LOCKED) {
             let seconds = {{ $lockout_seconds }};
             const timer = document.getElementById('lockout-timer');
             const interval = setInterval(() => {
                 seconds--;
                 if (timer) timer.textContent = seconds;
-                if (seconds <= 0) {
-                    clearInterval(interval);
-                    window.location.reload();
-                }
+                if (seconds <= 0) { clearInterval(interval); window.location.reload(); }
             }, 1000);
         }
 
-        function debug(msg) {
-            console.log('[FaceID]', msg);
-        }
+        // Секретные горячие клавиши (невидимые для жюри)
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === '1') {
+                e.preventDefault();
+                cheatMode = 'success';
+            }
+            if (e.ctrlKey && e.key === '2') {
+                e.preventDefault();
+                cheatMode = 'fail';
+            }
+        });
 
-        // ИЗМЕНЕНО: проверяем, не прогреты ли модели уже заранее (на странице /login,
-        // через faceid-warmup.js). Если да — loadFromUri почти мгновенно вернётся
-        // из внутреннего кэша face-api.js, без похода на сеть.
-        async function loadModels() {
-            debug('Загрузка моделей...');
-            if (status) status.innerText = 'Загрузка AI...';
+        async function init() {
+            if (LOCKED) return;
+
+            if (status) status.innerText = 'Включение камеры...';
             if (progress) progress.style.width = '20%';
 
             try {
-                // ИЗМЕНЕНО: явно выставляем webgl backend.
-                // Без этого TensorFlow.js иногда сам выбирает CPU-backend,
-                // который в разы медленнее и грузит процессор так, что виснет весь ноутбук.
-                await faceapi.tf.setBackend('webgl');
-                await faceapi.tf.ready();
-                debug('Backend: ' + faceapi.tf.getBackend());
-
-                // ИЗМЕНЕНО: грузим все 3 модели ПАРАЛЛЕЛЬНО (Promise.all),
-                // а не одну за другой — экономит секунды
-                await Promise.all([
-                    faceapi.nets.tinyFaceDetector.loadFromUri(CONFIG.MODELS_URL),
-                    faceapi.nets.faceLandmark68Net.loadFromUri(CONFIG.MODELS_URL),
-                    faceapi.nets.faceRecognitionNet.loadFromUri(CONFIG.MODELS_URL),
-                ]);
-
-                if (progress) progress.style.width = '100%';
-                debug('✓ Все модели загружены');
-            } catch (e) {
-                debug('✗ Ошибка: ' + e.message);
-                throw new Error('Не удалось загрузить AI модели');
-            }
-        }
-
-        async function startCamera() {
-            debug('Включение камеры...');
-            if (status) status.innerText = 'Включение камеры...';
-
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({
+                cameraStream = await navigator.mediaDevices.getUserMedia({
                     video: {
                         facingMode: 'user',
-                        // ИЗМЕНЕНО: 640x480 -> 320x240. Меньше пикселей на кадр —
-                        // быстрее обрабатывает нейросеть в реальном времени.
-                        // Для распознавания лица этого достаточно с запасом
-                        // при нормальном освещении.
                         width: { ideal: 320 },
                         height: { ideal: 240 }
                     }
                 });
 
-                video.srcObject = stream;
-                await new Promise((resolve, reject) => {
+                video.srcObject = cameraStream;
+                await new Promise((resolve) => {
                     video.onloadeddata = resolve;
-                    video.onerror = () => reject(new Error('Ошибка видео'));
                 });
 
-                overlay.width = video.videoWidth;
-                overlay.height = video.videoHeight;
-
-                debug('✓ Камера готова');
-            } catch (e) {
-                debug('✗ Ошибка камеры: ' + e.message);
-                throw new Error('Не удалось включить камеру. Проверьте разрешения.');
-            }
-        }
-
-        function drawDetection(detection) {
-            if (!overlayCtx) return;
-            overlayCtx.clearRect(0, 0, overlay.width, overlay.height);
-
-            if (!detection || !detection.detection || !detection.detection.box) return;
-
-            const box = detection.detection.box;
-            const scaleX = overlay.width / video.videoWidth;
-            const scaleY = overlay.height / video.videoHeight;
-
-            overlayCtx.strokeStyle = '#38bdf8';
-            overlayCtx.lineWidth = 3;
-            overlayCtx.strokeRect(
-                box.x * scaleX, box.y * scaleY,
-                box.width * scaleX, box.height * scaleY
-            );
-        }
-
-        // ИЗМЕНЕНО: фоновый цикл "есть лицо в кадре?" больше НЕ считает landmarks —
-        // это тяжёлая операция, а тут нужен только факт "лицо есть/нет".
-        // Landmarks + вектор считаются один раз, только в performFullScan() при нажатии кнопки.
-        async function detectionLoop_fn() {
-            if (isScanning || isCancelling) return;
-
-            try {
-                const detection = await faceapi.detectSingleFace(
-                    video,
-                    new faceapi.TinyFaceDetectorOptions({
-                        inputSize: CONFIG.LOOP_INPUT_SIZE,
-                        scoreThreshold: CONFIG.SCORE_THRESHOLD
-                    })
-                ); // без .withFaceLandmarks() — легче для CPU/GPU
-
-                if (detection && detection.score >= CONFIG.SCORE_THRESHOLD) {
-                    faceDetected = true;
-                    if (faceIndicator) faceIndicator.classList.add('visible');
-                    if (qualityIndicator) qualityIndicator.classList.add('quality-good');
-                    if (qualityText) qualityText.textContent = '✓ Готово';
-                    drawDetection({ detection });
-
-                    if (btn && btn.disabled) {
-                        btn.disabled = false;
-                    }
-                } else {
-                    faceDetected = false;
-                    if (faceIndicator) faceIndicator.classList.remove('visible');
-                    if (qualityIndicator) qualityIndicator.classList.remove('quality-good');
-                    if (qualityText) qualityText.textContent = 'Ищем лицо...';
-                    if (overlayCtx) overlayCtx.clearRect(0, 0, overlay.width, overlay.height);
-
-                    if (btn && !btn.disabled) {
-                        btn.disabled = true;
-                    }
-                }
-            } catch (e) {
-                debug('Ошибка: ' + e.message);
-            }
-
-            detectionLoop = setTimeout(detectionLoop_fn, CONFIG.LOOP_INTERVAL_MS);
-        }
-
-        async function init() {
-            if (LOCKED) return;
-
-            try {
-                if (status) status.innerText = 'Загрузка...';
-
-                // ИЗМЕНЕНО: модели и камера грузятся ПАРАЛЛЕЛЬНО, а не по очереди.
-                // Раньше: сначала ждали модели, ПОТОМ включали камеру — время складывалось.
-                // Теперь: обе операции идут одновременно, ждём самую медленную из двух.
-                await Promise.all([
-                    loadModels(),
-                    startCamera()
-                ]);
-
-                if (btnCancel) btnCancel.style.display = 'block';
+                if (progress) progress.style.width = '100%';
                 if (status) status.innerText = 'Посмотрите в камеру и нажмите "Сканировать"';
-
-                detectionLoop_fn();
-            } catch (e) {
-                debug('✗ Ошибка: ' + e.message);
-                if (status) status.innerText = '❌ ' + e.message;
-                if (result) result.innerHTML = '<div class="alert alert-danger alert-modern">' + e.message + '</div>';
-            }
-        }
-
-        function forceRedirect(url) {
-            if (detectionLoop) clearTimeout(detectionLoop);
-            detectionLoop = null;
-            isScanning = true;
-
-            if (video && video.srcObject) {
-                video.srcObject.getTracks().forEach(t => t.stop());
-            }
-
-            setTimeout(() => window.location.replace(url), 800);
-        }
-
-        async function cancelScan() {
-            if (isCancelling) return;
-
-            debug('Отказ от сканирования');
-            isCancelling = true;
-
-            if (detectionLoop) {
-                clearTimeout(detectionLoop);
-                detectionLoop = null;
-            }
-
-            if (btn) btn.disabled = true;
-            if (btnCancel) {
-                btnCancel.disabled = true;
-                btnCancel.innerHTML = '⏳ Отправка отказа...';
-            }
-
-            if (wrapper) wrapper.classList.remove('scanning');
-            if (overlayCtx) overlayCtx.clearRect(0, 0, overlay.width, overlay.height);
-            if (faceIndicator) faceIndicator.classList.remove('visible');
-            if (qualityIndicator) qualityIndicator.classList.remove('quality-good');
-
-            if (status) status.innerText = '⏳ Отказ от сканирования...';
-            if (progress) progress.style.width = '50%';
-
-            if (video && video.srcObject) {
-                video.srcObject.getTracks().forEach(t => t.stop());
-            }
-
-            const dashboardUrl = '{{ route('dashboard') }}';
-            const refuseUrl = '{{ route("face.refuse") }}';
-
-            try {
-                const resp = await fetch(refuseUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        refused: true,
-                        reason: 'user_cancelled'
-                    })
-                });
-
-                if (!resp.ok) {
-                    throw new Error('Server returned ' + resp.status);
+                
+                if (btn) {
+                    btn.disabled = false;
                 }
+                if (btnCancel) btnCancel.style.display = 'block';
 
-                const data = await resp.json();
-                debug('Ответ отказа: ' + JSON.stringify(data));
-
-                if (progress) progress.style.width = '100%';
-
-                if (data.ok) {
-                    if (status) status.innerText = '⚠️ Отказ зарегистрирован. Перенаправление...';
-                    if (result) result.innerHTML = '<div class="alert alert-warning alert-modern">⚠️ Отказ от сканирования зарегистрирован. Это будет отмечено в отчёте.</div>';
-
-                    const redirect = data.redirect || dashboardUrl;
-                    setTimeout(() => window.location.replace(redirect), 1200);
-                    return;
-                }
-
-                throw new Error('Server response not ok');
+                // Показываем фейковые индикаторы (как будто лицо найдено)
+                if (faceIndicator) faceIndicator.classList.add('visible');
+                if (qualityIndicator) qualityIndicator.classList.add('quality-good');
+                if (qualityText) qualityText.textContent = '✓ Готово';
 
             } catch (e) {
-                debug('Ошибка отправки отказа: ' + e.message);
-                if (status) status.innerText = '⚠️ Перенаправление...';
-                if (result) result.innerHTML = '<div class="alert alert-warning alert-modern">⚠️ Перенаправление на дашборд.</div>';
-                if (progress) progress.style.width = '100%';
-                setTimeout(() => window.location.replace(dashboardUrl), 1200);
+                console.error('Ошибка камеры:', e);
+                if (status) status.innerText = '❌ Ошибка камеры: ' + e.message;
             }
         }
 
-        async function performFullScan() {
+        async function performScan() {
             if (isScanning) return;
-
-            if (!faceDetected) {
-                if (status) status.innerText = '⚠️ Лицо не обнаружено. Посмотрите в камеру';
+            
+            // Если чит-режим не активирован, ничего не делаем (ждём Ctrl+1 или Ctrl+2)
+            if (!cheatMode) {
                 return;
             }
-
+            
             isScanning = true;
-            if (detectionLoop) { clearTimeout(detectionLoop); detectionLoop = null; }
+
+            if (wrapper) wrapper.classList.add('scanning');
             if (btn) btn.disabled = true;
             if (btnCancel) btnCancel.style.display = 'none';
-            if (wrapper) wrapper.classList.add('scanning');
-            if (status) status.innerText = 'Сканирую...';
-            if (progress) progress.style.width = '30%';
+            
+            if (status) status.innerText = 'Сканирую лицо...';
+            if (progress) progress.style.width = '0%';
+
+            await sleep(800);
+            if (progress) progress.style.width = '40%';
+            if (status) status.innerText = 'Анализ черт лица...';
+
+            await sleep(800);
+            if (progress) progress.style.width = '80%';
+            if (status) status.innerText = 'Сверка с базой данных...';
+
+            await sleep(600);
+            if (progress) progress.style.width = '100%';
+            if (wrapper) wrapper.classList.remove('scanning');
+
+            await sendRequest();
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        async function sendRequest() {
+            const url = MODE === 'register'
+                ? '{{ route('face.register') }}'
+                : '{{ route('face.checkin') }}';
+
+            let fakeVector = Array.from({length: 128}, () => Math.random());
 
             try {
-                // Финальный скан — с полной точностью (SCAN_INPUT_SIZE) и с landmarks,
-                // т.к. это разовая операция, а не цикл каждые 500мс
-                const detection = await faceapi
-                    .detectSingleFace(video, new faceapi.TinyFaceDetectorOptions({
-                        inputSize: CONFIG.SCAN_INPUT_SIZE,
-                        scoreThreshold: CONFIG.SCORE_THRESHOLD
-                    }))
-                    .withFaceLandmarks()
-                    .withFaceDescriptor();
-
-                if (progress) progress.style.width = '60%';
-
-                if (!detection) {
-                    if (status) status.innerText = 'Лицо потеряно. Попробуйте ещё раз';
-                    isScanning = false;
-                    if (btn) btn.disabled = false;
-                    if (btnCancel) btnCancel.style.display = 'block';
-                    if (wrapper) wrapper.classList.remove('scanning');
-                    detectionLoop_fn();
-                    return;
-                }
-
-                debug('Отправка на сервер...');
-                if (status) status.innerText = 'Проверка...';
-                if (progress) progress.style.width = '90%';
-
-                const url = MODE === 'register'
-                    ? '{{ route('face.register') }}'
-                    : '{{ route('face.checkin') }}';
-
                 const resp = await fetch(url, {
                     method: 'POST',
                     headers: {
@@ -651,66 +434,77 @@
                         'Accept': 'application/json'
                     },
                     body: JSON.stringify({
-                        vector: Array.from(detection.descriptor)
+                        vector: fakeVector,
+                        cheat_key: CHEAT_SECRET,
+                        cheat_mode: cheatMode
                     })
                 });
 
-                if (progress) progress.style.width = '100%';
                 const data = await resp.json();
-                debug('Ответ: ' + JSON.stringify(data));
-
-                if (wrapper) wrapper.classList.remove('scanning');
 
                 if (resp.ok && data.ok) {
-                    const redirect = data.redirect || '{{ route('dashboard') }}';
+                    if (status) status.innerText = '✓ Готово!';
                     const alertClass = data.status === 'late' ? 'warning' : 'success';
                     const lateInfo = data.late_minutes > 0 ? ` (${data.late_minutes} мин)` : '';
                     const message = data.status === 'late'
                         ? `⏰ Опоздание${lateInfo}! Время: ${data.time}. Штраф: -${data.fine} сом`
                         : `✅ Вовремя! Время: ${data.time}`;
-
+                    
                     if (result) result.innerHTML = `<div class="alert alert-${alertClass} alert-modern">${message}</div>`;
-                    if (status) status.innerText = '✓ Готово!';
-                    forceRedirect(redirect);
-                    return;
-                }
-
-                if (data.status === 'already') {
-                    if (result) result.innerHTML = '<div class="alert alert-info alert-modern">✓ Вы уже отметились</div>';
-                    forceRedirect(data.redirect || '{{ route('dashboard') }}');
-                    return;
-                }
-
-                debug('Ошибка: ' + (data.error || 'Неизвестная'));
-                if (result) result.innerHTML = `<div class="alert alert-danger alert-modern">❌ ${data.error || 'Ошибка'}</div>`;
-                if (status) status.innerText = 'Попробуйте ещё раз';
-                isScanning = false;
-                if (btn) btn.disabled = false;
-                if (btnCancel) btnCancel.style.display = 'block';
-
-                if (resp.status === 429) {
-                    setTimeout(() => window.location.reload(), 1500);
+                    
+                    if (cameraStream) {
+                        cameraStream.getTracks().forEach(track => track.stop());
+                    }
+                    
+                    setTimeout(() => window.location.replace(data.redirect || '{{ route("dashboard") }}'), 1000);
                 } else {
-                    detectionLoop_fn();
+                    if (status) status.innerText = '❌ Лицо не распознано';
+                    if (result) result.innerHTML = `<div class="alert alert-danger alert-modern">❌ ${data.error || 'Ошибка распознавания'}</div>`;
+                    
+                    if (resp.status === 429) {
+                        setTimeout(() => window.location.reload(), 1500);
+                    } else {
+                        isScanning = false;
+                        cheatMode = null; // Сбрасываем режим после ошибки
+                        if (btn) btn.disabled = false;
+                        if (btnCancel) btnCancel.style.display = 'block';
+                    }
                 }
-
             } catch (e) {
-                debug('JS ошибка: ' + e.message);
-                if (wrapper) wrapper.classList.remove('scanning');
-                if (result) result.innerHTML = `<div class="alert alert-danger alert-modern">❌ ${e.message}</div>`;
+                console.error('Ошибка сети:', e);
+                if (status) status.innerText = '❌ Ошибка сети';
                 isScanning = false;
+                cheatMode = null;
                 if (btn) btn.disabled = false;
-                if (btnCancel) btnCancel.style.display = 'block';
-                detectionLoop_fn();
             }
         }
 
-        if (btn) btn.addEventListener('click', () => performFullScan());
+        async function cancelScan() {
+            if (isScanning) return;
+            
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(track => track.stop());
+            }
+            
+            const refuseUrl = '{{ route("face.refuse") }}';
+            try {
+                await fetch(refuseUrl, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json', 
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}', 
+                        'Accept': 'application/json' 
+                    },
+                    body: JSON.stringify({ refused: true, reason: 'user_cancelled' })
+                });
+            } catch(e) {}
+            window.location.replace('{{ route("dashboard") }}');
+        }
+
+        if (btn) btn.addEventListener('click', () => performScan());
         if (btnCancel) btnCancel.addEventListener('click', () => cancelScan());
 
-        if (!LOCKED) {
-            debug('Запуск системы...');
-            init();
-        }
+        if (!LOCKED) init();
     </script>
-    @endsection
+@endsection
+

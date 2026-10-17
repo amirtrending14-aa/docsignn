@@ -11,170 +11,162 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 <script>
 tailwind.config = {
-  darkMode: 'class',
-  theme: {
-    extend: {
-      fontFamily: { sans: ['Inter', 'sans-serif'] },
-      colors: {
-        ink: { 950:'#050505', 900:'#0a0a0a', 850:'#121212', 800:'#1a1a1a', 700:'#2a2a2a', 600:'#3a3a3a' }
-      }
-    }
-  }
+darkMode: 'class',
+theme: {
+extend: {
+fontFamily: { sans: ['Inter', 'sans-serif'] },
+colors: {
+ink: { 950:'#050505', 900:'#0a0a0a', 850:'#121212', 800:'#1a1a1a', 700:'#2a2a2a', 600:'#3a3a3a' }
+}
+}
+}
 }
 </script>
 <style>
 /* ===== CSS VARIABLES FOR THEMES ===== */
 :root {
-  --bg-primary: #ffffff;
-  --bg-secondary: #f8fafc;
-  --text-primary: #0f172a;
-  --text-secondary: #475569;
-  --text-muted: #64748b;
-  --glass-bg: rgba(255, 255, 255, 0.85);
-  --glass-border: rgba(15, 23, 42, 0.10);
-  --glass-strong-bg: rgba(255, 255, 255, 0.95);
-  --glass-strong-border: rgba(15, 23, 42, 0.12);
-  --card-bg: #ffffff;
-  --card-border: rgba(15, 23, 42, 0.10);
-  --card-shadow: 0 10px 30px -15px rgba(15, 23, 42, 0.20), 0 2px 8px rgba(15, 23, 42, 0.05);
-  --card-shadow-hover: 0 24px 48px -20px rgba(15, 23, 42, 0.30), 0 8px 16px rgba(15, 23, 42, 0.08);
-  --card-shine: rgba(15, 23, 42, 0.05);
-  --nav-link: #475569;
-  --nav-link-hover: #0f172a;
-  --scrollbar-track: #f1f5f9;
-  --scrollbar-thumb: #cbd5e1;
-  --scrollbar-thumb-hover: #94a3b8;
-  --superadmin-bg: linear-gradient(135deg, rgba(248,250,252,0.98), rgba(241,245,249,0.98));
-  --superadmin-border: rgba(15,23,42,0.10);
-  --footer-border: rgba(15,23,42,0.10);
-  --line-glow: linear-gradient(90deg, transparent, #3b82f6, #8b5cf6, transparent);
-  --donut-header-bg: linear-gradient(90deg, rgba(248,250,252,0.95), rgba(241,245,249,0.9));
-  --donut-header-border: rgba(15,23,42,0.08);
-  --rag-demo-bg: linear-gradient(135deg, rgba(248,250,252,0.98), rgba(255,255,255,1));
-  --rag-demo-border: rgba(6,182,212,0.3);
-  --rag-bubble-ai-bg: rgba(241,245,249,0.9);
-  --rag-bubble-ai-border: rgba(6,182,212,0.25);
-  --rag-bubble-ai-text: #334155;
-  --rag-sources-bg: rgba(6,182,212,0.05);
-  --rag-sources-border: rgba(6,182,212,0.18);
-  --rag-pipeline-bg: rgba(15,23,42,0.02);
-  --rag-pipeline-border: rgba(15,23,42,0.07);
-  --white-text: #0f172a;
+--bg-primary: #ffffff;
+--bg-secondary: #f8fafc;
+--text-primary: #0f172a;
+--text-secondary: #475569;
+--text-muted: #64748b;
+--glass-bg: rgba(255, 255, 255, 0.85);
+--glass-border: rgba(15, 23, 42, 0.10);
+--glass-strong-bg: rgba(255, 255, 255, 0.95);
+--glass-strong-border: rgba(15, 23, 42, 0.12);
+--card-bg: #ffffff;
+--card-border: rgba(15, 23, 42, 0.10);
+--card-shadow: 0 10px 30px -15px rgba(15, 23, 42, 0.20), 0 2px 8px rgba(15, 23, 42, 0.05);
+--card-shadow-hover: 0 24px 48px -20px rgba(15, 23, 42, 0.30), 0 8px 16px rgba(15, 23, 42, 0.08);
+--card-shine: rgba(15, 23, 42, 0.05);
+--nav-link: #475569;
+--nav-link-hover: #0f172a;
+--scrollbar-track: #f1f5f9;
+--scrollbar-thumb: #cbd5e1;
+--scrollbar-thumb-hover: #94a3b8;
+--superadmin-bg: linear-gradient(135deg, rgba(248,250,252,0.98), rgba(241,245,249,0.98));
+--superadmin-border: rgba(15,23,42,0.10);
+--footer-border: rgba(15,23,42,0.10);
+--line-glow: linear-gradient(90deg, transparent, #3b82f6, #8b5cf6, transparent);
+--donut-header-bg: linear-gradient(90deg, rgba(248,250,252,0.95), rgba(241,245,249,0.9));
+--donut-header-border: rgba(15,23,42,0.08);
+--rag-demo-bg: linear-gradient(135deg, rgba(248,250,252,0.98), rgba(255,255,255,1));
+--rag-demo-border: rgba(6,182,212,0.3);
+--rag-bubble-ai-bg: rgba(241,245,249,0.9);
+--rag-bubble-ai-border: rgba(6,182,212,0.25);
+--rag-bubble-ai-text: #334155;
+--rag-sources-bg: rgba(6,182,212,0.05);
+--rag-sources-border: rgba(6,182,212,0.18);
+--rag-pipeline-bg: rgba(15,23,42,0.02);
+--rag-pipeline-border: rgba(15,23,42,0.07);
+--white-text: #0f172a;
 }
 .dark {
-  --bg-primary: #050505;
-  --bg-secondary: #0a0a0a;
-  --text-primary: #e5e5e5;
-  --text-secondary: #a0a0a0;
-  --text-muted: #737373;
-  --glass-bg: rgba(20, 20, 20, 0.65);
-  --glass-border: rgba(255, 255, 255, 0.08);
-  --glass-strong-bg: rgba(10, 10, 10, 0.9);
-  --glass-strong-border: rgba(255, 255, 255, 0.10);
-  --card-bg: rgba(18, 18, 18, 0.7);
-  --card-border: rgba(255, 255, 255, 0.08);
-  --card-shadow: 0 10px 30px -15px rgba(0, 0, 0, 0.6);
-  --card-shadow-hover: 0 24px 48px -20px rgba(0, 0, 0, 0.8), 0 0 30px rgba(255,255,255,0.03);
-  --card-shine: rgba(255, 255, 255, 0.07);
-  --nav-link: #a3a3a3;
-  --nav-link-hover: #ffffff;
-  --scrollbar-track: #050505;
-  --scrollbar-thumb: #2a2a2a;
-  --scrollbar-thumb-hover: #444444;
-  --superadmin-bg: linear-gradient(135deg, rgba(30,30,30,0.95), rgba(15,15,15,0.95));
-  --superadmin-border: rgba(255,255,255,0.12);
-  --footer-border: rgba(255,255,255,0.06);
-  --line-glow: linear-gradient(90deg, transparent, #3b82f6, #8b5cf6, transparent);
-  --donut-header-bg: linear-gradient(90deg, rgba(30,30,30,0.9), rgba(40,40,40,0.7));
-  --donut-header-border: rgba(255,255,255,0.08);
-  --rag-demo-bg: linear-gradient(135deg, rgba(15,15,15,0.95), rgba(10,10,10,0.98));
-  --rag-demo-border: rgba(6,182,212,0.25);
-  --rag-bubble-ai-bg: rgba(255,255,255,0.04);
-  --rag-bubble-ai-border: rgba(6,182,212,0.22);
-  --rag-bubble-ai-text: #cbd5e1;
-  --rag-sources-bg: rgba(6,182,212,0.06);
-  --rag-sources-border: rgba(6,182,212,0.18);
-  --rag-pipeline-bg: rgba(255,255,255,0.03);
-  --rag-pipeline-border: rgba(255,255,255,0.06);
-  --white-text: #ffffff;
+--bg-primary: #050505;
+--bg-secondary: #0a0a0a;
+--text-primary: #e5e5e5;
+--text-secondary: #a0a0a0;
+--text-muted: #737373;
+--glass-bg: rgba(20, 20, 20, 0.65);
+--glass-border: rgba(255, 255, 255, 0.08);
+--glass-strong-bg: rgba(10, 10, 10, 0.9);
+--glass-strong-border: rgba(255, 255, 255, 0.10);
+--card-bg: rgba(18, 18, 18, 0.7);
+--card-border: rgba(255, 255, 255, 0.08);
+--card-shadow: 0 10px 30px -15px rgba(0, 0, 0, 0.6);
+--card-shadow-hover: 0 24px 48px -20px rgba(0, 0, 0, 0.8), 0 0 30px rgba(255,255,255,0.03);
+--card-shine: rgba(255, 255, 255, 0.07);
+--nav-link: #a3a3a3;
+--nav-link-hover: #ffffff;
+--scrollbar-track: #050505;
+--scrollbar-thumb: #2a2a2a;
+--scrollbar-thumb-hover: #444444;
+--superadmin-bg: linear-gradient(135deg, rgba(30,30,30,0.95), rgba(15,15,15,0.95));
+--superadmin-border: rgba(255,255,255,0.12);
+--footer-border: rgba(255,255,255,0.06);
+--line-glow: linear-gradient(90deg, transparent, #3b82f6, #8b5cf6, transparent);
+--donut-header-bg: linear-gradient(90deg, rgba(30,30,30,0.9), rgba(40,40,40,0.7));
+--donut-header-border: rgba(255,255,255,0.08);
+--rag-demo-bg: linear-gradient(135deg, rgba(15,15,15,0.95), rgba(10,10,10,0.98));
+--rag-demo-border: rgba(6,182,212,0.25);
+--rag-bubble-ai-bg: rgba(255,255,255,0.04);
+--rag-bubble-ai-border: rgba(6,182,212,0.22);
+--rag-bubble-ai-text: #cbd5e1;
+--rag-sources-bg: rgba(6,182,212,0.06);
+--rag-sources-border: rgba(6,182,212,0.18);
+--rag-pipeline-bg: rgba(255,255,255,0.03);
+--rag-pipeline-border: rgba(255,255,255,0.06);
+--white-text: #ffffff;
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html, body {
-  font-family: 'Inter', sans-serif;
-  background: var(--bg-primary);
-  color: var(--text-primary);
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
-  transition: background 0.5s ease, color 0.5s ease;
+font-family: 'Inter', sans-serif;
+background: var(--bg-primary);
+color: var(--text-primary);
+overflow-x: hidden;
+-webkit-font-smoothing: antialiased;
+transition: background 0.5s ease, color 0.5s ease;
 }
 section { scroll-margin-top: 80px; }
 .content-wrap { position: relative; z-index: 1; }
-
-/* ===== GRADIENTS ===== */
 .gradient-text {
-  background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 50%, var(--text-primary) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 50%, var(--text-primary) 100%);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
 }
 .gradient-accent {
-  background: linear-gradient(135deg, #3b82f6, #8b5cf6, #ec4899);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+background: linear-gradient(135deg, #3b82f6, #8b5cf6, #ec4899);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
 }
 .gradient-ai {
-  background: linear-gradient(135deg, #06b6d4, #8b5cf6, #ec4899);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+background: linear-gradient(135deg, #06b6d4, #8b5cf6, #ec4899);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
 }
-
-/* ===== GLASS ===== */
 .glass {
-  background: var(--glass-bg);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
-  border: 1px solid var(--glass-border);
-  transition: background 0.5s ease, border-color 0.5s ease, box-shadow 0.4s ease;
+background: var(--glass-bg);
+backdrop-filter: blur(24px) saturate(180%);
+-webkit-backdrop-filter: blur(24px) saturate(180%);
+border: 1px solid var(--glass-border);
+transition: background 0.5s ease, border-color 0.5s ease, box-shadow 0.4s ease;
 }
 .glass-strong {
-  background: var(--glass-strong-bg);
-  backdrop-filter: blur(30px) saturate(180%);
-  -webkit-backdrop-filter: blur(30px) saturate(180%);
-  border: 1px solid var(--glass-strong-border);
-  transition: background 0.5s ease, border-color 0.5s ease;
+background: var(--glass-strong-bg);
+backdrop-filter: blur(30px) saturate(180%);
+-webkit-backdrop-filter: blur(30px) saturate(180%);
+border: 1px solid var(--glass-strong-border);
+transition: background 0.5s ease, border-color 0.5s ease;
 }
-
-/* ===== 3D CARDS WITH PERFECT BORDERS ===== */
 .card-3d {
-  position: relative;
-  transform-style: preserve-3d;
-  transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.4s ease, border-color 0.4s ease;
-  will-change: transform;
-  background: var(--card-bg);
-  border: 1.5px solid var(--card-border);
-  box-shadow: var(--card-shadow);
+position: relative;
+transform-style: preserve-3d;
+transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.4s ease, border-color 0.4s ease;
+will-change: transform;
+background: var(--card-bg);
+border: 1.5px solid var(--card-border);
+box-shadow: var(--card-shadow);
 }
 .card-3d:hover { box-shadow: var(--card-shadow-hover); }
 .card-3d .card-inner {
-  transform: translateZ(0);
-  transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+transform: translateZ(0);
+transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
 }
 .card-3d:hover .card-inner { transform: translateZ(20px); }
 .card-shine {
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.4s ease;
-  background: radial-gradient(600px circle at var(--mx, 50%) var(--my, 50%), var(--card-shine), transparent 40%);
-  z-index: 2;
+position: absolute;
+inset: 0;
+border-radius: inherit;
+pointer-events: none;
+opacity: 0;
+transition: opacity 0.4s ease;
+background: radial-gradient(600px circle at var(--mx, 50%) var(--my, 50%), var(--card-shine), transparent 40%);
+z-index: 2;
 }
 .card-3d:hover .card-shine { opacity: 1; }
-
-/* ===== COLORED CARD BORDERS — ALWAYS VISIBLE ===== */
 .card-blue   { border-color: rgba(59, 130, 246, 0.35) !important; }
 .card-purple { border-color: rgba(139, 92, 246, 0.35) !important; }
 .card-green  { border-color: rgba(16, 185, 129, 0.35) !important; }
@@ -193,17 +185,15 @@ section { scroll-margin-top: 80px; }
 .card-cyan:hover   { border-color: rgba(6, 182, 212, 0.7) !important; box-shadow: var(--card-shadow-hover), 0 0 24px -4px rgba(6,182,212,0.25); }
 .card-red:hover    { border-color: rgba(239, 68, 68, 0.7) !important; box-shadow: var(--card-shadow-hover), 0 0 24px -4px rgba(239,68,68,0.25); }
 .card-ai:hover     { border-color: rgba(6, 182, 212, 0.75) !important; box-shadow: var(--card-shadow-hover), 0 0 28px -4px rgba(6,182,212,0.3); }
-
-/* Colored top accent line inside cards */
 .card-accent { position: relative; overflow: hidden; }
 .card-accent::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 10%; right: 10%;
-  height: 2px;
-  border-radius: 0 0 4px 4px;
-  opacity: 0.6;
-  transition: opacity 0.4s ease, left 0.4s ease, right 0.4s ease;
+content: '';
+position: absolute;
+top: 0; left: 10%; right: 10%;
+height: 2px;
+border-radius: 0 0 4px 4px;
+opacity: 0.6;
+transition: opacity 0.4s ease, left 0.4s ease, right 0.4s ease;
 }
 .card-accent:hover::before { opacity: 1; left: 0; right: 0; }
 .card-blue.card-accent::before   { background: linear-gradient(90deg, transparent, #3b82f6, transparent); }
@@ -214,180 +204,163 @@ section { scroll-margin-top: 80px; }
 .card-indigo.card-accent::before { background: linear-gradient(90deg, transparent, #6366f1, transparent); }
 .card-cyan.card-accent::before   { background: linear-gradient(90deg, transparent, #06b6d4, transparent); }
 .card-ai.card-accent::before     { background: linear-gradient(90deg, transparent, #06b6d4, #8b5cf6, transparent); }
-
-/* ===== BUTTONS — PILL STYLE (Startup Template) ===== */
 .btn-primary {
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
-  color: #fff;
-  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 4px 14px rgba(59,130,246,0.25);
-  border-radius: 999px !important;
+background: linear-gradient(135deg, #3b82f6, #2563eb);
+color: #fff;
+transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+position: relative;
+overflow: hidden;
+box-shadow: 0 4px 14px rgba(59,130,246,0.25);
+border-radius: 999px !important;
 }
 .btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 15px 40px rgba(59, 130, 246, 0.35);
+transform: translateY(-2px);
+box-shadow: 0 15px 40px rgba(59, 130, 246, 0.35);
 }
 .btn-primary:active { transform: translateY(0); }
 .dark .btn-primary {
-  background: linear-gradient(135deg, #fff, #ccc);
-  color: #000;
-  box-shadow: 0 4px 14px rgba(255,255,255,0.1);
+background: linear-gradient(135deg, #fff, #ccc);
+color: #000;
+box-shadow: 0 4px 14px rgba(255,255,255,0.1);
 }
 .dark .btn-primary:hover { box-shadow: 0 15px 40px rgba(255, 255, 255, 0.18); }
 .btn-outline {
-  background: transparent;
-  border: 1.5px solid rgba(15, 23, 42, 0.18);
-  color: var(--text-secondary);
-  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
-  border-radius: 999px !important;
+background: transparent;
+border: 1.5px solid rgba(15, 23, 42, 0.18);
+color: var(--text-secondary);
+transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+border-radius: 999px !important;
 }
 .btn-outline:hover {
-  background: rgba(59, 130, 246, 0.05);
-  border-color: rgba(59, 130, 246, 0.45);
-  color: var(--text-primary);
-  transform: translateY(-2px);
+background: rgba(59, 130, 246, 0.05);
+border-color: rgba(59, 130, 246, 0.45);
+color: var(--text-primary);
+transform: translateY(-2px);
 }
 .btn-outline:active { transform: translateY(0); }
 .dark .btn-outline { border: 1.5px solid rgba(255, 255, 255, 0.18); color: #d1d5db; }
 .dark .btn-outline:hover {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.35);
-  color: #fff;
+background: rgba(255, 255, 255, 0.05);
+border-color: rgba(255, 255, 255, 0.35);
+color: #fff;
 }
-
-/* ===== THEME TOGGLE — PILL ===== */
 .theme-toggle {
-  position: relative;
-  width: 40px; height: 40px;
-  border-radius: 999px;
-  background: var(--glass-bg);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
-  border: 1px solid var(--glass-border);
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
-  overflow: hidden;
-  flex-shrink: 0;
+position: relative;
+width: 40px; height: 40px;
+border-radius: 999px;
+background: var(--glass-bg);
+backdrop-filter: blur(24px) saturate(180%);
+-webkit-backdrop-filter: blur(24px) saturate(180%);
+border: 1px solid var(--glass-border);
+display: flex; align-items: center; justify-content: center;
+cursor: pointer;
+transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+overflow: hidden;
+flex-shrink: 0;
 }
 .theme-toggle:hover {
-  border-color: rgba(59, 130, 246, 0.4);
-  background: rgba(59, 130, 246, 0.08);
-  transform: scale(1.05);
+border-color: rgba(59, 130, 246, 0.4);
+background: rgba(59, 130, 246, 0.08);
+transform: scale(1.05);
 }
 .theme-toggle svg {
-  width: 18px; height: 18px;
-  transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-  position: absolute;
+width: 18px; height: 18px;
+transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+position: absolute;
 }
 .theme-toggle .sun-icon { color: #f59e0b; opacity: 0; transform: rotate(90deg) scale(0); }
 .theme-toggle .moon-icon { color: #6366f1; opacity: 1; transform: rotate(0deg) scale(1); }
 .dark .theme-toggle .sun-icon { opacity: 1; transform: rotate(0deg) scale(1); }
 .dark .theme-toggle .moon-icon { opacity: 0; transform: rotate(-90deg) scale(0); }
-
-/* ===== SCROLL REVEAL ===== */
 .js .scroll-reveal {
-  opacity: 0;
-  transform: translateY(40px);
-  transition: all 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+opacity: 0;
+transform: translateY(40px);
+transition: all 0.9s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .js .scroll-reveal.revealed { opacity: 1; transform: translateY(0); }
-
-/* ===== NAV LINKS — STARTUP TEMPLATE STYLE (без CAPS, hover из центра) ===== */
 .nav-link {
-  position: relative;
-  color: var(--nav-link);
-  font-size: 14px;
-  font-weight: 500;
-  letter-spacing: -0.011em;
-  white-space: nowrap;
-  text-transform: none;
-  transition: color 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+position: relative;
+color: var(--nav-link);
+font-size: 14px;
+font-weight: 500;
+letter-spacing: -0.011em;
+white-space: nowrap;
+text-transform: none;
+transition: color 0.3s cubic-bezier(0.23, 1, 0.32, 1);
 }
 .nav-link::after {
-  content: '';
-  position: absolute;
-  bottom: -5px;
-  left: 50%;
-  width: 0;
-  height: 2px;
-  border-radius: 2px;
-  background: linear-gradient(90deg, #3b82f6, #8b5cf6);
-  transition: width 0.35s cubic-bezier(0.23, 1, 0.32, 1), left 0.35s cubic-bezier(0.23, 1, 0.32, 1);
+content: '';
+position: absolute;
+bottom: -5px;
+left: 50%;
+width: 0;
+height: 2px;
+border-radius: 2px;
+background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+transition: width 0.35s cubic-bezier(0.23, 1, 0.32, 1), left 0.35s cubic-bezier(0.23, 1, 0.32, 1);
 }
 .nav-link:hover { color: var(--nav-link-hover); }
 .nav-link:hover::after { width: 100%; left: 0; }
-
 .counter { font-variant-numeric: tabular-nums; }
 .line-glow { height: 1px; background: var(--line-glow); }
 ::-webkit-scrollbar { width: 8px; }
 ::-webkit-scrollbar-track { background: var(--scrollbar-track); }
 ::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--scrollbar-thumb-hover); }
-
-/* ===== LANGUAGE SELECT — PILL ===== */
 .lang-select-wrap { position: relative; display: inline-flex; align-items: center; }
 .lang-select {
-  appearance: none; -webkit-appearance: none; -moz-appearance: none;
-  background: var(--glass-bg);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
-  border: 1px solid var(--glass-border);
-  color: var(--text-primary);
-  padding: 7px 30px 7px 14px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  cursor: pointer;
-  outline: none;
-  transition: all 0.3s ease;
-  font-family: 'Inter', sans-serif;
+appearance: none; -webkit-appearance: none; -moz-appearance: none;
+background: var(--glass-bg);
+backdrop-filter: blur(24px) saturate(180%);
+-webkit-backdrop-filter: blur(24px) saturate(180%);
+border: 1px solid var(--glass-border);
+color: var(--text-primary);
+padding: 7px 30px 7px 14px;
+border-radius: 999px;
+font-size: 12px;
+font-weight: 600;
+letter-spacing: 0.02em;
+cursor: pointer;
+outline: none;
+transition: all 0.3s ease;
+font-family: 'Inter', sans-serif;
 }
 .lang-select:hover { border-color: rgba(59, 130, 246, 0.4); background: rgba(59, 130, 246, 0.08); }
 .lang-select:focus { border-color: rgba(59, 130, 246, 0.6); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15); }
 .lang-select option { background: var(--bg-primary); color: var(--text-primary); padding: 8px; }
 .lang-select-arrow {
-  position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
-  pointer-events: none; color: #3b82f6; transition: transform 0.3s ease;
+position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+pointer-events: none; color: #3b82f6; transition: transform 0.3s ease;
 }
 .stat-num { font-size: 2.25rem; font-weight: 800; letter-spacing: -0.04em; line-height: 1; }
-
-/* ===== SUPER ADMIN CARD ===== */
 .superadmin-card {
-  background: var(--superadmin-bg);
-  border: 1.5px solid var(--superadmin-border);
-  position: relative;
-  overflow: hidden;
-  transition: background 0.5s ease, border-color 0.5s ease;
-  box-shadow: var(--card-shadow);
+background: var(--superadmin-bg);
+border: 1.5px solid var(--superadmin-border);
+position: relative;
+overflow: hidden;
+transition: background 0.5s ease, border-color 0.5s ease;
+box-shadow: var(--card-shadow);
 }
 .superadmin-card::before {
-  content: '';
-  position: absolute;
-  top: -50%; left: -50%;
-  width: 200%; height: 200%;
-  background: conic-gradient(from 0deg, transparent, rgba(59,130,246,0.08), rgba(139,92,246,0.08), transparent 30%);
-  animation: rotate 8s linear infinite;
+content: '';
+position: absolute;
+top: -50%; left: -50%;
+width: 200%; height: 200%;
+background: conic-gradient(from 0deg, transparent, rgba(59,130,246,0.08), rgba(139,92,246,0.08), transparent 30%);
+animation: rotate 8s linear infinite;
 }
 @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 .superadmin-card > * { position: relative; z-index: 1; }
-
-/* ===== PULSE DOT ===== */
 .pulse-dot {
-  width: 8px; height: 8px; border-radius: 50%;
-  background: #10b981;
-  box-shadow: 0 0 12px #10b981;
-  animation: pulseDot 2s ease-in-out infinite;
+width: 8px; height: 8px; border-radius: 50%;
+background: #10b981;
+box-shadow: 0 0 12px #10b981;
+animation: pulseDot 2s ease-in-out infinite;
 }
 @keyframes pulseDot {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.5; transform: scale(1.3); }
+0%, 100% { opacity: 1; transform: scale(1); }
+50% { opacity: 0.5; transform: scale(1.3); }
 }
-
-/* ===== ICON BOXES ===== */
 .icon-blue   { background: linear-gradient(135deg, rgba(59,130,246,0.18), rgba(59,130,246,0.05)); border: 1.5px solid rgba(59,130,246,0.35); box-shadow: 0 0 20px rgba(59,130,246,0.10); }
 .icon-purple { background: linear-gradient(135deg, rgba(139,92,246,0.18), rgba(139,92,246,0.05)); border: 1.5px solid rgba(139,92,246,0.35); box-shadow: 0 0 20px rgba(139,92,246,0.10); }
 .icon-green  { background: linear-gradient(135deg, rgba(16,185,129,0.18), rgba(16,185,129,0.05)); border: 1.5px solid rgba(16,185,129,0.35); box-shadow: 0 0 20px rgba(16,185,129,0.10); }
@@ -397,8 +370,6 @@ section { scroll-margin-top: 80px; }
 .icon-cyan   { background: linear-gradient(135deg, rgba(6,182,212,0.18), rgba(6,182,212,0.05)); border: 1.5px solid rgba(6,182,212,0.35); box-shadow: 0 0 20px rgba(6,182,212,0.10); }
 .icon-red    { background: linear-gradient(135deg, rgba(239,68,68,0.18), rgba(239,68,68,0.05)); border: 1.5px solid rgba(239,68,68,0.35); box-shadow: 0 0 20px rgba(239,68,68,0.10); }
 .icon-ai     { background: linear-gradient(135deg, rgba(6,182,212,0.18), rgba(139,92,246,0.10)); border: 1.5px solid rgba(6,182,212,0.40); box-shadow: 0 0 25px rgba(6,182,212,0.15), 0 0 50px rgba(139,92,246,0.05); }
-
-/* ===== STAT CARDS ===== */
 .mini-chart-bar { transition: height 1s cubic-bezier(0.23, 1, 0.32, 1); }
 .stat-card-blue   { background: linear-gradient(135deg, rgba(59,130,246,0.10), rgba(59,130,246,0.03)); border: 1.5px solid rgba(59,130,246,0.35) !important; }
 .stat-card-purple { background: linear-gradient(135deg, rgba(139,92,246,0.10), rgba(139,92,246,0.03)); border: 1.5px solid rgba(139,92,246,0.35) !important; }
@@ -410,16 +381,12 @@ section { scroll-margin-top: 80px; }
 .dark .stat-card-green  { background: linear-gradient(135deg, rgba(16,185,129,0.14), rgba(16,185,129,0.04)); }
 .dark .stat-card-orange { background: linear-gradient(135deg, rgba(245,158,11,0.16), rgba(245,158,11,0.04)); }
 .dark .stat-card-ai     { background: linear-gradient(135deg, rgba(6,182,212,0.16), rgba(139,92,246,0.06)); }
-
-/* ===== DONUT ===== */
 .donut-segment { transition: stroke-dasharray 1.5s cubic-bezier(0.23, 1, 0.32, 1), stroke-dashoffset 1.5s cubic-bezier(0.23, 1, 0.32, 1); stroke-dasharray: 0 100; stroke-dashoffset: 0; }
 .donut-center-text { animation: fadeInScale 0.8s ease-out 0.5s both; }
 @keyframes fadeInScale { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
 .legend-item { transition: transform 0.3s ease, opacity 0.3s ease, border-color 0.3s ease; border: 1.5px solid var(--glass-border) !important; }
 .legend-item:hover { transform: translateX(4px); opacity: 0.85; border-color: rgba(59,130,246,0.4) !important; }
 .donut-header-bar { background: var(--donut-header-bg); border: 1.5px solid var(--donut-header-border); transition: background 0.5s ease; }
-
-/* ===== FACE ID ===== */
 .faceid-perspective { perspective: 1200px; }
 .faceid-tilt { transform-style: preserve-3d; transition: transform 0.25s ease-out; will-change: transform; }
 .faceid-layer-frame { transform: translateZ(36px); }
@@ -448,8 +415,6 @@ section { scroll-margin-top: 80px; }
 .face-status-dot { width: 7px; height: 7px; border-radius: 50%; background: #3b82f6; box-shadow: 0 0 10px #3b82f6; animation: pulseDot 1.6s ease-in-out infinite; flex-shrink: 0; }
 .face-check { position: absolute; top: 8px; right: 8px; z-index: 6; width: 40px; height: 40px; border-radius: 999px; background: linear-gradient(135deg, #10b981, #059669); display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 24px rgba(16,185,129,.45); opacity: 0; transform: scale(.4) rotate(-30deg); transition: all .5s cubic-bezier(.34,1.56,.64,1); }
 .faceid-verified .face-check { opacity: 1; transform: scale(1) rotate(0deg); }
-
-/* ===== GEOGRAPHY MAP ===== */
 .map-ping { transform-box: fill-box; transform-origin: center; animation: mapPing 2.6s ease-out infinite; }
 @keyframes mapPing { 0% { transform: scale(.4); opacity: .9; } 100% { transform: scale(2.6); opacity: 0; } }
 .route-line { stroke-dasharray: 3 7; animation: routeDash 2.8s linear infinite; }
@@ -460,8 +425,6 @@ section { scroll-margin-top: 80px; }
 .geo-chip:hover { border-color: rgba(59,130,246,.55) !important; background: rgba(59,130,246,.08); transform: translateY(-2px); }
 .region-card { transition: transform .4s cubic-bezier(.23,1,.32,1), border-color .3s ease, background .3s ease; }
 .region-card:hover { transform: translateX(6px); border-color: rgba(59,130,246,.45) !important; }
-
-/* ===== AI / RAG SECTION ===== */
 .ai-section-bg { position: relative; overflow: hidden; }
 .ai-section-bg::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 20% 30%, rgba(6,182,212,0.06) 0%, transparent 55%), radial-gradient(ellipse at 80% 70%, rgba(139,92,246,0.05) 0%, transparent 55%); pointer-events: none; z-index: 0; }
 .dark .ai-section-bg::before { background: radial-gradient(ellipse at 20% 30%, rgba(6,182,212,0.12) 0%, transparent 55%), radial-gradient(ellipse at 80% 70%, rgba(139,92,246,0.1) 0%, transparent 55%); }
@@ -483,8 +446,6 @@ section { scroll-margin-top: 80px; }
 .ai-pulse-ring { position: absolute; inset: 40px; border-radius: 50%; border: 2px solid rgba(6,182,212,0.35); animation: aiPulseRing 3s ease-out infinite; }
 .ai-pulse-ring-2 { position: absolute; inset: 40px; border-radius: 50%; border: 2px solid rgba(139,92,246,0.35); animation: aiPulseRing 3s ease-out infinite 1.5s; }
 @keyframes aiPulseRing { 0% { transform: scale(0.6); opacity: 0.8; } 100% { transform: scale(1.4); opacity: 0; } }
-
-/* ===== RAG DEMO ===== */
 .rag-demo { background: var(--rag-demo-bg); border: 1.5px solid var(--rag-demo-border); border-radius: 20px; padding: 20px; position: relative; overflow: hidden; transition: background 0.5s ease; box-shadow: var(--card-shadow); }
 .rag-demo::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, #06b6d4, #8b5cf6, transparent); }
 .rag-header { display: flex; align-items: center; justify-content: space-between; padding-bottom: 14px; border-bottom: 1px solid var(--glass-border); margin-bottom: 16px; }
@@ -534,7 +495,211 @@ section { scroll-margin-top: 80px; }
 .rag-step-arrow { color: var(--glass-border); flex-shrink: 0; }
 .rag-step-arrow.active { color: #06b6d4; }
 
-/* ===== LIGHT THEME TEXT FIXES ===== */
+/* ===== CHAT SECTION STYLES (PERFECT LIGHT & DARK) ===== */
+.chat-preview-wrap {
+position: relative;
+border-radius: 24px;
+overflow: hidden;
+box-shadow: 0 20px 60px -15px rgba(0,0,0,0.15);
+border: 1.5px solid var(--glass-border);
+background: var(--bg-primary);
+transition: transform 0.4s ease, box-shadow 0.4s ease, background 0.5s ease;
+}
+.dark .chat-preview-wrap {
+box-shadow: 0 20px 60px -15px rgba(0,0,0,0.6);
+}
+.chat-preview-wrap:hover { transform: translateY(-4px); box-shadow: 0 30px 70px -20px rgba(0,0,0,0.25); }
+.dark .chat-preview-wrap:hover { box-shadow: 0 30px 70px -20px rgba(0,0,0,0.8); }
+
+.chat-top-bar {
+background: var(--glass-bg);
+backdrop-filter: blur(20px);
+-webkit-backdrop-filter: blur(20px);
+border-bottom: 1px solid var(--glass-border);
+padding: 12px 16px;
+display: flex;
+align-items: center;
+gap: 12px;
+}
+.chat-avatar {
+width: 42px; height: 42px;
+border-radius: 50%;
+background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+display: flex; align-items: center; justify-content: center;
+color: white; font-weight: 700; font-size: 14px;
+flex-shrink: 0;
+}
+.chat-name { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+.chat-status { font-size: 12px; color: var(--text-muted); }
+.chat-actions { margin-left: auto; display: flex; gap: 6px; }
+.chat-action-btn {
+width: 34px; height: 34px;
+border-radius: 50%;
+border: none;
+background: transparent;
+color: var(--text-muted);
+cursor: pointer;
+display: flex; align-items: center; justify-content: center;
+transition: all 0.2s;
+}
+.chat-action-btn:hover { background: var(--glass-border); color: var(--text-primary); }
+.chat-action-btn.danger:hover { color: #e53935; background: rgba(229,57,53,0.1); }
+
+.chat-body {
+height: 340px;
+overflow-y: auto;
+padding: 16px;
+display: flex;
+flex-direction: column;
+/* Light theme background */
+background-color: #e5ebf1;
+background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239ba6b5' fill-opacity='0.15'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+/* Dark theme background */
+.dark .chat-body {
+background-color: #0f141a;
+background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+.chat-body::-webkit-scrollbar { width: 5px; }
+.chat-body::-webkit-scrollbar-thumb { background: rgba(128,128,128,0.3); border-radius: 3px; }
+
+.chat-date-divider {
+text-align: center;
+margin: 12px 0;
+}
+.chat-date-divider span {
+background: rgba(0,0,0,0.3);
+color: white;
+padding: 4px 12px;
+border-radius: 16px;
+font-size: 11px;
+font-weight: 500;
+backdrop-filter: blur(4px);
+}
+.dark .chat-date-divider span { background: rgba(0,0,0,0.6); }
+
+.chat-msg { display: flex; margin-bottom: 8px; max-width: 75%; }
+.chat-msg.mine { align-self: flex-end; margin-left: auto; }
+.chat-msg.theirs { align-self: flex-start; }
+
+.chat-bubble {
+padding: 8px 12px;
+border-radius: 14px;
+font-size: 13.5px;
+line-height: 1.4;
+box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+position: relative;
+word-wrap: break-word;
+}
+/* Theirs bubble (Light) */
+.chat-msg.theirs .chat-bubble {
+background: #ffffff;
+color: #0f172a;
+border-bottom-left-radius: 4px;
+}
+/* Theirs bubble (Dark) */
+.dark .chat-msg.theirs .chat-bubble {
+background: #1e262f;
+color: #e5e5e5;
+box-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+/* Mine bubble (Light) */
+.chat-msg.mine .chat-bubble {
+background: #effdde; /* Telegram light green */
+color: #0f172a;
+border-bottom-right-radius: 4px;
+}
+/* Mine bubble (Dark) */
+.dark .chat-msg.mine .chat-bubble {
+background: #2b5278; /* Telegram dark blue */
+color: #ffffff;
+box-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+.chat-time {
+font-size: 10px;
+margin-top: 4px;
+text-align: right;
+display: flex;
+align-items: center;
+justify-content: flex-end;
+gap: 3px;
+}
+.chat-msg.mine .chat-time { color: #4fae4e; } /* Green checks in light */
+.dark .chat-msg.mine .chat-time { color: #6ab2f2; } /* Blue checks in dark */
+.chat-msg.theirs .chat-time { color: #a0a0a0; }
+.dark .chat-msg.theirs .chat-time { color: #737373; }
+
+.chat-file-bubble {
+display: flex;
+align-items: center;
+gap: 10px;
+margin-bottom: 4px;
+}
+.chat-file-icon {
+width: 36px; height: 36px;
+border-radius: 10px;
+background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+display: flex; align-items: center; justify-content: center;
+flex-shrink: 0;
+}
+.chat-file-icon svg { width: 18px; height: 18px; color: white; }
+.chat-file-name { font-size: 13px; font-weight: 600; color: inherit; }
+.chat-file-size { font-size: 11px; opacity: 0.7; }
+
+.chat-input-bar {
+background: var(--glass-bg);
+backdrop-filter: blur(20px);
+-webkit-backdrop-filter: blur(20px);
+border-top: 1px solid var(--glass-border);
+padding: 10px 12px;
+display: flex;
+align-items: center;
+gap: 8px;
+}
+.chat-input-pill {
+flex: 1;
+background: var(--bg-secondary);
+border: 1px solid var(--glass-border);
+border-radius: 999px;
+padding: 8px 16px;
+display: flex;
+align-items: center;
+gap: 8px;
+transition: background 0.3s;
+}
+.chat-input-pill input {
+flex: 1;
+background: transparent;
+border: none;
+outline: none;
+font-size: 13.5px;
+color: var(--text-primary);
+font-family: 'Inter', sans-serif;
+}
+.chat-input-pill input::placeholder { color: var(--text-muted); }
+.chat-input-icon {
+color: var(--text-muted);
+cursor: pointer;
+transition: color 0.2s;
+display: flex;
+align-items: center;
+}
+.chat-input-icon:hover { color: var(--text-primary); }
+.chat-send-btn {
+width: 40px; height: 40px;
+border-radius: 50%;
+border: none;
+background: linear-gradient(135deg, #3b82f6, #2563eb);
+color: white;
+cursor: pointer;
+display: flex; align-items: center; justify-content: center;
+flex-shrink: 0;
+transition: transform 0.2s;
+}
+.chat-send-btn:hover { transform: scale(1.05); }
+.dark .chat-send-btn { background: linear-gradient(135deg, #60a5fa, #3b82f6); }
+
 html:not(.dark) .text-white { color: var(--text-primary) !important; }
 html:not(.dark) .text-gray-300 { color: #475569 !important; }
 html:not(.dark) .text-gray-400 { color: #64748b !important; }
@@ -547,884 +712,1021 @@ html:not(.dark) .text-pink-500 { color: #db2777 !important; }
 html:not(.dark) .text-indigo-500 { color: #4f46e5 !important; }
 html:not(.dark) .text-cyan-500 { color: #0891b2 !important; }
 
-/* ===== RESPONSIVE ===== */
 @media (max-width: 1024px) {
-  .hero-title { font-size: 3.5rem !important; }
-  .stat-num { font-size: 2rem; }
-  .superadmin-card { padding: 32px; }
-  #donutChart { width: 220px !important; height: 220px !important; }
-  .ai-brain-wrap { width: 280px; height: 280px; }
-  #mobileMenu { max-height: calc(100vh - 64px); overflow-y: auto; }
+.hero-title { font-size: 3.5rem !important; }
+.stat-num { font-size: 2rem; }
+.superadmin-card { padding: 32px; }
+#donutChart { width: 220px !important; height: 220px !important; }
+.ai-brain-wrap { width: 280px; height: 280px; }
+#mobileMenu { max-height: calc(100vh - 64px); overflow-y: auto; }
 }
 @media (max-width: 768px) {
-  .hero-title { font-size: 2.5rem !important; line-height: 1.1 !important; }
-  .stat-num { font-size: 1.75rem; }
-  .superadmin-card { padding: 24px; }
-  .superadmin-card .w-24 { width: 80px; height: 80px; }
-  .superadmin-card .text-3xl { font-size: 1.5rem; }
-  #donutChart { width: 200px !important; height: 200px !important; }
-  .donut-header-bar { padding: 12px 16px; }
-  .donut-header-bar .text-2xl { font-size: 1.25rem; }
-  #mainChart { height: 240px !important; }
-  section { padding-top: 60px !important; padding-bottom: 60px !important; }
-  .faceid-tilt { transform: none !important; }
-  .faceid-layer-frame, .faceid-layer-status, .faceid-layer-chip { transform: none !important; }
-  .faceid-layer-chip { display: none !important; }
-  .ai-brain-wrap { width: 240px; height: 240px; }
-  .ai-brain-core svg { width: 140px; height: 140px; }
-  .ai-node { width: 28px; height: 28px; }
-  .ai-node svg { width: 13px; height: 13px; }
-  .rag-pipeline { flex-wrap: wrap; }
-  .rag-step-arrow { display: none; }
-  .card-3d { transform: none !important; }
-  .card-3d:hover { transform: none !important; }
-  .card-3d .card-inner, .card-3d:hover .card-inner { transform: none !important; }
-  .card-shine { display: none !important; }
+.hero-title { font-size: 2.5rem !important; line-height: 1.1 !important; }
+.stat-num { font-size: 1.75rem; }
+.superadmin-card { padding: 24px; }
+.superadmin-card .w-24 { width: 80px; height: 80px; }
+.superadmin-card .text-3xl { font-size: 1.5rem; }
+#donutChart { width: 200px !important; height: 200px !important; }
+.donut-header-bar { padding: 12px 16px; }
+.donut-header-bar .text-2xl { font-size: 1.25rem; }
+#mainChart { height: 240px !important; }
+section { padding-top: 60px !important; padding-bottom: 60px !important; }
+.faceid-tilt { transform: none !important; }
+.faceid-layer-frame, .faceid-layer-status, .faceid-layer-chip { transform: none !important; }
+.faceid-layer-chip { display: none !important; }
+.ai-brain-wrap { width: 240px; height: 240px; }
+.ai-brain-core svg { width: 140px; height: 140px; }
+.ai-node { width: 28px; height: 28px; }
+.ai-node svg { width: 13px; height: 13px; }
+.rag-pipeline { flex-wrap: wrap; }
+.rag-step-arrow { display: none; }
+.card-3d { transform: none !important; }
+.card-3d:hover { transform: none !important; }
+.card-3d .card-inner, .card-3d:hover .card-inner { transform: none !important; }
+.card-shine { display: none !important; }
+.chat-preview-wrap { border-radius: 18px; }
+.chat-body { height: 280px; }
 }
 @media (max-width: 576px) {
-  .hero-title { font-size: 2rem !important; }
-  .stat-num { font-size: 1.5rem; }
-  .btn-primary, .btn-outline { padding: 10px 18px; font-size: 12px; }
-  .superadmin-card { padding: 20px; }
-  .superadmin-card .w-24 { width: 70px; height: 70px; }
-  .superadmin-card .text-3xl { font-size: 1.25rem; }
-  .superadmin-card .text-2xl { font-size: 1.125rem; }
-  #donutChart { width: 180px !important; height: 180px !important; }
-  .donut-header-bar { flex-direction: column; align-items: flex-start; gap: 8px; }
-  #mainChart { height: 200px !important; }
-  section { padding-top: 48px !important; padding-bottom: 48px !important; }
-  .ai-brain-wrap { width: 220px; height: 220px; }
-  footer .grid { gap: 24px; }
+.hero-title { font-size: 2rem !important; }
+.stat-num { font-size: 1.5rem; }
+.btn-primary, .btn-outline { padding: 10px 18px; font-size: 12px; }
+.superadmin-card { padding: 20px; }
+.superadmin-card .w-24 { width: 70px; height: 70px; }
+.superadmin-card .text-3xl { font-size: 1.25rem; }
+.superadmin-card .text-2xl { font-size: 1.125rem; }
+#donutChart { width: 180px !important; height: 180px !important; }
+.donut-header-bar { flex-direction: column; align-items: flex-start; gap: 8px; }
+#mainChart { height: 200px !important; }
+section { padding-top: 48px !important; padding-bottom: 48px !important; }
+.ai-brain-wrap { width: 220px; height: 220px; }
+footer .grid { gap: 24px; }
+.chat-body { height: 240px; }
 }
 @media (max-width: 480px) {
-  .hero-title { font-size: 1.75rem !important; }
-  .stat-num { font-size: 1.25rem; }
-  .btn-primary, .btn-outline { padding: 9px 16px; font-size: 11px; gap: 6px; }
-  .btn-primary svg, .btn-outline svg { width: 14px; height: 14px; }
-  .superadmin-card { padding: 16px; }
-  .superadmin-card .w-24 { width: 60px; height: 60px; }
-  .superadmin-card .text-3xl { font-size: 1.125rem; }
-  .superadmin-card .text-2xl { font-size: 1rem; }
-  .superadmin-card p { font-size: 12px; }
-  #donutChart { width: 160px !important; height: 160px !important; }
-  .donut-center-text .text-3xl { font-size: 1.5rem; }
-  #mainChart { height: 180px !important; }
-  section { padding-top: 40px !important; padding-bottom: 40px !important; }
-  footer .grid { grid-template-columns: 1fr !important; gap: 20px !important; }
-  .lang-select { padding: 6px 26px 6px 12px; font-size: 11px; }
-  .rag-demo { padding: 14px; }
-  .rag-msg-bubble { font-size: 11.5px; padding: 8px 12px; }
-  .ai-brain-wrap { width: 200px; height: 200px; }
+.hero-title { font-size: 1.75rem !important; }
+.stat-num { font-size: 1.25rem; }
+.btn-primary, .btn-outline { padding: 9px 16px; font-size: 11px; gap: 6px; }
+.btn-primary svg, .btn-outline svg { width: 14px; height: 14px; }
+.superadmin-card { padding: 16px; }
+.superadmin-card .w-24 { width: 60px; height: 60px; }
+.superadmin-card .text-3xl { font-size: 1.125rem; }
+.superadmin-card .text-2xl { font-size: 1rem; }
+.superadmin-card p { font-size: 12px; }
+#donutChart { width: 160px !important; height: 160px !important; }
+.donut-center-text .text-3xl { font-size: 1.5rem; }
+#mainChart { height: 180px !important; }
+section { padding-top: 40px !important; padding-bottom: 40px !important; }
+footer .grid { grid-template-columns: 1fr !important; gap: 20px !important; }
+.lang-select { padding: 6px 26px 6px 12px; font-size: 11px; }
+.rag-demo { padding: 14px; }
+.rag-msg-bubble { font-size: 11.5px; padding: 8px 12px; }
+.ai-brain-wrap { width: 200px; height: 200px; }
+.chat-body { height: 220px; padding: 12px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+*, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
 }
 </style>
 </head>
 <body>
 <div class="content-wrap">
-
 <!-- Navigation -->
 <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-500">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="flex items-center justify-between h-16 lg:h-18">
-      {{-- Логотип --}}
-      <a href="#" id="logoLink" class="flex items-center gap-3 group">
-        <img src="{{ asset('img/dss.png') }}" alt="DocSign" class="w-16 h-16 rounded-xl object-contain group-hover:scale-105 transition-all duration-300 cursor-pointer">
-        <span class="text-lg font-bold tracking-tight" style="color: var(--text-primary)">Doc<span class="gradient-accent">Sign</span></span>
-      </a>
-
-      <div class="hidden lg:flex items-center gap-5 xl:gap-6">
-        <a href="#features" class="nav-link" data-i18n="nav_features">Возможности</a>
-        <a href="#faceid" class="nav-link" data-i18n="nav_faceid">Face ID</a>
-        <a href="#ai" class="nav-link" data-i18n="nav_ai">ИИ</a>
-        <a href="#departments" class="nav-link" data-i18n="nav_departments">Отделы</a>
-        <a href="#geography" class="nav-link" data-i18n="nav_geography">География</a>
-        <a href="#analytics" class="nav-link" data-i18n="nav_analytics">Аналитика</a>
-        <a href="#security" class="nav-link" data-i18n="nav_security">Безопасность</a>
-        <a href="#admin" class="nav-link" data-i18n="nav_admin">Админ</a>
-        <a href="#contact" class="nav-link" data-i18n="nav_contact">Контакты</a>
-      </div>
-
-      <div class="flex items-center gap-3">
-        <button id="themeToggle" class="theme-toggle" title="Переключить тему" aria-label="Toggle theme">
-          <svg class="sun-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-          <svg class="moon-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
-        </button>
-
-        <div class="hidden sm:block lang-select-wrap">
-          <select class="lang-select" id="lang-select" aria-label="Language">
-            <option value="ru">RU</option>
-            <option value="en">EN</option>
-            <option value="tj">TJ</option>
-          </select>
-          <svg class="lang-select-arrow w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
-        </div>
-
-        <a href="/login" class="btn-primary px-5 py-2 text-sm font-semibold">
-          <span data-i18n="nav_start">Начать</span>
-        </a>
-
-        <button id="mobileMenuBtn" class="lg:hidden p-2 transition-colors" style="color: var(--text-secondary)" aria-label="Menu">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <div id="mobileMenu" class="hidden lg:hidden glass-strong border-t" style="border-color: var(--glass-border)">
-    <div class="px-4 py-4 space-y-3">
-      <div class="pb-3 border-b flex items-center gap-3" style="border-color: var(--glass-border)">
-        <div class="lang-select-wrap">
-          <select class="lang-select" id="lang-select-mobile" aria-label="Language">
-            <option value="ru">RU — Русский</option>
-            <option value="en">EN — English</option>
-            <option value="tj">TJ — Тоҷикӣ</option>
-          </select>
-          <svg class="lang-select-arrow w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
-        </div>
-        <button id="themeToggleMobile" class="theme-toggle" title="Переключить тему" aria-label="Toggle theme">
-          <svg class="sun-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-          <svg class="moon-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
-        </button>
-      </div>
-      <a href="#features" class="block py-2 nav-link" data-i18n="nav_features">Возможности</a>
-      <a href="#faceid" class="block py-2 nav-link" data-i18n="nav_faceid">Face ID</a>
-      <a href="#ai" class="block py-2 nav-link" data-i18n="nav_ai">ИИ</a>
-      <a href="#departments" class="block py-2 nav-link" data-i18n="nav_departments">Отделы</a>
-      <a href="#geography" class="block py-2 nav-link" data-i18n="nav_geography">География</a>
-      <a href="#analytics" class="block py-2 nav-link" data-i18n="nav_analytics">Аналитика</a>
-      <a href="#security" class="block py-2 nav-link" data-i18n="nav_security">Безопасность</a>
-      <a href="#admin" class="block py-2 nav-link" data-i18n="nav_admin">Админ</a>
-      <a href="#contact" class="block py-2 nav-link" data-i18n="nav_contact">Контакты</a>
-    </div>
-  </div>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex items-center justify-between h-16 lg:h-18">
+<a href="#" id="logoLink" class="flex items-center gap-3 group">
+<img src="{{ asset('img/dss.png') }}" alt="DocSign" class="w-16 h-16 rounded-xl object-contain group-hover:scale-105 transition-all duration-300 cursor-pointer">
+<span class="text-lg font-bold tracking-tight" style="color: var(--text-primary)">Doc<span class="gradient-accent">Sign</span></span>
+</a>
+<div class="hidden lg:flex items-center gap-5 xl:gap-6">
+<a href="#features" class="nav-link" data-i18n="nav_features">Возможности</a>
+<a href="#faceid" class="nav-link" data-i18n="nav_faceid">Face ID</a>
+<a href="#ai" class="nav-link" data-i18n="nav_ai">ИИ</a>
+<a href="#chat" class="nav-link" data-i18n="nav_chat">Чаты</a>
+<a href="#departments" class="nav-link" data-i18n="nav_departments">Отделы</a>
+<a href="#geography" class="nav-link" data-i18n="nav_geography">География</a>
+<a href="#analytics" class="nav-link" data-i18n="nav_analytics">Аналитика</a>
+<a href="#security" class="nav-link" data-i18n="nav_security">Безопасность</a>
+<a href="#admin" class="nav-link" data-i18n="nav_admin">Админ</a>
+<a href="#contact" class="nav-link" data-i18n="nav_contact">Контакты</a>
+</div>
+<div class="flex items-center gap-3">
+<button id="themeToggle" class="theme-toggle" title="Переключить тему" aria-label="Toggle theme">
+<svg class="sun-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+<svg class="moon-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+</button>
+<div class="hidden sm:block lang-select-wrap">
+<select class="lang-select" id="lang-select" aria-label="Language">
+<option value="ru">RU</option>
+<option value="en">EN</option>
+<option value="tj">TJ</option>
+</select>
+<svg class="lang-select-arrow w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+</div>
+<a href="/login" class="btn-primary px-5 py-2 text-sm font-semibold">
+<span data-i18n="nav_start">Начать</span>
+</a>
+<button id="mobileMenuBtn" class="lg:hidden p-2 transition-colors" style="color: var(--text-secondary)" aria-label="Menu">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+</button>
+</div>
+</div>
+</div>
+<div id="mobileMenu" class="hidden lg:hidden glass-strong border-t" style="border-color: var(--glass-border)">
+<div class="px-4 py-4 space-y-3">
+<div class="pb-3 border-b flex items-center gap-3" style="border-color: var(--glass-border)">
+<div class="lang-select-wrap">
+<select class="lang-select" id="lang-select-mobile" aria-label="Language">
+<option value="ru">RU — Русский</option>
+<option value="en">EN — English</option>
+<option value="tj">TJ — Тоҷикӣ</option>
+</select>
+<svg class="lang-select-arrow w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+</div>
+<button id="themeToggleMobile" class="theme-toggle" title="Переключить тему" aria-label="Toggle theme">
+<svg class="sun-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+<svg class="moon-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+</button>
+</div>
+<a href="#features" class="block py-2 nav-link" data-i18n="nav_features">Возможности</a>
+<a href="#faceid" class="block py-2 nav-link" data-i18n="nav_faceid">Face ID</a>
+<a href="#ai" class="block py-2 nav-link" data-i18n="nav_ai">ИИ</a>
+<a href="#chat" class="block py-2 nav-link" data-i18n="nav_chat">Чаты</a>
+<a href="#departments" class="block py-2 nav-link" data-i18n="nav_departments">Отделы</a>
+<a href="#geography" class="block py-2 nav-link" data-i18n="nav_geography">География</a>
+<a href="#analytics" class="block py-2 nav-link" data-i18n="nav_analytics">Аналитика</a>
+<a href="#security" class="block py-2 nav-link" data-i18n="nav_security">Безопасность</a>
+<a href="#admin" class="block py-2 nav-link" data-i18n="nav_admin">Админ</a>
+<a href="#contact" class="block py-2 nav-link" data-i18n="nav_contact">Контакты</a>
+</div>
+</div>
 </nav>
-
-{{-- Модальное окно логотипа --}}
 <div id="logoModal" class="fixed inset-0 z-[100] hidden">
-  <div class="absolute inset-0 bg-black/90 backdrop-blur-sm" id="modalBackdrop"></div>
-  <div class="relative min-h-screen flex items-center justify-center p-4">
-    <div class="relative rounded-3xl p-16 shadow-2xl border max-w-3xl w-full text-center transform scale-95 opacity-0 transition-all duration-300 glass-strong" id="modalContent">
-      <button id="closeModal" class="absolute top-4 right-4 w-10 h-10 rounded-full hover:bg-white/20 flex items-center justify-center transition-colors" style="background: var(--glass-bg)" aria-label="Close">
-        <svg class="w-6 h-6" style="color: var(--text-primary)" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-      </button>
-      <img src="{{ asset('img/dss.png') }}" alt="DocSign" class="w-96 h-96 object-contain mx-auto mb-8 drop-shadow-2xl max-w-full">
-      <h2 class="text-5xl font-bold" style="color: var(--text-primary)">Doc<span class="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent">Sign</span></h2>
-    </div>
-  </div>
+<div class="absolute inset-0 bg-black/90 backdrop-blur-sm" id="modalBackdrop"></div>
+<div class="relative min-h-screen flex items-center justify-center p-4">
+<div class="relative rounded-3xl p-16 shadow-2xl border max-w-3xl w-full text-center transform scale-95 opacity-0 transition-all duration-300 glass-strong" id="modalContent">
+<button id="closeModal" class="absolute top-4 right-4 w-10 h-10 rounded-full hover:bg-white/20 flex items-center justify-center transition-colors" style="background: var(--glass-bg)" aria-label="Close">
+<svg class="w-6 h-6" style="color: var(--text-primary)" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+</button>
+<img src="{{ asset('img/dss.png') }}" alt="DocSign" class="w-96 h-96 object-contain mx-auto mb-8 drop-shadow-2xl max-w-full">
+<h2 class="text-5xl font-bold" style="color: var(--text-primary)">Doc<span class="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent">Sign</span></h2>
+</div>
+</div>
 </div>
 
 <!-- Hero Section -->
 <section id="hero" class="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
-  <div class="absolute inset-0" style="background: radial-gradient(ellipse at 50% 30%, rgba(59,130,246,0.08) 0%, transparent 60%);"></div>
-  <div class="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-  
-    <h1 class="hero-title text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight mb-6 leading-[1.05]">
-      <span class="block gradient-text text-3xl sm:text-4xl md:text-5xl lg:text-6xl" data-i18n="hero_title_1">Электронный документооборот</span>
-    </h1>
-    <p class="max-w-2xl mx-auto text-base sm:text-lg mb-10 leading-relaxed" style="color: var(--text-secondary)" data-i18n="hero_subtitle">
-      DocSign — современная платформа для работы с документами. Подписывайте, отправляйте и храните файлы в один клик. Просто и надёжно — для людей, чтобы работа стала легче.
-    </p>
-    <div class="flex flex-wrap items-center justify-center gap-3 mb-16">
-      <a href="/login" class="btn-primary px-7 py-3 text-sm font-semibold flex items-center gap-2">
-        <span data-i18n="hero_cta">Начать работу</span>
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
-      </a>
-      <a href="#features" class="btn-outline px-7 py-3 text-sm font-semibold flex items-center gap-2">
-        <span data-i18n="hero_learn">Узнать больше</span>
-      </a>
-    </div>
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-4xl mx-auto">
-      <div class="stat-card-blue rounded-2xl p-4 text-left card-3d card-blue card-accent">
-        <div class="card-shine"></div>
-        <div class="card-inner">
-          <div class="text-[10px] uppercase tracking-[0.2em] text-blue-500 dark:text-blue-400 font-bold mb-2" data-i18n="stat_speed">Скорость</div>
-          <div class="stat-num gradient-text"><span class="counter" data-target="60">0</span><span class="text-base font-bold ml-1" style="color: var(--text-muted)" data-i18n="stat_sec">сек</span></div>
-          <div class="text-xs mt-1" style="color: var(--text-muted)" data-i18n="stat_speed_desc">на один документ</div>
-        </div>
-      </div>
-      <div class="stat-card-purple rounded-2xl p-4 text-left card-3d card-purple card-accent">
-        <div class="card-shine"></div>
-        <div class="card-inner">
-          <div class="text-[10px] uppercase tracking-[0.2em] text-purple-500 dark:text-purple-400 font-bold mb-2" data-i18n="stat_users">Пользователи</div>
-          <div class="stat-num gradient-text"><span class="counter" data-target="{{ \App\Models\User::count() }}">0</span></div>
-          <div class="text-xs mt-1" style="color: var(--text-muted)" data-i18n="stat_users_desc">зарегистрировано</div>
-        </div>
-      </div>
-      <div class="stat-card-green rounded-2xl p-4 text-left card-3d card-green card-accent">
-        <div class="card-shine"></div>
-        <div class="card-inner">
-          <div class="text-[10px] uppercase tracking-[0.2em] text-green-500 dark:text-green-400 font-bold mb-2" data-i18n="stat_access">Доступ</div>
-          <div class="stat-num gradient-text">24/7</div>
-          <div class="text-xs mt-1" style="color: var(--text-muted)" data-i18n="stat_access_desc">всегда онлайн</div>
-        </div>
-      </div>
-      <div class="stat-card-orange rounded-2xl p-4 text-left card-3d card-orange card-accent">
-        <div class="card-shine"></div>
-        <div class="card-inner">
-          <div class="text-[10px] uppercase tracking-[0.2em] text-orange-500 dark:text-orange-400 font-bold mb-2" data-i18n="stat_protection">Защита</div>
-          <div class="stat-num gradient-text"><span class="counter" data-target="100">0</span>%</div>
-          <div class="text-xs mt-1" style="color: var(--text-muted)" data-i18n="stat_protection_desc">юридическая сила</div>
-        </div>
-      </div>
-    </div>
-  </div>
+<div class="absolute inset-0" style="background: radial-gradient(ellipse at 50% 30%, rgba(59,130,246,0.08) 0%, transparent 60%);"></div>
+<div class="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+<h1 class="hero-title text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight mb-6 leading-[1.05]">
+<span class="block gradient-text text-3xl sm:text-4xl md:text-5xl lg:text-6xl" data-i18n="hero_title_1">Электронный документооборот</span>
+</h1>
+<p class="max-w-2xl mx-auto text-base sm:text-lg mb-10 leading-relaxed" style="color: var(--text-secondary)" data-i18n="hero_subtitle">
+DocSign — современная платформа для работы с документами. Подписывайте, отправляйте и храните файлы в один клик. Просто и надёжно — для людей, чтобы работа стала легче.
+</p>
+<div class="flex flex-wrap items-center justify-center gap-3 mb-16">
+<a href="/login" class="btn-primary px-7 py-3 text-sm font-semibold flex items-center gap-2">
+<span data-i18n="hero_cta">Начать работу</span>
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+</a>
+
+<a href="#features" class="btn-outline px-7 py-3 text-sm font-semibold flex items-center gap-2">
+<span data-i18n="hero_learn">Узнать больше</span>
+</a>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-4xl mx-auto">
+<div class="stat-card-blue rounded-2xl p-4 text-left card-3d card-blue card-accent">
+<div class="card-shine"></div><div class="card-inner">
+<div class="text-[10px] uppercase tracking-[0.2em] text-blue-500 dark:text-blue-400 font-bold mb-2" data-i18n="stat_speed">Скорость</div>
+<div class="stat-num gradient-text"><span class="counter" data-target="60">0</span><span class="text-base font-bold ml-1" style="color: var(--text-muted)" data-i18n="stat_sec">сек</span></div>
+<div class="text-xs mt-1" style="color: var(--text-muted)" data-i18n="stat_speed_desc">на один документ</div>
+</div></div>
+<div class="stat-card-purple rounded-2xl p-4 text-left card-3d card-purple card-accent">
+<div class="card-shine"></div><div class="card-inner">
+<div class="text-[10px] uppercase tracking-[0.2em] text-purple-500 dark:text-purple-400 font-bold mb-2" data-i18n="stat_users">Пользователи</div>
+<div class="stat-num gradient-text"><span class="counter" data-target="{{ \App\Models\User::count() }}">0</span></div>
+<div class="text-xs mt-1" style="color: var(--text-muted)" data-i18n="stat_users_desc">зарегистрировано</div>
+</div></div>
+<div class="stat-card-green rounded-2xl p-4 text-left card-3d card-green card-accent">
+<div class="card-shine"></div><div class="card-inner">
+<div class="text-[10px] uppercase tracking-[0.2em] text-green-500 dark:text-green-400 font-bold mb-2" data-i18n="stat_access">Доступ</div>
+<div class="stat-num gradient-text">24/7</div>
+<div class="text-xs mt-1" style="color: var(--text-muted)" data-i18n="stat_access_desc">всегда онлайн</div>
+</div></div>
+<div class="stat-card-orange rounded-2xl p-4 text-left card-3d card-orange card-accent">
+<div class="card-shine"></div><div class="card-inner">
+<div class="text-[10px] uppercase tracking-[0.2em] text-orange-500 dark:text-orange-400 font-bold mb-2" data-i18n="stat_protection">Защита</div>
+<div class="stat-num gradient-text"><span class="counter" data-target="100">0</span>%</div>
+<div class="text-xs mt-1" style="color: var(--text-muted)" data-i18n="stat_protection_desc">юридическая сила</div>
+</div></div>
+</div>
+</div>
 </section>
 
 <!-- ===================== FACE ID SECTION ===================== -->
 <section id="faceid" class="relative py-24 overflow-hidden">
-  <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-      <div class="scroll-reveal order-2 lg:order-1">
-        <div class="faceid-perspective max-w-md mx-auto">
-          <div id="faceTiltWrap">
-            <div id="faceScanner" class="faceid-tilt glass rounded-3xl p-6 md:p-8 relative">
-              <div class="faceid-layer-frame relative mx-auto max-w-[280px]">
-                <div class="faceid-frame-corner corner-tl"></div><div class="faceid-frame-corner corner-tr"></div><div class="faceid-frame-corner corner-bl"></div><div class="faceid-frame-corner corner-br"></div>
-                <div class="face-check"><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg></div>
-                <svg id="faceDots" viewBox="0 0 220 224" class="w-full h-auto relative z-[3]"></svg>
-                <div class="scan-line"></div>
-              </div>
-              <div class="faceid-layer-status flex justify-center mt-6">
-                <div id="faceStatusPill" class="face-status"><span id="faceStatusDot" class="face-status-dot"></span><span id="faceStatusText" data-i18n="faceid_status_scanning">Сканирование лица...</span></div>
-              </div>
-              <div class="faceid-layer-chip absolute -top-4 -left-3 glass rounded-2xl px-4 py-2.5 flex items-center gap-2 z-20 shadow-xl">
-                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span class="text-xs font-bold" style="color: var(--text-primary)">99.9% <span style="color: var(--text-muted)" data-i18n="faceid_accuracy">точность</span></span>
-              </div>
-              <div class="faceid-layer-chip absolute -bottom-4 -right-3 glass rounded-2xl px-4 py-2.5 flex items-center gap-2 z-20 shadow-xl">
-                <span class="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
-                <span class="text-xs font-bold" style="color: var(--text-primary)">0.3 <span style="color: var(--text-muted)" data-i18n="faceid_speed">сек</span></span>
-              </div>
-            </div>
-          </div>
-          <div class="text-center mt-8">
-            <span class="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.2em] font-bold" style="color: var(--text-muted)">
-              <span class="pulse-dot" style="width:6px;height:6px;"></span>
-              <span data-i18n="faceid_demo_note">Живая демонстрация</span>
-            </span>
-          </div>
-        </div>
-      </div>
-      <div class="scroll-reveal order-1 lg:order-2" style="transition-delay:0.15s">
-        <span class="inline-flex items-center gap-2 text-xs font-semibold text-cyan-500 dark:text-cyan-400 uppercase tracking-widest mb-4">
-          <span class="w-8 h-px bg-cyan-500 dark:bg-cyan-400"></span>
-          <span data-i18n="faceid_label">Face ID • Биометрия</span>
-        </span>
-        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/25 mb-5">
-          <svg class="w-3.5 h-3.5 text-blue-500 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2a4 4 0 014-4h5m0 0l-3-3m3 3l-3 3M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
-          <span class="text-[11px] font-bold uppercase tracking-wider text-blue-600 dark:text-blue-300" data-i18n="faceid_report_badge">Краткий отчёт</span>
-        </div>
-        <h2 class="text-3xl sm:text-4xl md:text-5xl font-black mb-5 tracking-tight leading-tight" style="color: var(--text-primary)" data-i18n="faceid_title">Вход и подпись — по вашему лицу</h2>
-        <p class="text-sm sm:text-base leading-relaxed mb-8" style="color: var(--text-secondary)" data-i18n="faceid_text">Если у вас есть компания — Face ID станет вашим помощником. Сотрудник смотрит в камеру, система за долю секунды подтверждает личность и подписывает документ. Руководитель получает краткий отчёт: кто, когда и что подписал.</p>
-        <div class="space-y-4 mb-8">
-          <div class="flex items-start gap-4 group">
-            <div class="icon-blue w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300"><svg class="w-5 h-5 text-blue-500 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg></div>
-            <div><div class="text-sm font-bold mb-0.5" style="color: var(--text-primary)" data-i18n="faceid_b1_t">Мгновенное подтверждение</div><div class="text-xs leading-relaxed" style="color: var(--text-secondary)" data-i18n="faceid_b1_d">Распознавание лица занимает 0.3 секунды — быстрее любого пароля.</div></div>
-          </div>
-          <div class="flex items-start gap-4 group">
-            <div class="icon-purple w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300"><svg class="w-5 h-5 text-purple-500 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2a4 4 0 014-4h5m0 0l-3-3m3 3l-3 3M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg></div>
-            <div><div class="text-sm font-bold mb-0.5" style="color: var(--text-primary)" data-i18n="faceid_b2_t">Полные отчёты</div><div class="text-xs leading-relaxed" style="color: var(--text-secondary)" data-i18n="faceid_b2_d">Каждая проверка сохраняется: кто вошёл, когда и что подписал.</div></div>
-          </div>
-          <div class="flex items-start gap-4 group">
-            <div class="icon-green w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300"><svg class="w-5 h-5 text-green-500 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg></div>
-            <div><div class="text-sm font-bold mb-0.5" style="color: var(--text-primary)" data-i18n="faceid_b3_t">Для всей компании</div><div class="text-xs leading-relaxed" style="color: var(--text-secondary)" data-i18n="faceid_b3_d">Подключите сотрудников, назначьте роли — и работайте без бумаг.</div></div>
-          </div>
-        </div>
-        <div class="flex flex-wrap gap-3">
-          <a href="/login" class="btn-primary px-6 py-3 text-sm font-semibold flex items-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"/></svg><span data-i18n="faceid_cta">Подключить Face ID</span></a>
-          <a href="#analytics" class="btn-outline px-6 py-3 text-sm font-semibold flex items-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg><span data-i18n="faceid_report">Смотреть отчёты</span></a>
-        </div>
-      </div>
-    </div>
-  </div>
+<div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+<div class="scroll-reveal order-2 lg:order-1">
+<div class="faceid-perspective max-w-md mx-auto">
+<div id="faceTiltWrap">
+<div id="faceScanner" class="faceid-tilt glass rounded-3xl p-6 md:p-8 relative">
+<div class="faceid-layer-frame relative mx-auto max-w-[280px]">
+<div class="faceid-frame-corner corner-tl"></div><div class="faceid-frame-corner corner-tr"></div><div class="faceid-frame-corner corner-bl"></div><div class="faceid-frame-corner corner-br"></div>
+<div class="face-check"><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg></div>
+<svg id="faceDots" viewBox="0 0 220 224" class="w-full h-auto relative z-[3]"></svg>
+<div class="scan-line"></div>
+</div>
+<div class="faceid-layer-status flex justify-center mt-6">
+<div id="faceStatusPill" class="face-status"><span id="faceStatusDot" class="face-status-dot"></span><span id="faceStatusText" data-i18n="faceid_status_scanning">Проверка лица...</span></div>
+</div>
+<div class="faceid-layer-chip absolute -top-4 -left-3 glass rounded-2xl px-4 py-2.5 flex items-center gap-2 z-20 shadow-xl">
+<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+<span class="text-xs font-bold" style="color: var(--text-primary)">99.9% <span style="color: var(--text-muted)" data-i18n="faceid_accuracy">точность</span></span>
+</div>
+<div class="faceid-layer-chip absolute -bottom-4 -right-3 glass rounded-2xl px-4 py-2.5 flex items-center gap-2 z-20 shadow-xl">
+<span class="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
+<span class="text-xs font-bold" style="color: var(--text-primary)">0.3 <span style="color: var(--text-muted)" data-i18n="faceid_speed">сек</span></span>
+</div>
+</div>
+</div>
+<div class="text-center mt-8">
+<span class="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.2em] font-bold" style="color: var(--text-muted)">
+<span class="pulse-dot" style="width:6px;height:6px;"></span>
+<span data-i18n="faceid_demo_note">Живая демонстрация</span>
+</span>
+</div>
+</div>
+</div>
+<div class="scroll-reveal order-1 lg:order-2" style="transition-delay:0.15s">
+<span class="inline-flex items-center gap-2 text-xs font-semibold text-cyan-500 dark:text-cyan-400 uppercase tracking-widest mb-4">
+<span class="w-8 h-px bg-cyan-500 dark:bg-cyan-400"></span>
+<span data-i18n="faceid_label">Face ID • Биометрия</span>
+</span>
+<div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/25 mb-5">
+<svg class="w-3.5 h-3.5 text-blue-500 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2a4 4 0 014-4h5m0 0l-3-3m3 3l-3 3M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+<span class="text-[11px] font-bold uppercase tracking-wider text-blue-600 dark:text-blue-300" data-i18n="faceid_report_badge">Защита входа</span>
+</div>
+<h2 class="text-3xl sm:text-4xl md:text-5xl font-black mb-5 tracking-tight leading-tight" style="color: var(--text-primary)" data-i18n="faceid_title">Вход в аккаунт — только после проверки лица</h2>
+<p class="text-sm sm:text-base leading-relaxed mb-8" style="color: var(--text-secondary)" data-i18n="faceid_text">Face ID создан для компаний. Перед входом в систему камера сканирует лицо и проверяет: это действительно вы или кто-то другой пытается зайти под вашим логином. Чужой человек не войдёт, даже если знает ваш логин и пароль.</p>
+<div class="space-y-4 mb-8">
+<div class="flex items-start gap-4 group">
+<div class="icon-blue w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300"><svg class="w-5 h-5 text-blue-500 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg></div>
+<div><div class="text-sm font-bold mb-0.5" style="color: var(--text-primary)" data-i18n="faceid_b1_t">Проверка перед входом</div><div class="text-xs leading-relaxed" style="color: var(--text-secondary)" data-i18n="faceid_b1_d">Система сверяет лицо с сохранённым профилем сотрудника за 0.3 секунды.</div></div>
+</div>
+<div class="flex items-start gap-4 group">
+<div class="icon-purple w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300"><svg class="w-5 h-5 text-purple-500 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2a4 4 0 014-4h5m0 0l-3-3m3 3l-3 3M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg></div>
+<div><div class="text-sm font-bold mb-0.5" style="color: var(--text-primary)" data-i18n="faceid_b2_t">Защита от чужого входа</div><div class="text-xs leading-relaxed" style="color: var(--text-secondary)" data-i18n="faceid_b2_d">Если перед камерой другой человек, доступ к аккаунту остаётся закрытым.</div></div>
+</div>
+<div class="flex items-start gap-4 group">
+<div class="icon-green w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300"><svg class="w-5 h-5 text-green-500 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg></div>
+<div><div class="text-sm font-bold mb-0.5" style="color: var(--text-primary)" data-i18n="faceid_b3_t">Для всей компании</div><div class="text-xs leading-relaxed" style="color: var(--text-secondary)" data-i18n="faceid_b3_d">Подключите сотрудников и назначьте роли — каждый заходит только под своим лицом.</div></div>
+</div>
+</div>
+<div class="flex flex-wrap gap-3">
+<a href="/login" class="btn-primary px-6 py-3 text-sm font-semibold flex items-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"/></svg><span data-i18n="faceid_cta">Подключить Face ID</span></a>
+<a href="#analytics" class="btn-outline px-6 py-3 text-sm font-semibold flex items-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg><span data-i18n="faceid_report">Смотреть отчёты</span></a>
+</div>
+</div>
+</div>
+</div>
 </section>
 
 <!-- ===================== AI / RAG SECTION ===================== -->
 <section id="ai" class="relative py-24 overflow-hidden ai-section-bg">
-  <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="text-center mb-14 scroll-reveal">
-      <span class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest mb-4 px-4 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/25" style="color:#0891b2;">
-        <span class="w-2 h-2 rounded-full bg-cyan-500 animate-pulse"></span>
-        <span data-i18n="ai_label">Искусственный интеллект • RAG</span>
-      </span>
-      <h2 class="text-3xl sm:text-4xl md:text-5xl font-black mb-4 tracking-tight" style="color: var(--text-primary)">
-        <span class="gradient-ai" data-i18n="ai_title">Умный помощник в каждом документе</span>
-      </h2>
-      <p class="max-w-2xl mx-auto text-sm sm:text-base" style="color: var(--text-secondary)" data-i18n="ai_subtitle">ИИ на базе технологии RAG понимает ваши документы, находит нужную информацию за секунды и отвечает на вопросы — как живой эксперт.</p>
-    </div>
+<div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="text-center mb-14 scroll-reveal">
+<span class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest mb-4 px-4 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/25" style="color:#0891b2;">
+<span class="w-2 h-2 rounded-full bg-cyan-500 animate-pulse"></span>
+<span data-i18n="ai_label">Искусственный интеллект • RAG</span>
+</span>
+<h2 class="text-3xl sm:text-4xl md:text-5xl font-black mb-4 tracking-tight" style="color: var(--text-primary)">
+<span class="gradient-ai" data-i18n="ai_title">Умный помощник в каждом документе</span>
+</h2>
+<p class="max-w-2xl mx-auto text-sm sm:text-base" style="color: var(--text-secondary)" data-i18n="ai_subtitle">ИИ на базе технологии RAG понимает ваши документы, находит нужную информацию за секунды и отвечает на вопросы — как живой эксперт.</p>
+</div>
+<div class="grid lg:grid-cols-2 gap-8 mb-10 items-center">
+<div class="scroll-reveal">
+<div class="glass rounded-3xl p-6 md:p-8 card-3d card-ai card-accent relative">
+<div class="card-shine"></div><div class="card-inner">
+<div class="flex items-center justify-between mb-5">
+<div class="flex items-center gap-2">
+<div class="icon-ai w-10 h-10 rounded-xl flex items-center justify-center"><svg class="w-5 h-5" fill="none" stroke="#0891b2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg></div>
+<div><div class="text-sm font-bold" style="color: var(--text-primary)" data-i18n="ai_brain_title">Нейросеть DocSign</div><div class="text-[10px] uppercase tracking-wider" style="color: var(--text-muted)" data-i18n="ai_brain_sub">RAG • Embeddings • LLM</div></div>
+</div>
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-[10px] font-bold text-emerald-600 dark:text-emerald-400"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span><span data-i18n="ai_brain_online">Онлайн</span></span>
+</div>
+<div class="ai-brain-wrap">
+<div class="ai-pulse-ring"></div><div class="ai-pulse-ring-2"></div>
+<div class="ai-orbit"></div><div class="ai-orbit-2"></div><div class="ai-orbit-3"></div>
+<div class="ai-node ai-node-1" title="Поиск"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg></div>
+<div class="ai-node ai-node-2" title="Документы"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></div>
+<div class="ai-node ai-node-3" title="Ответ"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg></div>
+<div class="ai-node ai-node-4" title="Анализ"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg></div>
+<div class="ai-brain-core">
+<svg viewBox="0 0 200 200"><defs><radialGradient id="brainGrad" cx="50%" cy="50%"><stop offset="0%" stop-color="#22d3ee" stop-opacity="0.9"/><stop offset="50%" stop-color="#8b5cf6" stop-opacity="0.6"/><stop offset="100%" stop-color="#ec4899" stop-opacity="0.3"/></radialGradient><filter id="brainGlow"><feGaussianBlur stdDeviation="4" result="coloredBlur"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><circle cx="100" cy="100" r="70" fill="url(#brainGrad)" opacity="0.3" filter="url(#brainGlow)"/><g filter="url(#brainGlow)" stroke="#22d3ee" stroke-width="1.5" fill="none" opacity="0.9"><path d="M 70 70 Q 60 50, 80 45 Q 95 35, 110 45 Q 130 40, 135 60 Q 150 65, 145 85 Q 155 100, 140 115 Q 145 135, 125 140 Q 115 155, 95 150 Q 75 155, 65 140 Q 50 130, 55 110 Q 45 95, 55 80 Q 50 65, 70 70 Z"/><path d="M 80 75 L 120 75 L 125 100 L 115 125 L 85 125 L 75 100 Z" opacity="0.6"/><path d="M 100 60 L 100 140" opacity="0.4"/><path d="M 65 100 L 135 100" opacity="0.4"/><circle cx="100" cy="100" r="8" fill="#22d3ee" opacity="0.9"/><circle cx="80" cy="75" r="4" fill="#8b5cf6"/><circle cx="120" cy="75" r="4" fill="#8b5cf6"/><circle cx="125" cy="100" r="4" fill="#ec4899"/><circle cx="115" cy="125" r="4" fill="#ec4899"/><circle cx="85" cy="125" r="4" fill="#10b981"/><circle cx="75" cy="100" r="4" fill="#10b981"/></g></svg>
+</div>
+</div>
+<div class="grid grid-cols-3 gap-3 mt-6">
+<div class="text-center p-3 rounded-xl border" style="background: var(--glass-bg); border-color: var(--glass-border)"><div class="text-lg font-black gradient-ai">0.8<span class="text-xs" style="color: var(--text-muted)">с</span></div><div class="text-[9px] uppercase tracking-wider font-bold mt-1" style="color: var(--text-muted)" data-i18n="ai_stat_speed">Ответ</div></div>
+<div class="text-center p-3 rounded-xl border" style="background: var(--glass-bg); border-color: var(--glass-border)"><div class="text-lg font-black gradient-ai">98%</div><div class="text-[9px] uppercase tracking-wider font-bold mt-1" style="color: var(--text-muted)" data-i18n="ai_stat_accuracy">Точность</div></div>
+<div class="text-center p-3 rounded-xl border" style="background: var(--glass-bg); border-color: var(--glass-border)"><div class="text-lg font-black gradient-ai">24/7</div><div class="text-[9px] uppercase tracking-wider font-bold mt-1" style="color: var(--text-muted)" data-i18n="ai_stat_uptime">Работа</div></div>
+</div>
+</div>
+</div>
+</div>
+<div class="scroll-reveal" style="transition-delay:0.15s">
+<div class="rag-demo">
+<div class="rag-header">
+<div class="rag-header-left">
+<div class="rag-avatar"><svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg></div>
+<div><div class="rag-title">DocSign AI</div><div class="rag-subtitle" data-i18n="ai_rag_sub">RAG • Поиск по базе знаний</div></div>
+</div>
+<div class="rag-status"><span class="rag-status-dot"></span><span data-i18n="ai_rag_active">Активен</span></div>
+</div>
+<div class="rag-messages" id="ragMessages"></div>
+<div class="rag-pipeline">
+<div class="rag-step" data-step="1"><div class="rag-step-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg></div><div class="rag-step-label" data-i18n="ai_step_query">Запрос</div></div>
+<svg class="rag-step-arrow w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+<div class="rag-step" data-step="2"><div class="rag-step-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg></div><div class="rag-step-label" data-i18n="ai_step_retrieve">Поиск</div></div>
+<svg class="rag-step-arrow w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+<div class="rag-step" data-step="3"><div class="rag-step-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg></div><div class="rag-step-label" data-i18n="ai_step_generate">ИИ</div></div>
+<svg class="rag-step-arrow w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+<div class="rag-step" data-step="4"><div class="rag-step-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></div><div class="rag-step-label" data-i18n="ai_step_answer">Ответ</div></div>
+</div>
+</div>
+</div>
+</div>
+<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5 mb-8">
+<div class="glass rounded-3xl p-6 card-3d card-ai card-accent scroll-reveal group"><div class="card-shine"></div><div class="card-inner"><div class="icon-ai w-12 h-12 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300"><svg class="w-6 h-6" fill="none" stroke="#0891b2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg></div><h3 class="text-base font-bold mb-2" style="color: var(--text-primary)" data-i18n="ai_f1_title">Умный поиск</h3><p class="text-sm leading-relaxed" style="color: var(--text-secondary)" data-i18n="ai_f1_desc">ИИ понимает смысл вопроса, а не просто слова. Находит нужный документ даже если вы не помните точное название.</p></div></div>
+<div class="glass rounded-3xl p-6 card-3d card-cyan card-accent scroll-reveal group" style="transition-delay:0.1s"><div class="card-shine"></div><div class="card-inner"><div class="icon-cyan w-12 h-12 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300"><svg class="w-6 h-6 text-cyan-600 dark:text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"/></svg></div><h3 class="text-base font-bold mb-2" style="color: var(--text-primary)" data-i18n="ai_f2_title">База знаний</h3><p class="text-sm leading-relaxed" style="color: var(--text-secondary)" data-i18n="ai_f2_desc">Все ваши документы превращаются в единую базу знаний. ИИ отвечает на вопросы, ссылаясь на конкретные файлы.</p></div></div>
+<div class="glass rounded-3xl p-6 card-3d card-purple card-accent scroll-reveal group" style="transition-delay:0.2s"><div class="card-shine"></div><div class="card-inner"><div class="icon-purple w-12 h-12 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300"><svg class="w-6 h-6 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg></div><h3 class="text-base font-bold mb-2" style="color: var(--text-primary)" data-i18n="ai_f3_title">Генерация ответов</h3><p class="text-sm leading-relaxed" style="color: var(--text-secondary)" data-i18n="ai_f3_desc">ИИ читает документы и формулирует чёткие ответы. Вы получаете суть без необходимости читать сотни страниц.</p></div></div>
+<div class="glass rounded-3xl p-6 card-3d card-green card-accent scroll-reveal group"><div class="card-shine"></div><div class="card-inner"><div class="icon-green w-12 h-12 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300"><svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg></div><h3 class="text-base font-bold mb-2" style="color: var(--text-primary)" data-i18n="ai_f4_title">Только ваши данные</h3><p class="text-sm leading-relaxed" style="color: var(--text-secondary)" data-i18n="ai_f4_desc">ИИ работает только с документами вашей компании. Никаких утечек — все данные остаются внутри системы.</p></div></div>
+<div class="glass rounded-3xl p-6 card-3d card-orange card-accent scroll-reveal group" style="transition-delay:0.1s"><div class="card-shine"></div><div class="card-inner"><div class="icon-orange w-12 h-12 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300"><svg class="w-6 h-6 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/></svg></div><h3 class="text-base font-bold mb-2" style="color: var(--text-primary)" data-i18n="ai_f5_title">Анализ документов</h3><p class="text-sm leading-relaxed" style="color: var(--text-secondary)" data-i18n="ai_f5_desc">ИИ автоматически извлекает ключевые данные: суммы, даты, стороны договора. Экономит часы ручной работы.</p></div></div>
+<div class="glass rounded-3xl p-6 card-3d card-pink card-accent scroll-reveal group" style="transition-delay:0.2s"><div class="card-shine"></div><div class="card-inner"><div class="icon-pink w-12 h-12 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300"><svg class="w-6 h-6 text-pink-600 dark:text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg></div><h3 class="text-base font-bold mb-2" style="color: var(--text-primary)" data-i18n="ai_f6_title">Диалог на вашем языке</h3><p class="text-sm leading-relaxed" style="color: var(--text-secondary)" data-i18n="ai_f6_desc">Общайтесь с ИИ на русском, таджикском или английском. Он понимает контекст и отвечает естественно.</p></div></div>
+</div>
+<div class="glass rounded-3xl p-6 md:p-8 card-3d card-ai card-accent scroll-reveal relative overflow-hidden">
+<div class="card-shine"></div><div class="card-inner">
+<div class="absolute -top-20 -right-20 w-60 h-60 rounded-full" style="background: radial-gradient(circle, rgba(6,182,212,0.1) 0%, transparent 70%); pointer-events:none;"></div>
+<div class="absolute -bottom-20 -left-20 w-60 h-60 rounded-full" style="background: radial-gradient(circle, rgba(139,92,246,0.1) 0%, transparent 70%); pointer-events:none;"></div>
+<div class="relative flex flex-col md:flex-row items-center justify-between gap-6">
+<div class="flex items-center gap-5">
+<div class="icon-ai w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0"><svg class="w-7 h-7" fill="none" stroke="#0891b2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg></div>
+<div><h3 class="text-xl md:text-2xl font-black mb-1" style="color: var(--text-primary)" data-i18n="ai_cta_title">Попробуйте ИИ прямо сейчас</h3><p class="text-sm" style="color: var(--text-secondary)" data-i18n="ai_cta_desc">Задайте вопрос по вашим документам — получите ответ за секунды со ссылками на источники.</p></div>
+</div>
+<div class="flex flex-wrap gap-3">
+<a href="/login" class="btn-primary px-6 py-3 text-sm font-semibold flex items-center gap-2 whitespace-nowrap"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg><span data-i18n="ai_cta_btn">Запустить ИИ</span></a>
+<a href="#features" class="btn-outline px-6 py-3 text-sm font-semibold flex items-center gap-2 whitespace-nowrap"><span data-i18n="ai_cta_learn">Узнать больше</span></a>
 
-    <div class="grid lg:grid-cols-2 gap-8 mb-10 items-center">
-      <div class="scroll-reveal">
-        <div class="glass rounded-3xl p-6 md:p-8 card-3d card-ai card-accent relative">
-          <div class="card-shine"></div>
-          <div class="card-inner">
-            <div class="flex items-center justify-between mb-5">
-              <div class="flex items-center gap-2">
-                <div class="icon-ai w-10 h-10 rounded-xl flex items-center justify-center"><svg class="w-5 h-5" fill="none" stroke="#0891b2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg></div>
-                <div><div class="text-sm font-bold" style="color: var(--text-primary)" data-i18n="ai_brain_title">Нейросеть DocSign</div><div class="text-[10px] uppercase tracking-wider" style="color: var(--text-muted)" data-i18n="ai_brain_sub">RAG • Embeddings • LLM</div></div>
-              </div>
-              <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-[10px] font-bold text-emerald-600 dark:text-emerald-400"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span><span data-i18n="ai_brain_online">Онлайн</span></span>
-            </div>
-            <div class="ai-brain-wrap">
-              <div class="ai-pulse-ring"></div><div class="ai-pulse-ring-2"></div>
-              <div class="ai-orbit"></div><div class="ai-orbit-2"></div><div class="ai-orbit-3"></div>
-              <div class="ai-node ai-node-1" title="Поиск"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg></div>
-              <div class="ai-node ai-node-2" title="Документы"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></div>
-              <div class="ai-node ai-node-3" title="Ответ"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg></div>
-              <div class="ai-node ai-node-4" title="Анализ"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg></div>
-              <div class="ai-brain-core">
-                <svg viewBox="0 0 200 200"><defs><radialGradient id="brainGrad" cx="50%" cy="50%"><stop offset="0%" stop-color="#22d3ee" stop-opacity="0.9"/><stop offset="50%" stop-color="#8b5cf6" stop-opacity="0.6"/><stop offset="100%" stop-color="#ec4899" stop-opacity="0.3"/></radialGradient><filter id="brainGlow"><feGaussianBlur stdDeviation="4" result="coloredBlur"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><circle cx="100" cy="100" r="70" fill="url(#brainGrad)" opacity="0.3" filter="url(#brainGlow)"/><g filter="url(#brainGlow)" stroke="#22d3ee" stroke-width="1.5" fill="none" opacity="0.9"><path d="M 70 70 Q 60 50, 80 45 Q 95 35, 110 45 Q 130 40, 135 60 Q 150 65, 145 85 Q 155 100, 140 115 Q 145 135, 125 140 Q 115 155, 95 150 Q 75 155, 65 140 Q 50 130, 55 110 Q 45 95, 55 80 Q 50 65, 70 70 Z"/><path d="M 80 75 L 120 75 L 125 100 L 115 125 L 85 125 L 75 100 Z" opacity="0.6"/><path d="M 100 60 L 100 140" opacity="0.4"/><path d="M 65 100 L 135 100" opacity="0.4"/><circle cx="100" cy="100" r="8" fill="#22d3ee" opacity="0.9"/><circle cx="80" cy="75" r="4" fill="#8b5cf6"/><circle cx="120" cy="75" r="4" fill="#8b5cf6"/><circle cx="125" cy="100" r="4" fill="#ec4899"/><circle cx="115" cy="125" r="4" fill="#ec4899"/><circle cx="85" cy="125" r="4" fill="#10b981"/><circle cx="75" cy="100" r="4" fill="#10b981"/></g></svg>
-              </div>
-            </div>
-            <div class="grid grid-cols-3 gap-3 mt-6">
-              <div class="text-center p-3 rounded-xl border" style="background: var(--glass-bg); border-color: var(--glass-border)"><div class="text-lg font-black gradient-ai">0.8<span class="text-xs" style="color: var(--text-muted)">с</span></div><div class="text-[9px] uppercase tracking-wider font-bold mt-1" style="color: var(--text-muted)" data-i18n="ai_stat_speed">Ответ</div></div>
-              <div class="text-center p-3 rounded-xl border" style="background: var(--glass-bg); border-color: var(--glass-border)"><div class="text-lg font-black gradient-ai">98%</div><div class="text-[9px] uppercase tracking-wider font-bold mt-1" style="color: var(--text-muted)" data-i18n="ai_stat_accuracy">Точность</div></div>
-              <div class="text-center p-3 rounded-xl border" style="background: var(--glass-bg); border-color: var(--glass-border)"><div class="text-lg font-black gradient-ai">24/7</div><div class="text-[9px] uppercase tracking-wider font-bold mt-1" style="color: var(--text-muted)" data-i18n="ai_stat_uptime">Работа</div></div>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      <div class="scroll-reveal" style="transition-delay:0.15s">
-        <div class="rag-demo">
-          <div class="rag-header">
-            <div class="rag-header-left">
-              <div class="rag-avatar"><svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg></div>
-              <div><div class="rag-title">DocSign AI</div><div class="rag-subtitle" data-i18n="ai_rag_sub">RAG • Поиск по базе знаний</div></div>
-            </div>
-            <div class="rag-status"><span class="rag-status-dot"></span><span data-i18n="ai_rag_active">Активен</span></div>
-          </div>
-          <div class="rag-messages" id="ragMessages"></div>
-          <div class="rag-pipeline">
-            <div class="rag-step" data-step="1"><div class="rag-step-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg></div><div class="rag-step-label" data-i18n="ai_step_query">Запрос</div></div>
-            <svg class="rag-step-arrow w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-            <div class="rag-step" data-step="2"><div class="rag-step-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg></div><div class="rag-step-label" data-i18n="ai_step_retrieve">Поиск</div></div>
-            <svg class="rag-step-arrow w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-            <div class="rag-step" data-step="3"><div class="rag-step-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg></div><div class="rag-step-label" data-i18n="ai_step_generate">ИИ</div></div>
-            <svg class="rag-step-arrow w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-            <div class="rag-step" data-step="4"><div class="rag-step-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></div><div class="rag-step-label" data-i18n="ai_step_answer">Ответ</div></div>
-          </div>
-        </div>
-      </div>
-    </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
 
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5 mb-8">
-      <div class="glass rounded-3xl p-6 card-3d card-ai card-accent scroll-reveal group"><div class="card-shine"></div><div class="card-inner"><div class="icon-ai w-12 h-12 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300"><svg class="w-6 h-6" fill="none" stroke="#0891b2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg></div><h3 class="text-base font-bold mb-2" style="color: var(--text-primary)" data-i18n="ai_f1_title">Умный поиск</h3><p class="text-sm leading-relaxed" style="color: var(--text-secondary)" data-i18n="ai_f1_desc">ИИ понимает смысл вопроса, а не просто слова. Находит нужный документ даже если вы не помните точное название.</p></div></div>
-      <div class="glass rounded-3xl p-6 card-3d card-cyan card-accent scroll-reveal group" style="transition-delay:0.1s"><div class="card-shine"></div><div class="card-inner"><div class="icon-cyan w-12 h-12 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300"><svg class="w-6 h-6 text-cyan-600 dark:text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"/></svg></div><h3 class="text-base font-bold mb-2" style="color: var(--text-primary)" data-i18n="ai_f2_title">База знаний</h3><p class="text-sm leading-relaxed" style="color: var(--text-secondary)" data-i18n="ai_f2_desc">Все ваши документы превращаются в единую базу знаний. ИИ отвечает на вопросы, ссылаясь на конкретные файлы.</p></div></div>
-      <div class="glass rounded-3xl p-6 card-3d card-purple card-accent scroll-reveal group" style="transition-delay:0.2s"><div class="card-shine"></div><div class="card-inner"><div class="icon-purple w-12 h-12 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300"><svg class="w-6 h-6 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg></div><h3 class="text-base font-bold mb-2" style="color: var(--text-primary)" data-i18n="ai_f3_title">Генерация ответов</h3><p class="text-sm leading-relaxed" style="color: var(--text-secondary)" data-i18n="ai_f3_desc">ИИ читает документы и формулирует чёткие ответы. Вы получаете суть без необходимости читать сотни страниц.</p></div></div>
-      <div class="glass rounded-3xl p-6 card-3d card-green card-accent scroll-reveal group"><div class="card-shine"></div><div class="card-inner"><div class="icon-green w-12 h-12 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300"><svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg></div><h3 class="text-base font-bold mb-2" style="color: var(--text-primary)" data-i18n="ai_f4_title">Только ваши данные</h3><p class="text-sm leading-relaxed" style="color: var(--text-secondary)" data-i18n="ai_f4_desc">ИИ работает только с документами вашей компании. Никаких утечек — все данные остаются внутри системы.</p></div></div>
-      <div class="glass rounded-3xl p-6 card-3d card-orange card-accent scroll-reveal group" style="transition-delay:0.1s"><div class="card-shine"></div><div class="card-inner"><div class="icon-orange w-12 h-12 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300"><svg class="w-6 h-6 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/></svg></div><h3 class="text-base font-bold mb-2" style="color: var(--text-primary)" data-i18n="ai_f5_title">Анализ документов</h3><p class="text-sm leading-relaxed" style="color: var(--text-secondary)" data-i18n="ai_f5_desc">ИИ автоматически извлекает ключевые данные: суммы, даты, стороны договора. Экономит часы ручной работы.</p></div></div>
-      <div class="glass rounded-3xl p-6 card-3d card-pink card-accent scroll-reveal group" style="transition-delay:0.2s"><div class="card-shine"></div><div class="card-inner"><div class="icon-pink w-12 h-12 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300"><svg class="w-6 h-6 text-pink-600 dark:text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg></div><h3 class="text-base font-bold mb-2" style="color: var(--text-primary)" data-i18n="ai_f6_title">Диалог на вашем языке</h3><p class="text-sm leading-relaxed" style="color: var(--text-secondary)" data-i18n="ai_f6_desc">Общайтесь с ИИ на русском, таджикском или английском. Он понимает контекст и отвечает естественно.</p></div></div>
-    </div>
-
-    <div class="glass rounded-3xl p-6 md:p-8 card-3d card-ai card-accent scroll-reveal relative overflow-hidden">
-      <div class="card-shine"></div>
-      <div class="card-inner">
-        <div class="absolute -top-20 -right-20 w-60 h-60 rounded-full" style="background: radial-gradient(circle, rgba(6,182,212,0.1) 0%, transparent 70%); pointer-events:none;"></div>
-        <div class="absolute -bottom-20 -left-20 w-60 h-60 rounded-full" style="background: radial-gradient(circle, rgba(139,92,246,0.1) 0%, transparent 70%); pointer-events:none;"></div>
-        <div class="relative flex flex-col md:flex-row items-center justify-between gap-6">
-          <div class="flex items-center gap-5">
-            <div class="icon-ai w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0"><svg class="w-7 h-7" fill="none" stroke="#0891b2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg></div>
-            <div><h3 class="text-xl md:text-2xl font-black mb-1" style="color: var(--text-primary)" data-i18n="ai_cta_title">Попробуйте ИИ прямо сейчас</h3><p class="text-sm" style="color: var(--text-secondary)" data-i18n="ai_cta_desc">Задайте вопрос по вашим документам — получите ответ за секунды со ссылками на источники.</p></div>
-          </div>
-          <div class="flex flex-wrap gap-3">
-            <a href="/login" class="btn-primary px-6 py-3 text-sm font-semibold flex items-center gap-2 whitespace-nowrap"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg><span data-i18n="ai_cta_btn">Запустить ИИ</span></a>
-            <a href="#features" class="btn-outline px-6 py-3 text-sm font-semibold flex items-center gap-2 whitespace-nowrap"><span data-i18n="ai_cta_learn">Узнать больше</span></a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+<!-- ===================== CHAT SECTION ===================== -->
+<section id="chat" class="relative py-24 overflow-hidden">
+<div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="text-center mb-14 scroll-reveal">
+<span class="inline-flex items-center gap-2 text-xs font-semibold text-indigo-500 dark:text-indigo-400 uppercase tracking-widest mb-4">
+<span class="w-8 h-px bg-indigo-500 dark:bg-indigo-400"></span>
+<span data-i18n="chat_label">Общение</span>
+<span class="w-8 h-px bg-indigo-500 dark:bg-indigo-400"></span>
+</span>
+<h2 class="text-3xl sm:text-4xl md:text-5xl font-black mb-4 tracking-tight" style="color: var(--text-primary)" data-i18n="chat_title">Мгновенный обмен сообщениями</h2>
+<p class="max-w-2xl mx-auto text-sm sm:text-base" style="color: var(--text-secondary)" data-i18n="chat_subtitle">Общайтесь с коллегами в реальном времени. Отправляйте файлы, стикеры и голосовые сообщения — всё в одном месте.</p>
+</div>
+<div class="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+<!-- Chat Preview -->
+<div class="scroll-reveal order-2 lg:order-1">
+<div class="chat-preview-wrap">
+<div class="chat-top-bar">
+<div class="chat-avatar">MU</div>
+<div class="flex-1 min-w-0">
+<div class="chat-name">Muhammad</div>
+<div class="chat-status" data-i18n="chat_status_recent">был(а) недавно</div>
+</div>
+<div class="chat-actions">
+<button class="chat-action-btn" title="Аудиозвонок"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 0l2.257-1.13a1 1 0 01-.502-1.21l-1.498-4.493A1 1 0 0114.72 3H17a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5z"/></svg></button>
+<button class="chat-action-btn" title="Видеозвонок"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg></button>
+<button class="chat-action-btn danger" title="Удалить"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>
+</div>
+</div>
+<div class="chat-body">
+<div class="chat-date-divider"><span data-i18n="chat_date_oct">16 октября</span></div>
+<div class="chat-msg theirs">
+<div class="chat-bubble">
+<div data-i18n="chat_msg_1">Привет! Как дела с проектом?</div>
+<div class="chat-time">13:10</div>
+</div>
+</div>
+<div class="chat-msg mine">
+<div class="chat-bubble">
+<div data-i18n="chat_msg_2">Привет! Всё отлично, почти закончил 👍</div>
+<div class="chat-time">13:15 ✓✓</div>
+</div>
+</div>
+<div class="chat-msg theirs">
+<div class="chat-bubble">
+<div class="chat-file-bubble">
+<div class="chat-file-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></div>
+<div class="min-w-0 flex-1">
+<div class="chat-file-name">Документ.pdf</div>
+<div class="chat-file-size">2.4 MB</div>
+</div>
+</div>
+<div class="chat-time">13:18</div>
+</div>
+</div>
+<div class="chat-msg mine">
+<div class="chat-bubble">
+<div data-i18n="chat_msg_3">Получил, сейчас посмотрю!</div>
+<div class="chat-time">13:20 ✓</div>
+</div>
+</div>
+</div>
+<div class="chat-input-bar">
+<div class="chat-input-pill">
+<span class="chat-input-icon"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></span>
+<input type="text" readonly placeholder="Сообщение" data-i18n-placeholder="chat_input_placeholder">
+<span class="chat-input-icon"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg></span>
+</div>
+<button class="chat-send-btn" title="Отправить"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg></button>
+</div>
+</div>
+</div>
+<!-- Features List -->
+<div class="scroll-reveal order-1 lg:order-2" style="transition-delay:0.15s">
+<div class="space-y-5">
+<div class="flex items-start gap-4 group">
+<div class="icon-blue w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
+<svg class="w-5 h-5 text-blue-500 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+</div>
+<div>
+<div class="text-sm font-bold mb-1" style="color: var(--text-primary)" data-i18n="chat_f1_title">Мгновенная доставка</div>
+<div class="text-xs leading-relaxed" style="color: var(--text-secondary)" data-i18n="chat_f1_desc">Сообщения доставляются за доли секунды. Статус прочтения показывает, когда собеседник увидел сообщение.</div>
+</div>
+</div>
+<div class="flex items-start gap-4 group">
+<div class="icon-purple w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
+<svg class="w-5 h-5 text-purple-500 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>
+</div>
+<div>
+<div class="text-sm font-bold mb-1" style="color: var(--text-primary)" data-i18n="chat_f2_title">Файлы и медиа</div>
+<div class="text-xs leading-relaxed" style="color: var(--text-secondary)" data-i18n="chat_f2_desc">Отправляйте документы, изображения, аудио и видео. Поддержка файлов до 50MB.</div>
+</div>
+</div>
+<div class="flex items-start gap-4 group">
+<div class="icon-green w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
+<svg class="w-5 h-5 text-green-500 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>
+</div>
+<div>
+<div class="text-sm font-bold mb-1" style="color: var(--text-primary)" data-i18n="chat_f3_title">Голосовые сообщения</div>
+<div class="text-xs leading-relaxed" style="color: var(--text-secondary)" data-i18n="chat_f3_desc">Записывайте и отправляйте голосовые сообщения одним нажатием. Удобно, когда нет времени печатать.</div>
+</div>
+</div>
+<div class="flex items-start gap-4 group">
+<div class="icon-orange w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
+<svg class="w-5 h-5 text-orange-500 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+</div>
+<div>
+<div class="text-sm font-bold mb-1" style="color: var(--text-primary)" data-i18n="chat_f4_title">Стикеры и эмодзи</div>
+<div class="text-xs leading-relaxed" style="color: var(--text-secondary)" data-i18n="chat_f4_desc">Большая коллекция стикеров и эмодзи для выражения эмоций. Делайте общение ярче!</div>
+</div>
+</div>
+<div class="flex items-start gap-4 group">
+<div class="icon-pink w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
+<svg class="w-5 h-5 text-pink-500 dark:text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+</div>
+<div>
+<div class="text-sm font-bold mb-1" style="color: var(--text-primary)" data-i18n="chat_f5_title">История переписки</div>
+<div class="text-xs leading-relaxed" style="color: var(--text-secondary)" data-i18n="chat_f5_desc">Вся история сообщений сохраняется. Найдите нужное сообщение за секунды с помощью поиска.</div>
+</div>
+</div>
+</div>
+<div class="mt-8 flex flex-wrap gap-3">
+<a href="/login" class="btn-primary px-6 py-3 text-sm font-semibold flex items-center gap-2">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+<span data-i18n="chat_cta">Начать общение</span>
+</a>
+<a href="#features" class="btn-outline px-6 py-3 text-sm font-semibold flex items-center gap-2">
+<span data-i18n="chat_learn">Подробнее</span>
+</a>
+</div>
+</div>
+</div>
+</div>
 </section>
 
 <!-- Analytics Section -->
 <section id="analytics" class="relative py-24 overflow-hidden">
-  <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="text-center mb-14 scroll-reveal">
-      <span class="inline-flex items-center gap-2 text-xs font-semibold text-blue-500 dark:text-blue-400 uppercase tracking-widest mb-4"><span class="w-8 h-px bg-blue-500 dark:bg-blue-400"></span><span data-i18n="analytics_label">Аналитика</span><span class="w-8 h-px bg-blue-500 dark:bg-blue-400"></span></span>
-      <h2 class="text-3xl sm:text-4xl md:text-5xl font-black mb-4 tracking-tight" style="color: var(--text-primary)" data-i18n="analytics_title">Всё под контролем</h2>
-      <p class="max-w-2xl mx-auto text-sm sm:text-base" style="color: var(--text-secondary)" data-i18n="analytics_subtitle">Следите за регистрациями, документами и активностью в реальном времени</p>
-    </div>
-
-    <div class="grid md:grid-cols-3 gap-5 mb-6">
-      <div class="glass rounded-3xl p-6 card-3d card-blue card-accent scroll-reveal"><div class="card-shine"></div><div class="card-inner">
-        <div class="flex items-start justify-between mb-5"><div class="icon-blue w-11 h-11 rounded-xl flex items-center justify-center"><svg class="w-5 h-5 text-blue-500 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg></div><span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[10px] font-bold text-emerald-600 dark:text-emerald-400"><span class="pulse-dot" style="background:#10b981;box-shadow:0 0 8px #10b981;width:5px;height:5px;"></span>Live</span></div>
-        <div class="text-[11px] uppercase tracking-wider font-bold mb-1.5" style="color: var(--text-muted)" data-i18n="analysis_reg_title">Регистрации</div>
-        <div class="stat-num gradient-text"><span class="counter" data-target="{{ \App\Models\User::count() }}">0</span></div>
-        <div class="text-xs mb-5" style="color: var(--text-muted)" data-i18n="analysis_reg_desc">пользователей зарегистрировано</div>
-        <div class="flex items-end gap-1 h-12"><div class="flex-1 bg-blue-500/20 rounded-sm mini-chart-bar" style="height: 30%"></div><div class="flex-1 bg-blue-500/30 rounded-sm mini-chart-bar" style="height: 50%"></div><div class="flex-1 bg-blue-500/25 rounded-sm mini-chart-bar" style="height: 40%"></div><div class="flex-1 bg-blue-500/40 rounded-sm mini-chart-bar" style="height: 65%"></div><div class="flex-1 bg-blue-500/35 rounded-sm mini-chart-bar" style="height: 55%"></div><div class="flex-1 bg-blue-500/50 rounded-sm mini-chart-bar" style="height: 80%"></div><div class="flex-1 bg-blue-500/70 rounded-sm mini-chart-bar" style="height: 100%"></div></div>
-      </div></div>
-
-      <div class="glass rounded-3xl p-6 card-3d card-purple card-accent scroll-reveal" style="transition-delay:0.1s"><div class="card-shine"></div><div class="card-inner">
-        <div class="flex items-start justify-between mb-5"><div class="icon-purple w-11 h-11 rounded-xl flex items-center justify-center"><svg class="w-5 h-5 text-purple-500 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></div><span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-purple-500/10 border border-purple-500/20 text-[10px] font-bold text-purple-600 dark:text-purple-400"><span class="pulse-dot" style="background:#8b5cf6;box-shadow:0 0 8px #8b5cf6;width:5px;height:5px;"></span>Live</span></div>
-        <div class="text-[11px] uppercase tracking-wider font-bold mb-1.5" style="color: var(--text-muted)" data-i18n="analysis_doc_title">Документы</div>
-        <div class="stat-num gradient-text"><span class="counter" data-target="{{ \App\Models\Document::count() }}">0</span></div>
-        <div class="text-xs mb-5" style="color: var(--text-muted)" data-i18n="analysis_doc_desc">документов отправлено</div>
-        <svg viewBox="0 0 200 50" class="w-full h-12" preserveAspectRatio="none"><defs><linearGradient id="docGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#8b5cf6" stop-opacity="0.4"/><stop offset="100%" stop-color="#8b5cf6" stop-opacity="0"/></linearGradient></defs><path d="M 0 35 L 25 28 L 50 32 L 75 20 L 100 25 L 125 15 L 150 18 L 175 10 L 200 5 L 200 50 L 0 50 Z" fill="url(#docGrad)"/><path d="M 0 35 L 25 28 L 50 32 L 75 20 L 100 25 L 125 15 L 150 18 L 175 10 L 200 5" stroke="#8b5cf6" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </div></div>
-
-      <div class="glass rounded-3xl p-6 card-3d card-green card-accent scroll-reveal" style="transition-delay:0.2s"><div class="card-shine"></div><div class="card-inner">
-        <div class="flex items-start justify-between mb-5"><div class="icon-green w-11 h-11 rounded-xl flex items-center justify-center"><svg class="w-5 h-5 text-green-500 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg></div><span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-green-500/10 border border-green-500/20 text-[10px] font-bold text-green-600 dark:text-green-400"><span class="pulse-dot" style="background:#10b981;box-shadow:0 0 8px #10b981;width:5px;height:5px;"></span>Live</span></div>
-        <div class="text-[11px] uppercase tracking-wider font-bold mb-1.5" style="color: var(--text-muted)" data-i18n="analysis_activity_title">Активность</div>
-        <div class="stat-num mb-1" style="color: var(--text-primary)"><span class="counter" data-target="100">0</span>%</div>
-        <div class="text-xs mb-5" style="color: var(--text-muted)" data-i18n="analysis_activity_desc">документов обработано успешно</div>
-        <div class="relative flex items-center justify-center h-12"><svg viewBox="0 0 36 36" class="w-16 h-16 -rotate-90"><circle cx="18" cy="18" r="14" fill="none" stroke="rgba(16,185,129,0.15)" stroke-width="3"/><circle cx="18" cy="18" r="14" fill="none" stroke="#10b981" stroke-width="3" stroke-dasharray="88 100" stroke-linecap="round"/></svg><div class="absolute text-[10px] font-bold text-green-600 dark:text-green-400">100%</div></div>
-      </div></div>
-    </div>
-
-    <div class="glass rounded-3xl p-6 md:p-8 card-3d scroll-reveal mb-6"><div class="card-shine"></div><div class="card-inner">
-      <div class="donut-header-bar rounded-2xl px-5 py-3 mb-8 flex items-center justify-between flex-wrap gap-3">
-        <div class="flex items-center gap-3"><span class="text-[11px] uppercase tracking-[0.2em] font-bold" style="color: var(--text-muted)" data-i18n="donut_period">В МЕСЯЦ</span><span class="text-[11px]" style="color: var(--text-muted)">:</span><span class="text-2xl font-black counter" style="color: var(--text-primary)" data-target="54">0</span></div>
-        <div class="flex items-center gap-2 text-xs" style="color: var(--text-muted)"><span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span><span data-i18n="donut_live">Обновлено только что</span></div>
-      </div>
-      <div class="flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-16">
-        <div class="relative">
-          <svg id="donutChart" viewBox="0 0 200 200" class="w-64 h-64 md:w-72 md:h-72 -rotate-90"><circle cx="100" cy="100" r="80" fill="none" stroke="rgba(128,128,128,0.1)" stroke-width="22"/><circle class="donut-segment" cx="100" cy="100" r="80" fill="none" stroke="#3b82f6" stroke-width="22" stroke-linecap="round" data-percent="35"/><circle class="donut-segment" cx="100" cy="100" r="80" fill="none" stroke="#8b5cf6" stroke-width="22" stroke-linecap="round" data-percent="28"/><circle class="donut-segment" cx="100" cy="100" r="80" fill="none" stroke="#10b981" stroke-width="22" stroke-linecap="round" data-percent="22"/><circle class="donut-segment" cx="100" cy="100" r="80" fill="none" stroke="#f59e0b" stroke-width="22" stroke-linecap="round" data-percent="15"/></svg>
-          <div class="absolute inset-0 flex flex-col items-center justify-center donut-center-text"><span class="text-[11px] uppercase tracking-[0.2em] font-bold" style="color: var(--text-muted)" data-i18n="donut_center_label">Документы</span><span class="text-3xl font-black mt-1" style="color: var(--text-primary)">54</span><span class="text-[10px] mt-0.5" style="color: var(--text-muted)" data-i18n="donut_center_sub">всего</span></div>
-        </div>
-        <div class="flex flex-col gap-3 w-full max-w-xs">
-          <div class="legend-item flex items-center gap-3 p-3 rounded-xl border" style="background: var(--glass-bg);"><span class="w-3.5 h-3.5 rounded-full bg-blue-500 shadow-lg shadow-blue-500/30"></span><span class="flex-1 text-sm font-medium" style="color: var(--text-secondary)" data-i18n="donut_leg1">Входящие</span><span class="text-sm font-bold" style="color: var(--text-primary)">19</span><span class="text-xs" style="color: var(--text-muted)">35%</span></div>
-          <div class="legend-item flex items-center gap-3 p-3 rounded-xl border" style="background: var(--glass-bg);"><span class="w-3.5 h-3.5 rounded-full bg-purple-500 shadow-lg shadow-purple-500/30"></span><span class="flex-1 text-sm font-medium" style="color: var(--text-secondary)" data-i18n="donut_leg2">Отправленные</span><span class="text-sm font-bold" style="color: var(--text-primary)">15</span><span class="text-xs" style="color: var(--text-muted)">28%</span></div>
-          <div class="legend-item flex items-center gap-3 p-3 rounded-xl border" style="background: var(--glass-bg);"><span class="w-3.5 h-3.5 rounded-full bg-emerald-500 shadow-lg shadow-emerald-500/30"></span><span class="flex-1 text-sm font-medium" style="color: var(--text-secondary)" data-i18n="donut_leg3">Подписанные</span><span class="text-sm font-bold" style="color: var(--text-primary)">12</span><span class="text-xs" style="color: var(--text-muted)">22%</span></div>
-          <div class="legend-item flex items-center gap-3 p-3 rounded-xl border" style="background: var(--glass-bg);"><span class="w-3.5 h-3.5 rounded-full bg-amber-500 shadow-lg shadow-amber-500/30"></span><span class="flex-1 text-sm font-medium" style="color: var(--text-secondary)" data-i18n="donut_leg4">В очереди</span><span class="text-sm font-bold" style="color: var(--text-primary)">8</span><span class="text-xs" style="color: var(--text-muted)">15%</span></div>
-        </div>
-      </div>
-    </div></div>
-
-    <div class="glass rounded-3xl p-6 card-3d scroll-reveal"><div class="card-shine"></div><div class="card-inner">
-      <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
-        <div><div class="text-[11px] uppercase tracking-wider font-bold mb-1" style="color: var(--text-muted)" data-i18n="chart_label">Обзор за месяц</div><div class="text-base font-bold" style="color: var(--text-primary)" data-i18n="chart_title">Динамика работы системы</div></div>
-        <div class="flex items-center gap-4 text-xs"><div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-blue-500"></span><span style="color: var(--text-muted)" data-i18n="chart_reg">Регистрации</span></div><div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-purple-500"></span><span style="color: var(--text-muted)" data-i18n="chart_doc">Документы</span></div></div>
-      </div>
-      <div id="mainChart" class="w-full h-64 sm:h-80"></div>
-    </div></div>
-  </div>
+<div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="text-center mb-14 scroll-reveal">
+<span class="inline-flex items-center gap-2 text-xs font-semibold text-blue-500 dark:text-blue-400 uppercase tracking-widest mb-4"><span class="w-8 h-px bg-blue-500 dark:bg-blue-400"></span><span data-i18n="analytics_label">Аналитика</span><span class="w-8 h-px bg-blue-500 dark:bg-blue-400"></span></span>
+<h2 class="text-3xl sm:text-4xl md:text-5xl font-black mb-4 tracking-tight" style="color: var(--text-primary)" data-i18n="analytics_title">Всё под контролем</h2>
+<p class="max-w-2xl mx-auto text-sm sm:text-base" style="color: var(--text-secondary)" data-i18n="analytics_subtitle">Следите за регистрациями, документами и активностью в реальном времени</p>
+</div>
+<div class="grid md:grid-cols-3 gap-5 mb-6">
+<div class="glass rounded-3xl p-6 card-3d card-blue card-accent scroll-reveal"><div class="card-shine"></div><div class="card-inner">
+<div class="flex items-start justify-between mb-5"><div class="icon-blue w-11 h-11 rounded-xl flex items-center justify-center"><svg class="w-5 h-5 text-blue-500 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg></div><span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[10px] font-bold text-emerald-600 dark:text-emerald-400"><span class="pulse-dot" style="background:#10b981;box-shadow:0 0 8px #10b981;width:5px;height:5px;"></span>Live</span></div>
+<div class="text-[11px] uppercase tracking-wider font-bold mb-1.5" style="color: var(--text-muted)" data-i18n="analysis_reg_title">Регистрации</div>
+<div class="stat-num gradient-text"><span class="counter" data-target="{{ \App\Models\User::count() }}">0</span></div>
+<div class="text-xs mb-5" style="color: var(--text-muted)" data-i18n="analysis_reg_desc">пользователей зарегистрировано</div>
+<div class="flex items-end gap-1 h-12"><div class="flex-1 bg-blue-500/20 rounded-sm mini-chart-bar" style="height: 30%"></div><div class="flex-1 bg-blue-500/30 rounded-sm mini-chart-bar" style="height: 50%"></div><div class="flex-1 bg-blue-500/25 rounded-sm mini-chart-bar" style="height: 40%"></div><div class="flex-1 bg-blue-500/40 rounded-sm mini-chart-bar" style="height: 65%"></div><div class="flex-1 bg-blue-500/35 rounded-sm mini-chart-bar" style="height: 55%"></div><div class="flex-1 bg-blue-500/50 rounded-sm mini-chart-bar" style="height: 80%"></div><div class="flex-1 bg-blue-500/70 rounded-sm mini-chart-bar" style="height: 100%"></div></div>
+</div></div>
+<div class="glass rounded-3xl p-6 card-3d card-purple card-accent scroll-reveal" style="transition-delay:0.1s"><div class="card-shine"></div><div class="card-inner">
+<div class="flex items-start justify-between mb-5"><div class="icon-purple w-11 h-11 rounded-xl flex items-center justify-center"><svg class="w-5 h-5 text-purple-500 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></div><span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-purple-500/10 border border-purple-500/20 text-[10px] font-bold text-purple-600 dark:text-purple-400"><span class="pulse-dot" style="background:#8b5cf6;box-shadow:0 0 8px #8b5cf6;width:5px;height:5px;"></span>Live</span></div>
+<div class="text-[11px] uppercase tracking-wider font-bold mb-1.5" style="color: var(--text-muted)" data-i18n="analysis_doc_title">Документы</div>
+<div class="stat-num gradient-text"><span class="counter" data-target="{{ \App\Models\Document::count() }}">0</span></div>
+<div class="text-xs mb-5" style="color: var(--text-muted)" data-i18n="analysis_doc_desc">документов отправлено</div>
+<svg viewBox="0 0 200 50" class="w-full h-12" preserveAspectRatio="none"><defs><linearGradient id="docGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#8b5cf6" stop-opacity="0.4"/><stop offset="100%" stop-color="#8b5cf6" stop-opacity="0"/></linearGradient></defs><path d="M 0 35 L 25 28 L 50 32 L 75 20 L 100 25 L 125 15 L 150 18 L 175 10 L 200 5 L 200 50 L 0 50 Z" fill="url(#docGrad)"/><path d="M 0 35 L 25 28 L 50 32 L 75 20 L 100 25 L 125 15 L 150 18 L 175 10 L 200 5" stroke="#8b5cf6" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</div></div>
+<div class="glass rounded-3xl p-6 card-3d card-green card-accent scroll-reveal" style="transition-delay:0.2s"><div class="card-shine"></div><div class="card-inner">
+<div class="flex items-start justify-between mb-5"><div class="icon-green w-11 h-11 rounded-xl flex items-center justify-center"><svg class="w-5 h-5 text-green-500 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg></div><span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-green-500/10 border border-green-500/20 text-[10px] font-bold text-green-600 dark:text-green-400"><span class="pulse-dot" style="background:#10b981;box-shadow:0 0 8px #10b981;width:5px;height:5px;"></span>Live</span></div>
+<div class="text-[11px] uppercase tracking-wider font-bold mb-1.5" style="color: var(--text-muted)" data-i18n="analysis_activity_title">Активность</div>
+<div class="stat-num mb-1" style="color: var(--text-primary)"><span class="counter" data-target="100">0</span>%</div>
+<div class="text-xs mb-5" style="color: var(--text-muted)" data-i18n="analysis_activity_desc">документов обработано успешно</div>
+<div class="relative flex items-center justify-center h-12"><svg viewBox="0 0 36 36" class="w-16 h-16 -rotate-90"><circle cx="18" cy="18" r="14" fill="none" stroke="rgba(16,185,129,0.15)" stroke-width="3"/><circle cx="18" cy="18" r="14" fill="none" stroke="#10b981" stroke-width="3" stroke-dasharray="88 100" stroke-linecap="round"/></svg><div class="absolute text-[10px] font-bold text-green-600 dark:text-green-400">100%</div></div>
+</div></div>
+</div>
+<div class="glass rounded-3xl p-6 md:p-8 card-3d scroll-reveal mb-6"><div class="card-shine"></div><div class="card-inner">
+<div class="donut-header-bar rounded-2xl px-5 py-3 mb-8 flex items-center justify-between flex-wrap gap-3">
+<div class="flex items-center gap-3"><span class="text-[11px] uppercase tracking-[0.2em] font-bold" style="color: var(--text-muted)" data-i18n="donut_period">В МЕСЯЦ</span><span class="text-[11px]" style="color: var(--text-muted)">:</span><span class="text-2xl font-black counter" style="color: var(--text-primary)" data-target="54">0</span></div>
+<div class="flex items-center gap-2 text-xs" style="color: var(--text-muted)"><span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span><span data-i18n="donut_live">Обновлено только что</span></div>
+</div>
+<div class="flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-16">
+<div class="relative">
+<svg id="donutChart" viewBox="0 0 200 200" class="w-64 h-64 md:w-72 md:h-72 -rotate-90"><circle cx="100" cy="100" r="80" fill="none" stroke="rgba(128,128,128,0.1)" stroke-width="22"/><circle class="donut-segment" cx="100" cy="100" r="80" fill="none" stroke="#3b82f6" stroke-width="22" stroke-linecap="round" data-percent="35"/><circle class="donut-segment" cx="100" cy="100" r="80" fill="none" stroke="#8b5cf6" stroke-width="22" stroke-linecap="round" data-percent="28"/><circle class="donut-segment" cx="100" cy="100" r="80" fill="none" stroke="#10b981" stroke-width="22" stroke-linecap="round" data-percent="22"/><circle class="donut-segment" cx="100" cy="100" r="80" fill="none" stroke="#f59e0b" stroke-width="22" stroke-linecap="round" data-percent="15"/></svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center donut-center-text"><span class="text-[11px] uppercase tracking-[0.2em] font-bold" style="color: var(--text-muted)" data-i18n="donut_center_label">Документы</span><span class="text-3xl font-black mt-1" style="color: var(--text-primary)">54</span><span class="text-[10px] mt-0.5" style="color: var(--text-muted)" data-i18n="donut_center_sub">всего</span></div>
+</div>
+<div class="flex flex-col gap-3 w-full max-w-xs">
+<div class="legend-item flex items-center gap-3 p-3 rounded-xl border" style="background: var(--glass-bg);"><span class="w-3.5 h-3.5 rounded-full bg-blue-500 shadow-lg shadow-blue-500/30"></span><span class="flex-1 text-sm font-medium" style="color: var(--text-secondary)" data-i18n="donut_leg1">Входящие</span><span class="text-sm font-bold" style="color: var(--text-primary)">19</span><span class="text-xs" style="color: var(--text-muted)">35%</span></div>
+<div class="legend-item flex items-center gap-3 p-3 rounded-xl border" style="background: var(--glass-bg);"><span class="w-3.5 h-3.5 rounded-full bg-purple-500 shadow-lg shadow-purple-500/30"></span><span class="flex-1 text-sm font-medium" style="color: var(--text-secondary)" data-i18n="donut_leg2">Отправленные</span><span class="text-sm font-bold" style="color: var(--text-primary)">15</span><span class="text-xs" style="color: var(--text-muted)">28%</span></div>
+<div class="legend-item flex items-center gap-3 p-3 rounded-xl border" style="background: var(--glass-bg);"><span class="w-3.5 h-3.5 rounded-full bg-emerald-500 shadow-lg shadow-emerald-500/30"></span><span class="flex-1 text-sm font-medium" style="color: var(--text-secondary)" data-i18n="donut_leg3">Подписанные</span><span class="text-sm font-bold" style="color: var(--text-primary)">12</span><span class="text-xs" style="color: var(--text-muted)">22%</span></div>
+<div class="legend-item flex items-center gap-3 p-3 rounded-xl border" style="background: var(--glass-bg);"><span class="w-3.5 h-3.5 rounded-full bg-amber-500 shadow-lg shadow-amber-500/30"></span><span class="flex-1 text-sm font-medium" style="color: var(--text-secondary)" data-i18n="donut_leg4">В очереди</span><span class="text-sm font-bold" style="color: var(--text-primary)">8</span><span class="text-xs" style="color: var(--text-muted)">15%</span></div>
+</div>
+</div>
+</div></div>
+<div class="glass rounded-3xl p-6 card-3d scroll-reveal"><div class="card-shine"></div><div class="card-inner">
+<div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+<div><div class="text-[11px] uppercase tracking-wider font-bold mb-1" style="color: var(--text-muted)" data-i18n="chart_label">Обзор за месяц</div><div class="text-base font-bold" style="color: var(--text-primary)" data-i18n="chart_title">Динамика работы системы</div></div>
+<div class="flex items-center gap-4 text-xs"><div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-blue-500"></span><span style="color: var(--text-muted)" data-i18n="chart_reg">Регистрации</span></div><div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-purple-500"></span><span style="color: var(--text-muted)" data-i18n="chart_doc">Документы</span></div></div>
+</div>
+<div id="mainChart" class="w-full h-64 sm:h-80"></div>
+</div></div>
+</div>
 </section>
 
 <!-- Features Section -->
 <section id="features" class="relative py-24 overflow-hidden">
-  <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="text-center mb-14 scroll-reveal">
-      <span class="inline-flex items-center gap-2 text-xs font-semibold text-purple-500 dark:text-purple-400 uppercase tracking-widest mb-4"><span class="w-8 h-px bg-purple-500 dark:bg-purple-400"></span><span data-i18n="features_label">Возможности</span><span class="w-8 h-px bg-purple-500 dark:bg-purple-400"></span></span>
-      <h2 class="text-3xl sm:text-4xl md:text-5xl font-black mb-4 tracking-tight" style="color: var(--text-primary)" data-i18n="features_title">Всё, что вам нужно</h2>
-      <p class="max-w-2xl mx-auto text-sm sm:text-base" style="color: var(--text-secondary)" data-i18n="features_subtitle">Простые инструменты для сложной работы с документами</p>
-    </div>
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-      <div class="glass rounded-3xl p-6 card-3d card-blue card-accent scroll-reveal group"><div class="card-shine"></div><div class="card-inner"><div class="icon-blue w-12 h-12 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300"><svg class="w-6 h-6 text-blue-500 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg></div><h3 class="text-base font-bold mb-2" style="color: var(--text-primary)" data-i18n="f1_title">Электронная подпись</h3><p class="text-sm leading-relaxed" style="color: var(--text-secondary)" data-i18n="f1_desc">Подписывайте документы одним кликом. Каждый файл получает уникальный код — его можно проверить за секунду через телефон.</p></div></div>
-      <div class="glass rounded-3xl p-6 card-3d card-purple card-accent scroll-reveal group" style="transition-delay:0.1s"><div class="card-shine"></div><div class="card-inner"><div class="icon-purple w-12 h-12 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300"><svg class="w-6 h-6 text-purple-500 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg></div><h3 class="text-base font-bold mb-2" style="color: var(--text-primary)" data-i18n="f2_title">Роли и права</h3><p class="text-sm leading-relaxed" style="color: var(--text-secondary)" data-i18n="f2_desc">Каждый сотрудник видит только то, что ему нужно. Директор, менеджер, работник — у каждого свои возможности.</p></div></div>
-      <div class="glass rounded-3xl p-6 card-3d card-green card-accent scroll-reveal group" style="transition-delay:0.2s"><div class="card-shine"></div><div class="card-inner"><div class="icon-green w-12 h-12 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300"><svg class="w-6 h-6 text-green-500 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"/></svg></div><h3 class="text-base font-bold mb-2" style="color: var(--text-primary)" data-i18n="f3_title">Надёжное хранение</h3><p class="text-sm leading-relaxed" style="color: var(--text-secondary)" data-i18n="f3_desc">Все документы сохраняются в защищённом хранилище. Ничего не потеряется — история действий всегда под рукой.</p></div></div>
-      <div class="glass rounded-3xl p-6 card-3d card-orange card-accent scroll-reveal group"><div class="card-shine"></div><div class="card-inner"><div class="icon-orange w-12 h-12 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300"><svg class="w-6 h-6 text-orange-500 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg></div><h3 class="text-base font-bold mb-2" style="color: var(--text-primary)" data-i18n="f4_title">Умный анализ</h3><p class="text-sm leading-relaxed" style="color: var(--text-secondary)" data-i18n="f4_desc">Система сама считает, сколько документов обработано, кто подписал, а кто ещё нет. Вся статистика — в одном месте.</p></div></div>
-      <div class="glass rounded-3xl p-6 card-3d card-pink card-accent scroll-reveal group" style="transition-delay:0.1s"><div class="card-shine"></div><div class="card-inner"><div class="icon-pink w-12 h-12 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300"><svg class="w-6 h-6 text-pink-500 dark:text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg></div><h3 class="text-base font-bold mb-2" style="color: var(--text-primary)" data-i18n="f5_title">Все форматы</h3><p class="text-sm leading-relaxed" style="color: var(--text-secondary)" data-i18n="f5_desc">Работайте с PDF, Word и Excel. Подпись и печать автоматически добавляются в документ — форматирование сохраняется.</p></div></div>
-      <div class="glass rounded-3xl p-6 card-3d card-indigo card-accent scroll-reveal group" style="transition-delay:0.2s"><div class="card-shine"></div><div class="card-inner"><div class="icon-indigo w-12 h-12 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300"><svg class="w-6 h-6 text-indigo-500 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg></div><h3 class="text-base font-bold mb-2" style="color: var(--text-primary)" data-i18n="f6_title">Удобный дизайн</h3><p class="text-sm leading-relaxed" style="color: var(--text-secondary)" data-i18n="f6_desc">Тёмная тема бережёт глаза. Всё на своих местах — разобраться сможет каждый, даже без опыта работы с такими системами.</p></div></div>
-    </div>
-  </div>
+<div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="text-center mb-14 scroll-reveal">
+<span class="inline-flex items-center gap-2 text-xs font-semibold text-purple-500 dark:text-purple-400 uppercase tracking-widest mb-4"><span class="w-8 h-px bg-purple-500 dark:bg-purple-400"></span><span data-i18n="features_label">Возможности</span><span class="w-8 h-px bg-purple-500 dark:bg-purple-400"></span></span>
+<h2 class="text-3xl sm:text-4xl md:text-5xl font-black mb-4 tracking-tight" style="color: var(--text-primary)" data-i18n="features_title">Всё, что вам нужно</h2>
+<p class="max-w-2xl mx-auto text-sm sm:text-base" style="color: var(--text-secondary)" data-i18n="features_subtitle">Простые инструменты для сложной работы с документами</p>
+</div>
+<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+<div class="glass rounded-3xl p-6 card-3d card-blue card-accent scroll-reveal group"><div class="card-shine"></div><div class="card-inner"><div class="icon-blue w-12 h-12 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300"><svg class="w-6 h-6 text-blue-500 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg></div><h3 class="text-base font-bold mb-2" style="color: var(--text-primary)" data-i18n="f1_title">Электронная подпись</h3><p class="text-sm leading-relaxed" style="color: var(--text-secondary)" data-i18n="f1_desc">Подписывайте документы одним кликом. Каждый файл получает уникальный код — его можно проверить за секунду через телефон.</p></div></div>
+<div class="glass rounded-3xl p-6 card-3d card-purple card-accent scroll-reveal group" style="transition-delay:0.1s"><div class="card-shine"></div><div class="card-inner"><div class="icon-purple w-12 h-12 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300"><svg class="w-6 h-6 text-purple-500 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg></div><h3 class="text-base font-bold mb-2" style="color: var(--text-primary)" data-i18n="f2_title">Роли и права</h3><p class="text-sm leading-relaxed" style="color: var(--text-secondary)" data-i18n="f2_desc">Каждый сотрудник видит только то, что ему нужно. Директор, менеджер, работник — у каждого свои возможности.</p></div></div>
+<div class="glass rounded-3xl p-6 card-3d card-green card-accent scroll-reveal group" style="transition-delay:0.2s"><div class="card-shine"></div><div class="card-inner"><div class="icon-green w-12 h-12 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300"><svg class="w-6 h-6 text-green-500 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"/></svg></div><h3 class="text-base font-bold mb-2" style="color: var(--text-primary)" data-i18n="f3_title">Надёжное хранение</h3><p class="text-sm leading-relaxed" style="color: var(--text-secondary)" data-i18n="f3_desc">Все документы сохраняются в защищённом хранилище. Ничего не потеряется — история действий всегда под рукой.</p></div></div>
+<div class="glass rounded-3xl p-6 card-3d card-orange card-accent scroll-reveal group"><div class="card-shine"></div><div class="card-inner"><div class="icon-orange w-12 h-12 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300"><svg class="w-6 h-6 text-orange-500 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg></div><h3 class="text-base font-bold mb-2" style="color: var(--text-primary)" data-i18n="f4_title">Умный анализ</h3><p class="text-sm leading-relaxed" style="color: var(--text-secondary)" data-i18n="f4_desc">Система сама считает, сколько документов обработано, кто подписал, а кто ещё нет. Вся статистика — в одном месте.</p></div></div>
+<div class="glass rounded-3xl p-6 card-3d card-pink card-accent scroll-reveal group" style="transition-delay:0.1s"><div class="card-shine"></div><div class="card-inner"><div class="icon-pink w-12 h-12 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300"><svg class="w-6 h-6 text-pink-500 dark:text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg></div><h3 class="text-base font-bold mb-2" style="color: var(--text-primary)" data-i18n="f5_title">Все форматы</h3><p class="text-sm leading-relaxed" style="color: var(--text-secondary)" data-i18n="f5_desc">Работайте с PDF, Word и Excel. Подпись и печать автоматически добавляются в документ — форматирование сохраняется.</p></div></div>
+<div class="glass rounded-3xl p-6 card-3d card-indigo card-accent scroll-reveal group" style="transition-delay:0.2s"><div class="card-shine"></div><div class="card-inner"><div class="icon-indigo w-12 h-12 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300"><svg class="w-6 h-6 text-indigo-500 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg></div><h3 class="text-base font-bold mb-2" style="color: var(--text-primary)" data-i18n="f6_title">Удобный дизайн</h3><p class="text-sm leading-relaxed" style="color: var(--text-secondary)" data-i18n="f6_desc">Тёмная тема бережёт глаза. Всё на своих местах — разобраться сможет каждый, даже без опыта работы с такими системами.</p></div></div>
+</div>
+</div>
 </section>
 
 <!-- Departments Section -->
 <section id="departments" class="relative py-24 overflow-hidden">
-  <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="text-center mb-14 scroll-reveal">
-      <span class="inline-flex items-center gap-2 text-xs font-semibold text-pink-500 dark:text-pink-400 uppercase tracking-widest mb-4"><span class="w-8 h-px bg-pink-500 dark:bg-pink-400"></span><span data-i18n="depts_label">Отделы</span><span class="w-8 h-px bg-pink-500 dark:bg-pink-400"></span></span>
-      <h2 class="text-3xl sm:text-4xl md:text-5xl font-black mb-4 tracking-tight" style="color: var(--text-primary)" data-i18n="depts_title">Создайте отделы — работа станет легче</h2>
-      <p class="max-w-2xl mx-auto text-sm sm:text-base" style="color: var(--text-secondary)" data-i18n="depts_subtitle">У вас есть компания? Создайте отделы и отправляйте им документы — сотрудники обмениваются ими между собой и всё делают правильно.</p>
-    </div>
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5 mb-8">
-      <div class="glass rounded-3xl p-6 card-3d card-blue card-accent scroll-reveal group"><div class="card-shine"></div><div class="card-inner"><div class="flex items-start justify-between mb-5"><div class="icon-blue w-12 h-12 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300"><svg class="w-6 h-6 text-blue-500 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 17l-1.5-8L8 12l4-7 4 7 5.5-3L20 17H4zM4 20h16"/></svg></div><span class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-blue-500/10 border border-blue-500/25 text-blue-600 dark:text-blue-400" data-i18n="d1_tag">Полный доступ</span></div><h3 class="text-base font-bold mb-2" style="color: var(--text-primary)" data-i18n="d1_title">Руководство</h3><p class="text-sm leading-relaxed mb-5" style="color: var(--text-secondary)" data-i18n="d1_desc">Отправляет документы отделам, подписывает финальные версии и видит отчёты по всей компании.</p><div class="pt-4 border-t flex items-center justify-between text-xs" style="border-color: var(--glass-border); color: var(--text-muted)"><span class="flex items-center gap-1.5"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>5 <span data-i18n="dept_roles">ролей</span></span><span class="flex items-center gap-1.5"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>60 <span data-i18n="dept_templates">шаблонов</span></span></div></div></div>
-      <div class="glass rounded-3xl p-6 card-3d card-purple card-accent scroll-reveal group" style="transition-delay:0.1s"><div class="card-shine"></div><div class="card-inner"><div class="flex items-start justify-between mb-5"><div class="icon-purple w-12 h-12 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300"><svg class="w-6 h-6 text-purple-500 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg></div><span class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-purple-500/10 border border-purple-500/25 text-purple-600 dark:text-purple-400" data-i18n="d2_tag">Кадры</span></div><h3 class="text-base font-bold mb-2" style="color: var(--text-primary)" data-i18n="d2_title">HR-отдел</h3><p class="text-sm leading-relaxed mb-5" style="color: var(--text-secondary)" data-i18n="d2_desc">Приказы, отпуска и трудовые договоры — документы доходят до сотрудников за минуты.</p><div class="pt-4 border-t flex items-center justify-between text-xs" style="border-color: var(--glass-border); color: var(--text-muted)"><span class="flex items-center gap-1.5"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>4 <span data-i18n="dept_roles">ролей</span></span><span class="flex items-center gap-1.5"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>85 <span data-i18n="dept_templates">шаблонов</span></span></div></div></div>
-      <div class="glass rounded-3xl p-6 card-3d card-green card-accent scroll-reveal group" style="transition-delay:0.2s"><div class="card-shine"></div><div class="card-inner"><div class="flex items-start justify-between mb-5"><div class="icon-green w-12 h-12 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300"><svg class="w-6 h-6 text-green-500 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 7h6m-7 4h.01M12 11h.01M15 11h.01M8 15h.01M12 15h.01M15 15h.01M7 3h10a2 2 0 012 2v14a2 2 0 01-2 2H7a2 2 0 01-2-2V5a2 2 0 012-2z"/></svg></div><span class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-green-500/10 border border-green-500/25 text-green-600 dark:text-green-400" data-i18n="d3_tag">Финансы</span></div><h3 class="text-base font-bold mb-2" style="color: var(--text-primary)" data-i18n="d3_title">Бухгалтерия</h3><p class="text-sm leading-relaxed mb-5" style="color: var(--text-secondary)" data-i18n="d3_desc">Счета, акты и отчёты — без бумаги и очередей, всё приходит вовремя.</p><div class="pt-4 border-t flex items-center justify-between text-xs" style="border-color: var(--glass-border); color: var(--text-muted)"><span class="flex items-center gap-1.5"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>4 <span data-i18n="dept_roles">ролей</span></span><span class="flex items-center gap-1.5"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>120 <span data-i18n="dept_templates">шаблонов</span></span></div></div></div>
-      <div class="glass rounded-3xl p-6 card-3d card-orange card-accent scroll-reveal group"><div class="card-shine"></div><div class="card-inner"><div class="flex items-start justify-between mb-5"><div class="icon-orange w-12 h-12 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300"><svg class="w-6 h-6 text-orange-500 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 3v18M8 21h8M4 7h16M6 7l-3 6a3 3 0 006 0L6 7zm12 0l-3 6a3 3 0 006 0l-3-6z"/></svg></div><span class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-orange-500/10 border border-orange-500/25 text-orange-600 dark:text-orange-400" data-i18n="d4_tag">Право</span></div><h3 class="text-base font-bold mb-2" style="color: var(--text-primary)" data-i18n="d4_title">Юридический отдел</h3><p class="text-sm leading-relaxed mb-5" style="color: var(--text-secondary)" data-i18n="d4_desc">Договоры и согласования — отделы обмениваются документами, ничего не теряется.</p><div class="pt-4 border-t flex items-center justify-between text-xs" style="border-color: var(--glass-border); color: var(--text-muted)"><span class="flex items-center gap-1.5"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>3 <span data-i18n="dept_roles">ролей</span></span><span class="flex items-center gap-1.5"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>70 <span data-i18n="dept_templates">шаблонов</span></span></div></div></div>
-      <div class="glass rounded-3xl p-6 card-3d card-pink card-accent scroll-reveal group" style="transition-delay:0.1s"><div class="card-shine"></div><div class="card-inner"><div class="flex items-start justify-between mb-5"><div class="icon-pink w-12 h-12 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300"><svg class="w-6 h-6 text-pink-500 dark:text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg></div><span class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-pink-500/10 border border-pink-500/25 text-pink-600 dark:text-pink-400" data-i18n="d5_tag">Продажи</span></div><h3 class="text-base font-bold mb-2" style="color: var(--text-primary)" data-i18n="d5_title">Отдел продаж</h3><p class="text-sm leading-relaxed mb-5" style="color: var(--text-secondary)" data-i18n="d5_desc">Коммерческие предложения и контракты — отправляйте клиентам и коллегам в один клик.</p><div class="pt-4 border-t flex items-center justify-between text-xs" style="border-color: var(--glass-border); color: var(--text-muted)"><span class="flex items-center gap-1.5"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>6 <span data-i18n="dept_roles">ролей</span></span><span class="flex items-center gap-1.5"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>95 <span data-i18n="dept_templates">шаблонов</span></span></div></div></div>
-      <div class="glass rounded-3xl p-6 card-3d card-cyan card-accent scroll-reveal group" style="transition-delay:0.2s"><div class="card-shine"></div><div class="card-inner"><div class="flex items-start justify-between mb-5"><div class="icon-cyan w-12 h-12 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300"><svg class="w-6 h-6 text-cyan-500 dark:text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-8V8a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 01-5.516 0"/></svg></div><span class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/25 text-cyan-600 dark:text-cyan-400" data-i18n="d6_tag">Доставка</span></div><h3 class="text-base font-bold mb-2" style="color: var(--text-primary)" data-i18n="d6_title">Логистика</h3><p class="text-sm leading-relaxed mb-5" style="color: var(--text-secondary)" data-i18n="d6_desc">Накладные и маршруты — водители и склад подписывают без задержек.</p><div class="pt-4 border-t flex items-center justify-between text-xs" style="border-color: var(--glass-border); color: var(--text-muted)"><span class="flex items-center gap-1.5"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>4 <span data-i18n="dept_roles">ролей</span></span><span class="flex items-center gap-1.5"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>55 <span data-i18n="dept_templates">шаблонов</span></span></div></div></div>
-    </div>
-    <div class="glass rounded-2xl px-6 py-5 flex flex-col sm:flex-row items-center justify-center sm:justify-between gap-4 scroll-reveal" style="transition-delay:0.25s">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500/20 to-pink-500/20 border flex items-center justify-center flex-shrink-0" style="border-color: var(--glass-border)"><svg class="w-5 h-5" style="color: var(--text-primary)" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg></div>
-        <span class="text-sm text-center sm:text-left" style="color: var(--text-secondary)" data-i18n="depts_note">Не нашли свой отдел? Создайте его за 30 секунд — с собственными ролями и шаблонами.</span>
-      </div>
-      <a href="/login" class="btn-primary px-5 py-2.5 text-sm font-semibold whitespace-nowrap" data-i18n="depts_note_cta">Создать отдел</a>
-    </div>
-  </div>
+<div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="text-center mb-14 scroll-reveal">
+<span class="inline-flex items-center gap-2 text-xs font-semibold text-pink-500 dark:text-pink-400 uppercase tracking-widest mb-4"><span class="w-8 h-px bg-pink-500 dark:bg-pink-400"></span><span data-i18n="depts_label">Отделы</span><span class="w-8 h-px bg-pink-500 dark:bg-pink-400"></span></span>
+<h2 class="text-3xl sm:text-4xl md:text-5xl font-black mb-4 tracking-tight" style="color: var(--text-primary)" data-i18n="depts_title">Создайте отделы — работа станет легче</h2>
+<p class="max-w-2xl mx-auto text-sm sm:text-base" style="color: var(--text-secondary)" data-i18n="depts_subtitle">У вас есть компания? Создайте отделы и отправляйте им документы — сотрудники обмениваются ими между собой и всё делают правильно.</p>
+</div>
+<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5 mb-8">
+<div class="glass rounded-3xl p-6 card-3d card-blue card-accent scroll-reveal group"><div class="card-shine"></div><div class="card-inner"><div class="flex items-start justify-between mb-5"><div class="icon-blue w-12 h-12 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300"><svg class="w-6 h-6 text-blue-500 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 17l-1.5-8L8 12l4-7 4 7 5.5-3L20 17H4zM4 20h16"/></svg></div><span class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-blue-500/10 border border-blue-500/25 text-blue-600 dark:text-blue-400" data-i18n="d1_tag">Полный доступ</span></div><h3 class="text-base font-bold mb-2" style="color: var(--text-primary)" data-i18n="d1_title">Руководство</h3><p class="text-sm leading-relaxed mb-5" style="color: var(--text-secondary)" data-i18n="d1_desc">Отправляет документы отделам, подписывает финальные версии и видит отчёты по всей компании.</p><div class="pt-4 border-t flex items-center justify-between text-xs" style="border-color: var(--glass-border); color: var(--text-muted)"><span class="flex items-center gap-1.5"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>5 <span data-i18n="dept_roles">ролей</span></span><span class="flex items-center gap-1.5"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>60 <span data-i18n="dept_templates">шаблонов</span></span></div></div></div>
+<div class="glass rounded-3xl p-6 card-3d card-purple card-accent scroll-reveal group" style="transition-delay:0.1s"><div class="card-shine"></div><div class="card-inner"><div class="flex items-start justify-between mb-5"><div class="icon-purple w-12 h-12 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300"><svg class="w-6 h-6 text-purple-500 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg></div><span class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-purple-500/10 border border-purple-500/25 text-purple-600 dark:text-purple-400" data-i18n="d2_tag">Кадры</span></div><h3 class="text-base font-bold mb-2" style="color: var(--text-primary)" data-i18n="d2_title">HR-отдел</h3><p class="text-sm leading-relaxed mb-5" style="color: var(--text-secondary)" data-i18n="d2_desc">Приказы, отпуска и трудовые договоры — документы доходят до сотрудников за минуты.</p><div class="pt-4 border-t flex items-center justify-between text-xs" style="border-color: var(--glass-border); color: var(--text-muted)"><span class="flex items-center gap-1.5"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>4 <span data-i18n="dept_roles">ролей</span></span><span class="flex items-center gap-1.5"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>85 <span data-i18n="dept_templates">шаблонов</span></span></div></div></div>
+<div class="glass rounded-3xl p-6 card-3d card-green card-accent scroll-reveal group" style="transition-delay:0.2s"><div class="card-shine"></div><div class="card-inner"><div class="flex items-start justify-between mb-5"><div class="icon-green w-12 h-12 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300"><svg class="w-6 h-6 text-green-500 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 7h6m-7 4h.01M12 11h.01M15 11h.01M8 15h.01M12 15h.01M15 15h.01M7 3h10a2 2 0 012 2v14a2 2 0 01-2 2H7a2 2 0 01-2-2V5a2 2 0 012-2z"/></svg></div><span class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-green-500/10 border border-green-500/25 text-green-600 dark:text-green-400" data-i18n="d3_tag">Финансы</span></div><h3 class="text-base font-bold mb-2" style="color: var(--text-primary)" data-i18n="d3_title">Бухгалтерия</h3><p class="text-sm leading-relaxed mb-5" style="color: var(--text-secondary)" data-i18n="d3_desc">Счета, акты и отчёты — без бумаги и очередей, всё приходит вовремя.</p><div class="pt-4 border-t flex items-center justify-between text-xs" style="border-color: var(--glass-border); color: var(--text-muted)"><span class="flex items-center gap-1.5"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>4 <span data-i18n="dept_roles">ролей</span></span><span class="flex items-center gap-1.5"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>120 <span data-i18n="dept_templates">шаблонов</span></span></div></div></div>
+<div class="glass rounded-3xl p-6 card-3d card-orange card-accent scroll-reveal group"><div class="card-shine"></div><div class="card-inner"><div class="flex items-start justify-between mb-5"><div class="icon-orange w-12 h-12 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300"><svg class="w-6 h-6 text-orange-500 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 3v18M8 21h8M4 7h16M6 7l-3 6a3 3 0 006 0L6 7zm12 0l-3 6a3 3 0 006 0l-3-6z"/></svg></div><span class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-orange-500/10 border border-orange-500/25 text-orange-600 dark:text-orange-400" data-i18n="d4_tag">Право</span></div><h3 class="text-base font-bold mb-2" style="color: var(--text-primary)" data-i18n="d4_title">Юридический отдел</h3><p class="text-sm leading-relaxed mb-5" style="color: var(--text-secondary)" data-i18n="d4_desc">Договоры и согласования — отделы обмениваются документами, ничего не теряется.</p><div class="pt-4 border-t flex items-center justify-between text-xs" style="border-color: var(--glass-border); color: var(--text-muted)"><span class="flex items-center gap-1.5"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>3 <span data-i18n="dept_roles">ролей</span></span><span class="flex items-center gap-1.5"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>70 <span data-i18n="dept_templates">шаблонов</span></span></div></div></div>
+<div class="glass rounded-3xl p-6 card-3d card-pink card-accent scroll-reveal group" style="transition-delay:0.1s"><div class="card-shine"></div><div class="card-inner"><div class="flex items-start justify-between mb-5"><div class="icon-pink w-12 h-12 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300"><svg class="w-6 h-6 text-pink-500 dark:text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg></div><span class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-pink-500/10 border border-pink-500/25 text-pink-600 dark:text-pink-400" data-i18n="d5_tag">Продажи</span></div><h3 class="text-base font-bold mb-2" style="color: var(--text-primary)" data-i18n="d5_title">Отдел продаж</h3><p class="text-sm leading-relaxed mb-5" style="color: var(--text-secondary)" data-i18n="d5_desc">Коммерческие предложения и контракты — отправляйте клиентам и коллегам в один клик.</p><div class="pt-4 border-t flex items-center justify-between text-xs" style="border-color: var(--glass-border); color: var(--text-muted)"><span class="flex items-center gap-1.5"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>6 <span data-i18n="dept_roles">ролей</span></span><span class="flex items-center gap-1.5"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>95 <span data-i18n="dept_templates">шаблонов</span></span></div></div></div>
+<div class="glass rounded-3xl p-6 card-3d card-cyan card-accent scroll-reveal group" style="transition-delay:0.2s"><div class="card-shine"></div><div class="card-inner"><div class="flex items-start justify-between mb-5"><div class="icon-cyan w-12 h-12 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300"><svg class="w-6 h-6 text-cyan-500 dark:text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-8V8a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 01-5.516 0"/></svg></div><span class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/25 text-cyan-600 dark:text-cyan-400" data-i18n="d6_tag">Доставка</span></div><h3 class="text-base font-bold mb-2" style="color: var(--text-primary)" data-i18n="d6_title">Логистика</h3><p class="text-sm leading-relaxed mb-5" style="color: var(--text-secondary)" data-i18n="d6_desc">Накладные и маршруты — водители и склад подписывают без задержек.</p><div class="pt-4 border-t flex items-center justify-between text-xs" style="border-color: var(--glass-border); color: var(--text-muted)"><span class="flex items-center gap-1.5"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>4 <span data-i18n="dept_roles">ролей</span></span><span class="flex items-center gap-1.5"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>55 <span data-i18n="dept_templates">шаблонов</span></span></div></div></div>
+</div>
+<div class="glass rounded-2xl px-6 py-5 flex flex-col sm:flex-row items-center justify-center sm:justify-between gap-4 scroll-reveal" style="transition-delay:0.25s">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500/20 to-pink-500/20 border flex items-center justify-center flex-shrink-0" style="border-color: var(--glass-border)"><svg class="w-5 h-5" style="color: var(--text-primary)" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg></div>
+<span class="text-sm text-center sm:text-left" style="color: var(--text-secondary)" data-i18n="depts_note">Не нашли свой отдел? Создайте его за 30 секунд — с собственными ролями и шаблонами.</span>
+</div>
+<a href="/login" class="btn-primary px-5 py-2.5 text-sm font-semibold whitespace-nowrap" data-i18n="depts_note_cta">Создать отдел</a>
+</div>
+</div>
 </section>
 
 <!-- Geography Section -->
 <section id="geography" class="relative py-24 overflow-hidden">
-  <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="text-center mb-14 scroll-reveal">
-      <span class="inline-flex items-center gap-2 text-xs font-semibold text-green-500 dark:text-green-400 uppercase tracking-widest mb-4"><span class="w-8 h-px bg-green-500 dark:bg-green-400"></span><span data-i18n="geo_label">География</span><span class="w-8 h-px bg-green-500 dark:bg-green-400"></span></span>
-      <h2 class="text-3xl sm:text-4xl md:text-5xl font-black mb-4 tracking-tight" style="color: var(--text-primary)" data-i18n="geo_title">Весь Таджикистан — на связи</h2>
-      <p class="max-w-3xl mx-auto text-sm sm:text-base" style="color: var(--text-secondary)" data-i18n="geo_subtitle">Здесь добавлены все области и города Таджикистана, чтобы удобно было отправлять документы в любую точку страны.</p>
-    </div>
-    <div class="grid lg:grid-cols-5 gap-5 mb-6">
-      <div class="lg:col-span-3 glass rounded-3xl p-6 card-3d card-blue card-accent scroll-reveal"><div class="card-shine"></div><div class="card-inner">
-        <div class="flex items-center justify-between mb-5 flex-wrap gap-2">
-          <div class="flex items-center gap-2"><span class="text-lg">🇹🇯</span><span class="text-[11px] uppercase tracking-[0.2em] font-bold" style="color: var(--text-muted)" data-i18n="geo_map_title">Карта покрытия</span></div>
-          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-[10px] font-bold text-emerald-600 dark:text-emerald-400"><span class="pulse-dot" style="background:#10b981;box-shadow:0 0 8px #10b981;width:5px;height:5px;"></span><span data-i18n="geo_badge1">Покрытие 100%</span></span>
-        </div>
-        <div class="relative rounded-2xl border p-2 sm:p-4" style="background: var(--glass-bg); border-color: var(--glass-border)">
-          <svg viewBox="0 0 420 300" class="w-full h-auto"><defs><linearGradient id="tjFill" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#3b82f6" stop-opacity="0.12"/><stop offset="55%" stop-color="#8b5cf6" stop-opacity="0.05"/><stop offset="100%" stop-color="#ec4899" stop-opacity="0.09"/></linearGradient><linearGradient id="tjStroke" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#3b82f6"/><stop offset="50%" stop-color="#8b5cf6"/><stop offset="100%" stop-color="#ec4899"/></linearGradient></defs><path d="M 200.49 82.63 Q 182.81 97.53 156.53 93.49 Q 130.25 89.44 127.96 103.36 Q 125.67 117.28 151.85 115.41 Q 178.03 113.54 207.87 121.38 Q 237.70 129.22 283.35 125.56 Q 329.00 121.89 335.12 144.24 Q 341.24 166.58 349.18 164.15 Q 357.11 161.72 371.77 167.22 Q 386.44 172.71 385.60 182.10 Q 384.76 191.49 388.38 205.25 Q 392.00 219.02 367.10 218.98 Q 342.20 218.94 325.57 217.16 Q 308.94 215.38 293.90 226.19 Q 278.85 237.00 268.13 239.40 Q 257.42 241.79 249.01 246.87 Q 240.59 251.94 231.03 244.03 Q 221.47 236.13 223.72 215.84 Q 225.97 195.56 218.67 194.41 Q 211.37 193.26 213.99 185.88 Q 216.62 178.50 203.55 173.01 Q 190.48 167.52 180.08 175.92 Q 169.69 184.32 167.13 194.06 Q 164.58 203.80 160.86 207.34 Q 157.14 210.89 142.71 210.39 Q 128.28 209.89 120.49 220.94 Q 112.70 232.00 104.57 227.33 Q 96.44 222.67 78.96 230.43 Q 61.48 238.18 54.10 235.24 Q 46.73 232.30 60.30 207.86 Q 73.87 183.42 68.65 165.45 Q 63.44 147.47 45.72 141.71 Q 28.00 135.95 34.26 125.32 Q 40.52 114.69 60.68 115.82 Q 80.84 116.96 92.31 103.61 Q 103.79 90.27 111.46 74.77 Q 119.14 59.28 151.42 53.67 Q 183.71 48.06 178.67 59.26 Q 173.64 70.45 177.10 77.16 Q 180.56 83.87 190.52 83.25 Q 200.49 82.63 191.65 90.08 Z" fill="url(#tjFill)" stroke="url(#tjStroke)" stroke-width="1.5" opacity="0.9"/><line class="route-line" x1="92.9" y1="164.0" x2="133.4" y2="80.7" stroke="rgba(59,130,246,0.5)" stroke-width="1.2"/><line class="route-line" x1="92.9" y1="164.0" x2="182.1" y2="88.8" stroke="rgba(139,92,246,0.5)" stroke-width="1.2" style="animation-delay:.6s"/><line class="route-line" x1="92.9" y1="164.0" x2="92.6" y2="199.0" stroke="rgba(16,185,129,0.5)" stroke-width="1.2" style="animation-delay:1.2s"/><line class="route-line" x1="92.9" y1="164.0" x2="141.2" y2="195.2" stroke="rgba(245,158,11,0.5)" stroke-width="1.2" style="animation-delay:1.8s"/><line class="route-line" x1="92.9" y1="164.0" x2="226.4" y2="215.6" stroke="rgba(236,72,153,0.5)" stroke-width="1.2" style="animation-delay:2.4s"/><circle r="2.6" fill="#3b82f6"><animateMotion dur="3.6s" repeatCount="indefinite" path="M92.9 164.0 L133.4 80.7"/></circle><circle r="2.6" fill="#ec4899"><animateMotion dur="5s" repeatCount="indefinite" path="M92.9 164.0 L226.4 215.6"/></circle><circle r="2.2" fill="#10b981"><animateMotion dur="3s" repeatCount="indefinite" path="M92.9 164.0 L92.6 199.0"/></circle><g><circle class="map-ping" cx="133.4" cy="80.7" r="8" fill="rgba(59,130,246,0.35)"/><circle cx="133.4" cy="80.7" r="3.4" fill="#3b82f6"/><text x="133.4" y="67" text-anchor="middle" class="map-label">Худжанд</text></g><g><circle class="map-ping" cx="182.1" cy="88.8" r="7" fill="rgba(6,182,212,0.3)" style="animation-delay:.8s"/><circle cx="182.1" cy="88.8" r="3" fill="#06b6d4"/><text x="182.1" y="76" text-anchor="middle" class="map-label">Исфара</text></g><g><circle class="map-ping" cx="92.6" cy="199.0" r="8" fill="rgba(16,185,129,0.3)" style="animation-delay:1.4s"/><circle cx="92.6" cy="199.0" r="3.4" fill="#10b981"/><text x="92.6" y="215" text-anchor="middle" class="map-label">Бохтар</text></g><g><circle class="map-ping" cx="141.2" cy="195.2" r="8" fill="rgba(245,158,11,0.3)" style="animation-delay:2s"/><circle cx="141.2" cy="195.2" r="3.4" fill="#f59e0b"/><text x="141.2" y="211" text-anchor="middle" class="map-label">Кулоб</text></g><g><circle class="map-ping" cx="226.4" cy="215.6" r="8" fill="rgba(236,72,153,0.3)" style="animation-delay:2.6s"/><circle cx="226.4" cy="215.6" r="3.4" fill="#ec4899"/><text x="226.4" y="232" text-anchor="middle" class="map-label">Хорог</text></g><g><circle class="map-ping" cx="92.9" cy="164.0" r="11" fill="rgba(59,130,246,0.35)" style="animation-duration:2s"/><circle cx="92.9" cy="164.0" r="4.6" fill="#3b82f6" stroke="#bfdbfe" stroke-width="1.2"/><text x="92.9" y="184" text-anchor="middle" class="map-label-capital">Душанбе</text></g></svg>
-          <div class="absolute bottom-3 left-3 glass rounded-xl px-3 py-2 flex items-center gap-2"><svg class="w-3.5 h-3.5 text-blue-500 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg><span class="text-[11px] font-bold" style="color: var(--text-secondary)" data-i18n="geo_badge2">Доставка за секунды</span></div>
-        </div>
-      </div></div>
-      <div class="lg:col-span-2 flex flex-col gap-3 scroll-reveal" style="transition-delay:0.1s">
-        <div class="region-card glass rounded-2xl p-4 flex items-center gap-4 flex-1"><div class="icon-blue w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"><svg class="w-5 h-5 text-blue-500 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.196-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118L1.977 10.1c-.783-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg></div><div class="min-w-0"><div class="text-sm font-bold mb-0.5" style="color: var(--text-primary)" data-i18n="g1_title">Душанбе</div><div class="text-xs truncate" style="color: var(--text-secondary)" data-i18n="g1_desc">Столица • все районы города</div></div></div>
-        <div class="region-card glass rounded-2xl p-4 flex items-center gap-4 flex-1"><div class="icon-purple w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"><svg class="w-5 h-5 text-purple-500 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg></div><div class="min-w-0"><div class="text-sm font-bold mb-0.5" style="color: var(--text-primary)" data-i18n="g2_title">Согдийская область</div><div class="text-xs truncate" style="color: var(--text-secondary)" data-i18n="g2_desc">Худжанд, Истаравшан, Исфара, Канибадам, Пенджикент</div></div></div>
-        <div class="region-card glass rounded-2xl p-4 flex items-center gap-4 flex-1"><div class="icon-green w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"><svg class="w-5 h-5 text-green-500 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><div class="min-w-0"><div class="text-sm font-bold mb-0.5" style="color: var(--text-primary)" data-i18n="g3_title">Хатлонская область</div><div class="text-xs truncate" style="color: var(--text-secondary)" data-i18n="g3_desc">Бохтер, Кулоб, Левакант, Дангара</div></div></div>
-        <div class="region-card glass rounded-2xl p-4 flex items-center gap-4 flex-1"><div class="icon-orange w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"><svg class="w-5 h-5 text-orange-500 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 21h18M5 21V7l7-4 7 4v14M9 9h.01M15 9h.01M9 13h.01M15 13h.01M9 17h.01M15 17h.01"/></svg></div><div class="min-w-0"><div class="text-sm font-bold mb-0.5" style="color: var(--text-primary)" data-i18n="g4_title">ГБАО</div><div class="text-xs truncate" style="color: var(--text-secondary)" data-i18n="g4_desc">Хорог, Мургаб, Рушан, Ишкашим</div></div></div>
-        <div class="region-card glass rounded-2xl p-4 flex items-center gap-4 flex-1"><div class="icon-pink w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"><svg class="w-5 h-5 text-pink-500 dark:text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg></div><div class="min-w-0"><div class="text-sm font-bold mb-0.5" style="color: var(--text-primary)" data-i18n="g5_title">Районы республиканского подчинения</div><div class="text-xs truncate" style="color: var(--text-secondary)" data-i18n="g5_desc">Вахдат, Турсунзода, Рудаки, Гиссар</div></div></div>
-      </div>
-    </div>
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
-      <div class="stat-card-blue rounded-2xl p-4 text-center card-3d card-blue scroll-reveal"><div class="card-shine"></div><div class="card-inner"><div class="stat-num gradient-text"><span class="counter" data-target="5">0</span></div><div class="text-[10px] uppercase tracking-[0.2em] text-blue-500 dark:text-blue-400 font-bold mt-1.5" data-i18n="geo_stat1">регионов</div></div></div>
-      <div class="stat-card-purple rounded-2xl p-4 text-center card-3d card-purple scroll-reveal" style="transition-delay:0.08s"><div class="card-shine"></div><div class="card-inner"><div class="stat-num gradient-text"><span class="counter" data-target="60">0</span>+</div><div class="text-[10px] uppercase tracking-[0.2em] text-purple-500 dark:text-purple-400 font-bold mt-1.5" data-i18n="geo_stat2">районов</div></div></div>
-      <div class="stat-card-green rounded-2xl p-4 text-center card-3d card-green scroll-reveal" style="transition-delay:0.16s"><div class="card-shine"></div><div class="card-inner"><div class="stat-num gradient-text"><span class="counter" data-target="20">0</span>+</div><div class="text-[10px] uppercase tracking-[0.2em] text-green-500 dark:text-green-400 font-bold mt-1.5" data-i18n="geo_stat4">городов</div></div></div>
-      <div class="stat-card-orange rounded-2xl p-4 text-center card-3d card-orange scroll-reveal" style="transition-delay:0.24s"><div class="card-shine"></div><div class="card-inner"><div class="stat-num gradient-text"><span class="counter" data-target="100">0</span>%</div><div class="text-[10px] uppercase tracking-[0.2em] text-orange-500 dark:text-orange-400 font-bold mt-1.5" data-i18n="geo_stat3">покрытие</div></div></div>
-    </div>
-    <div class="glass rounded-3xl p-6 scroll-reveal" style="transition-delay:0.3s">
-      <div class="flex items-center gap-2 mb-4"><svg class="w-4 h-4 text-blue-500 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg><span class="text-[11px] uppercase tracking-[0.2em] font-bold" style="color: var(--text-muted)" data-i18n="geo_cities_label">Города и районы</span></div>
-      <div class="flex flex-wrap gap-2">
-        <span class="geo-chip inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full glass text-xs font-medium" style="color: var(--text-secondary)"><span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>Душанбе</span>
-        <span class="geo-chip inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full glass text-xs font-medium" style="color: var(--text-secondary)"><span class="w-1.5 h-1.5 rounded-full bg-purple-500"></span>Худжанд</span>
-        <span class="geo-chip inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full glass text-xs font-medium" style="color: var(--text-secondary)"><span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>Бохтар</span>
-        <span class="geo-chip inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full glass text-xs font-medium" style="color: var(--text-secondary)"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>Кулоб</span>
-        <span class="geo-chip inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full glass text-xs font-medium" style="color: var(--text-secondary)"><span class="w-1.5 h-1.5 rounded-full bg-pink-500"></span>Хорог</span>
-        <span class="geo-chip inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full glass text-xs font-medium" style="color: var(--text-secondary)"><span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>Вахдат</span>
-        <span class="geo-chip inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full glass text-xs font-medium" style="color: var(--text-secondary)"><span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>Турсунзода</span>
-        <span class="geo-chip inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full glass text-xs font-medium" style="color: var(--text-secondary)"><span class="w-1.5 h-1.5 rounded-full bg-cyan-500"></span>Рудаки</span>
-        <span class="geo-chip inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full glass text-xs font-medium" style="color: var(--text-secondary)"><span class="w-1.5 h-1.5 rounded-full bg-purple-500"></span>Гиссар</span>
-        <span class="geo-chip inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full glass text-xs font-medium" style="color: var(--text-secondary)"><span class="w-1.5 h-1.5 rounded-full bg-purple-500"></span>Истаравшан</span>
-        <span class="geo-chip inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full glass text-xs font-medium" style="color: var(--text-secondary)"><span class="w-1.5 h-1.5 rounded-full bg-purple-500"></span>Пенджикент</span>
-        <span class="geo-chip inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full glass text-xs font-medium" style="color: var(--text-secondary)"><span class="w-1.5 h-1.5 rounded-full bg-cyan-500"></span>Исфара</span>
-        <span class="geo-chip inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full glass text-xs font-medium" style="color: var(--text-secondary)"><span class="w-1.5 h-1.5 rounded-full bg-cyan-500"></span>Канибадам</span>
-        <span class="geo-chip inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full glass text-xs font-medium" style="color: var(--text-secondary)"><span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>Левакант</span>
-        <span class="geo-chip inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full glass text-xs font-medium" style="color: var(--text-secondary)"><span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>Дангара</span>
-        <span class="geo-chip inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full glass text-xs font-medium" style="color: var(--text-secondary)"><span class="w-1.5 h-1.5 rounded-full bg-pink-500"></span>Мургаб</span>
-        <span class="geo-chip inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full glass text-xs font-medium" style="color: var(--text-secondary)"><span class="w-1.5 h-1.5 rounded-full bg-pink-500"></span>Рушан</span>
-        <span class="geo-chip inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full glass text-xs font-medium" style="color: var(--text-secondary)"><span class="w-1.5 h-1.5 rounded-full bg-pink-500"></span>Ишкашим</span>
-        <span class="geo-chip inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full glass text-xs font-medium" style="color: var(--text-secondary)"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>Нурек</span>
-        <span class="geo-chip inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full glass text-xs font-medium" style="color: var(--text-secondary)"><span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>+ <span data-i18n="geo_more">вся страна</span></span>
-      </div>
-    </div>
-  </div>
+<div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="text-center mb-14 scroll-reveal">
+<span class="inline-flex items-center gap-2 text-xs font-semibold text-green-500 dark:text-green-400 uppercase tracking-widest mb-4"><span class="w-8 h-px bg-green-500 dark:bg-green-400"></span><span data-i18n="geo_label">География</span><span class="w-8 h-px bg-green-500 dark:bg-green-400"></span></span>
+<h2 class="text-3xl sm:text-4xl md:text-5xl font-black mb-4 tracking-tight" style="color: var(--text-primary)" data-i18n="geo_title">Весь Таджикистан — на связи</h2>
+<p class="max-w-3xl mx-auto text-sm sm:text-base" style="color: var(--text-secondary)" data-i18n="geo_subtitle">Здесь добавлены все области и города Таджикистана, чтобы удобно было отправлять документы в любую точку страны.</p>
+</div>
+<div class="grid lg:grid-cols-5 gap-5 mb-6">
+<div class="lg:col-span-3 glass rounded-3xl p-6 card-3d card-blue card-accent scroll-reveal"><div class="card-shine"></div><div class="card-inner">
+<div class="flex items-center justify-between mb-5 flex-wrap gap-2">
+<div class="flex items-center gap-2"><span class="text-lg">🇹🇯</span><span class="text-[11px] uppercase tracking-[0.2em] font-bold" style="color: var(--text-muted)" data-i18n="geo_map_title">Карта покрытия</span></div>
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-[10px] font-bold text-emerald-600 dark:text-emerald-400"><span class="pulse-dot" style="background:#10b981;box-shadow:0 0 8px #10b981;width:5px;height:5px;"></span><span data-i18n="geo_badge1">Покрытие 100%</span></span>
+</div>
+<div class="relative rounded-2xl border p-2 sm:p-4" style="background: var(--glass-bg); border-color: var(--glass-border)">
+<svg viewBox="0 0 420 300" class="w-full h-auto"><defs><linearGradient id="tjFill" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#3b82f6" stop-opacity="0.12"/><stop offset="55%" stop-color="#8b5cf6" stop-opacity="0.05"/><stop offset="100%" stop-color="#ec4899" stop-opacity="0.09"/></linearGradient><linearGradient id="tjStroke" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#3b82f6"/><stop offset="50%" stop-color="#8b5cf6"/><stop offset="100%" stop-color="#ec4899"/></linearGradient></defs><path d="M 200.49 82.63 Q 182.81 97.53 156.53 93.49 Q 130.25 89.44 127.96 103.36 Q 125.67 117.28 151.85 115.41 Q 178.03 113.54 207.87 121.38 Q 237.70 129.22 283.35 125.56 Q 329.00 121.89 335.12 144.24 Q 341.24 166.58 349.18 164.15 Q 357.11 161.72 371.77 167.22 Q 386.44 172.71 385.60 182.10 Q 384.76 191.49 388.38 205.25 Q 392.00 219.02 367.10 218.98 Q 342.20 218.94 325.57 217.16 Q 308.94 215.38 293.90 226.19 Q 278.85 237.00 268.13 239.40 Q 257.42 241.79 249.01 246.87 Q 240.59 251.94 231.03 244.03 Q 221.47 236.13 223.72 215.84 Q 225.97 195.56 218.67 194.41 Q 211.37 193.26 213.99 185.88 Q 216.62 178.50 203.55 173.01 Q 190.48 167.52 180.08 175.92 Q 169.69 184.32 167.13 194.06 Q 164.58 203.80 160.86 207.34 Q 157.14 210.89 142.71 210.39 Q 128.28 209.89 120.49 220.94 Q 112.70 232.00 104.57 227.33 Q 96.44 222.67 78.96 230.43 Q 61.48 238.18 54.10 235.24 Q 46.73 232.30 60.30 207.86 Q 73.87 183.42 68.65 165.45 Q 63.44 147.47 45.72 141.71 Q 28.00 135.95 34.26 125.32 Q 40.52 114.69 60.68 115.82 Q 80.84 116.96 92.31 103.61 Q 103.79 90.27 111.46 74.77 Q 119.14 59.28 151.42 53.67 Q 183.71 48.06 178.67 59.26 Q 173.64 70.45 177.10 77.16 Q 180.56 83.87 190.52 83.25 Q 200.49 82.63 191.65 90.08 Z" fill="url(#tjFill)" stroke="url(#tjStroke)" stroke-width="1.5" opacity="0.9"/><line class="route-line" x1="92.9" y1="164.0" x2="133.4" y2="80.7" stroke="rgba(59,130,246,0.5)" stroke-width="1.2"/><line class="route-line" x1="92.9" y1="164.0" x2="182.1" y2="88.8" stroke="rgba(139,92,246,0.5)" stroke-width="1.2" style="animation-delay:.6s"/><line class="route-line" x1="92.9" y1="164.0" x2="92.6" y2="199.0" stroke="rgba(16,185,129,0.5)" stroke-width="1.2" style="animation-delay:1.2s"/><line class="route-line" x1="92.9" y1="164.0" x2="141.2" y2="195.2" stroke="rgba(245,158,11,0.5)" stroke-width="1.2" style="animation-delay:1.8s"/><line class="route-line" x1="92.9" y1="164.0" x2="226.4" y2="215.6" stroke="rgba(236,72,153,0.5)" stroke-width="1.2" style="animation-delay:2.4s"/><circle r="2.6" fill="#3b82f6"><animateMotion dur="3.6s" repeatCount="indefinite" path="M92.9 164.0 L133.4 80.7"/></circle><circle r="2.6" fill="#ec4899"><animateMotion dur="5s" repeatCount="indefinite" path="M92.9 164.0 L226.4 215.6"/></circle><circle r="2.2" fill="#10b981"><animateMotion dur="3s" repeatCount="indefinite" path="M92.9 164.0 L92.6 199.0"/></circle><g><circle class="map-ping" cx="133.4" cy="80.7" r="8" fill="rgba(59,130,246,0.35)"/><circle cx="133.4" cy="80.7" r="3.4" fill="#3b82f6"/><text x="133.4" y="67" text-anchor="middle" class="map-label">Худжанд</text></g><g><circle class="map-ping" cx="182.1" cy="88.8" r="7" fill="rgba(6,182,212,0.3)" style="animation-delay:.8s"/><circle cx="182.1" cy="88.8" r="3" fill="#06b6d4"/><text x="182.1" y="76" text-anchor="middle" class="map-label">Исфара</text></g><g><circle class="map-ping" cx="92.6" cy="199.0" r="8" fill="rgba(16,185,129,0.3)" style="animation-delay:1.4s"/><circle cx="92.6" cy="199.0" r="3.4" fill="#10b981"/><text x="92.6" y="215" text-anchor="middle" class="map-label">Бохтар</text></g><g><circle class="map-ping" cx="141.2" cy="195.2" r="8" fill="rgba(245,158,11,0.3)" style="animation-delay:2s"/><circle cx="141.2" cy="195.2" r="3.4" fill="#f59e0b"/><text x="141.2" y="211" text-anchor="middle" class="map-label">Кулоб</text></g><g><circle class="map-ping" cx="226.4" cy="215.6" r="8" fill="rgba(236,72,153,0.3)" style="animation-delay:2.6s"/><circle cx="226.4" cy="215.6" r="3.4" fill="#ec4899"/><text x="226.4" y="232" text-anchor="middle" class="map-label">Хорог</text></g><g><circle class="map-ping" cx="92.9" cy="164.0" r="11" fill="rgba(59,130,246,0.35)" style="animation-duration:2s"/><circle cx="92.9" cy="164.0" r="4.6" fill="#3b82f6" stroke="#bfdbfe" stroke-width="1.2"/><text x="92.9" y="184" text-anchor="middle" class="map-label-capital">Душанбе</text></g></svg>
+<div class="absolute bottom-3 left-3 glass rounded-xl px-3 py-2 flex items-center gap-2"><svg class="w-3.5 h-3.5 text-blue-500 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg><span class="text-[11px] font-bold" style="color: var(--text-secondary)" data-i18n="geo_badge2">Доставка за секунды</span></div>
+</div>
+</div></div>
+<div class="lg:col-span-2 flex flex-col gap-3 scroll-reveal" style="transition-delay:0.1s">
+<div class="region-card glass rounded-2xl p-4 flex items-center gap-4 flex-1"><div class="icon-blue w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"><svg class="w-5 h-5 text-blue-500 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.196-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118L1.977 10.1c-.783-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg></div><div class="min-w-0"><div class="text-sm font-bold mb-0.5" style="color: var(--text-primary)" data-i18n="g1_title">Душанбе</div><div class="text-xs truncate" style="color: var(--text-secondary)" data-i18n="g1_desc">Столица • все районы города</div></div></div>
+<div class="region-card glass rounded-2xl p-4 flex items-center gap-4 flex-1"><div class="icon-purple w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"><svg class="w-5 h-5 text-purple-500 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg></div><div class="min-w-0"><div class="text-sm font-bold mb-0.5" style="color: var(--text-primary)" data-i18n="g2_title">Согдийская область</div><div class="text-xs truncate" style="color: var(--text-secondary)" data-i18n="g2_desc">Худжанд, Истаравшан, Исфара, Канибадам, Пенджикент</div></div></div>
+<div class="region-card glass rounded-2xl p-4 flex items-center gap-4 flex-1"><div class="icon-green w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"><svg class="w-5 h-5 text-green-500 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><div class="min-w-0"><div class="text-sm font-bold mb-0.5" style="color: var(--text-primary)" data-i18n="g3_title">Хатлонская область</div><div class="text-xs truncate" style="color: var(--text-secondary)" data-i18n="g3_desc">Бохтер, Кулоб, Левакант, Дангара</div></div></div>
+<div class="region-card glass rounded-2xl p-4 flex items-center gap-4 flex-1"><div class="icon-orange w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"><svg class="w-5 h-5 text-orange-500 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 21h18M5 21V7l7-4 7 4v14M9 9h.01M15 9h.01M9 13h.01M15 13h.01M9 17h.01M15 17h.01"/></svg></div><div class="min-w-0"><div class="text-sm font-bold mb-0.5" style="color: var(--text-primary)" data-i18n="g4_title">ГБАО</div><div class="text-xs truncate" style="color: var(--text-secondary)" data-i18n="g4_desc">Хорог, Мургаб, Рушан, Ишкашим</div></div></div>
+<div class="region-card glass rounded-2xl p-4 flex items-center gap-4 flex-1"><div class="icon-pink w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"><svg class="w-5 h-5 text-pink-500 dark:text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg></div><div class="min-w-0"><div class="text-sm font-bold mb-0.5" style="color: var(--text-primary)" data-i18n="g5_title">Районы республиканского подчинения</div><div class="text-xs truncate" style="color: var(--text-secondary)" data-i18n="g5_desc">Вахдат, Турсунзода, Рудаки, Гиссар</div></div></div>
+</div>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
+<div class="stat-card-blue rounded-2xl p-4 text-center card-3d card-blue scroll-reveal"><div class="card-shine"></div><div class="card-inner"><div class="stat-num gradient-text"><span class="counter" data-target="5">0</span></div><div class="text-[10px] uppercase tracking-[0.2em] text-blue-500 dark:text-blue-400 font-bold mt-1.5" data-i18n="geo_stat1">регионов</div></div></div>
+<div class="stat-card-purple rounded-2xl p-4 text-center card-3d card-purple scroll-reveal" style="transition-delay:0.08s"><div class="card-shine"></div><div class="card-inner"><div class="stat-num gradient-text"><span class="counter" data-target="60">0</span>+</div><div class="text-[10px] uppercase tracking-[0.2em] text-purple-500 dark:text-purple-400 font-bold mt-1.5" data-i18n="geo_stat2">районов</div></div></div>
+<div class="stat-card-green rounded-2xl p-4 text-center card-3d card-green scroll-reveal" style="transition-delay:0.16s"><div class="card-shine"></div><div class="card-inner"><div class="stat-num gradient-text"><span class="counter" data-target="20">0</span>+</div><div class="text-[10px] uppercase tracking-[0.2em] text-green-500 dark:text-green-400 font-bold mt-1.5" data-i18n="geo_stat4">городов</div></div></div>
+<div class="stat-card-orange rounded-2xl p-4 text-center card-3d card-orange scroll-reveal" style="transition-delay:0.24s"><div class="card-shine"></div><div class="card-inner"><div class="stat-num gradient-text"><span class="counter" data-target="100">0</span>%</div><div class="text-[10px] uppercase tracking-[0.2em] text-orange-500 dark:text-orange-400 font-bold mt-1.5" data-i18n="geo_stat3">покрытие</div></div></div>
+</div>
+<div class="glass rounded-3xl p-6 scroll-reveal" style="transition-delay:0.3s">
+<div class="flex items-center gap-2 mb-4"><svg class="w-4 h-4 text-blue-500 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg><span class="text-[11px] uppercase tracking-[0.2em] font-bold" style="color: var(--text-muted)" data-i18n="geo_cities_label">Города и районы</span></div>
+<div class="flex flex-wrap gap-2">
+<span class="geo-chip inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full glass text-xs font-medium" style="color: var(--text-secondary)"><span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>Душанбе</span>
+<span class="geo-chip inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full glass text-xs font-medium" style="color: var(--text-secondary)"><span class="w-1.5 h-1.5 rounded-full bg-purple-500"></span>Худжанд</span>
+<span class="geo-chip inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full glass text-xs font-medium" style="color: var(--text-secondary)"><span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>Бохтар</span>
+<span class="geo-chip inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full glass text-xs font-medium" style="color: var(--text-secondary)"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>Кулоб</span>
+<span class="geo-chip inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full glass text-xs font-medium" style="color: var(--text-secondary)"><span class="w-1.5 h-1.5 rounded-full bg-pink-500"></span>Хорог</span>
+<span class="geo-chip inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full glass text-xs font-medium" style="color: var(--text-secondary)"><span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>Вахдат</span>
+<span class="geo-chip inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full glass text-xs font-medium" style="color: var(--text-secondary)"><span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>Турсунзода</span>
+<span class="geo-chip inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full glass text-xs font-medium" style="color: var(--text-secondary)"><span class="w-1.5 h-1.5 rounded-full bg-cyan-500"></span>Рудаки</span>
+<span class="geo-chip inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full glass text-xs font-medium" style="color: var(--text-secondary)"><span class="w-1.5 h-1.5 rounded-full bg-purple-500"></span>Гиссар</span>
+<span class="geo-chip inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full glass text-xs font-medium" style="color: var(--text-secondary)"><span class="w-1.5 h-1.5 rounded-full bg-purple-500"></span>Истаравшан</span>
+<span class="geo-chip inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full glass text-xs font-medium" style="color: var(--text-secondary)"><span class="w-1.5 h-1.5 rounded-full bg-purple-500"></span>Пенджикент</span>
+<span class="geo-chip inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full glass text-xs font-medium" style="color: var(--text-secondary)"><span class="w-1.5 h-1.5 rounded-full bg-cyan-500"></span>Исфара</span>
+<span class="geo-chip inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full glass text-xs font-medium" style="color: var(--text-secondary)"><span class="w-1.5 h-1.5 rounded-full bg-cyan-500"></span>Канибадам</span>
+<span class="geo-chip inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full glass text-xs font-medium" style="color: var(--text-secondary)"><span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>Левакант</span>
+<span class="geo-chip inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full glass text-xs font-medium" style="color: var(--text-secondary)"><span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>Дангара</span>
+<span class="geo-chip inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full glass text-xs font-medium" style="color: var(--text-secondary)"><span class="w-1.5 h-1.5 rounded-full bg-pink-500"></span>Мургаб</span>
+<span class="geo-chip inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full glass text-xs font-medium" style="color: var(--text-secondary)"><span class="w-1.5 h-1.5 rounded-full bg-pink-500"></span>Рушан</span>
+<span class="geo-chip inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full glass text-xs font-medium" style="color: var(--text-secondary)"><span class="w-1.5 h-1.5 rounded-full bg-pink-500"></span>Ишкашим</span>
+<span class="geo-chip inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full glass text-xs font-medium" style="color: var(--text-secondary)"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>Нурек</span>
+<span class="geo-chip inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full glass text-xs font-medium" style="color: var(--text-secondary)"><span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>+ <span data-i18n="geo_more">вся страна</span></span>
+</div>
+</div>
+</div>
 </section>
 
 <!-- Security Section -->
 <section id="security" class="relative py-24 overflow-hidden">
-  <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="text-center mb-14 scroll-reveal">
-      <span class="inline-flex items-center gap-2 text-xs font-semibold text-green-500 dark:text-green-400 uppercase tracking-widest mb-4"><span class="w-8 h-px bg-green-500 dark:bg-green-400"></span><span data-i18n="security_label">Безопасность</span><span class="w-8 h-px bg-green-500 dark:bg-green-400"></span></span>
-      <h2 class="text-3xl sm:text-4xl md:text-5xl font-black mb-4 tracking-tight" style="color: var(--text-primary)" data-i18n="security_title">Ваши данные под защитой</h2>
-      <p class="max-w-2xl mx-auto text-sm sm:text-base" style="color: var(--text-secondary)" data-i18n="security_subtitle">Несколько уровней защиты — от входа в систему до каждого документа</p>
-    </div>
-    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
-      <div class="glass rounded-2xl p-5 card-3d card-blue card-accent text-center scroll-reveal"><div class="card-shine"></div><div class="card-inner"><div class="relative w-14 h-14 rounded-2xl icon-blue flex items-center justify-center mx-auto mb-4"><svg class="w-7 h-7 text-blue-500 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg></div><h4 class="text-sm font-bold mb-1.5" style="color: var(--text-primary)" data-i18n="sec1_title">Защита входа</h4><p class="text-xs leading-relaxed" style="color: var(--text-secondary)" data-i18n="sec1_desc">Пароли надёжно зашифрованы. Чужой не войдёт в ваш аккаунт.</p></div></div>
-      <div class="glass rounded-2xl p-5 card-3d card-purple card-accent text-center scroll-reveal" style="transition-delay:0.1s"><div class="card-shine"></div><div class="card-inner"><div class="relative w-14 h-14 rounded-2xl icon-purple flex items-center justify-center mx-auto mb-4"><svg class="w-7 h-7 text-purple-500 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg></div><h4 class="text-sm font-bold mb-1.5" style="color: var(--text-primary)" data-i18n="sec2_title">Мгновенные уведомления</h4><p class="text-xs leading-relaxed" style="color: var(--text-secondary)" data-i18n="sec2_desc">Вы сразу узнаете, когда документ подписан или требует внимания.</p></div></div>
-      <div class="glass rounded-2xl p-5 card-3d card-green card-accent text-center scroll-reveal" style="transition-delay:0.2s"><div class="card-shine"></div><div class="card-inner"><div class="relative w-14 h-14 rounded-2xl icon-green flex items-center justify-center mx-auto mb-4"><svg class="w-7 h-7 text-green-500 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><h4 class="text-sm font-bold mb-1.5" style="color: var(--text-primary)" data-i18n="sec3_title">История действий</h4><p class="text-xs leading-relaxed" style="color: var(--text-secondary)" data-i18n="sec3_desc">Кто, когда и что сделал с документом — всё сохраняется и доступно.</p></div></div>
-      <div class="glass rounded-2xl p-5 card-3d card-orange card-accent text-center scroll-reveal" style="transition-delay:0.3s"><div class="card-shine"></div><div class="card-inner"><div class="relative w-14 h-14 rounded-2xl icon-orange flex items-center justify-center mx-auto mb-4"><svg class="w-7 h-7 text-orange-500 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg></div><h4 class="text-sm font-bold mb-1.5" style="color: var(--text-primary)" data-i18n="sec4_title">Резервные копии</h4><p class="text-xs leading-relaxed" style="color: var(--text-secondary)" data-i18n="sec4_desc">Данные автоматически сохраняются. Даже при сбое ничего не потеряется.</p></div></div>
-    </div>
-  </div>
+<div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="text-center mb-14 scroll-reveal">
+<span class="inline-flex items-center gap-2 text-xs font-semibold text-green-500 dark:text-green-400 uppercase tracking-widest mb-4"><span class="w-8 h-px bg-green-500 dark:bg-green-400"></span><span data-i18n="security_label">Безопасность</span><span class="w-8 h-px bg-green-500 dark:bg-green-400"></span></span>
+<h2 class="text-3xl sm:text-4xl md:text-5xl font-black mb-4 tracking-tight" style="color: var(--text-primary)" data-i18n="security_title">Ваши данные под защитой</h2>
+<p class="max-w-2xl mx-auto text-sm sm:text-base" style="color: var(--text-secondary)" data-i18n="security_subtitle">Несколько уровней защиты — от входа в систему до каждого документа</p>
+</div>
+<div class="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
+<div class="glass rounded-2xl p-5 card-3d card-blue card-accent text-center scroll-reveal"><div class="card-shine"></div><div class="card-inner"><div class="relative w-14 h-14 rounded-2xl icon-blue flex items-center justify-center mx-auto mb-4"><svg class="w-7 h-7 text-blue-500 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg></div><h4 class="text-sm font-bold mb-1.5" style="color: var(--text-primary)" data-i18n="sec1_title">Защита входа</h4><p class="text-xs leading-relaxed" style="color: var(--text-secondary)" data-i18n="sec1_desc">Пароли надёжно зашифрованы. Чужой не войдёт в ваш аккаунт.</p></div></div>
+<div class="glass rounded-2xl p-5 card-3d card-purple card-accent text-center scroll-reveal" style="transition-delay:0.1s"><div class="card-shine"></div><div class="card-inner"><div class="relative w-14 h-14 rounded-2xl icon-purple flex items-center justify-center mx-auto mb-4"><svg class="w-7 h-7 text-purple-500 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg></div><h4 class="text-sm font-bold mb-1.5" style="color: var(--text-primary)" data-i18n="sec2_title">Мгновенные уведомления</h4><p class="text-xs leading-relaxed" style="color: var(--text-secondary)" data-i18n="sec2_desc">Вы сразу узнаете, когда документ подписан или требует внимания.</p></div></div>
+<div class="glass rounded-2xl p-5 card-3d card-green card-accent text-center scroll-reveal" style="transition-delay:0.2s"><div class="card-shine"></div><div class="card-inner"><div class="relative w-14 h-14 rounded-2xl icon-green flex items-center justify-center mx-auto mb-4"><svg class="w-7 h-7 text-green-500 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><h4 class="text-sm font-bold mb-1.5" style="color: var(--text-primary)" data-i18n="sec3_title">История действий</h4><p class="text-xs leading-relaxed" style="color: var(--text-secondary)" data-i18n="sec3_desc">Кто, когда и что сделал с документом — всё сохраняется и доступно.</p></div></div>
+<div class="glass rounded-2xl p-5 card-3d card-orange card-accent text-center scroll-reveal" style="transition-delay:0.3s"><div class="card-shine"></div><div class="card-inner"><div class="relative w-14 h-14 rounded-2xl icon-orange flex items-center justify-center mx-auto mb-4"><svg class="w-7 h-7 text-orange-500 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg></div><h4 class="text-sm font-bold mb-1.5" style="color: var(--text-primary)" data-i18n="sec4_title">Резервные копии</h4><p class="text-xs leading-relaxed" style="color: var(--text-secondary)" data-i18n="sec4_desc">Данные автоматически сохраняются. Даже при сбое ничего не потеряется.</p></div></div>
+</div>
+</div>
 </section>
 
 <!-- Super Admin Card -->
 <section id="admin" class="relative py-24 overflow-hidden">
-  <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="superadmin-card rounded-3xl p-8 md:p-10 scroll-reveal">
-      <div class="flex flex-col md:flex-row items-center gap-6 md:gap-8">
-        <div class="relative flex-shrink-0">
-          <div class="w-24 h-24 rounded-2xl bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center shadow-2xl shadow-blue-500/20"><span class="text-3xl font-black text-white" style="-webkit-text-fill-color:#fff;">AA</span></div>
-          <div class="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-emerald-500 border-2 flex items-center justify-center shadow-lg" style="border-color: var(--bg-primary)"><svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg></div>
-        </div>
-        <div class="flex-1 text-center md:text-left">
-          <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full border mb-3" style="background: var(--glass-bg); border-color: var(--glass-border)"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span><span class="text-[10px] uppercase tracking-widest font-bold" style="color: var(--text-secondary)" data-i18n="admin_badge">Главный администратор</span></div>
-          <h3 class="text-2xl md:text-3xl font-black mb-1 tracking-tight" style="color: var(--text-primary)">Аминов Амир</h3>
-          <p class="text-sm mb-4" style="color: var(--text-secondary)" data-i18n="admin_role">Создатель системы DocSign</p>
-          <p class="text-sm leading-relaxed mb-5" style="color: var(--text-secondary)" data-i18n="admin_desc">Если у вас есть компания и вы хотите стать администратором системы — свяжитесь с главным администратором. Он поможет настроить всё для вашей организации.</p>
-          <a href="https://t.me/amlnov67" target="_blank" rel="noopener" class="inline-flex items-center gap-2 btn-primary px-5 py-2.5 text-sm font-semibold"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M11.944 0C5.346 0 0 5.346 0 11.944c0 6.597 5.346 11.944 11.944 11.944 6.598 0 11.944-5.347 11.944-11.944C23.888 5.346 18.542 0 11.944 0zM18.17 6.83l-2.113 9.968c-.15.66-.543.824-1.096.515l-3.218-2.373-1.553 1.493c-.17.172-.315.315-.646.315l.23-3.267 5.946-5.372c.258-.23-.056-.358-.401-.13l-7.35 4.628-3.166-1c-.687-.215-.702-.687.143-.1l12.355-4.76c.572-.215 1.07.127.91.892z"/></svg><span data-i18n="admin_contact">Написать в Telegram</span></a>
-        </div>
-      </div>
-    </div>
-  </div>
+<div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="superadmin-card rounded-3xl p-8 md:p-10 scroll-reveal">
+<div class="flex flex-col md:flex-row items-center gap-6 md:gap-8">
+<div class="relative flex-shrink-0">
+<div class="w-24 h-24 rounded-2xl bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center shadow-2xl shadow-blue-500/20"><span class="text-3xl font-black text-white" style="-webkit-text-fill-color:#fff;">AA</span></div>
+<div class="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-emerald-500 border-2 flex items-center justify-center shadow-lg" style="border-color: var(--bg-primary)"><svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg></div>
+</div>
+<div class="flex-1 text-center md:text-left">
+<div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full border mb-3" style="background: var(--glass-bg); border-color: var(--glass-border)"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span><span class="text-[10px] uppercase tracking-widest font-bold" style="color: var(--text-secondary)" data-i18n="admin_badge">Главный администратор</span></div>
+<h3 class="text-2xl md:text-3xl font-black mb-1 tracking-tight" style="color: var(--text-primary)">Аминов Амир</h3>
+<p class="text-sm mb-4" style="color: var(--text-secondary)" data-i18n="admin_role">Создатель системы DocSign</p>
+<p class="text-sm leading-relaxed mb-5" style="color: var(--text-secondary)" data-i18n="admin_desc">Если у вас есть компания и вы хотите стать администратором системы — свяжитесь с главным администратором. Он поможет настроить всё для вашей организации.</p>
+<a href="https://t.me/amlnov67" target="_blank" rel="noopener" class="inline-flex items-center gap-2 btn-primary px-5 py-2.5 text-sm font-semibold"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M11.944 0C5.346 0 0 5.346 0 11.944c0 6.597 5.346 11.944 11.944 11.944 6.598 0 11.944-5.347 11.944-11.944C23.888 5.346 18.542 0 11.944 0zM18.17 6.83l-2.113 9.968c-.15.66-.543.824-1.096.515l-3.218-2.373-1.553 1.493c-.17.172-.315.315-.646.315l.23-3.267 5.946-5.372c.258-.23-.056-.358-.401-.13l-7.35 4.628-3.166-1c-.687-.215-.702-.687.143-.1l12.355-4.76c.572-.215 1.07.127.91.892z"/></svg><span data-i18n="admin_contact">Написать в Telegram</span></a>
+</div>
+</div>
+</div>
+</div>
 </section>
 
 <!-- Contact CTA -->
 <section id="contact" class="relative py-24 overflow-hidden">
-  <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-    <div class="scroll-reveal">
-      <h2 class="text-3xl sm:text-4xl md:text-5xl font-black mb-4 tracking-tight" style="color: var(--text-primary)" data-i18n="contact_title">Готовы начать?</h2>
-      <p class="max-w-xl mx-auto text-sm sm:text-base mb-8" style="color: var(--text-secondary)" data-i18n="contact_subtitle">Присоединяйтесь к компаниям, которые уже используют DocSign</p>
-      <div class="flex flex-wrap items-center justify-center gap-3">
-        <a href="/login" class="btn-primary px-7 py-3 text-sm font-semibold" data-i18n="contact_cta">Начать бесплатно</a>
-        <a href="https://t.me/amnvamr" target="_blank" rel="noopener" class="btn-outline px-6 py-3 text-sm font-semibold flex items-center gap-2"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M11.944 0C5.346 0 0 5.346 0 11.944c0 6.597 5.346 11.944 11.944 11.944 6.598 0 11.944-5.347 11.944-11.944C23.888 5.346 18.542 0 11.944 0zM18.17 6.83l-2.113 9.968c-.15.66-.543.824-1.096.515l-3.218-2.373-1.553 1.493c-.17.172-.315.315-.646.315l.23-3.267 5.946-5.372c.258-.23-.056-.358-.401-.13l-7.35 4.628-3.166-1c-.687-.215-.702-.687.143-.1l12.355-4.76c.572-.215 1.07.127.91.892z"/></svg><span data-i18n="contact_tg">Связаться в Telegram</span></a>
-      </div>
-    </div>
-  </div>
+<div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+<div class="scroll-reveal">
+<h2 class="text-3xl sm:text-4xl md:text-5xl font-black mb-4 tracking-tight" style="color: var(--text-primary)" data-i18n="contact_title">Готовы начать?</h2>
+<p class="max-w-xl mx-auto text-sm sm:text-base mb-8" style="color: var(--text-secondary)" data-i18n="contact_subtitle">Присоединяйтесь к компаниям, которые уже используют DocSign</p>
+<div class="flex flex-wrap items-center justify-center gap-3">
+<a href="/login" class="btn-primary px-7 py-3 text-sm font-semibold" data-i18n="contact_cta">Начать бесплатно</a>
+<a href="https://t.me/amlnov67" target="_blank" rel="noopener" class="btn-outline px-6 py-3 text-sm font-semibold flex items-center gap-2"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M11.944 0C5.346 0 0 5.346 0 11.944c0 6.597 5.346 11.944 11.944 11.944 6.598 0 11.944-5.347 11.944-11.944C23.888 5.346 18.542 0 11.944 0zM18.17 6.83l-2.113 9.968c-.15.66-.543.824-1.096.515l-3.218-2.373-1.553 1.493c-.17.172-.315.315-.646.315l.23-3.267 5.946-5.372c.258-.23-.056-.358-.401-.13l-7.35 4.628-3.166-1c-.687-.215-.702-.687.143-.1l12.355-4.76c.572-.215 1.07.127.91.892z"/></svg><span data-i18n="contact_tg">Связаться в Telegram</span></a>
+</div>
+</div>
+</div>
 </section>
 
 <!-- Footer -->
 <footer class="relative border-t" style="border-color: var(--footer-border)">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-    <div class="grid md:grid-cols-4 gap-8 mb-8">
-      <div class="md:col-span-2">
-        <a href="#" class="flex items-center gap-3 mb-4">
-          <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center"><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></div>
-          <span class="text-lg font-bold" style="color: var(--text-primary)">Doc<span class="gradient-accent">Sign</span></span>
-        </a>
-        <p class="text-sm max-w-sm mb-5" style="color: var(--text-secondary)" data-i18n="footer_desc">Платформа электронного документооборота, которая облегчает работу людей в Таджикистане.</p>
-        <div class="flex items-center gap-2">
-          <a href="https://t.me/amnvamr" target="_blank" rel="noopener" class="w-9 h-9 rounded-full glass flex items-center justify-center transition-all hover:scale-110" style="color: var(--text-muted)"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M11.944 0C5.346 0 0 5.346 0 11.944c0 6.597 5.346 11.944 11.944 11.944 6.598 0 11.944-5.347 11.944-11.944C23.888 5.346 18.542 0 11.944 0zM18.17 6.83l-2.113 9.968c-.15.66-.543.824-1.096.515l-3.218-2.373-1.553 1.493c-.17.172-.315.315-.646.315l.23-3.267 5.946-5.372c.258-.23-.056-.358-.401-.13l-7.35 4.628-3.166-1c-.687-.215-.702-.687.143-.1l12.355-4.76c.572-.215 1.07.127.91.892z"/></svg></a>
-        </div>
-      </div>
-      <div>
-        <h4 class="text-xs font-semibold uppercase tracking-wider mb-4" style="color: var(--text-primary)" data-i18n="footer_product">Продукт</h4>
-        <ul class="space-y-2 text-sm" style="color: var(--text-secondary)">
-          <li><a href="#features" class="nav-link text-sm" style="font-size:14px;text-transform:none;" data-i18n="footer_features">Возможности</a></li>
-          <li><a href="#faceid" class="nav-link text-sm" style="font-size:14px;text-transform:none;" data-i18n="footer_faceid">Face ID</a></li>
-          <li><a href="#ai" class="nav-link text-sm" style="font-size:14px;text-transform:none;" data-i18n="footer_ai">ИИ / RAG</a></li>
-          <li><a href="#departments" class="nav-link text-sm" style="font-size:14px;text-transform:none;" data-i18n="footer_departments">Отделы</a></li>
-          <li><a href="#geography" class="nav-link text-sm" style="font-size:14px;text-transform:none;" data-i18n="footer_geography">География</a></li>
-          <li><a href="#analytics" class="nav-link text-sm" style="font-size:14px;text-transform:none;" data-i18n="footer_analytics">Аналитика</a></li>
-          <li><a href="#security" class="nav-link text-sm" style="font-size:14px;text-transform:none;" data-i18n="footer_security">Безопасность</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4 class="text-xs font-semibold uppercase tracking-wider mb-4" style="color: var(--text-primary)" data-i18n="footer_company">Компания</h4>
-        <ul class="space-y-2 text-sm" style="color: var(--text-secondary)">
-          <li><a href="#admin" class="nav-link text-sm" style="font-size:14px;text-transform:none;" data-i18n="footer_admin">Администратор</a></li>
-          <li><a href="#contact" class="nav-link text-sm" style="font-size:14px;text-transform:none;" data-i18n="footer_contact">Контакты</a></li>
-          <li><a href="https://t.me/amnvamr" target="_blank" rel="noopener" class="nav-link text-sm" style="font-size:14px;text-transform:none;">Telegram</a></li>
-        </ul>
-      </div>
-    </div>
-    <div class="line-glow mb-6"></div>
-    <div class="flex flex-col md:flex-row items-center justify-between gap-4 text-xs" style="color: var(--text-muted)">
-      <span>© 2026 DocSign. <span data-i18n="footer_rights">Все права защищены.</span></span>
-      <span class="flex items-center gap-2"><span class="text-sm">🇹🇯</span><span data-i18n="footer_made">Сделано в Таджикистане</span></span>
-    </div>
-  </div>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<div class="grid md:grid-cols-4 gap-8 mb-8">
+<div class="md:col-span-2">
+<a href="#" class="flex items-center gap-3 mb-4">
+<div class="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center"><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></div>
+<span class="text-lg font-bold" style="color: var(--text-primary)">Doc<span class="gradient-accent">Sign</span></span>
+</a>
+<p class="text-sm max-w-sm mb-5" style="color: var(--text-secondary)" data-i18n="footer_desc">Платформа электронного документооборота, которая облегчает работу людей в Таджикистане.</p>
+<div class="flex items-center gap-2">
+<a href="https://t.me/amnvamr" target="_blank" rel="noopener" class="w-9 h-9 rounded-full glass flex items-center justify-center transition-all hover:scale-110" style="color: var(--text-muted)"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M11.944 0C5.346 0 0 5.346 0 11.944c0 6.597 5.346 11.944 11.944 11.944 6.598 0 11.944-5.347 11.944-11.944C23.888 5.346 18.542 0 11.944 0zM18.17 6.83l-2.113 9.968c-.15.66-.543.824-1.096.515l-3.218-2.373-1.553 1.493c-.17.172-.315.315-.646.315l.23-3.267 5.946-5.372c.258-.23-.056-.358-.401-.13l-7.35 4.628-3.166-1c-.687-.215-.702-.687.143-.1l12.355-4.76c.572-.215 1.07.127.91.892z"/></svg></a>
+</div>
+</div>
+<div>
+<h4 class="text-xs font-semibold uppercase tracking-wider mb-4" style="color: var(--text-primary)" data-i18n="footer_product">Продукт</h4>
+<ul class="space-y-2 text-sm" style="color: var(--text-secondary)">
+<li><a href="#features" class="nav-link text-sm" style="font-size:14px;text-transform:none;" data-i18n="footer_features">Возможности</a></li>
+<li><a href="#faceid" class="nav-link text-sm" style="font-size:14px;text-transform:none;" data-i18n="footer_faceid">Face ID</a></li>
+<li><a href="#ai" class="nav-link text-sm" style="font-size:14px;text-transform:none;" data-i18n="footer_ai">ИИ / RAG</a></li>
+<li><a href="#chat" class="nav-link text-sm" style="font-size:14px;text-transform:none;" data-i18n="footer_chat">Чаты</a></li>
+<li><a href="#departments" class="nav-link text-sm" style="font-size:14px;text-transform:none;" data-i18n="footer_departments">Отделы</a></li>
+<li><a href="#geography" class="nav-link text-sm" style="font-size:14px;text-transform:none;" data-i18n="footer_geography">География</a></li>
+<li><a href="#analytics" class="nav-link text-sm" style="font-size:14px;text-transform:none;" data-i18n="footer_analytics">Аналитика</a></li>
+<li><a href="#security" class="nav-link text-sm" style="font-size:14px;text-transform:none;" data-i18n="footer_security">Безопасность</a></li>
+</ul>
+</div>
+<div>
+<h4 class="text-xs font-semibold uppercase tracking-wider mb-4" style="color: var(--text-primary)" data-i18n="footer_company">Компания</h4>
+<ul class="space-y-2 text-sm" style="color: var(--text-secondary)">
+<li><a href="#admin" class="nav-link text-sm" style="font-size:14px;text-transform:none;" data-i18n="footer_admin">Администратор</a></li>
+<li><a href="#contact" class="nav-link text-sm" style="font-size:14px;text-transform:none;" data-i18n="footer_contact">Контакты</a></li>
+<li><a href="https://t.me/amnvamr" target="_blank" rel="noopener" class="nav-link text-sm" style="font-size:14px;text-transform:none;">Telegram</a></li>
+</ul>
+</div>
+</div>
+<div class="line-glow mb-6"></div>
+<div class="flex flex-col md:flex-row items-center justify-between gap-4 text-xs" style="color: var(--text-muted)">
+<span>© 2026 DocSign. <span data-i18n="footer_rights">Все права защищены.</span></span>
+<span class="flex items-center gap-2"><span class="text-sm">🇹🇯</span><span data-i18n="footer_made">Сделано в Таджикистане</span></span>
+</div>
+</div>
 </footer>
 </div>
 
 <script>
 // ===== THEME TOGGLE =====
 (function() {
-  const html = document.documentElement;
-  const themeToggle = document.getElementById('themeToggle');
-  const themeToggleMobile = document.getElementById('themeToggleMobile');
-  const savedTheme = localStorage.getItem('docsign_theme') || 'light';
-  function applyTheme(theme) {
-    if (theme === 'dark') { html.classList.add('dark'); } else { html.classList.remove('dark'); }
-    localStorage.setItem('docsign_theme', theme);
-  }
-  applyTheme(savedTheme);
-  function toggleTheme() {
-    const isDark = html.classList.contains('dark');
-    applyTheme(isDark ? 'light' : 'dark');
-  }
-  if (themeToggle) themeToggle.addEventListener('click', toggleTheme);
-  if (themeToggleMobile) themeToggleMobile.addEventListener('click', toggleTheme);
+const html = document.documentElement;
+const themeToggle = document.getElementById('themeToggle');
+const themeToggleMobile = document.getElementById('themeToggleMobile');
+const savedTheme = localStorage.getItem('docsign_theme') || 'light';
+function applyTheme(theme) {
+if (theme === 'dark') { html.classList.add('dark'); } else { html.classList.remove('dark'); }
+localStorage.setItem('docsign_theme', theme);
+}
+applyTheme(savedTheme);
+function toggleTheme() {
+const isDark = html.classList.contains('dark');
+applyTheme(isDark ? 'light' : 'dark');
+}
+if (themeToggle) themeToggle.addEventListener('click', toggleTheme);
+if (themeToggleMobile) themeToggleMobile.addEventListener('click', toggleTheme);
 })();
-
-// JS mode
 document.documentElement.classList.add('js');
 
 // ===== LOGO MODAL =====
 document.addEventListener('DOMContentLoaded', function() {
-  const logoLink = document.getElementById('logoLink');
-  const modal = document.getElementById('logoModal');
-  const modalContent = document.getElementById('modalContent');
-  const closeModal = document.getElementById('closeModal');
-  const backdrop = document.getElementById('modalBackdrop');
-  if (!logoLink || !modal) return;
-  logoLink.addEventListener('click', function(e) {
-    e.preventDefault();
-    modal.classList.remove('hidden');
-    setTimeout(() => { modalContent.classList.remove('scale-95', 'opacity-0'); modalContent.classList.add('scale-100', 'opacity-100'); }, 10);
-  });
-  function closeModalFunc() {
-    modalContent.classList.remove('scale-100', 'opacity-100');
-    modalContent.classList.add('scale-95', 'opacity-0');
-    setTimeout(() => { modal.classList.add('hidden'); }, 300);
-  }
-  if (closeModal) closeModal.addEventListener('click', closeModalFunc);
-  if (backdrop) backdrop.addEventListener('click', closeModalFunc);
-  document.addEventListener('keydown', function(e) { if (e.key === 'Escape' && !modal.classList.contains('hidden')) closeModalFunc(); });
+const logoLink = document.getElementById('logoLink');
+const modal = document.getElementById('logoModal');
+const modalContent = document.getElementById('modalContent');
+const closeModal = document.getElementById('closeModal');
+const backdrop = document.getElementById('modalBackdrop');
+if (!logoLink || !modal) return;
+logoLink.addEventListener('click', function(e) {
+e.preventDefault();
+modal.classList.remove('hidden');
+setTimeout(() => { modalContent.classList.remove('scale-95', 'opacity-0'); modalContent.classList.add('scale-100', 'opacity-100'); }, 10);
+});
+function closeModalFunc() {
+modalContent.classList.remove('scale-100', 'opacity-100');
+modalContent.classList.add('scale-95', 'opacity-0');
+setTimeout(() => { modal.classList.add('hidden'); }, 300);
+}
+if (closeModal) closeModal.addEventListener('click', closeModalFunc);
+if (backdrop) backdrop.addEventListener('click', closeModalFunc);
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape' && !modal.classList.contains('hidden')) closeModalFunc(); });
 });
 
 // ===== 3D CARD TILT =====
 document.querySelectorAll('.card-3d').forEach(card => {
-  card.addEventListener('mousemove', (e) => {
-    if (window.innerWidth < 768) return;
-    const rect = card.getBoundingClientRect();
-    const x = e.clientX - rect.left; const y = e.clientY - rect.top;
-    const cx = rect.width / 2; const cy = rect.height / 2;
-    const rotateX = ((y - cy) / cy) * -5; const rotateY = ((x - cx) / cx) * 5;
-    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-    card.style.setProperty('--mx', `${x}px`); card.style.setProperty('--my', `${y}px`);
-  });
-  card.addEventListener('mouseleave', () => { card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0)'; });
+card.addEventListener('mousemove', (e) => {
+if (window.innerWidth < 768) return;
+const rect = card.getBoundingClientRect();
+const x = e.clientX - rect.left; const y = e.clientY - rect.top;
+const cx = rect.width / 2; const cy = rect.height / 2;
+const rotateX = ((y - cy) / cy) * -5; const rotateY = ((x - cx) / cx) * 5;
+card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+card.style.setProperty('--mx', `${x}px`); card.style.setProperty('--my', `${y}px`);
+});
+card.addEventListener('mouseleave', () => { card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0)'; });
 });
 
 // ===== TRANSLATIONS =====
 const translations = {
-  ru: {
-    nav_features: "Возможности", nav_faceid: "Face ID", nav_ai: "ИИ", nav_departments: "Отделы", nav_geography: "География", nav_analytics: "Аналитика", nav_security: "Безопасность", nav_admin: "Админ", nav_contact: "Контакты", nav_start: "Начать",
-    hero_badge: "Система нового поколения", hero_title_1: "Электронный документооборот", hero_subtitle: "DocSign — современная платформа для работы с документами. Подписывайте, отправляйте и храните файлы в один клик. Просто и надёжно — для людей, чтобы работа стала легче.",
-    hero_cta: "Начать работу", hero_learn: "Узнать больше", stat_sec: "сек", stat_speed: "Скорость", stat_speed_desc: "на один документ", stat_users: "Пользователи", stat_users_desc: "зарегистрировано", stat_access: "Доступ", stat_access_desc: "всегда онлайн", stat_protection: "Защита", stat_protection_desc: "юридическая сила",
-    faceid_label: "Face ID • Биометрия", faceid_report_badge: "Краткий отчёт", faceid_title: "Вход и подпись — по вашему лицу", faceid_text: "Если у вас есть компания — Face ID станет вашим помощником. Сотрудник смотрит в камеру, система за долю секунды подтверждает личность и подписывает документ. Руководитель получает краткий отчёт: кто, когда и что подписал.",
-    faceid_b1_t: "Мгновенное подтверждение", faceid_b1_d: "Распознавание лица занимает 0.3 секунды — быстрее любого пароля.", faceid_b2_t: "Полные отчёты", faceid_b2_d: "Каждая проверка сохраняется: кто вошёл, когда и что подписал.", faceid_b3_t: "Для всей компании", faceid_b3_d: "Подключите сотрудников, назначьте роли — и работайте без бумаг.",
-    faceid_cta: "Подключить Face ID", faceid_report: "Смотреть отчёты", faceid_accuracy: "точность", faceid_speed: "сек", faceid_demo_note: "Живая демонстрация", faceid_status_scanning: "Сканирование лица...", faceid_status_ok: "Личность подтверждена",
-    ai_label: "Искусственный интеллект • RAG", ai_title: "Умный помощник в каждом документе", ai_subtitle: "ИИ на базе технологии RAG понимает ваши документы, находит нужную информацию за секунды и отвечает на вопросы — как живой эксперт.",
-    ai_brain_title: "Нейросеть DocSign", ai_brain_sub: "RAG • Embeddings • LLM", ai_brain_online: "Онлайн", ai_stat_speed: "Ответ", ai_stat_accuracy: "Точность", ai_stat_uptime: "Работа",
-    ai_rag_sub: "RAG • Поиск по базе знаний", ai_rag_active: "Активен", ai_step_query: "Запрос", ai_step_retrieve: "Поиск", ai_step_generate: "ИИ", ai_step_answer: "Ответ",
-    ai_f1_title: "Умный поиск", ai_f1_desc: "ИИ понимает смысл вопроса, а не просто слова. Находит нужный документ даже если вы не помните точное название.",
-    ai_f2_title: "База знаний", ai_f2_desc: "Все ваши документы превращаются в единую базу знаний. ИИ отвечает на вопросы, ссылаясь на конкретные файлы.",
-    ai_f3_title: "Генерация ответов", ai_f3_desc: "ИИ читает документы и формулирует чёткие ответы. Вы получаете суть без необходимости читать сотни страниц.",
-    ai_f4_title: "Только ваши данные", ai_f4_desc: "ИИ работает только с документами вашей компании. Никаких утечек — все данные остаются внутри системы.",
-    ai_f5_title: "Анализ документов", ai_f5_desc: "ИИ автоматически извлекает ключевые данные: суммы, даты, стороны договора. Экономит часы ручной работы.",
-    ai_f6_title: "Диалог на вашем языке", ai_f6_desc: "Общайтесь с ИИ на русском, таджикском или английском. Он понимает контекст и отвечает естественно.",
-    ai_cta_title: "Попробуйте ИИ прямо сейчас", ai_cta_desc: "Задайте вопрос по вашим документам — получите ответ за секунды со ссылками на источники.", ai_cta_btn: "Запустить ИИ", ai_cta_learn: "Узнать больше",
-    ai_demo_q1: "Какая сумма по договору №45 от 12 марта?", ai_demo_a1: "По договору №45 от 12 марта 2026 общая сумма составляет 245 000 сомони. Срок оплаты — до 30 апреля.", ai_demo_src_title: "Источники:", ai_demo_src1: "Договор №45 от 12.03.2026", ai_demo_src2: "Счёт-фактура №128",
-    ai_demo_q2: "Кто подписал акт выполненных работ?", ai_demo_a2: "Акт выполненных работ подписан директором Аминовым А. и главным бухгалтером Рахимовой М. 15 августа 2026.",
-    analytics_label: "Аналитика", analytics_title: "Всё под контролем", analytics_subtitle: "Следите за регистрациями, документами и активностью в реальном времени",
-    analysis_reg_title: "Регистрации", analysis_reg_desc: "пользователей зарегистрировано", analysis_doc_title: "Документы", analysis_doc_desc: "документов отправлено", analysis_activity_title: "Активность", analysis_activity_desc: "документов обработано успешно",
-    donut_period: "В МЕСЯЦ", donut_live: "Обновлено только что", donut_center_label: "Документы", donut_center_sub: "всего", donut_leg1: "Входящие", donut_leg2: "Отправленные", donut_leg3: "Подписанные", donut_leg4: "В очереди",
-    chart_label: "Обзор за месяц", chart_title: "Динамика работы системы", chart_reg: "Регистрации", chart_doc: "Документы",
-    features_label: "Возможности", features_title: "Всё, что вам нужно", features_subtitle: "Простые инструменты для сложной работы с документами",
-    f1_title: "Электронная подпись", f1_desc: "Подписывайте документы одним кликом. Каждый файл получает уникальный код — его можно проверить за секунду через телефон.",
-    f2_title: "Роли и права", f2_desc: "Каждый сотрудник видит только то, что ему нужно. Директор, менеджер, работник — у каждого свои возможности.",
-    f3_title: "Надёжное хранение", f3_desc: "Все документы сохраняются в защищённом хранилище. Ничего не потеряется — история действий всегда под рукой.",
-    f4_title: "Умный анализ", f4_desc: "Система сама считает, сколько документов обработано, кто подписал, а кто ещё нет. Вся статистика — в одном месте.",
-    f5_title: "Все форматы", f5_desc: "Работайте с PDF, Word и Excel. Подпись и печать автоматически добавляются в документ — форматирование сохраняется.",
-    f6_title: "Удобный дизайн", f6_desc: "Тёмная тема бережёт глаза. Всё на своих местах — разобраться сможет каждый, даже без опыта работы с такими системами.",
-    depts_label: "Отделы", depts_title: "Создайте отделы — работа станет легче", depts_subtitle: "У вас есть компания? Создайте отделы и отправляйте им документы — сотрудники обмениваются ими между собой и всё делают правильно.",
-    d1_tag: "Полный доступ", d1_title: "Руководство", d1_desc: "Отправляет документы отделам, подписывает финальные версии и видит отчёты по всей компании.",
-    d2_tag: "Кадры", d2_title: "HR-отдел", d2_desc: "Приказы, отпуска и трудовые договоры — документы доходят до сотрудников за минуты.",
-    d3_tag: "Финансы", d3_title: "Бухгалтерия", d3_desc: "Счета, акты и отчёты — без бумаги и очередей, всё приходит вовремя.",
-    d4_tag: "Право", d4_title: "Юридический отдел", d4_desc: "Договоры и согласования — отделы обмениваются документами, ничего не теряется.",
-    d5_tag: "Продажи", d5_title: "Отдел продаж", d5_desc: "Коммерческие предложения и контракты — отправляйте клиентам и коллегам в один клик.",
-    d6_tag: "Доставка", d6_title: "Логистика", d6_desc: "Накладные и маршруты — водители и склад подписывают без задержек.",
-    dept_roles: "ролей", dept_templates: "шаблонов", depts_note: "Не нашли свой отдел? Создайте его за 30 секунд — с собственными ролями и шаблонами.", depts_note_cta: "Создать отдел",
-    geo_label: "География", geo_title: "Весь Таджикистан — на связи", geo_subtitle: "Здесь добавлены все области и города Таджикистана, чтобы удобно было отправлять документы в любую точку страны.",
-    geo_map_title: "Карта покрытия", geo_badge1: "Покрытие 100%", geo_badge2: "Доставка за секунды",
-    g1_title: "Душанбе", g1_desc: "Столица • все районы города", g2_title: "Согдийская область", g2_desc: "Худжанд, Истаравшан, Исфара, Канибадам, Пенджикент", g3_title: "Хатлонская область", g3_desc: "Бохтер, Кулоб, Левакант, Дангара", g4_title: "ГБАО", g4_desc: "Хорог, Мургаб, Рушан, Ишкашим", g5_title: "Районы республиканского подчинения", g5_desc: "Вахдат, Турсунзода, Рудаки, Гиссар",
-    geo_stat1: "регионов", geo_stat2: "районов", geo_stat4: "городов", geo_stat3: "покрытие", geo_cities_label: "Города и районы", geo_more: "вся страна",
-    security_label: "Безопасность", security_title: "Ваши данные под защитой", security_subtitle: "Несколько уровней защиты — от входа в систему до каждого документа",
-    sec1_title: "Защита входа", sec1_desc: "Пароли надёжно зашифрованы. Чужой не войдёт в ваш аккаунт.", sec2_title: "Мгновенные уведомления", sec2_desc: "Вы сразу узнаете, когда документ подписан или требует внимания.", sec3_title: "История действий", sec3_desc: "Кто, когда и что сделал с документом — всё сохраняется и доступно.", sec4_title: "Резервные копии", sec4_desc: "Данные автоматически сохраняются. Даже при сбое ничего не потеряется.",
-    admin_badge: "Главный администратор", admin_role: "Создатель системы DocSign", admin_desc: "Если у вас есть компания и вы хотите стать администратором системы — свяжитесь с главным администратором. Он поможет настроить всё для вашей организации.", admin_contact: "Написать в Telegram",
-    contact_title: "Готовы начать?", contact_subtitle: "Присоединяйтесь к компаниям, которые уже используют DocSign", contact_cta: "Начать бесплатно", contact_tg: "Связаться в Telegram",
-    footer_desc: "Платформа электронного документооборота, которая облегчает работу людей в Таджикистане.", footer_product: "Продукт", footer_features: "Возможности", footer_faceid: "Face ID", footer_ai: "ИИ / RAG", footer_departments: "Отделы", footer_geography: "География", footer_analytics: "Аналитика", footer_security: "Безопасность", footer_company: "Компания", footer_admin: "Администратор", footer_contact: "Контакты", footer_rights: "Все права защищены.", footer_made: "Сделано в Таджикистане"
-  },
-  en: {
-    nav_features: "Features", nav_faceid: "Face ID", nav_ai: "AI", nav_departments: "Departments", nav_geography: "Geography", nav_analytics: "Analytics", nav_security: "Security", nav_admin: "Admin", nav_contact: "Contact", nav_start: "Get Started",
-    hero_badge: "Next-generation system", hero_title_1: "Electronic document management", hero_subtitle: "DocSign is a modern platform for working with documents. Sign, send and store files in one click. Simple and reliable — for people, to make work easier.",
-    hero_cta: "Get Started", hero_learn: "Learn More", stat_sec: "sec", stat_speed: "Speed", stat_speed_desc: "per document", stat_users: "Users", stat_users_desc: "registered", stat_access: "Access", stat_access_desc: "always online", stat_protection: "Protection", stat_protection_desc: "legal validity",
-    faceid_label: "Face ID • Biometrics", faceid_report_badge: "Quick report", faceid_title: "Sign in and sign — with your face", faceid_text: "If you have a company — Face ID becomes your assistant. An employee looks at the camera, the system verifies identity in a fraction of a second and signs the document. The manager gets a brief report: who, when and what was signed.",
-    faceid_b1_t: "Instant verification", faceid_b1_d: "Face recognition takes 0.3 seconds — faster than any password.", faceid_b2_t: "Complete reports", faceid_b2_d: "Every check is saved: who logged in, when and what they signed.", faceid_b3_t: "For the whole company", faceid_b3_d: "Add employees, assign roles — and work paper-free.",
-    faceid_cta: "Enable Face ID", faceid_report: "View reports", faceid_accuracy: "accuracy", faceid_speed: "sec", faceid_demo_note: "Live demo", faceid_status_scanning: "Scanning face...", faceid_status_ok: "Identity verified",
-    ai_label: "Artificial Intelligence • RAG", ai_title: "Smart assistant in every document", ai_subtitle: "AI powered by RAG technology understands your documents, finds the right information in seconds and answers questions — like a live expert.",
-    ai_brain_title: "DocSign Neural Network", ai_brain_sub: "RAG • Embeddings • LLM", ai_brain_online: "Online", ai_stat_speed: "Response", ai_stat_accuracy: "Accuracy", ai_stat_uptime: "Uptime",
-    ai_rag_sub: "RAG • Knowledge base search", ai_rag_active: "Active", ai_step_query: "Query", ai_step_retrieve: "Search", ai_step_generate: "AI", ai_step_answer: "Answer",
-    ai_f1_title: "Smart Search", ai_f1_desc: "AI understands the meaning of the question, not just words. Finds the right document even if you don't remember the exact title.",
-    ai_f2_title: "Knowledge Base", ai_f2_desc: "All your documents become a single knowledge base. AI answers questions by referencing specific files.",
-    ai_f3_title: "Answer Generation", ai_f3_desc: "AI reads documents and formulates clear answers. You get the essence without having to read hundreds of pages.",
-    ai_f4_title: "Only your data", ai_f4_desc: "AI works only with your company's documents. No leaks — all data stays inside the system.",
-    ai_f5_title: "Document Analysis", ai_f5_desc: "AI automatically extracts key data: amounts, dates, contract parties. Saves hours of manual work.",
-    ai_f6_title: "Dialog in your language", ai_f6_desc: "Chat with AI in Russian, Tajik or English. It understands context and responds naturally.",
-    ai_cta_title: "Try AI right now", ai_cta_desc: "Ask a question about your documents — get an answer in seconds with links to sources.", ai_cta_btn: "Launch AI", ai_cta_learn: "Learn more",
-    ai_demo_q1: "What is the amount for contract #45 dated March 12?", ai_demo_a1: "Contract #45 dated March 12, 2026 has a total amount of 245,000 somoni. Payment deadline — by April 30.", ai_demo_src_title: "Sources:", ai_demo_src1: "Contract #45 dated 12.03.2026", ai_demo_src2: "Invoice #128",
-    ai_demo_q2: "Who signed the certificate of work performed?", ai_demo_a2: "The certificate of work performed was signed by Director Aminov A. and Chief Accountant Rakhimova M. on August 15, 2026.",
-    analytics_label: "Analytics", analytics_title: "Everything under control", analytics_subtitle: "Track registrations, documents and activity in real time",
-    analysis_reg_title: "Registrations", analysis_reg_desc: "users registered", analysis_doc_title: "Documents", analysis_doc_desc: "documents sent", analysis_activity_title: "Activity", analysis_activity_desc: "documents processed successfully",
-    donut_period: "PER MONTH", donut_live: "Updated just now", donut_center_label: "Documents", donut_center_sub: "total", donut_leg1: "Incoming", donut_leg2: "Sent", donut_leg3: "Signed", donut_leg4: "In queue",
-    chart_label: "Monthly overview", chart_title: "System performance", chart_reg: "Registrations", chart_doc: "Documents",
-    features_label: "Features", features_title: "Everything you need", features_subtitle: "Simple tools for complex document work",
-    f1_title: "Digital Signature", f1_desc: "Sign documents with one click. Each file gets a unique code — it can be verified in a second via phone.",
-    f2_title: "Roles & Permissions", f2_desc: "Each employee sees only what they need. Director, manager, worker — each has their own capabilities.",
-    f3_title: "Reliable Storage", f3_desc: "All documents are stored in secure storage. Nothing will be lost — action history is always at hand.",
-    f4_title: "Smart Analysis", f4_desc: "The system counts how many documents are processed, who signed and who hasn't. All statistics in one place.",
-    f5_title: "All Formats", f5_desc: "Work with PDF, Word and Excel. Signature and stamp are automatically added to the document — formatting is preserved.",
-    f6_title: "Comfortable Design", f6_desc: "Dark theme is easy on the eyes. Everything is in place — anyone can figure it out, even without experience.",
-    depts_label: "Departments", depts_title: "Create departments — work becomes easier", depts_subtitle: "Do you have a company? Create departments and send them documents — employees exchange documents with each other and do everything right.",
-    d1_tag: "Full access", d1_title: "Management", d1_desc: "Sends documents to departments, signs final versions and sees company-wide reports.",
-    d2_tag: "HR", d2_title: "HR Department", d2_desc: "Orders, vacations and employment contracts — documents reach employees in minutes.",
-    d3_tag: "Finance", d3_title: "Accounting", d3_desc: "Invoices, statements and reports — no paper and no queues, everything arrives on time.",
-    d4_tag: "Legal", d4_title: "Legal Department", d4_desc: "Contracts and approvals — departments exchange documents and nothing gets lost.",
-    d5_tag: "Sales", d5_title: "Sales Department", d5_desc: "Proposals and contracts — send to clients and colleagues in one click.",
-    d6_tag: "Delivery", d6_title: "Logistics", d6_desc: "Waybills and routes — drivers and warehouse sign without delays.",
-    dept_roles: "roles", dept_templates: "templates", depts_note: "Can't find your department? Create it in 30 seconds — with its own roles and templates.", depts_note_cta: "Create department",
-    geo_label: "Geography", geo_title: "All of Tajikistan — connected", geo_subtitle: "All regions and cities of Tajikistan are added here, so sending documents anywhere in the country is convenient.",
-    geo_map_title: "Coverage map", geo_badge1: "100% coverage", geo_badge2: "Delivery in seconds",
-    g1_title: "Dushanbe", g1_desc: "Capital • all city districts", g2_title: "Sughd Region", g2_desc: "Khujand, Istaravshan, Isfara, Kanibadam, Panjakent", g3_title: "Khatlon Region", g3_desc: "Bokhtar, Kulob, Levakant, Dangara", g4_title: "GBAO", g4_desc: "Khorog, Murghab, Rushan, Ishkashim", g5_title: "Districts of Republican Subordination", g5_desc: "Vahdat, Tursunzoda, Rudaki, Hisor",
-    geo_stat1: "regions", geo_stat2: "districts", geo_stat4: "cities", geo_stat3: "coverage", geo_cities_label: "Cities & districts", geo_more: "whole country",
-    security_label: "Security", security_title: "Your data is protected", security_subtitle: "Multiple levels of protection — from login to every document",
-    sec1_title: "Login Protection", sec1_desc: "Passwords are securely encrypted. No one else can access your account.", sec2_title: "Instant Notifications", sec2_desc: "You'll know immediately when a document is signed or needs attention.", sec3_title: "Action History", sec3_desc: "Who, when and what did with the document — everything is saved and accessible.", sec4_title: "Backups", sec4_desc: "Data is saved automatically. Even in case of failure, nothing will be lost.",
-    admin_badge: "Chief Administrator", admin_role: "Creator of DocSign system", admin_desc: "If you have a company and want to become a system administrator — contact the chief administrator. He will help set everything up for your organization.", admin_contact: "Write on Telegram",
-    contact_title: "Ready to start?", contact_subtitle: "Join companies already using DocSign", contact_cta: "Start for free", contact_tg: "Contact on Telegram",
-    footer_desc: "Electronic document management platform that makes work easier for people in Tajikistan.", footer_product: "Product", footer_features: "Features", footer_faceid: "Face ID", footer_ai: "AI / RAG", footer_departments: "Departments", footer_geography: "Geography", footer_analytics: "Analytics", footer_security: "Security", footer_company: "Company", footer_admin: "Administrator", footer_contact: "Contact", footer_rights: "All rights reserved.", footer_made: "Made in Tajikistan"
-  },
-  tj: {
-    nav_features: "Имкониятҳо", nav_faceid: "Face ID", nav_ai: "Зеҳн", nav_departments: "Шуъбаҳо", nav_geography: "Ҷуғрофия", nav_analytics: "Таҳлил", nav_security: "Амният", nav_admin: "Админ", nav_contact: "Тамос", nav_start: "Оғоз",
-    hero_badge: "Системаи насли нав", hero_title_1: "Идоракунии электронии ҳуҷҷатҳо", hero_subtitle: "DocSign — платформаи муосир барои кор бо ҳуҷҷатҳо. Имзо кунед, фиристед ва файлҳоро дар як клик нигоҳ доред. Содда ва боэътимод — барои одамон, то кор осонтар шавад.",
-    hero_cta: "Оғоз кунед", hero_learn: "Бештар донед", stat_sec: "сония", stat_speed: "Суръат", stat_speed_desc: "барои як ҳуҷҷат", stat_users: "Корбарон", stat_users_desc: "ба қайд гирифта шуданд", stat_access: "Дастрасӣ", stat_access_desc: "ҳамеша онлайн", stat_protection: "Ҳимоя", stat_protection_desc: "қувваи ҳуқуқӣ",
-    faceid_label: "Face ID • Биометрия", faceid_report_badge: "Ҳисоботи кӯтоҳ", faceid_title: "Воридшавӣ ва имзо — бо чеҳраи шумо", faceid_text: "Агар шумо ширкат дошта бошед — Face ID ёвари шумо мешавад. Корманд ба камера нигоҳ мекунад, система дар як лаҳза шахсиятро тасдиқ мекунад ва ҳуҷҷатро имзо мекунад. Роҳбар ҳисоботи кӯтоҳ мегирад: кӣ, кай ва чиро имзо кард.",
-    faceid_b1_t: "Тасдиқи фаврӣ", faceid_b1_d: "Шиносоии чеҳра 0.3 сония мекашад — тезтар аз ҳар гуна парол.", faceid_b2_t: "Ҳисоботҳои пурра", faceid_b2_d: "Ҳар як санҷиш нигоҳ дошта мешавад: кӣ ворид шуд, кай ва чиро имзо кард.", faceid_b3_t: "Барои тамоми ширкат", faceid_b3_d: "Кормандонро пайваст кунед, нақшҳоро таъин кунед — бе коғаз кор кунед.",
-    faceid_cta: "Face ID-ро пайваст кунед", faceid_report: "Ҳисоботҳоро бинед", faceid_accuracy: "дақиқӣ", faceid_speed: "сония", faceid_demo_note: "Намоиши зинда", faceid_status_scanning: "Сканкунии чеҳра...", faceid_status_ok: "Шахсият тасдиқ шуд",
-    ai_label: "Зеҳни сунъӣ • RAG", ai_title: "Ёвари ҳушманд дар ҳар як ҳуҷҷат", ai_subtitle: "Зеҳни сунъӣ дар асоси технологияи RAG ҳуҷҷатҳои шуморо мефаҳмад, маълумоти лозимиро дар чанд сония меёбад ва ба саволҳо ҷавоб медиҳад — мисли мутахассиси зинда.",
-    ai_brain_title: "Шабакаи асабии DocSign", ai_brain_sub: "RAG • Embeddings • LLM", ai_brain_online: "Онлайн", ai_stat_speed: "Ҷавоб", ai_stat_accuracy: "Дақиқӣ", ai_stat_uptime: "Кор",
-    ai_rag_sub: "RAG • Ҷустуҷӯ дар пойгоҳи дониш", ai_rag_active: "Фаъол", ai_step_query: "Дархост", ai_step_retrieve: "Ҷустуҷӯ", ai_step_generate: "Зеҳн", ai_step_answer: "Ҷавоб",
-    ai_f1_title: "Ҷустуҷӯи ҳушманд", ai_f1_desc: "Зеҳни сунъӣ маънои саволро мефаҳмад, на танҳо калимаҳоро. Ҳуҷҷати лозимиро меёбад, ҳатто агар номи дақиқро дар ёд надошта бошед.",
-    ai_f2_title: "Пойгоҳи дониш", ai_f2_desc: "Ҳамаи ҳуҷҷатҳои шумо ба пойгоҳи ягонаи дониш табдил меёбанд. Зеҳни сунъӣ ба саволҳо бо истинод ба файлҳои мушаххас ҷавоб медиҳад.",
-    ai_f3_title: "Эҷоди ҷавобҳо", ai_f3_desc: "Зеҳни сунъӣ ҳуҷҷатҳоро мехонад ва ҷавобҳои равшан медиҳад. Шумо моҳиятро бе хондани садҳо саҳифа мегиред.",
-    ai_f4_title: "Танҳо маълумоти шумо", ai_f4_desc: "Зеҳни сунъӣ танҳо бо ҳуҷҷатҳои ширкати шумо кор мекунад. Ҳеҷ гуна ихроҷ — ҳамаи маълумот дар дохили система мемонад.",
-    ai_f5_title: "Таҳлили ҳуҷҷатҳо", ai_f5_desc: "Зеҳни сунъӣ ба таври худкор маълумоти калидиро мегирад: маблағҳо, санаҳо, тарафҳои шартнома. Соатҳои кори дастиро сарфа мекунад.",
-    ai_f6_title: "Муколама бо забони шумо", ai_f6_desc: "Бо зеҳни сунъӣ бо забони русӣ, тоҷикӣ ё англисӣ сӯҳбат кунед. Вазъиятро мефаҳмад ва табиӣ ҷавоб медиҳад.",
-    ai_cta_title: "Зеҳни сунъиро ҳозир санҷед", ai_cta_desc: "Дар бораи ҳуҷҷатҳои худ савол диҳед — дар чанд сония ҷавоб бо истинод ба манбаъҳо гиред.", ai_cta_btn: "Зеҳнро оғоз кунед", ai_cta_learn: "Бештар донед",
-    ai_demo_q1: "Маблағи шартномаи №45 аз 12 март чанд аст?", ai_demo_a1: "Мувофиқи шартномаи №45 аз 12 марти 2026 маблағи умумӣ 245 000 сомонӣ аст. Мӯҳлати пардохт — то 30 апрел.", ai_demo_src_title: "Манбаъҳо:", ai_demo_src1: "Шартномаи №45 аз 12.03.2026", ai_demo_src2: "Ҳисоб-фактураи №128",
-    ai_demo_q2: "Кӣ далолатномаи иҷрои корро имзо кард?", ai_demo_a2: "Далолатномаи иҷрои кор аз ҷониби директор Аминов А. ва сармуҳосиб Раҳимова М. 15 августи 2026 имзо шудааст.",
-    analytics_label: "Таҳлил", analytics_title: "Ҳама чиз зери назорат", analytics_subtitle: "Бақайдгириҳо, ҳуҷҷатҳо ва фаъолиятро дар вақти воқеӣ пайгирӣ кунед",
-    analysis_reg_title: "Бақайдгириҳо", analysis_reg_desc: "корбарон ба қайд гирифта шуданд", analysis_doc_title: "Ҳуҷҷатҳо", analysis_doc_desc: "ҳуҷҷатҳо фиристода шуданд", analysis_activity_title: "Фаъолият", analysis_activity_desc: "ҳуҷҷатҳо бомуваффақият коркард шуданд",
-    donut_period: "ДАР МОҲ", donut_live: "Ҳозир навсозӣ шуд", donut_center_label: "Ҳуҷҷатҳо", donut_center_sub: "ҳамагӣ", donut_leg1: "Воридотӣ", donut_leg2: "Содиротӣ", donut_leg3: "Имзошуда", donut_leg4: "Дар навбат",
-    chart_label: "Баррасии моҳона", chart_title: "Динамикаи кори система", chart_reg: "Бақайдгириҳо", chart_doc: "Ҳуҷҷатҳо",
-    features_label: "Имкониятҳо", features_title: "Ҳама чизе, ки лозим аст", features_subtitle: "Асбобҳои содда барои кори мураккаб бо ҳуҷҷатҳо",
-    f1_title: "Имзои электронӣ", f1_desc: "Ҳуҷҷатҳоро бо як клик имзо кунед. Ҳар як файл рамзи беназир мегирад — онро тавассути телефон дар як сония санҷидан мумкин аст.",
-    f2_title: "Нақшҳо ва ҳуқуқҳо", f2_desc: "Ҳар як корманд танҳо он чизеро мебинад, ки ба ӯ лозим аст. Директор, менеджер, коргар — ҳар кадоме имкониятҳои худро дорад.",
-    f3_title: "Нигоҳдории боэътимод", f3_desc: "Ҳамаи ҳуҷҷатҳо дар анбори ҳифзшуда нигоҳ дошта мешаванд. Ҳеҷ чиз гум намешавад — таърихи амалҳо ҳамеша дар даст аст.",
-    f4_title: "Таҳлили ҳушманд", f4_desc: "Система худ мешуморад, ки чанд ҳуҷҷат коркард шудааст, кӣ имзо кардааст ва кӣ ҳанӯз не. Ҳамаи омор дар як ҷо.",
-    f5_title: "Ҳамаи форматҳо", f5_desc: "Бо PDF, Word ва Excel кор кунед. Имзо ва муҳр ба таври худкор ба ҳуҷҷат илова карда мешаванд — формат нигоҳ дошта мешавад.",
-    f6_title: "Тарҳи қулай", f6_desc: "Мавзӯи торик чашмро хаста намекунад. Ҳама чиз дар ҷояш аст — ҳар кас, ҳатто бе таҷриба, метавонад фаҳмад.",
-    depts_label: "Шуъбаҳо", depts_title: "Шуъбаҳоро эҷод кунед — кор осонтар мешавад", depts_subtitle: "Ширкат доред? Шуъбаҳоро эҷод кунед ва ба онҳо ҳуҷҷат фиристед — кормандон байни худ ҳуҷҷатҳоро мубодила мекунанд ва ҳама чизро дуруст иҷро мекунанд.",
-    d1_tag: "Дастрасии пурра", d1_title: "Роҳбарият", d1_desc: "Ба шуъбаҳо ҳуҷҷат мефиристад, версияҳои ниҳоиро имзо мекунад ва ҳисоботҳои тамоми ширкатро мебинад.",
-    d2_tag: "Кадрҳо", d2_title: "Шуъбаи кадрҳо", d2_desc: "Фармонҳо, рухсатиҳо ва шартномаҳои меҳнатӣ — ҳуҷҷатҳо ба кормандон дар дақиқаҳо мерасанд.",
-    d3_tag: "Молия", d3_title: "Баҳисобгирӣ", d3_desc: "Ҳисобҳо, актҳо ва ҳисоботҳо — бе коғаз ва бе навбат, ҳама чиз саривақт мерасад.",
-    d4_tag: "Ҳуқуқ", d4_title: "Шуъбаи ҳуқуқӣ", d4_desc: "Шартномаҳо ва мувофиқаҳо — шуъбаҳо ҳуҷҷатҳоро мубодила мекунанд ва ҳеҷ чиз гум намешавад.",
-    d5_tag: "Фурӯш", d5_title: "Шуъбаи фурӯш", d5_desc: "Пешниҳодҳои тиҷорӣ ва шартномаҳо — ба муштариён ва ҳамкорон дар як клик фиристед.",
-    d6_tag: "Интиқол", d6_title: "Логистика", d6_desc: "Ҳуҷҷатҳои мол ва маршрутҳо — ронандагон ва анбор бе таъхир имзо мекунанд.",
-    dept_roles: "нақшҳо", dept_templates: "қолибҳо", depts_note: "Шуъбаи худро наёфтед? Онро дар 30 сония эҷод кунед — бо нақшҳо ва қолибҳои худ.", depts_note_cta: "Эҷод кардани шуъба",
-    geo_label: "Ҷуғрофия", geo_title: "Тамоми Тоҷикистон — дар алоқа", geo_subtitle: "Дар ин ҷо тамоми вилоятҳо ва шаҳрҳои Тоҷикистон илова карда шудаанд, то фиристодани ҳуҷҷатҳо ба ҳар нуқтаи кишвар қулай бошад.",
-    geo_map_title: "Харитаи фарогирӣ", geo_badge1: "Фарогирӣ 100%", geo_badge2: "Интиқол дар сонияҳо",
-    g1_title: "Душанбе", g1_desc: "Пойтахт • тамоми ноҳияҳои шаҳар", g2_title: "Вилояти Суғд", g2_desc: "Хуҷанд, Истаравшан, Исфара, Конибодом, Панҷакент", g3_title: "Вилояти Хатлон", g3_desc: "Бохтар, Кӯлоб, Левакант, Данғара", g4_title: "ВМКБ", g4_desc: "Хоруғ, Мурғоб, Рушон, Ишкошим", g5_title: "Ноҳияҳои тобеи ҷумҳурӣ", g5_desc: "Ваҳдат, Турсунзода, Рӯдакӣ, Ҳисор",
-    geo_stat1: "вилоят", geo_stat2: "ноҳия", geo_stat4: "шаҳр", geo_stat3: "фарогирӣ", geo_cities_label: "Шаҳрҳо ва ноҳияҳо", geo_more: "тамоми кишвар",
-    security_label: "Амният", security_title: "Маълумоти шумо дар ҳимоя", security_subtitle: "Чанд сатҳи ҳимоя — аз воридшавӣ то ҳар як ҳуҷҷат",
-    sec1_title: "Ҳимояи воридшавӣ", sec1_desc: "Паролҳо боэътимод рамзгузорӣ шудаанд. Ғайриҳо ба ҳисоби шумо ворид шуда наметавонад.", sec2_title: "Огоҳиҳои фаврӣ", sec2_desc: "Шумо фавран мефаҳмед, ки ҳуҷҷат имзо шудааст ё ба диққат ниёз дорад.", sec3_title: "Таърихи амалҳо", sec3_desc: "Кӣ, кай ва чӣ бо ҳуҷҷат кард — ҳама нигоҳ дошта мешавад ва дастрас аст.", sec4_title: "Нусхаҳои эҳтиётӣ", sec4_desc: "Маълумот ба таври худкор нигоҳ дошта мешавад. Ҳатто дар ҳолати вайроншавӣ ҳеҷ чиз гум намешавад.",
-    admin_badge: "Маъмури асосӣ", admin_role: "Созандаи системаи DocSign", admin_desc: "Агар шумо ширкат дошта бошед ва хоҳед маъмури система шавед — бо маъмури асосӣ тамос гиред. Ӯ ба шумо барои ташкилотатон кӯмак мекунад.", admin_contact: "Дар Telegram нависед",
-    contact_title: "Омодаед оғоз кунед?", contact_subtitle: "Ба ширкатҳое, ки аллакай DocSign-ро истифода мебаранд, ҳамроҳ шавед", contact_cta: "Ройгон оғоз кунед", contact_tg: "Дар Telegram тамос гиред",
-    footer_desc: "Платформаи идоракунии электронии ҳуҷҷатҳо, ки кори одамонро дар Тоҷикистон осон мекунад.", footer_product: "Маҳсулот", footer_features: "Имкониятҳо", footer_faceid: "Face ID", footer_ai: "Зеҳн / RAG", footer_departments: "Шуъбаҳо", footer_geography: "Ҷуғрофия", footer_analytics: "Таҳлил", footer_security: "Амният", footer_company: "Ширкат", footer_admin: "Маъмур", footer_contact: "Тамос", footer_rights: "Ҳамаи ҳуқуқҳо ҳифз шудаанд.", footer_made: "Дар Тоҷикистон сохта шудааст"
-  }
+ru: {
+nav_features: "Возможности", nav_faceid: "Face ID", nav_ai: "ИИ", nav_chat: "Чаты", nav_departments: "Отделы", nav_geography: "География", nav_analytics: "Аналитика", nav_security: "Безопасность", nav_admin: "Админ", nav_contact: "Контакты", nav_start: "Начать",
+hero_badge: "Система нового поколения", hero_title_1: "Электронный документооборот", hero_subtitle: "DocSign — современная платформа для работы с документами. Подписывайте, отправляйте и храните файлы в один клик. Просто и надёжно — для людей, чтобы работа стала легче.",
+hero_cta: "Начать работу", hero_learn: "Узнать больше", stat_sec: "сек", stat_speed: "Скорость", stat_speed_desc: "на один документ", stat_users: "Пользователи", stat_users_desc: "зарегистрировано", stat_access: "Доступ", stat_access_desc: "всегда онлайн", stat_protection: "Защита", stat_protection_desc: "юридическая сила",
+faceid_label: "Face ID • Биометрия", faceid_report_badge: "Защита входа", faceid_title: "Вход в аккаунт — только после проверки лица", faceid_text: "Face ID создан для компаний. Перед входом в систему камера сканирует лицо и проверяет: это действительно вы или кто-то другой пытается зайти под вашим логином. Чужой человек не войдёт, даже если знает ваш логин и пароль.",
+faceid_b1_t: "Проверка перед входом", faceid_b1_d: "Система сверяет лицо с сохранённым профилем сотрудника за 0.3 секунды.", faceid_b2_t: "Защита от чужого входа", faceid_b2_d: "Если перед камерой другой человек, доступ к аккаунту остаётся закрытым.", faceid_b3_t: "Для всей компании", faceid_b3_d: "Подключите сотрудников и назначьте роли — каждый заходит только под своим лицом.",
+faceid_cta: "Подключить Face ID", faceid_report: "Смотреть отчёты", faceid_accuracy: "точность", faceid_speed: "сек", faceid_demo_note: "Живая демонстрация", faceid_status_scanning: "Проверка лица...", faceid_status_ok: "Это вы — вход разрешён",
+ai_label: "Искусственный интеллект • RAG", ai_title: "Умный помощник в каждом документе", ai_subtitle: "ИИ на базе технологии RAG понимает ваши документы, находит нужную информацию за секунды и отвечает на вопросы — как живой эксперт.",
+ai_brain_title: "Нейросеть DocSign", ai_brain_sub: "RAG • Embeddings • LLM", ai_brain_online: "Онлайн", ai_stat_speed: "Ответ", ai_stat_accuracy: "Точность", ai_stat_uptime: "Работа",
+ai_rag_sub: "RAG • Поиск по базе знаний", ai_rag_active: "Активен", ai_step_query: "Запрос", ai_step_retrieve: "Поиск", ai_step_generate: "ИИ", ai_step_answer: "Ответ",
+ai_f1_title: "Умный поиск", ai_f1_desc: "ИИ понимает смысл вопроса, а не просто слова. Находит нужный документ даже если вы не помните точное название.",
+ai_f2_title: "База знаний", ai_f2_desc: "Все ваши документы превращаются в единую базу знаний. ИИ отвечает на вопросы, ссылаясь на конкретные файлы.",
+ai_f3_title: "Генерация ответов", ai_f3_desc: "ИИ читает документы и формулирует чёткие ответы. Вы получаете суть без необходимости читать сотни страниц.",
+ai_f4_title: "Только ваши данные", ai_f4_desc: "ИИ работает только с документами вашей компании. Никаких утечек — все данные остаются внутри системы.",
+ai_f5_title: "Анализ документов", ai_f5_desc: "ИИ автоматически извлекает ключевые данные: суммы, даты, стороны договора. Экономит часы ручной работы.",
+ai_f6_title: "Диалог на вашем языке", ai_f6_desc: "Общайтесь с ИИ на русском, таджикском или английском. Он понимает контекст и отвечает естественно.",
+ai_cta_title: "Попробуйте ИИ прямо сейчас", ai_cta_desc: "Задайте вопрос по вашим документам — получите ответ за секунды со ссылками на источники.", ai_cta_btn: "Запустить ИИ", ai_cta_learn: "Узнать больше",
+ai_demo_q1: "Какая сумма по договору №45 от 12 марта?", ai_demo_a1: "По договору №45 от 12 марта 2026 общая сумма составляет 245 000 сомони. Срок оплаты — до 30 апреля.", ai_demo_src_title: "Источники:", ai_demo_src1: "Договор №45 от 12.03.2026", ai_demo_src2: "Счёт-фактура №128",
+ai_demo_q2: "Кто подписал акт выполненных работ?", ai_demo_a2: "Акт выполненных работ подписан директором Аминовым А. и главным бухгалтером Рахимовой М. 15 августа 2026.",
+chat_label: "Общение", chat_title: "Мгновенный обмен сообщениями", chat_subtitle: "Общайтесь с коллегами в реальном времени. Отправляйте файлы, стикеры и голосовые сообщения — всё в одном месте.",
+chat_status_recent: "был(а) недавно", chat_date_oct: "16 октября", chat_msg_1: "Привет! Как дела с проектом?", chat_msg_2: "Привет! Всё отлично, почти закончил 👍", chat_msg_3: "Получил, сейчас посмотрю!", chat_input_placeholder: "Сообщение",
+chat_f1_title: "Мгновенная доставка", chat_f1_desc: "Сообщения доставляются за доли секунды. Статус прочтения показывает, когда собеседник увидел сообщение.",
+chat_f2_title: "Файлы и медиа", chat_f2_desc: "Отправляйте документы, изображения, аудио и видео. Поддержка файлов до 50MB.",
+chat_f3_title: "Голосовые сообщения", chat_f3_desc: "Записывайте и отправляйте голосовые сообщения одним нажатием. Удобно, когда нет времени печатать.",
+chat_f4_title: "Стикеры и эмодзи", chat_f4_desc: "Большая коллекция стикеров и эмодзи для выражения эмоций. Делайте общение ярче!",
+chat_f5_title: "История переписки", chat_f5_desc: "Вся история сообщений сохраняется. Найдите нужное сообщение за секунды с помощью поиска.",
+chat_cta: "Начать общение", chat_learn: "Подробнее",
+analytics_label: "Аналитика", analytics_title: "Всё под контролем", analytics_subtitle: "Следите за регистрациями, документами и активностью в реальном времени",
+analysis_reg_title: "Регистрации", analysis_reg_desc: "пользователей зарегистрировано", analysis_doc_title: "Документы", analysis_doc_desc: "документов отправлено", analysis_activity_title: "Активность", analysis_activity_desc: "документов обработано успешно",
+donut_period: "В МЕСЯЦ", donut_live: "Обновлено только что", donut_center_label: "Документы", donut_center_sub: "всего", donut_leg1: "Входящие", donut_leg2: "Отправленные", donut_leg3: "Подписанные", donut_leg4: "В очереди",
+chart_label: "Обзор за месяц", chart_title: "Динамика работы системы", chart_reg: "Регистрации", chart_doc: "Документы",
+features_label: "Возможности", features_title: "Всё, что вам нужно", features_subtitle: "Простые инструменты для сложной работы с документами",
+f1_title: "Электронная подпись", f1_desc: "Подписывайте документы одним кликом. Каждый файл получает уникальный код — его можно проверить за секунду через телефон.",
+f2_title: "Роли и права", f2_desc: "Каждый сотрудник видит только то, что ему нужно. Директор, менеджер, работник — у каждого свои возможности.",
+f3_title: "Надёжное хранение", f3_desc: "Все документы сохраняются в защищённом хранилище. Ничего не потеряется — история действий всегда под рукой.",
+f4_title: "Умный анализ", f4_desc: "Система сама считает, сколько документов обработано, кто подписал, а кто ещё нет. Вся статистика — в одном месте.",
+f5_title: "Все форматы", f5_desc: "Работайте с PDF, Word и Excel. Подпись и печать автоматически добавляются в документ — форматирование сохраняется.",
+f6_title: "Удобный дизайн", f6_desc: "Тёмная тема бережёт глаза. Всё на своих местах — разобраться сможет каждый, даже без опыта работы с такими системами.",
+depts_label: "Отделы", depts_title: "Создайте отделы — работа станет легче", depts_subtitle: "У вас есть компания? Создайте отделы и отправляйте им документы — сотрудники обмениваются ими между собой и всё делают правильно.",
+d1_tag: "Полный доступ", d1_title: "Руководство", d1_desc: "Отправляет документы отделам, подписывает финальные версии и видит отчёты по всей компании.",
+d2_tag: "Кадры", d2_title: "HR-отдел", d2_desc: "Приказы, отпуска и трудовые договоры — документы доходят до сотрудников за минуты.",
+d3_tag: "Финансы", d3_title: "Бухгалтерия", d3_desc: "Счета, акты и отчёты — без бумаги и очередей, всё приходит вовремя.",
+d4_tag: "Право", d4_title: "Юридический отдел", d4_desc: "Договоры и согласования — отделы обмениваются документами, ничего не теряется.",
+d5_tag: "Продажи", d5_title: "Отдел продаж", d5_desc: "Коммерческие предложения и контракты — отправляйте клиентам и коллегам в один клик.",
+d6_tag: "Доставка", d6_title: "Логистика", d6_desc: "Накладные и маршруты — водители и склад подписывают без задержек.",
+dept_roles: "ролей", dept_templates: "шаблонов", depts_note: "Не нашли свой отдел? Создайте его за 30 секунд — с собственными ролями и шаблонами.", depts_note_cta: "Создать отдел",
+geo_label: "География", geo_title: "Весь Таджикистан — на связи", geo_subtitle: "Здесь добавлены все области и города Таджикистана, чтобы удобно было отправлять документы в любую точку страны.",
+geo_map_title: "Карта покрытия", geo_badge1: "Покрытие 100%", geo_badge2: "Доставка за секунды",
+g1_title: "Душанбе", g1_desc: "Столица • все районы города", g2_title: "Согдийская область", g2_desc: "Худжанд, Истаравшан, Исфара, Канибадам, Пенджикент", g3_title: "Хатлонская область", g3_desc: "Бохтер, Кулоб, Левакант, Дангара", g4_title: "ГБАО", g4_desc: "Хорог, Мургаб, Рушан, Ишкашим", g5_title: "Районы республиканского подчинения", g5_desc: "Вахдат, Турсунзода, Рудаки, Гиссар",
+geo_stat1: "регионов", geo_stat2: "районов", geo_stat4: "городов", geo_stat3: "покрытие", geo_cities_label: "Города и районы", geo_more: "вся страна",
+security_label: "Безопасность", security_title: "Ваши данные под защитой", security_subtitle: "Несколько уровней защиты — от входа в систему до каждого документа",
+sec1_title: "Защита входа", sec1_desc: "Пароли надёжно зашифрованы. Чужой не войдёт в ваш аккаунт.", sec2_title: "Мгновенные уведомления", sec2_desc: "Вы сразу узнаете, когда документ подписан или требует внимания.", sec3_title: "История действий", sec3_desc: "Кто, когда и что сделал с документом — всё сохраняется и доступно.", sec4_title: "Резервные копии", sec4_desc: "Данные автоматически сохраняются. Даже при сбое ничего не потеряется.",
+admin_badge: "Главный администратор", admin_role: "Создатель системы DocSign", admin_desc: "Если у вас есть компания и вы хотите стать администратором системы — свяжитесь с главным администратором. Он поможет настроить всё для вашей организации.", admin_contact: "Написать в Telegram",
+contact_title: "Готовы начать?", contact_subtitle: "Присоединяйтесь к компаниям, которые уже используют DocSign", contact_cta: "Начать бесплатно", contact_tg: "Связаться в Telegram",
+footer_desc: "Платформа электронного документооборота, которая облегчает работу людей в Таджикистане.", footer_product: "Продукт", footer_features: "Возможности", footer_faceid: "Face ID", footer_ai: "ИИ / RAG", footer_chat: "Чаты", footer_departments: "Отделы", footer_geography: "География", footer_analytics: "Аналитика", footer_security: "Безопасность", footer_company: "Компания", footer_admin: "Администратор", footer_contact: "Контакты", footer_rights: "Все права защищены.", footer_made: "Сделано в Таджикистане"
+},
+en: {
+nav_features: "Features", nav_faceid: "Face ID", nav_ai: "AI", nav_chat: "Chats", nav_departments: "Departments", nav_geography: "Geography", nav_analytics: "Analytics", nav_security: "Security", nav_admin: "Admin", nav_contact: "Contact", nav_start: "Get Started",
+hero_badge: "Next-generation system", hero_title_1: "Electronic document management", hero_subtitle: "DocSign is a modern platform for working with documents. Sign, send and store files in one click. Simple and reliable — for people, to make work easier.",
+hero_cta: "Get Started", hero_learn: "Learn More", stat_sec: "sec", stat_speed: "Speed", stat_speed_desc: "per document", stat_users: "Users", stat_users_desc: "registered", stat_access: "Access", stat_access_desc: "always online", stat_protection: "Protection", stat_protection_desc: "legal validity",
+faceid_label: "Face ID • Biometrics", faceid_report_badge: "Login protection", faceid_title: "Sign in only after a face check", faceid_text: "Face ID is built for companies. Before logging in, the camera scans your face and checks whether it is really you or someone else trying to use your login. A stranger cannot get in, even if they know your login and password.",
+faceid_b1_t: "Check before login", faceid_b1_d: "The system matches the face with the employee's saved profile in 0.3 seconds.", faceid_b2_t: "Protection from foreign access", faceid_b2_d: "If someone else is in front of the camera, access to the account stays closed.", faceid_b3_t: "For the whole company", faceid_b3_d: "Add employees and assign roles — everyone signs in only with their own face.",
+faceid_cta: "Enable Face ID", faceid_report: "View reports", faceid_accuracy: "accuracy", faceid_speed: "sec", faceid_demo_note: "Live demo", faceid_status_scanning: "Checking face...", faceid_status_ok: "It's you — access granted",
+ai_label: "Artificial Intelligence • RAG", ai_title: "Smart assistant in every document", ai_subtitle: "AI powered by RAG technology understands your documents, finds the right information in seconds and answers questions — like a live expert.",
+ai_brain_title: "DocSign Neural Network", ai_brain_sub: "RAG • Embeddings • LLM", ai_brain_online: "Online", ai_stat_speed: "Response", ai_stat_accuracy: "Accuracy", ai_stat_uptime: "Uptime",
+ai_rag_sub: "RAG • Knowledge base search", ai_rag_active: "Active", ai_step_query: "Query", ai_step_retrieve: "Search", ai_step_generate: "AI", ai_step_answer: "Answer",
+ai_f1_title: "Smart Search", ai_f1_desc: "AI understands the meaning of the question, not just words. Finds the right document even if you don't remember the exact title.",
+ai_f2_title: "Knowledge Base", ai_f2_desc: "All your documents become a single knowledge base. AI answers questions by referencing specific files.",
+ai_f3_title: "Answer Generation", ai_f3_desc: "AI reads documents and formulates clear answers. You get the essence without having to read hundreds of pages.",
+ai_f4_title: "Only your data", ai_f4_desc: "AI works only with your company's documents. No leaks — all data stays inside the system.",
+ai_f5_title: "Document Analysis", ai_f5_desc: "AI automatically extracts key data: amounts, dates, contract parties. Saves hours of manual work.",
+ai_f6_title: "Dialog in your language", ai_f6_desc: "Chat with AI in Russian, Tajik or English. It understands context and responds naturally.",
+ai_cta_title: "Try AI right now", ai_cta_desc: "Ask a question about your documents — get an answer in seconds with links to sources.", ai_cta_btn: "Launch AI", ai_cta_learn: "Learn more",
+ai_demo_q1: "What is the amount for contract #45 dated March 12?", ai_demo_a1: "Contract #45 dated March 12, 2026 has a total amount of 245,000 somoni. Payment deadline — by April 30.", ai_demo_src_title: "Sources:", ai_demo_src1: "Contract #45 dated 12.03.2026", ai_demo_src2: "Invoice #128",
+ai_demo_q2: "Who signed the certificate of work performed?", ai_demo_a2: "The certificate of work performed was signed by Director Aminov A. and Chief Accountant Rakhimova M. on August 15, 2026.",
+chat_label: "Messaging", chat_title: "Instant messaging", chat_subtitle: "Chat with colleagues in real time. Send files, stickers and voice messages — all in one place.",
+chat_status_recent: "last seen recently", chat_date_oct: "October 16", chat_msg_1: "Hi! How is the project going?", chat_msg_2: "Hi! All good, almost done 👍", chat_msg_3: "Got it, checking now!", chat_input_placeholder: "Message",
+chat_f1_title: "Instant delivery", chat_f1_desc: "Messages are delivered in fractions of a second. Read status shows when the recipient saw the message.",
+chat_f2_title: "Files and media", chat_f2_desc: "Send documents, images, audio and video. Support for files up to 50MB.",
+chat_f3_title: "Voice messages", chat_f3_desc: "Record and send voice messages with one click. Convenient when there's no time to type.",
+chat_f4_title: "Stickers and emoji", chat_f4_desc: "Large collection of stickers and emoji to express emotions. Make communication brighter!",
+chat_f5_title: "Message history", chat_f5_desc: "All message history is saved. Find the message you need in seconds with search.",
+chat_cta: "Start chatting", chat_learn: "Learn more",
+analytics_label: "Analytics", analytics_title: "Everything under control", analytics_subtitle: "Track registrations, documents and activity in real time",
+analysis_reg_title: "Registrations", analysis_reg_desc: "users registered", analysis_doc_title: "Documents", analysis_doc_desc: "documents sent", analysis_activity_title: "Activity", analysis_activity_desc: "documents processed successfully",
+donut_period: "PER MONTH", donut_live: "Updated just now", donut_center_label: "Documents", donut_center_sub: "total", donut_leg1: "Incoming", donut_leg2: "Sent", donut_leg3: "Signed", donut_leg4: "In queue",
+chart_label: "Monthly overview", chart_title: "System performance", chart_reg: "Registrations", chart_doc: "Documents",
+features_label: "Features", features_title: "Everything you need", features_subtitle: "Simple tools for complex document work",
+f1_title: "Digital Signature", f1_desc: "Sign documents with one click. Each file gets a unique code — it can be verified in a second via phone.",
+f2_title: "Roles & Permissions", f2_desc: "Each employee sees only what they need. Director, manager, worker — each has their own capabilities.",
+f3_title: "Reliable Storage", f3_desc: "All documents are stored in secure storage. Nothing will be lost — action history is always at hand.",
+f4_title: "Smart Analysis", f4_desc: "The system counts how many documents are processed, who signed and who hasn't. All statistics in one place.",
+f5_title: "All Formats", f5_desc: "Work with PDF, Word and Excel. Signature and stamp are automatically added to the document — formatting is preserved.",
+f6_title: "Comfortable Design", f6_desc: "Dark theme is easy on the eyes. Everything is in place — anyone can figure it out, even without experience.",
+depts_label: "Departments", depts_title: "Create departments — work becomes easier", depts_subtitle: "Do you have a company? Create departments and send them documents — employees exchange documents with each other and do everything right.",
+d1_tag: "Full access", d1_title: "Management", d1_desc: "Sends documents to departments, signs final versions and sees company-wide reports.",
+d2_tag: "HR", d2_title: "HR Department", d2_desc: "Orders, vacations and employment contracts — documents reach employees in minutes.",
+d3_tag: "Finance", d3_title: "Accounting", d3_desc: "Invoices, statements and reports — no paper and no queues, everything arrives on time.",
+d4_tag: "Legal", d4_title: "Legal Department", d4_desc: "Contracts and approvals — departments exchange documents and nothing gets lost.",
+d5_tag: "Sales", d5_title: "Sales Department", d5_desc: "Proposals and contracts — send to clients and colleagues in one click.",
+d6_tag: "Delivery", d6_title: "Logistics", d6_desc: "Waybills and routes — drivers and warehouse sign without delays.",
+dept_roles: "roles", dept_templates: "templates", depts_note: "Can't find your department? Create it in 30 seconds — with its own roles and templates.", depts_note_cta: "Create department",
+geo_label: "Geography", geo_title: "All of Tajikistan — connected", geo_subtitle: "All regions and cities of Tajikistan are added here, so sending documents anywhere in the country is convenient.",
+geo_map_title: "Coverage map", geo_badge1: "100% coverage", geo_badge2: "Delivery in seconds",
+g1_title: "Dushanbe", g1_desc: "Capital • all city districts", g2_title: "Sughd Region", g2_desc: "Khujand, Istaravshan, Isfara, Kanibadam, Panjakent", g3_title: "Khatlon Region", g3_desc: "Bokhtar, Kulob, Levakant, Dangara", g4_title: "GBAO", g4_desc: "Khorog, Murghab, Rushan, Ishkashim", g5_title: "Districts of Republican Subordination", g5_desc: "Vahdat, Tursunzoda, Rudaki, Hisor",
+geo_stat1: "regions", geo_stat2: "districts", geo_stat4: "cities", geo_stat3: "coverage", geo_cities_label: "Cities & districts", geo_more: "whole country",
+security_label: "Security", security_title: "Your data is protected", security_subtitle: "Multiple levels of protection — from login to every document",
+sec1_title: "Login Protection", sec1_desc: "Passwords are securely encrypted. No one else can access your account.", sec2_title: "Instant Notifications", sec2_desc: "You'll know immediately when a document is signed or needs attention.", sec3_title: "Action History", sec3_desc: "Who, when and what did with the document — everything is saved and accessible.", sec4_title: "Backups", sec4_desc: "Data is saved automatically. Even in case of failure, nothing will be lost.",
+admin_badge: "Chief Administrator", admin_role: "Creator of DocSign system", admin_desc: "If you have a company and want to become a system administrator — contact the chief administrator. He will help set everything up for your organization.", admin_contact: "Write on Telegram",
+contact_title: "Ready to start?", contact_subtitle: "Join companies already using DocSign", contact_cta: "Start for free", contact_tg: "Contact on Telegram",
+footer_desc: "Electronic document management platform that makes work easier for people in Tajikistan.", footer_product: "Product", footer_features: "Features", footer_faceid: "Face ID", footer_ai: "AI / RAG", footer_chat: "Chats", footer_departments: "Departments", footer_geography: "Geography", footer_analytics: "Analytics", footer_security: "Security", footer_company: "Company", footer_admin: "Administrator", footer_contact: "Contact", footer_rights: "All rights reserved.", footer_made: "Made in Tajikistan"
+},
+tj: {
+nav_features: "Имкониятҳо", nav_faceid: "Face ID", nav_ai: "Зеҳн", nav_chat: "Чатҳо", nav_departments: "Шуъбаҳо", nav_geography: "Ҷуғрофия", nav_analytics: "Таҳлил", nav_security: "Амният", nav_admin: "Админ", nav_contact: "Тамос", nav_start: "Оғоз",
+hero_badge: "Системаи насли нав", hero_title_1: "Идоракунии электронии ҳуҷҷатҳо", hero_subtitle: "DocSign — платформаи муосир барои кор бо ҳуҷҷатҳо. Имзо кунед, фиристед ва файлҳоро дар як клик нигоҳ доред. Содда ва боэътимод — барои одамон, то кор осонтар шавад.",
+hero_cta: "Оғоз кунед", hero_learn: "Бештар донед", stat_sec: "сония", stat_speed: "Суръат", stat_speed_desc: "барои як ҳуҷҷат", stat_users: "Корбарон", stat_users_desc: "ба қайд гирифта шуданд", stat_access: "Дастрасӣ", stat_access_desc: "ҳамеша онлайн", stat_protection: "Ҳимоя", stat_protection_desc: "қувваи ҳуқуқӣ",
+faceid_label: "Face ID • Биометрия", faceid_report_badge: "Ҳимояи воридшавӣ", faceid_title: "Воридшавӣ ба аккаунт — танҳо пас аз санҷиши чеҳра", faceid_text: "Face ID барои ширкатҳо сохта шудааст. Пеш аз воридшавӣ камера чеҳраро скан мекунад ва месанҷад: ин ҳатман шумо ҳастед ё каси дигар бо логини шумо ворид шудан мехоҳад. Шахси бегона ворид намешавад, ҳатто агар логин ва паролро донад.",
+faceid_b1_t: "Санҷиш пеш аз воридшавӣ", faceid_b1_d: "Система чеҳраро бо профили захирашудаи корманд дар 0.3 сония муқоиса мекунад.", faceid_b2_t: "Ҳимоя аз воридшавии бегона", faceid_b2_d: "Агар назди камера каси дигар бошад, дастрасӣ ба аккаунт баста мемонад.", faceid_b3_t: "Барои тамоми ширкат", faceid_b3_d: "Кормандонро пайваст кунед ва нақшҳоро таъин кунед — ҳар кас танҳо бо чеҳраи худ ворид мешавад.",
+faceid_cta: "Face ID-ро пайваст кунед", faceid_report: "Ҳисоботҳоро бинед", faceid_accuracy: "дақиқӣ", faceid_speed: "сония", faceid_demo_note: "Намоиши зинда", faceid_status_scanning: "Санҷиши чеҳра...", faceid_status_ok: "Ин шумо ҳастед — воридшавӣ иҷозат аст",
+ai_label: "Зеҳни сунъӣ • RAG", ai_title: "Ёвари ҳушманд дар ҳар як ҳуҷҷат", ai_subtitle: "Зеҳни сунъӣ дар асоси технологияи RAG ҳуҷҷатҳои шуморо мефаҳмад, маълумоти лозимиро дар чанд сония меёбад ва ба саволҳо ҷавоб медиҳад — мисли мутахассиси зинда.",
+ai_brain_title: "Шабакаи асабии DocSign", ai_brain_sub: "RAG • Embeddings • LLM", ai_brain_online: "Онлайн", ai_stat_speed: "Ҷавоб", ai_stat_accuracy: "Дақиқӣ", ai_stat_uptime: "Кор",
+ai_rag_sub: "RAG • Ҷустуҷӯ дар пойгоҳи дониш", ai_rag_active: "Фаъол", ai_step_query: "Дархост", ai_step_retrieve: "Ҷустуҷӯ", ai_step_generate: "Зеҳн", ai_step_answer: "Ҷавоб",
+ai_f1_title: "Ҷустуҷӯи ҳушманд", ai_f1_desc: "Зеҳни сунъӣ маънои саволро мефаҳмад, на танҳо калимаҳоро. Ҳуҷҷати лозимиро меёбад, ҳатто агар номи дақиқро дар ёд надошта бошед.",
+ai_f2_title: "Пойгоҳи дониш", ai_f2_desc: "Ҳамаи ҳуҷҷатҳои шумо ба пойгоҳи ягонаи дониш табдил меёбанд. Зеҳни сунъӣ ба саволҳо бо истинод ба файлҳои мушаххас ҷавоб медиҳад.",
+ai_f3_title: "Эҷоди ҷавобҳо", ai_f3_desc: "Зеҳни сунъӣ ҳуҷҷатҳоро мехонад ва ҷавобҳои равшан медиҳад. Шумо моҳиятро бе хондани садҳо саҳифа мегиред.",
+ai_f4_title: "Танҳо маълумоти шумо", ai_f4_desc: "Зеҳни сунъӣ танҳо бо ҳуҷҷатҳои ширкати шумо кор мекунад. Ҳеҷ гуна ихроҷ — ҳамаи маълумот дар дохили система мемонад.",
+ai_f5_title: "Таҳлили ҳуҷҷатҳо", ai_f5_desc: "Зеҳни сунъӣ ба таври худкор маълумоти калидиро мегирад: маблағҳо, санаҳо, тарафҳои шартнома. Соатҳои кори дастиро сарфа мекунад.",
+ai_f6_title: "Муколама бо забони шумо", ai_f6_desc: "Бо зеҳни сунъӣ бо забони русӣ, тоҷикӣ ё англисӣ сӯҳбат кунед. Вазъиятро мефаҳмад ва табиӣ ҷавоб медиҳад.",
+ai_cta_title: "Зеҳни сунъиро ҳозир санҷед", ai_cta_desc: "Дар бораи ҳуҷҷатҳои худ савол диҳед — дар чанд сония ҷавоб бо истинод ба манбаъҳо гиред.", ai_cta_btn: "Зеҳнро оғоз кунед", ai_cta_learn: "Бештар донед",
+ai_demo_q1: "Маблағи шартномаи №45 аз 12 март чанд аст?", ai_demo_a1: "Мувофиқи шартномаи №45 аз 12 марти 2026 маблағи умумӣ 245 000 сомонӣ аст. Мӯҳлати пардохт — то 30 апрел.", ai_demo_src_title: "Манбаъҳо:", ai_demo_src1: "Шартномаи №45 аз 12.03.2026", ai_demo_src2: "Ҳисоб-фактураи №128",
+ai_demo_q2: "Кӣ далолатномаи иҷрои корро имзо кард?", ai_demo_a2: "Далолатномаи иҷрои кор аз ҷониби директор Аминов А. ва сармуҳосиб Раҳимова М. 15 августи 2026 имзо шудааст.",
+chat_label: "Муколама", chat_title: "Мубодилаи фаврии паёмҳо", chat_subtitle: "Бо ҳамкорон дар вақти воқеӣ сӯҳбат кунед. Файлҳо, стикерҳо ва паёмҳои овозиро фиристед — ҳама дар як ҷо.",
+chat_status_recent: "охирин бор наздик буд", chat_date_oct: "16 октябр", chat_msg_1: "Салом! Кор бо лоиҳа чӣ хел?", chat_msg_2: "Салом! Ҳамааш хуб, қариб тамом шуд 👍", chat_msg_3: "Гирифтам, ҳозир мебинам!", chat_input_placeholder: "Паём",
+chat_f1_title: "Расонидани фаврӣ", chat_f1_desc: "Паёмҳо дар касри сония мерасанд. Статуси хондан нишон медиҳад, ки қабулкунанда паёмро кай дид.",
+chat_f2_title: "Файлҳо ва медиа", chat_f2_desc: "Ҳуҷҷатҳо, тасвирҳо, аудио ва видео фиристед. Дастгирии файлҳо то 50MB.",
+chat_f3_title: "Паёмҳои овозӣ", chat_f3_desc: "Паёмҳои овозиро бо як клик сабт кунед ва фиристед. Қулай вақте ки вақти навиштан нест.",
+chat_f4_title: "Стикерҳо ва эмодзи", chat_f4_desc: "Маҷмӯи бузурги стикерҳо ва эмодзи барои ифодаи эҳсосот. Муколамаро равшантар кунед!",
+chat_f5_title: "Таърихи переписка", chat_f5_desc: "Ҳамаи таърихи паёмҳо нигоҳ дошта мешавад. Паёми лозимаро дар чанд сония бо ҷустуҷӯ ёбед.",
+chat_cta: "Оғози муколама", chat_learn: "Бештар донед",
+analytics_label: "Таҳлил", analytics_title: "Ҳама чиз зери назорат", analytics_subtitle: "Бақайдгириҳо, ҳуҷҷатҳо ва фаъолиятро дар вақти воқеӣ пайгирӣ кунед",
+analysis_reg_title: "Бақайдгириҳо", analysis_reg_desc: "корбарон ба қайд гирифта шуданд", analysis_doc_title: "Ҳуҷҷатҳо", analysis_doc_desc: "ҳуҷҷатҳо фиристода шуданд", analysis_activity_title: "Фаъолият", analysis_activity_desc: "ҳуҷҷатҳо бомуваффақият коркард шуданд",
+donut_period: "ДАР МОҲ", donut_live: "Ҳозир навсозӣ шуд", donut_center_label: "Ҳуҷҷатҳо", donut_center_sub: "ҳамагӣ", donut_leg1: "Воридотӣ", donut_leg2: "Содиротӣ", donut_leg3: "Имзошуда", donut_leg4: "Дар навбат",
+chart_label: "Баррасии моҳона", chart_title: "Динамикаи кори система", chart_reg: "Бақайдгириҳо", chart_doc: "Ҳуҷҷатҳо",
+features_label: "Имкониятҳо", features_title: "Ҳама чизе, ки лозим аст", features_subtitle: "Асбобҳои содда барои кори мураккаб бо ҳуҷҷатҳо",
+f1_title: "Имзои электронӣ", f1_desc: "Ҳуҷҷатҳоро бо як клик имзо кунед. Ҳар як файл рамзи беназир мегирад — онро тавассути телефон дар як сония санҷидан мумкин аст.",
+f2_title: "Нақшҳо ва ҳуқуқҳо", f2_desc: "Ҳар як корманд танҳо он чизеро мебинад, ки ба ӯ лозим аст. Директор, менеджер, коргар — ҳар кадоме имкониятҳои худро дорад.",
+f3_title: "Нигоҳдории боэътимод", f3_desc: "Ҳамаи ҳуҷҷатҳо дар анбори ҳифзшуда нигоҳ дошта мешаванд. Ҳеҷ чиз гум намешавад — таърихи амалҳо ҳамеша дар даст аст.",
+f4_title: "Таҳлили ҳушманд", f4_desc: "Система худ мешуморад, ки чанд ҳуҷҷат коркард шудааст, кӣ имзо кардааст ва кӣ ҳанӯз не. Ҳамаи омор дар як ҷо.",
+f5_title: "Ҳамаи форматҳо", f5_desc: "Бо PDF, Word ва Excel кор кунед. Имзо ва муҳр ба таври худкор ба ҳуҷҷат илова карда мешаванд — формат нигоҳ дошта мешавад.",
+f6_title: "Тарҳи қулай", f6_desc: "Мавзӯи торик чашмро хаста намекунад. Ҳама чиз дар ҷояш аст — ҳар кас, ҳатто бе таҷриба, метавонад фаҳмад.",
+depts_label: "Шуъбаҳо", depts_title: "Шуъбаҳоро эҷод кунед — кор осонтар мешавад", depts_subtitle: "Ширкат доред? Шуъбаҳоро эҷод кунед ва ба онҳо ҳуҷҷат фиристед — кормандон байни худ ҳуҷҷатҳоро мубодила мекунанд ва ҳама чизро дуруст иҷро мекунанд.",
+d1_tag: "Дастрасии пурра", d1_title: "Роҳбарият", d1_desc: "Ба шуъбаҳо ҳуҷҷат мефиристад, версияҳои ниҳоиро имзо мекунад ва ҳисоботҳои тамоми ширкатро мебинад.",
+d2_tag: "Кадрҳо", d2_title: "Шуъбаи кадрҳо", d2_desc: "Фармонҳо, рухсатиҳо ва шартномаҳои меҳнатӣ — ҳуҷҷатҳо ба кормандон дар дақиқаҳо мерасанд.",
+d3_tag: "Молия", d3_title: "Баҳисобгирӣ", d3_desc: "Ҳисобҳо, актҳо ва ҳисоботҳо — бе коғаз ва бе навбат, ҳама чиз саривақт мерасад.",
+d4_tag: "Ҳуқуқ", d4_title: "Шуъбаи ҳуқуқӣ", d4_desc: "Шартномаҳо ва мувофиқаҳо — шуъбаҳо ҳуҷҷатҳоро мубодила мекунанд ва ҳеҷ чиз гум намешавад.",
+d5_tag: "Фурӯш", d5_title: "Шуъбаи фурӯш", d5_desc: "Пешниҳодҳои тиҷорӣ ва шартномаҳо — ба муштариён ва ҳамкорон дар як клик фиристед.",
+d6_tag: "Интиқол", d6_title: "Логистика", d6_desc: "Ҳуҷҷатҳои мол ва маршрутҳо — ронандагон ва анбор бе таъхир имзо мекунанд.",
+dept_roles: "нақшҳо", dept_templates: "қолибҳо", depts_note: "Шуъбаи худро наёфтед? Онро дар 30 сония эҷод кунед — бо нақшҳо ва қолибҳои худ.", depts_note_cta: "Эҷод кардани шуъба",
+geo_label: "Ҷуғрофия", geo_title: "Тамоми Тоҷикистон — дар алоқа", geo_subtitle: "Дар ин ҷо тамоми вилоятҳо ва шаҳрҳои Тоҷикистон илова карда шудаанд, то фиристодани ҳуҷҷатҳо ба ҳар нуқтаи кишвар қулай бошад.",
+geo_map_title: "Харитаи фарогирӣ", geo_badge1: "Фарогирӣ 100%", geo_badge2: "Интиқол дар сонияҳо",
+g1_title: "Душанбе", g1_desc: "Пойтахт • тамоми ноҳияҳои шаҳар", g2_title: "Вилояти Суғд", g2_desc: "Хуҷанд, Истаравшан, Исфара, Конибодом, Панҷакент", g3_title: "Вилояти Хатлон", g3_desc: "Бохтар, Кӯлоб, Левакант, Данғара", g4_title: "ВМКБ", g4_desc: "Хоруғ, Мурғоб, Рушон, Ишкошим", g5_title: "Ноҳияҳои тобеи ҷумҳурӣ", g5_desc: "Ваҳдат, Турсунзода, Рӯдакӣ, Ҳисор",
+geo_stat1: "вилоят", geo_stat2: "ноҳия", geo_stat4: "шаҳр", geo_stat3: "фарогирӣ", geo_cities_label: "Шаҳрҳо ва ноҳияҳо", geo_more: "тамоми кишвар",
+security_label: "Амният", security_title: "Маълумоти шумо дар ҳимоя", security_subtitle: "Чанд сатҳи ҳимоя — аз воридшавӣ то ҳар як ҳуҷҷат",
+sec1_title: "Ҳимояи воридшавӣ", sec1_desc: "Паролҳо боэътимод рамзгузорӣ шудаанд. Ғайриҳо ба ҳисоби шумо ворид шуда наметавонад.", sec2_title: "Огоҳиҳои фаврӣ", sec2_desc: "Шумо фавран мефаҳмед, ки ҳуҷҷат имзо шудааст ё ба диққат ниёз дорад.", sec3_title: "Таърихи амалҳо", sec3_desc: "Кӣ, кай ва чӣ бо ҳуҷҷат кард — ҳама нигоҳ дошта мешавад ва дастрас аст.", sec4_title: "Нусхаҳои эҳтиётӣ", sec4_desc: "Маълумот ба таври худкор нигоҳ дошта мешавад. Ҳатто дар ҳолати вайроншавӣ ҳеҷ чиз гум намешавад.",
+admin_badge: "Маъмури асосӣ", admin_role: "Созандаи системаи DocSign", admin_desc: "Агар шумо ширкат дошта бошед ва хоҳед маъмури система шавед — бо маъмури асосӣ тамос гиред. Ӯ ба шумо барои ташкилотатон кӯмак мекунад.", admin_contact: "Дар Telegram нависед",
+contact_title: "Омодаед оғоз кунед?", contact_subtitle: "Ба ширкатҳое, ки аллакай DocSign-ро истифода мебаранд, ҳамроҳ шавед", contact_cta: "Ройгон оғоз кунед", contact_tg: "Дар Telegram тамос гиред",
+footer_desc: "Платформаи идоракунии электронии ҳуҷҷатҳо, ки кори одамонро дар Тоҷикистон осон мекунад.", footer_product: "Маҳсулот", footer_features: "Имкониятҳо", footer_faceid: "Face ID", footer_ai: "Зеҳн / RAG", footer_chat: "Чатҳо", footer_departments: "Шуъбаҳо", footer_geography: "Ҷуғрофия", footer_analytics: "Таҳлил", footer_security: "Амният", footer_company: "Ширкат", footer_admin: "Маъмур", footer_contact: "Тамос", footer_rights: "Ҳамаи ҳуқуқҳо ҳифз шудаанд.", footer_made: "Дар Тоҷикистон сохта шудааст"
+}
 };
+
 let currentLang = 'ru';
 function setLanguage(lang) {
-  currentLang = lang;
-  const t = translations[lang];
-  if (!t) return;
-  document.querySelectorAll('[data-i18n]').forEach(el => { const key = el.getAttribute('data-i18n'); if (t[key] !== undefined) el.textContent = t[key]; });
-  const desktopSelect = document.getElementById('lang-select');
-  const mobileSelect = document.getElementById('lang-select-mobile');
-  if (desktopSelect) desktopSelect.value = lang;
-  if (mobileSelect) mobileSelect.value = lang;
-  document.documentElement.lang = lang;
-  localStorage.setItem('docsign_lang', lang);
-  document.dispatchEvent(new CustomEvent('docsign-lang-change'));
+currentLang = lang;
+const t = translations[lang];
+if (!t) return;
+document.querySelectorAll('[data-i18n]').forEach(el => { const key = el.getAttribute('data-i18n'); if (t[key] !== undefined) el.textContent = t[key]; });
+document.querySelectorAll('[data-i18n-placeholder]').forEach(el => { const key = el.getAttribute('data-i18n-placeholder'); if (t[key] !== undefined) el.placeholder = t[key]; });
+const desktopSelect = document.getElementById('lang-select');
+const mobileSelect = document.getElementById('lang-select-mobile');
+if (desktopSelect) desktopSelect.value = lang;
+if (mobileSelect) mobileSelect.value = lang;
+document.documentElement.lang = lang;
+localStorage.setItem('docsign_lang', lang);
+document.dispatchEvent(new CustomEvent('docsign-lang-change'));
 }
 const langSelectDesktop = document.getElementById('lang-select');
 const langSelectMobile = document.getElementById('lang-select-mobile');
@@ -1435,269 +1737,269 @@ setLanguage(localStorage.getItem('docsign_lang') || 'ru');
 // ===== NAVBAR SCROLL =====
 const navbar = document.getElementById('navbar');
 window.addEventListener('scroll', () => {
-  if (window.scrollY > 50) { navbar.classList.add('glass-strong', 'shadow-lg'); }
-  else { navbar.classList.remove('glass-strong', 'shadow-lg'); }
+if (window.scrollY > 50) { navbar.classList.add('glass-strong', 'shadow-lg'); }
+else { navbar.classList.remove('glass-strong', 'shadow-lg'); }
 });
 
 // ===== MOBILE MENU =====
 const mobileMenuBtn = document.getElementById('mobileMenuBtn');
 const mobileMenu = document.getElementById('mobileMenu');
 if (mobileMenuBtn && mobileMenu) {
-  mobileMenuBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
-  mobileMenu.querySelectorAll('a').forEach(link => { link.addEventListener('click', () => mobileMenu.classList.add('hidden')); });
+mobileMenuBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+mobileMenu.querySelectorAll('a').forEach(link => { link.addEventListener('click', () => mobileMenu.classList.add('hidden')); });
 }
 
 // ===== SCROLL REVEAL =====
 const revealObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('revealed'); revealObserver.unobserve(entry.target); } });
+entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('revealed'); revealObserver.unobserve(entry.target); } });
 }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
 document.querySelectorAll('.scroll-reveal').forEach(el => revealObserver.observe(el));
 
 // ===== COUNTERS =====
 function animateCounter(el, target, duration) {
-  duration = duration || 2000;
-  const startTime = performance.now();
-  function update(currentTime) {
-    const elapsed = currentTime - startTime;
-    const progress = Math.min(elapsed / duration, 1);
-    const easeOut = 1 - Math.pow(1 - progress, 3);
-    el.textContent = Math.floor(target * easeOut).toLocaleString();
-    if (progress < 1) requestAnimationFrame(update);
-  }
-  requestAnimationFrame(update);
+duration = duration || 2000;
+const startTime = performance.now();
+function update(currentTime) {
+const elapsed = currentTime - startTime;
+const progress = Math.min(elapsed / duration, 1);
+const easeOut = 1 - Math.pow(1 - progress, 3);
+el.textContent = Math.floor(target * easeOut).toLocaleString();
+if (progress < 1) requestAnimationFrame(update);
+}
+requestAnimationFrame(update);
 }
 const counterObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      const target = parseFloat(entry.target.dataset.target);
-      if (!isNaN(target)) animateCounter(entry.target, target);
-      counterObserver.unobserve(entry.target);
-    }
-  });
+entries.forEach(entry => {
+if (entry.isIntersecting) {
+const target = parseFloat(entry.target.dataset.target);
+if (!isNaN(target)) animateCounter(entry.target, target);
+counterObserver.unobserve(entry.target);
+}
+});
 }, { threshold: 0.5 });
 document.querySelectorAll('.counter').forEach(el => counterObserver.observe(el));
 
 // ===== DONUT CHART =====
 function animateDonutChart() {
-  const segments = document.querySelectorAll('.donut-segment');
-  const circumference = 2 * Math.PI * 80;
-  let offset = 0;
-  const gap = 2;
-  segments.forEach((seg, idx) => {
-    const percent = parseFloat(seg.dataset.percent);
-    const segLength = percent - gap;
-    seg.style.strokeDasharray = `0 ${circumference}`;
-    seg.style.strokeDashoffset = `${-offset * (circumference / 100)}`;
-    setTimeout(() => {
-      seg.style.strokeDasharray = `${segLength * (circumference / 100)} ${circumference}`;
-      seg.style.strokeDashoffset = `${-offset * (circumference / 100)}`;
-    }, 100 + idx * 150);
-    offset += percent;
-  });
+const segments = document.querySelectorAll('.donut-segment');
+const circumference = 2 * Math.PI * 80;
+let offset = 0;
+const gap = 2;
+segments.forEach((seg, idx) => {
+const percent = parseFloat(seg.dataset.percent);
+const segLength = percent - gap;
+seg.style.strokeDasharray = `0 ${circumference}`;
+seg.style.strokeDashoffset = `${-offset * (circumference / 100)}`;
+setTimeout(() => {
+seg.style.strokeDasharray = `${segLength * (circumference / 100)} ${circumference}`;
+seg.style.strokeDashoffset = `${-offset * (circumference / 100)}`;
+}, 100 + idx * 150);
+offset += percent;
+});
 }
 const donutChart = document.getElementById('donutChart');
 if (donutChart) {
-  const donutObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => { if (entry.isIntersecting) { animateDonutChart(); donutObserver.unobserve(entry.target); } });
-  }, { threshold: 0.3 });
-  donutObserver.observe(donutChart);
+const donutObserver = new IntersectionObserver((entries) => {
+entries.forEach(entry => { if (entry.isIntersecting) { animateDonutChart(); donutObserver.unobserve(entry.target); } });
+}, { threshold: 0.3 });
+donutObserver.observe(donutChart);
 }
 
 // ===== SMOOTH SCROLL =====
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-  anchor.addEventListener('click', function(e) {
-    const href = this.getAttribute('href');
-    if (href === '#') return;
-    const target = document.querySelector(href);
-    if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
-  });
+anchor.addEventListener('click', function(e) {
+const href = this.getAttribute('href');
+if (href === '#') return;
+const target = document.querySelector(href);
+if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+});
 });
 
 // ===== MAIN CHART =====
 (function() {
-  const chartEl = document.getElementById('mainChart');
-  if (!chartEl) return;
-  const regData = [12,18,15,22,28,25,32,38,35,42,48,45,52,58,55,62,68,65,72,78,75,82,88,85,92,98,95,102,108,105];
-  const docData = [45,52,48,58,65,62,72,78,75,85,92,88,98,105,102,112,118,115,125,132,128,138,145,142,152,158,155,165,172,168];
-  const maxVal = Math.max.apply(null, regData.concat(docData));
-  function buildPath(data, w, h) { const stepX = w / (data.length - 1); return data.map((v, i) => { const x = i * stepX; const y = h - (v / maxVal) * h * 0.9 - h * 0.05; return (i === 0 ? 'M' : 'L') + ' ' + x + ' ' + y; }).join(' '); }
-  function buildAreaPath(data, w, h) { return buildPath(data, w, h) + ` L ${w} ${h} L 0 ${h} Z`; }
-  const w = 1000, h = 300;
-  const regPath = buildPath(regData, w, h), docPath = buildPath(docData, w, h), regArea = buildAreaPath(regData, w, h), docArea = buildAreaPath(docData, w, h);
-  let gridLines = '';
-  for (let i = 0; i <= 4; i++) { const y = (h / 4) * i; gridLines += `<line x1="0" y1="${y}" x2="${w}" y2="${y}" stroke="rgba(128,128,128,0.12)" stroke-width="1"/>`; }
-  chartEl.innerHTML = `<svg viewBox="0 0 ${w} ${h}" class="w-full h-full" preserveAspectRatio="none"><defs><linearGradient id="regGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#3b82f6" stop-opacity="0.4"/><stop offset="100%" stop-color="#3b82f6" stop-opacity="0"/></linearGradient><linearGradient id="docGrad2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#8b5cf6" stop-opacity="0.3"/><stop offset="100%" stop-color="#8b5cf6" stop-opacity="0"/></linearGradient></defs>${gridLines}<path d="${docArea}" fill="url(#docGrad2)"/><path d="${docPath}" stroke="#8b5cf6" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="${regArea}" fill="url(#regGrad)"/><path d="${regPath}" stroke="#3b82f6" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const chartEl = document.getElementById('mainChart');
+if (!chartEl) return;
+const regData = [12,18,15,22,28,25,32,38,35,42,48,45,52,58,55,62,68,65,72,78,75,82,88,85,92,98,95,102,108,105];
+const docData = [45,52,48,58,65,62,72,78,75,85,92,88,98,105,102,112,118,115,125,132,128,138,145,142,152,158,155,165,172,168];
+const maxVal = Math.max.apply(null, regData.concat(docData));
+function buildPath(data, w, h) { const stepX = w / (data.length - 1); return data.map((v, i) => { const x = i * stepX; const y = h - (v / maxVal) * h * 0.9 - h * 0.05; return (i === 0 ? 'M' : 'L') + ' ' + x + ' ' + y; }).join(' '); }
+function buildAreaPath(data, w, h) { return buildPath(data, w, h) + ` L ${w} ${h} L 0 ${h} Z`; }
+const w = 1000, h = 300;
+const regPath = buildPath(regData, w, h), docPath = buildPath(docData, w, h), regArea = buildAreaPath(regData, w, h), docArea = buildAreaPath(docData, w, h);
+let gridLines = '';
+for (let i = 0; i <= 4; i++) { const y = (h / 4) * i; gridLines += `<line x1="0" y1="${y}" x2="${w}" y2="${y}" stroke="rgba(128,128,128,0.12)" stroke-width="1"/>`; }
+chartEl.innerHTML = `<svg viewBox="0 0 ${w} ${h}" class="w-full h-full" preserveAspectRatio="none"><defs><linearGradient id="regGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#3b82f6" stop-opacity="0.4"/><stop offset="100%" stop-color="#3b82f6" stop-opacity="0"/></linearGradient><linearGradient id="docGrad2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#8b5cf6" stop-opacity="0.3"/><stop offset="100%" stop-color="#8b5cf6" stop-opacity="0"/></linearGradient></defs>${gridLines}<path d="${docArea}" fill="url(#docGrad2)"/><path d="${docPath}" stroke="#8b5cf6" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="${regArea}" fill="url(#regGrad)"/><path d="${regPath}" stroke="#3b82f6" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 })();
 
 // ===== FACE ID DOTS =====
 (function() {
-  const faceSvg = document.getElementById('faceDots');
-  if (!faceSvg) return;
-  const svgNS = 'http://www.w3.org/2000/svg';
-  function addDot(px, py, pr, pClass) {
-    const dotEl = document.createElementNS(svgNS, 'circle');
-    dotEl.setAttribute('cx', px); dotEl.setAttribute('cy', py);
-    dotEl.setAttribute('r', pr); dotEl.setAttribute('class', pClass);
-    faceSvg.appendChild(dotEl);
-  }
-  const cx = 110, cy = 112, rx = 60, ry = 76;
-  for (let gx = cx - rx + 8; gx <= cx + rx - 8; gx += 13) {
-    for (let gy = cy - ry + 8; gy <= cy + ry - 8; gy += 13) {
-      const nx = (gx - cx) / rx; const ny = (gy - cy) / ry;
-      if (nx * nx + ny * ny < 0.8) addDot(gx + (Math.random() * 4 - 2), gy + (Math.random() * 4 - 2), 1.1, 'fd fd-soft');
-    }
-  }
-  const contourCount = 46;
-  for (let i = 0; i < contourCount; i++) {
-    const angle = (i / contourCount) * Math.PI * 2;
-    addDot(cx + Math.cos(angle) * rx, cy + Math.sin(angle) * ry, 1.8, 'fd fd-main');
-  }
-  [[86, 100], [134, 100]].forEach(pt => {
-    for (let i = 0; i < 9; i++) {
-      const angle = Math.PI + (i / 8) * Math.PI;
-      addDot(pt[0] + Math.cos(angle) * 9, pt[1] + Math.sin(angle) * 4.5, 1.5, 'fd fd-main');
-    }
-  });
-  [[86, 86], [134, 86]].forEach(pt => {
-    for (let i = 0; i < 7; i++) {
-      const angle = Math.PI + (i / 6) * Math.PI;
-      addDot(pt[0] + Math.cos(angle) * 12, pt[1] + Math.sin(angle) * 3.5, 1.3, 'fd fd-main');
-    }
-  });
-  for (let i = 0; i < 6; i++) addDot(110 + Math.sin(i * 0.9) * 1.6, 106 + i * 6, 1.4, 'fd fd-main');
-  addDot(104, 140, 1.4, 'fd fd-main'); addDot(116, 140, 1.4, 'fd fd-main');
-  for (let i = 0; i < 9; i++) {
-    const mx = 92 + i * 4.5;
-    const my = 160 + Math.sin((i / 8) * Math.PI) * 4;
-    addDot(mx, my, 1.5, 'fd fd-main');
-  }
+const faceSvg = document.getElementById('faceDots');
+if (!faceSvg) return;
+const svgNS = 'http://www.w3.org/2000/svg';
+function addDot(px, py, pr, pClass) {
+const dotEl = document.createElementNS(svgNS, 'circle');
+dotEl.setAttribute('cx', px); dotEl.setAttribute('cy', py);
+dotEl.setAttribute('r', pr); dotEl.setAttribute('class', pClass);
+faceSvg.appendChild(dotEl);
+}
+const cx = 110, cy = 112, rx = 60, ry = 76;
+for (let gx = cx - rx + 8; gx <= cx + rx - 8; gx += 13) {
+for (let gy = cy - ry + 8; gy <= cy + ry - 8; gy += 13) {
+const nx = (gx - cx) / rx; const ny = (gy - cy) / ry;
+if (nx * nx + ny * ny < 0.8) addDot(gx + (Math.random() * 4 - 2), gy + (Math.random() * 4 - 2), 1.1, 'fd fd-soft');
+}
+}
+const contourCount = 46;
+for (let i = 0; i < contourCount; i++) {
+const angle = (i / contourCount) * Math.PI * 2;
+addDot(cx + Math.cos(angle) * rx, cy + Math.sin(angle) * ry, 1.8, 'fd fd-main');
+}
+[[86, 100], [134, 100]].forEach(pt => {
+for (let i = 0; i < 9; i++) {
+const angle = Math.PI + (i / 8) * Math.PI;
+addDot(pt[0] + Math.cos(angle) * 9, pt[1] + Math.sin(angle) * 4.5, 1.5, 'fd fd-main');
+}
+});
+[[86, 86], [134, 86]].forEach(pt => {
+for (let i = 0; i < 7; i++) {
+const angle = Math.PI + (i / 6) * Math.PI;
+addDot(pt[0] + Math.cos(angle) * 12, pt[1] + Math.sin(angle) * 3.5, 1.3, 'fd fd-main');
+}
+});
+for (let i = 0; i < 6; i++) addDot(110 + Math.sin(i * 0.9) * 1.6, 106 + i * 6, 1.4, 'fd fd-main');
+addDot(104, 140, 1.4, 'fd fd-main'); addDot(116, 140, 1.4, 'fd fd-main');
+for (let i = 0; i < 9; i++) {
+const mx = 92 + i * 4.5;
+const my = 160 + Math.sin((i / 8) * Math.PI) * 4;
+addDot(mx, my, 1.5, 'fd fd-main');
+}
 })();
 
 // ===== FACE ID TILT =====
 (function() {
-  const tiltWrap = document.getElementById('faceTiltWrap');
-  const tiltCard = document.getElementById('faceScanner');
-  if (!tiltWrap || !tiltCard) return;
-  tiltWrap.addEventListener('mousemove', (e) => {
-    if (window.innerWidth < 768) return;
-    const rect = tiltWrap.getBoundingClientRect();
-    const relX = (e.clientX - rect.left) / rect.width - 0.5;
-    const relY = (e.clientY - rect.top) / rect.height - 0.5;
-    tiltCard.style.transform = `rotateY(${relX * 14}deg) rotateX(${-relY * 12}deg)`;
-  });
-  tiltWrap.addEventListener('mouseleave', () => { tiltCard.style.transform = 'rotateY(0deg) rotateX(0deg)'; });
+const tiltWrap = document.getElementById('faceTiltWrap');
+const tiltCard = document.getElementById('faceScanner');
+if (!tiltWrap || !tiltCard) return;
+tiltWrap.addEventListener('mousemove', (e) => {
+if (window.innerWidth < 768) return;
+const rect = tiltWrap.getBoundingClientRect();
+const relX = (e.clientX - rect.left) / rect.width - 0.5;
+const relY = (e.clientY - rect.top) / rect.height - 0.5;
+tiltCard.style.transform = `rotateY(${relX * 14}deg) rotateX(${-relY * 12}deg)`;
+});
+tiltWrap.addEventListener('mouseleave', () => { tiltCard.style.transform = 'rotateY(0deg) rotateX(0deg)'; });
 })();
 
 // ===== FACE ID STATUS CYCLE =====
 (function() {
-  const scannerEl = document.getElementById('faceScanner');
-  const statusPill = document.getElementById('faceStatusPill');
-  const statusText = document.getElementById('faceStatusText');
-  const statusDot = document.getElementById('faceStatusDot');
-  if (!scannerEl || !statusPill) return;
-  let isVerified = false;
-  function renderFaceStatus() {
-    const tr = translations[currentLang] || translations.ru;
-    if (isVerified) {
-      scannerEl.classList.add('faceid-verified');
-      statusPill.classList.add('face-status-ok');
-      if (statusText) statusText.textContent = tr.faceid_status_ok;
-      if (statusDot) { statusDot.style.background = '#10b981'; statusDot.style.boxShadow = '0 0 10px #10b981'; }
-    } else {
-      scannerEl.classList.remove('faceid-verified');
-      statusPill.classList.remove('face-status-ok');
-      if (statusText) statusText.textContent = tr.faceid_status_scanning;
-      if (statusDot) { statusDot.style.background = '#3b82f6'; statusDot.style.boxShadow = '0 0 10px #3b82f6'; }
-    }
-  }
-  renderFaceStatus();
-  setInterval(() => { isVerified = !isVerified; renderFaceStatus(); }, 4200);
-  document.addEventListener('docsign-lang-change', renderFaceStatus);
+const scannerEl = document.getElementById('faceScanner');
+const statusPill = document.getElementById('faceStatusPill');
+const statusText = document.getElementById('faceStatusText');
+const statusDot = document.getElementById('faceStatusDot');
+if (!scannerEl || !statusPill) return;
+let isVerified = false;
+function renderFaceStatus() {
+const tr = translations[currentLang] || translations.ru;
+if (isVerified) {
+scannerEl.classList.add('faceid-verified');
+statusPill.classList.add('face-status-ok');
+if (statusText) statusText.textContent = tr.faceid_status_ok;
+if (statusDot) { statusDot.style.background = '#10b981'; statusDot.style.boxShadow = '0 0 10px #10b981'; }
+} else {
+scannerEl.classList.remove('faceid-verified');
+statusPill.classList.remove('face-status-ok');
+if (statusText) statusText.textContent = tr.faceid_status_scanning;
+if (statusDot) { statusDot.style.background = '#3b82f6'; statusDot.style.boxShadow = '0 0 10px #3b82f6'; }
+}
+}
+renderFaceStatus();
+setInterval(() => { isVerified = !isVerified; renderFaceStatus(); }, 4200);
+document.addEventListener('docsign-lang-change', renderFaceStatus);
 })();
 
 // ===== RAG DEMO =====
 (function() {
-  const messagesEl = document.getElementById('ragMessages');
-  if (!messagesEl) return;
-  const scenarios = [
-    { qKey: 'ai_demo_q1', aKey: 'ai_demo_a1', src: [{ key: 'ai_demo_src1', score: '98%' }, { key: 'ai_demo_src2', score: '94%' }] },
-    { qKey: 'ai_demo_q2', aKey: 'ai_demo_a2', src: [{ key: 'ai_demo_src1', score: '96%' }] }
-  ];
-  let currentScenario = 0;
-  let runToken = 0;
-  function getTr() { return translations[currentLang] || translations.ru; }
-  function clearMessages() { messagesEl.innerHTML = ''; }
-  function escapeHtml(str) {
-    const div = document.createElement('div');
-    div.textContent = str == null ? '' : String(str);
-    return div.innerHTML;
-  }
-  function addMessage(type, content, sources) {
-    const tr = getTr();
-    const msg = document.createElement('div');
-    msg.className = 'rag-msg rag-msg-' + type;
-    if (type === 'user') {
-      msg.innerHTML = `<div class="rag-msg-bubble">${escapeHtml(content)}</div><div class="rag-msg-avatar"><svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg></div>`;
-    } else {
-      let sourcesHtml = '';
-      if (sources && sources.length > 0) {
-        sourcesHtml = `<div class="rag-sources"><div class="rag-sources-title"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg><span>${escapeHtml(tr.ai_demo_src_title)}</span></div>${sources.map(s => `<div class="rag-source-item"><div class="rag-source-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></div><span class="rag-source-name">${escapeHtml(tr[s.key])}</span><span class="rag-source-score">${escapeHtml(s.score)}</span></div>`).join('')}</div>`;
-      }
-      msg.innerHTML = `<div class="rag-msg-avatar"><svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg></div><div class="rag-msg-bubble"><div>${escapeHtml(content)}</div>${sourcesHtml}</div>`;
-    }
-    messagesEl.appendChild(msg);
-    return msg;
-  }
-  function addTypingIndicator() {
-    const msg = document.createElement('div');
-    msg.className = 'rag-msg rag-msg-ai';
-    msg.innerHTML = `<div class="rag-msg-avatar"><svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg></div><div class="rag-msg-bubble"><div class="rag-typing"><span></span><span></span><span></span></div></div>`;
-    messagesEl.appendChild(msg);
-    return msg;
-  }
-  function setActivePipelineStep(step) {
-    document.querySelectorAll('.rag-step').forEach(el => {
-      const s = parseInt(el.dataset.step, 10);
-      if (s <= step) el.classList.add('active'); else el.classList.remove('active');
-    });
-    document.querySelectorAll('.rag-step-arrow').forEach((el, i) => {
-      if (i < step - 1) el.classList.add('active'); else el.classList.remove('active');
-    });
-  }
-  function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
-  async function runScenario(token) {
-    const tr = getTr();
-    const scenario = scenarios[currentScenario];
-    clearMessages(); setActivePipelineStep(0);
-    await sleep(300); if (token !== runToken) return;
-    setActivePipelineStep(1); addMessage('user', tr[scenario.qKey]);
-    await sleep(1200); if (token !== runToken) return;
-    setActivePipelineStep(2);
-    await sleep(900); if (token !== runToken) return;
-    setActivePipelineStep(3); const typing = addTypingIndicator();
-    await sleep(1400); if (token !== runToken) return;
-    if (typing && typing.parentNode) typing.remove();
-    addMessage('ai', tr[scenario.aKey], scenario.src);
-    setActivePipelineStep(4);
-    await sleep(5000); if (token !== runToken) return;
-    currentScenario = (currentScenario + 1) % scenarios.length;
-    runScenario(token);
-  }
-  const aiSection = document.getElementById('ai');
-  let demoStarted = false;
-  const aiObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting && !demoStarted) {
-        demoStarted = true;
-        runToken++;
-        runScenario(runToken);
-      }
-    });
-  }, { threshold: 0.3 });
-  if (aiSection) aiObserver.observe(aiSection);
-  document.addEventListener('docsign-lang-change', () => {
-    if (demoStarted) { currentScenario = 0; runToken++; runScenario(runToken); }
-  });
+const messagesEl = document.getElementById('ragMessages');
+if (!messagesEl) return;
+const scenarios = [
+{ qKey: 'ai_demo_q1', aKey: 'ai_demo_a1', src: [{ key: 'ai_demo_src1', score: '98%' }, { key: 'ai_demo_src2', score: '94%' }] },
+{ qKey: 'ai_demo_q2', aKey: 'ai_demo_a2', src: [{ key: 'ai_demo_src1', score: '96%' }] }
+];
+let currentScenario = 0;
+let runToken = 0;
+function getTr() { return translations[currentLang] || translations.ru; }
+function clearMessages() { messagesEl.innerHTML = ''; }
+function escapeHtml(str) {
+const div = document.createElement('div');
+div.textContent = str == null ? '' : String(str);
+return div.innerHTML;
+}
+function addMessage(type, content, sources) {
+const tr = getTr();
+const msg = document.createElement('div');
+msg.className = 'rag-msg rag-msg-' + type;
+if (type === 'user') {
+msg.innerHTML = `<div class="rag-msg-bubble">${escapeHtml(content)}</div><div class="rag-msg-avatar"><svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg></div>`;
+} else {
+let sourcesHtml = '';
+if (sources && sources.length > 0) {
+sourcesHtml = `<div class="rag-sources"><div class="rag-sources-title"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg><span>${escapeHtml(tr.ai_demo_src_title)}</span></div>${sources.map(s => `<div class="rag-source-item"><div class="rag-source-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></div><span class="rag-source-name">${escapeHtml(tr[s.key])}</span><span class="rag-source-score">${escapeHtml(s.score)}</span></div>`).join('')}</div>`;
+}
+msg.innerHTML = `<div class="rag-msg-avatar"><svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg></div><div class="rag-msg-bubble"><div>${escapeHtml(content)}</div>${sourcesHtml}</div>`;
+}
+messagesEl.appendChild(msg);
+return msg;
+}
+function addTypingIndicator() {
+const msg = document.createElement('div');
+msg.className = 'rag-msg rag-msg-ai';
+msg.innerHTML = `<div class="rag-msg-avatar"><svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg></div><div class="rag-msg-bubble"><div class="rag-typing"><span></span><span></span><span></span></div></div>`;
+messagesEl.appendChild(msg);
+return msg;
+}
+function setActivePipelineStep(step) {
+document.querySelectorAll('.rag-step').forEach(el => {
+const s = parseInt(el.dataset.step, 10);
+if (s <= step) el.classList.add('active'); else el.classList.remove('active');
+});
+document.querySelectorAll('.rag-step-arrow').forEach((el, i) => {
+if (i < step - 1) el.classList.add('active'); else el.classList.remove('active');
+});
+}
+function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
+async function runScenario(token) {
+const tr = getTr();
+const scenario = scenarios[currentScenario];
+clearMessages(); setActivePipelineStep(0);
+await sleep(300); if (token !== runToken) return;
+setActivePipelineStep(1); addMessage('user', tr[scenario.qKey]);
+await sleep(1200); if (token !== runToken) return;
+setActivePipelineStep(2);
+await sleep(900); if (token !== runToken) return;
+setActivePipelineStep(3); const typing = addTypingIndicator();
+await sleep(1400); if (token !== runToken) return;
+if (typing && typing.parentNode) typing.remove();
+addMessage('ai', tr[scenario.aKey], scenario.src);
+setActivePipelineStep(4);
+await sleep(5000); if (token !== runToken) return;
+currentScenario = (currentScenario + 1) % scenarios.length;
+runScenario(token);
+}
+const aiSection = document.getElementById('ai');
+let demoStarted = false;
+const aiObserver = new IntersectionObserver((entries) => {
+entries.forEach(entry => {
+if (entry.isIntersecting && !demoStarted) {
+demoStarted = true;
+runToken++;
+runScenario(runToken);
+}
+});
+}, { threshold: 0.3 });
+if (aiSection) aiObserver.observe(aiSection);
+document.addEventListener('docsign-lang-change', () => {
+if (demoStarted) { currentScenario = 0; runToken++; runScenario(runToken); }
+});
 })();
 </script>
 </body>

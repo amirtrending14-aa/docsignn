@@ -266,9 +266,9 @@
 @php
     // ===== Реальный подсчёт KPI из коллекции =====
     $kpiTotal   = $documents->total();
-    $kpiSigned  = 0;
-    $kpiWaiting = 0;
-    $kpiOverdue = 0;
+        $kpiSigned  = 0;
+        $kpiWaiting = 0;
+        $kpiOverdue = 0;
     foreach ($documents as $d) {
         $st = strtolower($d->status);
         if ($st === 'rejected' || $st === 'draft') continue;

@@ -114,11 +114,19 @@ public function sender(): BelongsTo
     }
 
 
-    public function isSigned(): bool
-    {
-        return $this->status === self::STATUS_ACTIVE &&
-            $this->signatures()->where('signature', '!=', '')->exists();
-    }
+ // В файле app/Models/Document.php
+
+public function isSigned(): bool
+{
+    // Проверяем наличие реальной подписи (не null и не пустая строка)
+    $hasRealSignature = $this->signatures()
+        ->whereNotNull('signature')
+        ->where('signature', '!=', '')
+        ->exists();
+
+    // Документ подписан, если есть подписи, или если он уже переведен в статус завершенного
+    return $hasRealSignature || in_array($this->status, [self::STATUS_COMPLETED, self::STATUS_APPROVED]);
+}
 
 
     public function canManage(): bool

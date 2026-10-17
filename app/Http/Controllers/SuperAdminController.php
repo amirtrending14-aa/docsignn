@@ -343,9 +343,17 @@ class SuperAdminController extends Controller
         return back()->with('success', '✅ Профиль успешно обновлён');
     }
 
-    public function userActivity(User $user)
+     public function userActivity(User $user)
     {
+        // Получаем документы пользователя
         $documents = Document::where('created_by', $user->id)->latest()->paginate(30);
-        return view('superadmin.user-activity', compact('user', 'documents'));
+        
+        // ✅ ДОБАВЛЕНО: Подсчет общего количества активностей (документов) этого пользователя
+        $totalActivities = Document::where('created_by', $user->id)->count();
+        
+        // Если вам нужны другие статистические данные, можно добавить их здесь
+        // Например, количество комментариев или логов, если они используются в шаблоне
+        
+        return view('superadmin.user-activity', compact('user', 'documents', 'totalActivities'));
     }
 }

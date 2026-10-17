@@ -379,12 +379,64 @@ class UserController extends Controller
             ->with('success', "✅ Пользователь '{$userName}' успешно удалён");
     }
 
-    public function userActivity($id)
+     public function userActivity($id)
     {
         $user = User::findOrFail($id);
+        
+        // Получаем список всех пользователей для фильтров
         $users = User::orderBy('name')->get();
+        
+        // Получаем логи активности конкретного пользователя
         $activities = \App\Models\DocumentLog::where('user_id', $id)
-            ->with('document')->orderBy('created_at', 'desc')->paginate(30);
-        return view('superadmin.activity', compact('user', 'users', 'activities'));
+            ->with('document')
+            ->orderBy('created_at', 'desc')
+            ->paginate(30);
+            
+        // ✅ ИСПРАВЛЕНИЕ: Добавляем все необходимые статистические переменные
+        
+        // 1. Общее количество активностей этого пользователя
+        $totalActivities = \App\Models\DocumentLog::where('user_id', $id)->count();
+        
+        // 2. Количество входов сегодня
+        $todayLogins = \App\Models\DocumentLog::where('user_id', $id)
+            ->whereDate('created_at', today())
+            ->where(function ($query) {
+                $query->where('action', 'like', '%вход%')
+                      ->orWhere('action', 'like', '%login%');
+            })
+            ->count();
+            
+        // 3. Количество действий с документами (создание, подписание и т.д.)
+        $documentActions = \App\Models\DocumentLog::where('user_id', $id)
+            ->whereIn('action', [
+                'создание', 'обновление', 'удаление', 'подписание', 'отправка',
+                'отклонение', 'экспорт', 'скачивание', 'анализ ИИ', 'генерация ИИ',
+                'CREATED', 'RECEIVED', 'UPDATED', 'DELETED', 'SIGNED', 'REJECTED',
+                'create', 'update', 'delete', 'sign', 'signed', 'document_created',
+                'document_updated', 'document_deleted', 'document_signed',
+            ])
+            ->count();
+            
+        // 4. Общее количество активных пользователей в системе
+        $activeUsersCount = User::count();
+        
+        // 5. Список уникальных действий для фильтра
+        $actions = \App\Models\DocumentLog::query()
+            ->whereNotNull('action')
+            ->where('action', '!=', '')
+            ->distinct()
+            ->orderBy('action')
+            ->pluck('action');
+
+        return view('superadmin.activity', compact(
+            'user', 
+            'users', 
+            'activities', 
+            'totalActivities', 
+            'todayLogins',       
+            'documentActions',   // <-- Добавлено
+            'activeUsersCount',  
+            'actions'            
+        ));
     }
 }
