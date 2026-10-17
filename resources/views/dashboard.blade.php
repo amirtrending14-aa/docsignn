@@ -193,6 +193,8 @@ html[data-theme="dark"] .hero::before {
     max-width: 600px;
 }
 
+
+
 /* Приветствие и имя в одну строку */
 /* Приветствие и имя в одну строку */
 .hero-hello {
