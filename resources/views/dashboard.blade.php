@@ -202,7 +202,7 @@ html[data-theme="dark"] .hero::before {
     color: #6b7280; /* Чуть серый цвет для светлой темы */
     margin-bottom: 0;
     margin-right: 6px; /* Небольшой пробел между приветствием и именем */
-    letter-spacing: -0.03em; /* Совпадает с именем */
+     letter-spacing: -0.03em; /* Совпадает с именем */
     line-height: 1.1; /* Совпадает с именем */
     vertical-align: baseline; /* Идеальное выравнивание по одной линии */
     animation: fadeInUp 0.5s ease 0.1s both;

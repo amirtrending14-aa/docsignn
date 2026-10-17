@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class Activity extends Model
 {
+    
     protected $fillable = [
         'user_id',
         'action',

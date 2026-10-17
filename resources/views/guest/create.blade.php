@@ -190,6 +190,8 @@ document.addEventListener('click', (e) => {
     }
 });
 
+
+
 // Валидация перед submit
 document.querySelector('form').addEventListener('submit', (e) => {
     if (!hiddenId.value) {
